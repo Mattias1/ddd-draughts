@@ -1,0 +1,9 @@
+@model UserViewModel
+@{
+    ViewBag.Title = "User: " + Model.Username;
+}
+
+<div class="text-container">
+    <h1>@Model.Username</h1>
+    <p>@Model.Rank.Name @Model.Username has played @Model.GamesPlayed games.</p>
+</div>

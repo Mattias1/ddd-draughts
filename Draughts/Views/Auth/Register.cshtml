@@ -1,0 +1,32 @@
+@{
+    ViewBag.Title = "Register";
+}
+
+<div class="text-container">
+    <h1>Register</h1>
+    <div>
+        <form class="form-horizontal" action="/auth/register" method="post">
+            <h3>Register a new account</h3>
+            <label>
+                <span>Name:</span>
+                <input type="text" name="name" placeholder="Username" />
+            </label>
+            <label>
+                <span>Email:</span>
+                <input type="text" name="email" placeholder="Email address" />
+            </label>
+            <label>
+                <span>Password:</span>
+                <input type="password" name="password" placeholder="Password" />
+            </label>
+            <label>
+                <span>Password confirmation:</span>
+                <input type="password" name="passwordConfirm" placeholder="Password" />
+            </label>
+            <label>
+                <span></span><input type="submit" value="Register" />
+            </label>
+        </form>
+        <p>Or <a href="/auth/login">login</a> to an existing account.</p>
+    </div>
+</div>

@@ -8,7 +8,60 @@
 </head>
 
 <body>
-    @RenderBody()
+    <header>
+        <nav class="navbar">
+            <div class="container">
+                <ul class="nav-list">
+                    <li><a class="navbar-home" href="/">Draughts</a></li>
+                    <li><a href="/user/list">Userlist</a></li>
+                    <li><a href="/gamelist/active">My games</a></li>
+                    <li><a href="/lobby/index">Lobby</a></li>
+                    <li><a href="/modpanel">Mod panel</a></li>
+                </ul>
+
+                @if (false) {
+                    <div class="nav-user">
+                        Logged in as: Todo | @Utils.PostLink("Logout", "/auth/logout")
+                    </div>
+                }
+                else {
+                    <div class="nav-user">
+                        Viewing as guest: <a href="/auth/login">Login</a> | <a href="/auth/register">Register</a>
+                    </div>
+                }
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <div class="container">
+            @if ((ViewBag.Errors?.Count ?? 0) > 0) {
+                <div id="page-errors" class="page-errors">
+                    <div class="page-errors-x">
+                        <a href="#" class="show-hide-link" data-id="page-errors">&times;</a>
+                    </div>
+                    <ul>
+                        @foreach (var (_, error) in (IReadOnlyList<(string, string)>)ViewBag.Errors) {
+                            <li>@error</li>
+                        }
+                    </ul>
+                </div>
+            }
+
+            @RenderBody()
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            &copy; @DateTime.Now.Year
+            - Draughts
+            - <a href="/privacy">Privacy</a>
+            - <a href="/license">License</a>
+            - <a href="/documentation">About</a>
+            - <a class="extern" href="https://github.com/Mattias1/ddd-draughts">Github</a>
+        </div>
+    </footer>
 
     <script src="/lib/jquery/dist/jquery.min.js"></script>
     <script src="/js/site.js" asp-append-version="true"></script>
