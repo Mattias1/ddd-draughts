@@ -4,7 +4,7 @@ body {
     background-color: #333;
     font-family: Arial, Arial, Helvetica, sans-serif;
     font-size: 16px;
-    margin: 0;
+    margin: 0 0 30px 0; /* Margin bottom by footer height */
     padding: 0;
     border: none;
 }
@@ -33,9 +33,214 @@ p {
     margin: 16px 6px;
 }
 
+a, button.link, input[type=submit].link {
+    color: #fd3;
+    text-decoration: none;
+}
+a.extern, button.link.extern, input[type=submit].link.extern {
+    color: #3cf;
+}
+a:hover, button.link:hover, input[type=submit].link:hover {
+    text-decoration: underline;
+}
+
+.container {
+    max-width: 1100px;
+    margin-left: auto;
+    margin-right: auto;
+}
 .text-container {
     max-width: 900px;
     padding: 6px 12px;
     margin-left: auto;
     margin-right: auto;
+}
+.text-side-menu-container {
+    min-width: 400px;
+    max-width: 688px;
+    padding: 6px 224px 6px 12px;
+    margin-left: auto;
+    margin-right: auto;
+}
+.side-menu {
+    width: 200px;
+    padding: 6px 12px;
+    float: right;
+    margin: 80px 80px 0 0;
+}
+.side-menu ul {
+    padding: 0 0 0 20px;
+    margin: 0;
+}
+.side-menu ul li {
+    margin: 6px 0;
+}
+
+/* ------- Forms ------- */
+input:not(.link), select, textarea {
+    height: 24px;
+    font-size: 14px;
+    vertical-align: middle;
+    font-weight: lighter;
+    margin: 0;
+    padding: 0 4px;
+    border: 1px solid #ccc;
+    border-radius: 2px;
+    min-width: 200px;
+    line-height: normal;
+    color: #222;
+    background-color: #eee;
+}
+input:hover:not(.link), select:hover, textarea:hover {
+    border-color: #aaa;
+}
+input:focus:not(.link), select:focus, textarea:focus {
+    border-color: #999;
+}
+input[type=checkbox], input[type=radio] {
+    min-width: 17px;
+}
+button:not(.link), input[type=submit]:not(.link) {
+    margin: 0 4px;
+    min-width: 120px;
+    border: 1px solid #aaa;
+    background-color: #ccc;
+}
+button:hover:not(.link), input[type=submit]:hover:not(.link) {
+    border-color: #999;
+    background-color: #bbb;
+}
+
+.form-horizontal label {
+    display: block;
+    padding: 3px 6px;
+}
+.form-horizontal label span {
+    display: inline-block;
+    min-width: 200px;
+}
+
+.post-link-form {
+    display: inline-block;
+}
+button.link, input[type=submit].link {
+    background: none!important;
+    border: none;
+    padding: 0!important;
+    font-family: Arial, Arial, Helvetica, sans-serif; /* input has OS specific font-family */
+    font-size: 16px;
+    cursor: pointer;
+}
+
+/* ------- Page table ------- */
+.page-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    margin: 16px 6px;
+    padding: 0;
+}
+
+.page-table .nano { width: 30px; }
+.page-table .small { width: 70px; }
+.page-table .normal { width: 110px; }
+.page-table .large { width: 165px; }
+.page-table .huge { width: 190px; }
+
+.page-table .left { text-align: left; }
+.page-table .center { text-align: center; }
+.page-table .right { text-align: right; }
+
+.page-table td, .page-table th {
+    margin: 0;
+    padding: 3px 5px;
+    border-top: 1px solid #444;
+    border-bottom: 1px solid #2a2a2a;
+}
+
+/* ------- Header ------- */
+.navbar {
+    background-color: #222;
+    border-bottom: 1px solid #000;
+    box-shadow: 0px 1px 6px #222;
+}
+.nav-list {
+    list-style: none;
+    display: inline-block;
+    margin: 0;
+    padding: 0;
+}
+.nav-list li {
+    display: inline-block;
+}
+.nav-list li a {
+    display: inline-block;
+    margin: 0 12px;
+    padding: 0 12px;
+    line-height: 60px;
+    text-align: center;
+    font-size: 22px;
+    color: #eee;
+}
+.nav-list li a.navbar-home {
+    font-size: 30px;
+    color: #bbb;
+}
+
+.nav-user {
+    float: right;
+    margin: 0 12px;
+    padding: 10px 12px 0 12px;
+    line-height: 50px;
+    text-align: right;
+    color: #aaa;
+}
+
+/* ------- Main ------- */
+.page-errors {
+    margin: 8px 80px 0 80px;
+    padding: 0;
+    color: #c00;
+    border: 1px solid #c00;
+    border-radius: 4px;
+    background-color: #feed;
+    position: absolute;
+}
+.page-errors ul {
+    margin: 0;
+    padding: 0;
+}
+.page-errors ul li {
+    padding: 6px 10px;
+    list-style: none;
+}
+.page-errors ul li:first-child {
+    margin-right: 30px;
+}
+.page-errors-x {
+    font-weight: bold;
+    position: absolute;
+    right: 0;
+}
+.page-errors-x a {
+    display: block;
+    padding: 7px 11px;
+    color: #c00;
+}
+
+/* ------- Footer ------- */
+.footer {
+    position: absolute;
+    margin: 0;
+    padding: 0;
+    bottom: 0;
+    width: 100%;
+    white-space: nowrap;
+    line-height: 30px;
+    background-color: #222;
+    border-top: 1px solid #000;
+    box-shadow: 0px 1px 6px #222;
+}
+.footer div {
+    padding: 12px;
 }

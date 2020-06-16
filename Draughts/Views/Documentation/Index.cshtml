@@ -1,0 +1,37 @@
+@model MenuViewModel
+@{
+    ViewBag.Title = "Documentation";
+}
+
+<nav class="side-menu">
+    <h4>Subpages</h4>
+    @Utils.SideMenu(Model)
+</nav>
+
+<div class="text-side-menu-container">
+    <h1>@ViewBag.Title</h1>
+
+    <h3>Domain driven design</h3>
+    <p>
+        There's a lot you can say about Domain driven design (DDD). It is a concept in which the structure of the code,
+        the team and the processes are focussed on the business domain (and not, for example, on features or on the
+        database).
+    </p>
+    <p>
+        The term was coined by Erik Evans in <a class="extern" href="https://dddcommunity.org/book/evans_2003/">
+        his book</a> (2003).
+    </p>
+    <p>
+        This application focusses on the software architecture part, and largely ignores the rest.
+    </p>
+
+    <h2>Design choices</h2>
+
+    <h3>Bounded contexts</h3>
+    <p>
+        A bounded context is an important concept in DDD. It marks explicit boundaries between models, and allows you to
+        achieve tight cohesion and loose coupling on an architectural level.
+        For Draughts, we have three bounded contexts: Game, User and AuthUser.
+        <a href="/documentation/boundedcontexts">Read more</a>.
+    </p>
+</div>

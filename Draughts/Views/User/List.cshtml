@@ -1,0 +1,32 @@
+@model UserlistViewModel
+@{
+    ViewBag.Title = "Userlist";
+}
+
+<div class="text-container">
+    <h1>Userlist</h1>
+    <table class="page-table">
+        <caption>The list of users of this site.</caption>
+        <thead>
+            <tr>
+                <th class="left small">Rank</th>
+                <th class="left">Name</th>
+                <th class="left normal">Total games</th>
+            </tr>
+        </thead>
+        <tfoot>
+            <tr class="center">
+                <td colspan="3">Some footer text.</td>
+            </tr>
+        </tfoot>
+        <tbody>
+            @foreach(var user in Model.Users) {
+                <tr>
+                    <td>Icon #@user.Rank.Icon</td>
+                    <td>@Utils.UserLinkWithRank(user)</td>
+                    <td>@user.GamesPlayed</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
