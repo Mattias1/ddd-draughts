@@ -1,0 +1,14 @@
+using Draughts.Common;
+using System.Collections.Generic;
+
+namespace Draughts.Repositories {
+    public interface IRepository<T> where T : class {
+        T Find(Specification<T> spec);
+        T? FindOrNull(Specification<T> spec);
+        IReadOnlyList<T> List();
+        IReadOnlyList<T> List(Specification<T> spec);
+        IReadOnlyList<T> List<TKey>(Sort<T, TKey> sort);
+        IReadOnlyList<T> List<TKey>(Specification<T> spec, Sort<T, TKey> sort);
+        void Save(T entity);
+    }
+}
