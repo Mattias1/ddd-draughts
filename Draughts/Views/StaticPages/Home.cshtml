@@ -3,32 +3,39 @@
 }
 
 <div class="text-container">
-    <h1>Hey there</h1>
-    <p>
-        This is a site I made to play around with Domain-driven design (DDD).
-        You can read about the design choices in the <a href="/documentation">documentation</a>.
-    </p>
+    @if (ViewBag.IsLoggedIn) {
+        <h1>Dashboard</h1>
+        <p>Hi @ViewBag.Username, here's an overview of, err, well, things?</p>
+        <p>Nothing to see so far.</p>
+    }
+    else {
+        <h1>Hey there</h1>
+        <p>
+            This is a site I made to play around with Domain-driven design (DDD).
+            You can read about the design choices in the <a href="/documentation">documentation</a>.
+        </p>
 
-    <div>
-        <form class="form-horizontal" action="/auth/login" method="post">
-            <h3>Login</h3>
-            <p>
-                Try to login with <em>admin</em> or <em>user</em> for example.
-                The password should be <em>admin</em> for all of them.
-            </p>
-            <label>
-                <span>Name:</span>
-                <input type="text" name="name" placeholder="Insert username or email" />
-            </label>
-            <label>
-                <span>Password:</span>
-                <input type="password" name="password" placeholder="Insert password" />
-            </label>
-            <label>
-                <span></span>
-                <input type="submit" value="Login" />
-            </label>
-        </form>
-        <p>Or <a href="/auth/register">register</a> a new account.</p>
-    </div>
+        <div>
+            <form class="form-horizontal" action="/auth/login" method="post">
+                <h3>Login</h3>
+                <p>
+                    Try to login with <em>admin</em> or <em>user</em> for example.
+                    The password should be <em>admin</em> for all of them.
+                </p>
+                <label>
+                    <span>Name:</span>
+                    <input type="text" name="name" placeholder="Insert username or email" />
+                </label>
+                <label>
+                    <span>Password:</span>
+                    <input type="password" name="password" placeholder="Insert password" />
+                </label>
+                <label>
+                    <span></span>
+                    <input type="submit" value="Login" />
+                </label>
+            </form>
+            <p>Or <a href="/auth/register">register</a> a new account.</p>
+        </div>
+    }
 </div>

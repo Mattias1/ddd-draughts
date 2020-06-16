@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Draughts.Common;
 using Draughts.Controllers.Attributes;
+using System.Net;
 
 namespace Draughts.Controllers {
     public class StaticPagesController : BaseController {
@@ -20,6 +21,11 @@ namespace Draughts.Controllers {
 
         [HttpGet("/error"), GuestRoute]
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error() => View();
+        public IActionResult Error(HttpStatusCode? status) {
+            ViewBag.StatusString = status?.ToString() ?? "Error";
+            ViewBag.StatusCode = (int)(status ?? HttpStatusCode.InternalServerError);
+
+            return View();
+        }
     }
 }

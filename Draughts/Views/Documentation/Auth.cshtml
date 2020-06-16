@@ -1,0 +1,33 @@
+@{
+    ViewBag.Title = "Documentation";
+}
+
+<nav class="side-menu">
+    <h4>Subpages</h4>
+    @Utils.SideMenu(Model)
+</nav>
+
+<div class="text-side-menu-container">
+    <h1>@ViewBag.Title</h1>
+
+    <h3>Authentication and authorization</h3>
+    <p>
+        Draughts is a stateless application using Json Web Tokens for authorization.
+        Every request goes through the JwtActionFilter, where the token, if present, is parsed and validated. The action
+        that belongs to that request has either a Requires attribute or a GuestRoute attribute. If there's a Requires
+        attribute the permissions of the user will be checked against the required permissions. For a guest route no
+        check is necessary of course.
+        The information from the JWT is stored in an AuthContext object, containing the users information. This is
+        attached to the HttpContext. After de filter is done with its authorization, the AuthContextActionFilter is used
+        to pass the AuthContext information back to the Controller and the View.
+    </p>
+    <p>
+        The Json Web Token is passed via a cookie. The reason for that is because our frontend doesn't rely on
+        javascript or ajax to communicate with the backend, but uses mostly just simple html links and form posts. With
+        a cookie it's way easier to attach the token to every request.
+    </p>
+    <p>
+        All of this is handcrafted and should not be used in production code. Please use properly audited libraries for
+        security related things instead :).
+    </p>
+</div>

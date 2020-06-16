@@ -14,14 +14,18 @@
                 <ul class="nav-list">
                     <li><a class="navbar-home" href="/">Draughts</a></li>
                     <li><a href="/user/list">Userlist</a></li>
-                    <li><a href="/gamelist/active">My games</a></li>
+                    @if (Utils.Can(ViewBag.Permissions, Permissions.PlayGame)) {
+                        <li><a href="/gamelist/active">My games</a></li>
+                    }
                     <li><a href="/lobby/index">Lobby</a></li>
-                    <li><a href="/modpanel">Mod panel</a></li>
+                    @if (Utils.Can(ViewBag.Permissions, Permissions.ViewModPanel)) {
+                        <li><a href="/modpanel">Mod panel</a></li>
+                    }
                 </ul>
 
-                @if (false) {
+                @if (ViewBag.IsLoggedIn) {
                     <div class="nav-user">
-                        Logged in as: Todo | @Utils.PostLink("Logout", "/auth/logout")
+                        Logged in as: @Utils.UserLink(ViewBag.UserId, ViewBag.Username) | @Utils.PostLink("Logout", "/auth/logout")
                     </div>
                 }
                 else {
@@ -35,7 +39,7 @@
 
     <main>
         <div class="container">
-            @if ((ViewBag.Errors?.Count ?? 0) > 0) {
+            @if (ViewBag.Errors.Count > 0) {
                 <div id="page-errors" class="page-errors">
                     <div class="page-errors-x">
                         <a href="#" class="show-hide-link" data-id="page-errors">&times;</a>

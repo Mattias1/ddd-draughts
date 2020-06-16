@@ -9,11 +9,15 @@ namespace Draughts.Controllers {
         public IActionResult Index() => ViewWithMenu();
 
         [HttpGet, GuestRoute]
+        public IActionResult Auth() => ViewWithMenu();
+
+        [HttpGet, GuestRoute]
         public IActionResult BoundedContexts() => ViewWithMenu();
 
         private IActionResult ViewWithMenu() {
             return View(new MenuViewModel(
                 ("Overview", "/documentation"),
+                ("Authentication and authorization", "/documentation/auth"),
                 ("Bounded contexts", "/documentation/boundedcontexts")
             ));
         }

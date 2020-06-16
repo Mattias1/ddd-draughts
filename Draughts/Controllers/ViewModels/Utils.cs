@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Linq;
 using System.Text.Encodings.Web;
 using Draughts.Domain.AuthUserAggregate.Models;
@@ -35,5 +36,7 @@ namespace Draughts.Controllers.ViewModels {
             s += "</ul>";
             return new HtmlString(s);
         }
+
+        public static bool Can(IReadOnlyList<Permission> permissions, Permission permission) => permissions.Contains(permission);
     }
 }
