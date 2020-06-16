@@ -1,0 +1,41 @@
+/* ------- Global ------- */
+body {
+    color: #eee;
+    background-color: #333;
+    font-family: Arial, Arial, Helvetica, sans-serif;
+    font-size: 16px;
+    margin: 0;
+    padding: 0;
+    border: none;
+}
+
+h1 {
+    font-size: 32px;
+    font-weight: bold;
+}
+h2 {
+    font-size: 24px;
+    font-weight: bold;
+}
+h3 {
+    font-size: 20px;
+    font-weight: bold;
+    margin: 16px 0;
+}
+h4 {
+    font-size: 16px;
+    font-weight: bold;
+    margin: 6px 0;
+}
+
+p {
+    padding: 0;
+    margin: 16px 6px;
+}
+
+.text-container {
+    max-width: 900px;
+    padding: 6px 12px;
+    margin-left: auto;
+    margin-right: auto;
+}

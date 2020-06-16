@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>@ViewBag.Title | Draughts</title>
+    <link rel="stylesheet" href="/css/site.css" />
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+</head>
+
+<body>
+    @RenderBody()
+
+    <script src="/lib/jquery/dist/jquery.min.js"></script>
+    <script src="/js/site.js" asp-append-version="true"></script>
+    @RenderSection("Scripts", required: false)
+</body>
+</html>
