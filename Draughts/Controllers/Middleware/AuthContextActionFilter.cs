@@ -2,7 +2,7 @@ using Draughts.Common;
 using Microsoft.AspNetCore.Mvc.Filters;
 using System;
 
-namespace Draughts.Middleware {
+namespace Draughts.Controllers.Middleware {
     public class AuthContextActionFilter : IActionFilter {
         public void OnActionExecuting(ActionExecutingContext context) {
             if (context.Controller is BaseController controller) {

@@ -7,9 +7,9 @@ using Microsoft.AspNetCore.Html;
 
 namespace Draughts.Controllers.ViewModels {
     public static class Utils {
-        public static string E(string text) => HtmlEncoder.Default.Encode(text).ToString();
+        public static string E(string text) => HtmlEncoder.Default.Encode(text);
         public static string UrlE(string url)
-            => string.Join('/', url.Split('/').Select(text => UrlEncoder.Default.Encode(text).ToString()));
+            => string.Join('/', url.Split('/').Select(text => UrlEncoder.Default.Encode(text)));
 
         public static HtmlString PostLink(string text, string url, params (string key, string value)[] parameters) {
             string s = $"<form class=\"post-link-form\" action=\"{UrlE(url)}\" method=\"post\">";

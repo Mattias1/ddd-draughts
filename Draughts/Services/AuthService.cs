@@ -6,7 +6,7 @@ using NodaTime;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Draughts.Controllers.Services {
+namespace Draughts.Services {
     public class AuthService : IAuthService {
         private readonly IAuthUserRepository _authUserRepository;
         private readonly IClock _clock;
@@ -29,7 +29,6 @@ namespace Draughts.Controllers.Services {
             return JsonWebToken.Generate(authUser, _clock);
         }
 
-        // TODO: Should this be here? Or should this be in a domain service?
         public IReadOnlyList<Permission> PermissionsForJwt(JsonWebToken jwt) {
             return jwt.RoleIds.SelectMany(r => _roleRepository.PermissionsForRole(r)).ToList().AsReadOnly();
         }

@@ -14,11 +14,15 @@ namespace Draughts.Controllers {
         [HttpGet, GuestRoute]
         public IActionResult BoundedContexts() => ViewWithMenu();
 
+        [HttpGet, GuestRoute]
+        public IActionResult HexagonalArchitecture() => ViewWithMenu();
+
         private IActionResult ViewWithMenu() {
             return View(new MenuViewModel(
                 ("Overview", "/documentation"),
                 ("Authentication and authorization", "/documentation/auth"),
-                ("Bounded contexts", "/documentation/boundedcontexts")
+                ("Bounded contexts", "/documentation/boundedcontexts"),
+                ("Hexagonal architecture", "/documentation/hexagonalarchitecture")
             ));
         }
     }

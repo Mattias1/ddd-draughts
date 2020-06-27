@@ -29,6 +29,8 @@ namespace Draughts {
             }
             app.UseStaticFiles();
 
+            DraughtsServiceProvider.RegisterEventHandlers(app.ApplicationServices);
+
             app.UseRouting();
 
             app.UseEndpoints(endpoints => {

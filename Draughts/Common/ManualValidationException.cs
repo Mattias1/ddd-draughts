@@ -2,6 +2,11 @@ using System;
 
 namespace Draughts.Common {
     public class ManualValidationException : Exception {
-        public ManualValidationException(string message) : base(message) { }
+        public string Field { get; }
+
+        public ManualValidationException(string message) : this("", message) { }
+        public ManualValidationException(string field, string message) : base(message) {
+            Field = field;
+        }
     }
 }

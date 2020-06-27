@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace Draughts.Repositories {
     public abstract class Repository<T> : IRepository<T> where T : class {
-        protected abstract IEnumerable<T> BaseQuery { get; }
+        protected abstract IList<T> BaseQuery { get; }
 
         public T Find(Specification<T> spec) => BaseQuery.Single(spec.IsSatisfiedBy);
         public T? FindOrNull(Specification<T> spec) => BaseQuery.SingleOrDefault(spec.IsSatisfiedBy);
@@ -14,6 +14,9 @@ namespace Draughts.Repositories {
         public IReadOnlyList<T> List<TKey>(Specification<T> spec, Sort<T, TKey> sort)
             => BaseQuery.Where(spec.IsSatisfiedBy).Sort(sort).ToList().AsReadOnly();
 
-        public abstract void Save(T entity);
+        public void Save(T entity) {
+            BaseQuery.Remove(entity);
+            BaseQuery.Add(entity);
+        }
     }
 }

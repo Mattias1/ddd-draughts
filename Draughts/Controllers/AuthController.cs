@@ -1,17 +1,19 @@
 using Microsoft.AspNetCore.Mvc;
 using Draughts.Common;
-using Draughts.Middleware;
+using Draughts.Controllers.Middleware;
 using Draughts.Controllers.Attributes;
-using Draughts.Controllers.Services;
+using Draughts.Services;
 
 namespace Draughts.Controllers {
     public class AuthController : BaseController {
         private const string ALREADY_LOGGED_IN_ERROR = "You're already logged in.";
 
         private readonly IAuthService _authService;
+        private readonly IAuthUserFactory _authUserFactory;
 
-        public AuthController(IAuthService authService) {
+        public AuthController(IAuthService authService, IAuthUserFactory authUserFactory) {
             _authService = authService;
+            _authUserFactory = authUserFactory;
         }
 
         [HttpGet, GuestRoute]
@@ -55,7 +57,22 @@ namespace Draughts.Controllers {
 
         [HttpPost, GuestRoute]
         public IActionResult Register([FromForm] RegistrationRequest request) {
-            return ErrorRedirect("/", "TODO");
+            if (IsLoggedIn) {
+                return ErrorRedirect("/", ALREADY_LOGGED_IN_ERROR);
+            }
+
+            try {
+                // This is no domain logic, but let's-help-the-user logic. It's fine in here.
+                if (request.Password != request.PasswordConfirm) {
+                    throw new ManualValidationException("PasswordConfirm", "The passwords do not match.");
+                }
+
+                _authUserFactory.CreateAuthUser(request.Name, request.Email, request.Password);
+                return Redirect("/");
+            }
+            catch (ManualValidationException e) {
+                return ErrorRedirect("/auth/register", e.Message);
+            }
         }
 
         public class LoginRequest {
