@@ -1,10 +1,16 @@
+using Draughts.Common;
 using System;
 
 namespace Draughts.Domain.AuthUserAggregate.Models {
     public struct Username : IComparable<Username> {
         public string Value { get; }
 
-        public Username(string value) => Value = value;
+        public Username(string? value) {
+            if (string.IsNullOrWhiteSpace(value)) {
+                throw new ManualValidationException("Invalid username.");
+            }
+            Value = value;
+        }
 
         public static implicit operator string(Username username) => username.Value;
 

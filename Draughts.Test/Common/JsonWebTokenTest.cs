@@ -29,7 +29,7 @@ namespace Draughts.Test.Common {
         }
 
         [TestMethod]
-        public void TestTryParseJwtString_WhenAlright_ThenParseCorrectly() {
+        public void TryParseJwtString_WhenAlright_ThenParseCorrectly() {
             var clock = new FakeClock(new LocalDateTime(2020, 01, 16, 12, 0).InUtc().ToInstant());
 
             bool success = JsonWebToken.TryParseFromJwtString(JWT_STRING, clock, out var jwt);
@@ -40,7 +40,7 @@ namespace Draughts.Test.Common {
         }
 
         [TestMethod]
-        public void TestTryParseJwtString_WhenExpired_ThenAbort() {
+        public void TryParseJwtString_WhenExpired_ThenAbort() {
             var clock = new FakeClock(new LocalDateTime(2021, 01, 16, 12, 0).InUtc().ToInstant());
 
             bool success = JsonWebToken.TryParseFromJwtString(JWT_STRING, clock, out var jwt);
@@ -50,7 +50,7 @@ namespace Draughts.Test.Common {
         }
 
         [TestMethod]
-        public void TestTryParseJwtString_WhenInvalidHash_ThenAbort() {
+        public void TryParseJwtString_WhenInvalidHash_ThenAbort() {
             var clock = new FakeClock(new LocalDateTime(2020, 01, 16, 12, 0).InUtc().ToInstant());
 
             string invalidJwtString = JWT_STRING.Substring(0, JWT_STRING.Length - 1) + 'A';
@@ -61,7 +61,7 @@ namespace Draughts.Test.Common {
         }
 
         private static AuthUser BuildAuthUser(long id, string name, params Role[] roles) {
-            var hash = PasswordHash.Generate("admin", new AuthUserId(id), name);
+            var hash = PasswordHash.Generate("admin", new AuthUserId(id), new Username(name));
             return new AuthUser(new AuthUserId(id), new UserId(id), new Username(name), hash, new Email($"{name}@example.com"), roles);
         }
     }

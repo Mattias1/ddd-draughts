@@ -8,11 +8,10 @@ namespace Draughts.Domain.AuthUserAggregate.Models {
 
         private static readonly Regex EmailRegex = new Regex(@".+@.+\..+");
 
-        public Email(string emailAddress) {
-            if (!EmailRegex.Match(emailAddress).Success) {
+        public Email(string? emailAddress) {
+            if (string.IsNullOrWhiteSpace(emailAddress) || !EmailRegex.Match(emailAddress).Success) {
                 throw new ManualValidationException("Invalid email address");
             }
-
             EmailAddress = emailAddress;
         }
 

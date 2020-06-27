@@ -1,10 +1,16 @@
+using Draughts.Common;
 using System;
 
 namespace Draughts.Domain.AuthUserAggregate.Models {
     public readonly struct AuthUserId : IComparable<AuthUserId> {
         public long Id { get; }
 
-        public AuthUserId(long id) => Id = id;
+        public AuthUserId(long id) {
+            if (id <= 0) {
+                throw new ManualValidationException("Invalid user id.");
+            }
+            Id = id;
+        }
 
         public static implicit operator long(AuthUserId authUserId) => authUserId.Id;
         public static implicit operator string(AuthUserId authUserId) => authUserId.ToString();

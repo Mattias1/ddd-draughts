@@ -1,6 +1,6 @@
 using Draughts.Domain.AuthUserAggregate.Models;
 using Draughts.Domain.UserAggregate.Models;
-using Draughts.Middleware;
+using Draughts.Controllers.Middleware;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Linq;
@@ -65,9 +65,9 @@ namespace Draughts.Common {
 
         public void UpdateViewBag() {
             ViewBag.IsLoggedIn = IsLoggedIn;
-            ViewBag.AuthUserId = AuthContextOrNull?.AuthUserId ?? new AuthUserId(0);
-            ViewBag.UserId = AuthContextOrNull?.UserId ?? new UserId(0);
-            ViewBag.Username = AuthContextOrNull?.Username ?? new Username("");
+            ViewBag.AuthUserId = AuthContextOrNull?.AuthUserId;
+            ViewBag.UserId = AuthContextOrNull?.UserId;
+            ViewBag.Username = AuthContextOrNull?.Username;
             ViewBag.Permissions = AuthContextOrNull?.Permissions ?? new List<Permission>(0).AsReadOnly();
 
             ViewBag.Errors = Errors;

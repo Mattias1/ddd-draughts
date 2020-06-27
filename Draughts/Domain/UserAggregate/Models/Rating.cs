@@ -2,7 +2,7 @@ using System;
 
 namespace Draughts.Domain.UserAggregate.Models {
     public readonly struct Rating : IComparable<Rating> {
-        public static Rating Default = new Rating(1000);
+        public static Rating StartRating = new Rating(1000);
 
         public int Value { get; }
 
