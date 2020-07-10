@@ -1,16 +1,10 @@
-using System;
+using Draughts.Common;
 
 namespace Draughts.Domain.AuthUserAggregate.Models {
-    public readonly struct Permission {
-        public string Value { get; }
+    public class Permission : StringValueObject<Permission> {
+        public override string Value { get; }
 
         public Permission(string permissionname) => Value = permissionname.ToLower();
-
-        public override bool Equals(object? obj) => obj is Permission permission && Equals(permission);
-        public bool Equals(Permission other) => Value.Equals(other.Value, StringComparison.OrdinalIgnoreCase);
-        public override int GetHashCode() => Value.GetHashCode();
-        public static bool operator ==(Permission left, Permission right) => left.Equals(right);
-        public static bool operator !=(Permission left, Permission right) => !left.Equals(right);
 
         public static class Permissions {
             public const string PENDING_REGISTRATION = "role.pendingregistration";
