@@ -1,10 +1,11 @@
 using System;
+using System.Collections.Generic;
 using System.Text;
 using Draughts.Common;
 using Konscious.Security.Cryptography;
 
 namespace Draughts.Domain.AuthUserAggregate.Models {
-    public readonly struct PasswordHash {
+    public class PasswordHash : ValueObject<PasswordHash> {
 #if DEBUG
         private const int MINIMUM_LENGTH = 1;
 #else
@@ -53,6 +54,12 @@ namespace Draughts.Domain.AuthUserAggregate.Models {
         private static void ValidatePassword(string? plaintextPassword) {
             if (plaintextPassword is null || plaintextPassword.Length < MINIMUM_LENGTH) {
                 throw new ManualValidationException($"A password should have at least {MINIMUM_LENGTH} characters.");
+            }
+        }
+
+        protected override IEnumerable<object> GetEqualityComponents() {
+            foreach (byte b in Hash) {
+                yield return b;
             }
         }
     }

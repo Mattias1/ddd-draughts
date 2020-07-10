@@ -1,7 +1,9 @@
+using Draughts.Common;
 using System;
+using System.Collections.Generic;
 
 namespace Draughts.Domain.UserAggregate.Models {
-    public readonly struct Rank : IComparable<Rank> {
+    public class Rank : ValueObject<Rank>, IComparable<Rank> {
         public int Order { get; }
         public string Name { get; }
         public Rating RequiredRating { get; }
@@ -14,14 +16,12 @@ namespace Draughts.Domain.UserAggregate.Models {
             RequiredRating = new Rating(requiredRating);
         }
 
-        public override bool Equals(object? obj) => obj is Rank rank && Equals(rank);
-        public bool Equals(Rank other) => Order.Equals(other.Order) && Name.Equals(other.Name, StringComparison.OrdinalIgnoreCase);
-        public override int GetHashCode() => Order.GetHashCode() * 17 + Name.GetHashCode();
+        public int CompareTo(Rank? other) => Order.CompareTo(other?.Order);
 
-        public int CompareTo(Rank other) => Order.CompareTo(other.Order);
-
-        public static bool operator ==(Rank left, Rank right) => left.Equals(right);
-        public static bool operator !=(Rank left, Rank right) => !left.Equals(right);
+        protected override IEnumerable<object> GetEqualityComponents() {
+            yield return Order;
+            yield return Name.ToLower();
+        }
 
         public static class Ranks {
             public static Rank Private => new Rank(1, "Private", 0);

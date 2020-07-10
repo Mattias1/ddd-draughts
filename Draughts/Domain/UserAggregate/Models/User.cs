@@ -2,8 +2,8 @@ using Draughts.Common;
 using Draughts.Domain.AuthUserAggregate.Models;
 
 namespace Draughts.Domain.UserAggregate.Models {
-    public class User {
-        public UserId Id { get; }
+    public class User : Entity<User, UserId> {
+        public override UserId Id { get; }
         public AuthUserId AuthUserId { get; }
         public Username Username { get; }
         public Rating Rating { get; private set; }
@@ -18,11 +18,5 @@ namespace Draughts.Domain.UserAggregate.Models {
             Rank = rank;
             GamesPlayed = gamesPlayed;
         }
-
-        public override bool Equals(object? obj) => Equals(obj as User);
-        public bool Equals(User? other) => other is null ? false : other.Id == Id;
-        public override int GetHashCode() => Id.GetHashCode();
-        public static bool operator ==(User? left, User? right) => Compare.NullSafeEquals(left, right);
-        public static bool operator !=(User? left, User? right) => Compare.NullSafeNotEquals(left, right);
     }
 }

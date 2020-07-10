@@ -1,7 +1,9 @@
+using Draughts.Common;
 using System;
+using System.Collections.Generic;
 
 namespace Draughts.Domain.UserAggregate.Models {
-    public readonly struct Rating : IComparable<Rating> {
+    public class Rating : ValueObject<Rating>, IComparable<Rating> {
         public static Rating StartRating = new Rating(1000);
 
         public int Value { get; }
@@ -12,13 +14,10 @@ namespace Draughts.Domain.UserAggregate.Models {
 
         public override string ToString() => Value.ToString();
 
-        public override bool Equals(object? obj) => obj is Rating rating && Equals(rating);
-        public bool Equals(Rating other) => Value.Equals(other.Value);
-        public override int GetHashCode() => Value.GetHashCode();
-
         public int CompareTo(Rating other) => Value.CompareTo(other.Value);
 
-        public static bool operator ==(Rating left, Rating right) => left.Equals(right);
-        public static bool operator !=(Rating left, Rating right) => !left.Equals(right);
+        protected override IEnumerable<object> GetEqualityComponents() {
+            yield return Value;
+        }
     }
 }
