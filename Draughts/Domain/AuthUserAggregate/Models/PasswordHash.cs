@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using Draughts.Common;
+using Draughts.Common.OoConcepts;
 using Konscious.Security.Cryptography;
 
 namespace Draughts.Domain.AuthUserAggregate.Models {

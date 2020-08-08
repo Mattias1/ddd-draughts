@@ -1,8 +1,9 @@
+using Draughts.Common.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Draughts.Common {
+namespace Draughts.Common.OoConcepts {
     public abstract class ValueObject<T> : IEquatable<T> where T : ValueObject<T> {
         protected abstract IEnumerable<object> GetEqualityComponents();
 
@@ -18,8 +19,8 @@ namespace Draughts.Common {
             });
         }
 
-        public static bool operator ==(ValueObject<T>? left, ValueObject<T>? right) => Compare.NullSafeEquals(left, right);
-        public static bool operator !=(ValueObject<T>? left, ValueObject<T>? right) => Compare.NullSafeNotEquals(left, right);
+        public static bool operator ==(ValueObject<T>? left, ValueObject<T>? right) => ComparisonUtils.NullSafeEquals(left, right);
+        public static bool operator !=(ValueObject<T>? left, ValueObject<T>? right) => ComparisonUtils.NullSafeNotEquals(left, right);
     }
 
     public abstract class IdValueObject<T> : ValueObject<T>, IComparable<T> where T : IdValueObject<T> {

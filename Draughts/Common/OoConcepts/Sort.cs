@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 
-namespace Draughts.Common {
+namespace Draughts.Common.OoConcepts {
     public abstract class Sort<T, TKey> {
         public bool SortDescending { get; private set; }
         public abstract Expression<Func<T, TKey>> ToExpression();

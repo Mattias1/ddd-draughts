@@ -1,4 +1,4 @@
-using Draughts.Common;
+using Draughts.Common.OoConcepts;
 using System;
 using System.Collections.Generic;
 
@@ -14,7 +14,7 @@ namespace Draughts.Domain.UserAggregate.Models {
 
         public override string ToString() => Value.ToString();
 
-        public int CompareTo(Rating other) => Value.CompareTo(other.Value);
+        public int CompareTo(Rating? other) => Value.CompareTo(other?.Value);
 
         protected override IEnumerable<object> GetEqualityComponents() {
             yield return Value;

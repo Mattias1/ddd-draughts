@@ -1,5 +1,5 @@
 using Draughts.Common;
-using System;
+using Draughts.Common.OoConcepts;
 using System.Text.RegularExpressions;
 
 namespace Draughts.Domain.AuthUserAggregate.Models {

@@ -1,4 +1,4 @@
-using Draughts.Common;
+using Draughts.Common.OoConcepts;
 using System;
 using System.Collections.Generic;
 

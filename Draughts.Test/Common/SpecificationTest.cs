@@ -1,4 +1,4 @@
-using Draughts.Common;
+using Draughts.Common.OoConcepts;
 using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;

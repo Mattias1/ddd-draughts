@@ -1,4 +1,4 @@
-using Draughts.Common;
+using Draughts.Common.OoConcepts;
 using Draughts.Domain.AuthUserAggregate.Models;
 using System;
 using System.Linq.Expressions;
