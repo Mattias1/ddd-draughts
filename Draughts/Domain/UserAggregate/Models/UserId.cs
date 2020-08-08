@@ -1,4 +1,5 @@
 using Draughts.Common;
+using Draughts.Common.OoConcepts;
 
 namespace Draughts.Domain.UserAggregate.Models {
     public class UserId : IdValueObject<UserId> {

@@ -2,7 +2,7 @@ using System;
 using System.Linq;
 using System.Linq.Expressions;
 
-namespace Draughts.Common {
+namespace Draughts.Common.OoConcepts {
     public abstract class Specification<T> {
         public abstract Expression<Func<T, bool>> ToExpression();
 

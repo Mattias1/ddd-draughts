@@ -1,4 +1,5 @@
 using Draughts.Common;
+using Draughts.Common.OoConcepts;
 
 namespace Draughts.Domain.AuthUserAggregate.Models {
     public class RoleId : IdValueObject<RoleId> {
