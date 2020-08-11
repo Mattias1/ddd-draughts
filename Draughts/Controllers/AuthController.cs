@@ -3,6 +3,7 @@ using Draughts.Common;
 using Draughts.Controllers.Middleware;
 using Draughts.Controllers.Attributes;
 using Draughts.Services;
+using Draughts.Repositories.Databases;
 
 namespace Draughts.Controllers {
     public class AuthController : BaseController {
@@ -10,10 +11,12 @@ namespace Draughts.Controllers {
 
         private readonly IAuthService _authService;
         private readonly IAuthUserFactory _authUserFactory;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public AuthController(IAuthService authService, IAuthUserFactory authUserFactory) {
+        public AuthController(IAuthService authService, IAuthUserFactory authUserFactory, IUnitOfWork unitOfWork) {
             _authService = authService;
             _authUserFactory = authUserFactory;
+            _unitOfWork = unitOfWork;
         }
 
         [HttpGet, GuestRoute]
@@ -67,7 +70,14 @@ namespace Draughts.Controllers {
                     throw new ManualValidationException("PasswordConfirm", "The passwords do not match.");
                 }
 
-                _authUserFactory.CreateAuthUser(request.Name, request.Email, request.Password);
+                // Do I want this transaction in a controller? Probably not right? Because we might need transactions
+                // for different domains. And they should be accessed from inside a non-domain service.
+                // Although, we do always need events for that right? So this might just be fine.
+                _unitOfWork.WithTransaction(TransactionDomain.AuthUser, tran => {
+                    _authUserFactory.CreateAuthUser(request.Name, request.Email, request.Password);
+
+                    tran.Commit();
+                });
                 return Redirect("/");
             }
             catch (ManualValidationException e) {

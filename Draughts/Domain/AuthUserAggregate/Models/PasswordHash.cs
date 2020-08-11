@@ -58,6 +58,9 @@ namespace Draughts.Domain.AuthUserAggregate.Models {
             }
         }
 
+        public string ToStorage() => Convert.ToBase64String(Hash);
+        public static PasswordHash FromStorage(string storage) => new PasswordHash(Convert.FromBase64String(storage));
+
         protected override IEnumerable<object> GetEqualityComponents() {
             foreach (byte b in Hash) {
                 yield return b;
