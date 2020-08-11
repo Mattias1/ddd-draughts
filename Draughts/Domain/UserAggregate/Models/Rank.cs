@@ -41,6 +41,12 @@ namespace Draughts.Domain.UserAggregate.Models {
             public static Rank MajorGeneral => new Rank(15, "Major general", 3900);
             public static Rank General => new Rank(16, "General", 4200);
             public static Rank FieldMarshal => new Rank(17, "Field marshal", 4500);
+
+            public static IReadOnlyList<Rank> All => new List<Rank> {
+                Private, LanceCorporal, Corporal, Sergeant, SergeantMajor, WarrantOfficer, ChiefWarrantOfficer,
+                SecondLieutenant, Lieutenant, Captain, Major, LieutenantColonel, Colonel,
+                BrigadierGeneral, MajorGeneral, General, FieldMarshal
+            }.AsReadOnly();
         }
     }
 }

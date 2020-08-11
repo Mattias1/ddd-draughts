@@ -1,5 +1,4 @@
 using Draughts.Domain.AuthUserAggregate.Models;
-using Draughts.Domain.UserAggregate.Models;
 using Draughts.Controllers.Middleware;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;

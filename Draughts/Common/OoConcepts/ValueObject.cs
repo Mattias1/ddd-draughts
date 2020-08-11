@@ -23,7 +23,7 @@ namespace Draughts.Common.OoConcepts {
         public static bool operator !=(ValueObject<T>? left, ValueObject<T>? right) => ComparisonUtils.NullSafeNotEquals(left, right);
     }
 
-    public abstract class IdValueObject<T> : ValueObject<T>, IComparable<T> where T : IdValueObject<T> {
+    public abstract class IdValueObject<T> : ValueObject<T>, IEquatable<long?>, IComparable<T> where T : IdValueObject<T> {
         public abstract long Id { get; }
 
         public override string ToString() => Id.ToString();
@@ -33,11 +33,23 @@ namespace Draughts.Common.OoConcepts {
         protected override IEnumerable<object> GetEqualityComponents() {
             yield return Id;
         }
+
+        public override bool Equals(object? obj) => obj switch
+        {
+            IdValueObject<T> v => Equals(v),
+            long id => Equals(id),
+            _ => false
+        };
+        public bool Equals(IdValueObject<T>? obj) => Id == obj?.Id;
+        public bool Equals(long? id) => Id == id;
+
+        public override int GetHashCode() => Id.GetHashCode();
+
+        public static bool operator ==(IdValueObject<T>? left, long? right) => left?.Id == right;
+        public static bool operator !=(IdValueObject<T>? left, long? right) => left?.Id != right;
     }
 
-#pragma warning disable CS0660, CS0661 // Type defines operator == or operator != but does not override Object.Equals(object o), Object.GetHashCode()
-    public abstract class StringValueObject<T> : ValueObject<T>, IComparable<T> where T : StringValueObject<T> {
-#pragma warning restore CS0660, CS0661 // Type defines operator == or operator != but does not override Object.Equals(object o), Object.GetHashCode()
+    public abstract class StringValueObject<T> : ValueObject<T>, IEquatable<string>, IComparable<T> where T : StringValueObject<T> {
         public abstract string Value { get; }
 
         public override string ToString() => Value;
@@ -48,7 +60,18 @@ namespace Draughts.Common.OoConcepts {
             yield return Value.ToLower();
         }
 
-        public static bool operator ==(StringValueObject<T>? left, string? right) => left is null ? right is null : left.Equals(right);
-        public static bool operator !=(StringValueObject<T>? left, string? right) => !(left == right);
+        public override bool Equals(object? obj) => obj switch
+        {
+            StringValueObject<T> v => Equals(v),
+            string value => Equals(value),
+            _ => false
+        };
+        public bool Equals(StringValueObject<T>? obj) => Equals(obj?.Value);
+        public bool Equals(string? value) => Value.Equals(value, StringComparison.OrdinalIgnoreCase);
+
+        public override int GetHashCode() => Value.ToLower().GetHashCode();
+
+        public static bool operator ==(StringValueObject<T>? left, string? right) => ComparisonUtils.EquatableNullSafeEquals(left, right);
+        public static bool operator !=(StringValueObject<T>? left, string? right) => ComparisonUtils.EquatableNullSafeNotEquals(left, right);
     }
 }

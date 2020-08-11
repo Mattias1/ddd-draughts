@@ -16,6 +16,7 @@ namespace Draughts.Controllers {
         public IActionResult Index(long userId) {
             var user = _userRepository.FindByIdOrNull(new UserId(userId));
             if (user is null) {
+                List(); // This call is needed to set the view model :(
                 return ErrorRedirect("/user/list", $"User not found with id {userId}.");
             }
 

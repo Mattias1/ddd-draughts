@@ -1,6 +1,7 @@
 using Draughts.Common;
 using Draughts.Domain.AuthUserAggregate.Models;
 using Draughts.Domain.UserAggregate.Models;
+using Draughts.Test.TestHelpers;
 using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NodaTime;
@@ -61,8 +62,7 @@ namespace Draughts.Test.Common {
         }
 
         private static AuthUser BuildAuthUser(long id, string name, params Role[] roles) {
-            var hash = PasswordHash.Generate("admin", new AuthUserId(id), new Username(name));
-            return new AuthUser(new AuthUserId(id), new UserId(id), new Username(name), hash, new Email($"{name}@example.com"), roles);
+            return AuthUserTestHelper.User(name).WithId(id).WithUserId(id).WithRoles(roles).Build();
         }
     }
 }

@@ -20,7 +20,7 @@ namespace Draughts.Services {
 
         // TODO: Should this be here? Or should this be in a domain service?
         public JsonWebToken GenerateJwt(string? name, string? plaintextPassword) {
-            var usernameOrEmailSpec = new UsernameSpecification(name).Or(new EmailSpecification(plaintextPassword));
+            var usernameOrEmailSpec = new UsernameSpecification(name).Or(new EmailSpecification(name));
             var authUser = _authUserRepository.FindOrNull(usernameOrEmailSpec);
             if (authUser is null || !authUser.PasswordHash.CanLogin(plaintextPassword, authUser.Id, authUser.Username)) {
                 throw new ManualValidationException("Incorrect username or password.");
