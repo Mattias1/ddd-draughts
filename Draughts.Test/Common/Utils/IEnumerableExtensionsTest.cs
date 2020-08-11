@@ -1,8 +1,9 @@
 using Draughts.Common.Utils;
 using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Collections.Generic;
 
-namespace Draughts.Test.Common {
+namespace Draughts.Test.Common.Utils {
     [TestClass]
     public class IEnumerableExtensionsTest {
         [TestMethod]
@@ -15,6 +16,20 @@ namespace Draughts.Test.Common {
         [DataRow(new int[0], new int[0], true)]
         public void TestContainsAll(int[] haystack, int[] needles, bool expectedResult) {
             haystack.ContainsAll(needles).Should().Be(expectedResult);
+        }
+
+        [TestMethod]
+        public void TestForEach() {
+            var list = new List<TestItem> { new TestItem(1), new TestItem(2) };
+
+            list.ForEach(item => item.Value += 10);
+
+            list.Should().OnlyContain(item => item.Value >= 10);
+        }
+
+        public class TestItem {
+            public TestItem(int value) => Value = value;
+            public int Value { get; set; }
         }
     }
 }
