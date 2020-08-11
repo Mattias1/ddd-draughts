@@ -19,7 +19,7 @@ namespace Draughts.Common.Events {
     }
 
     public abstract class DomainEventHandler<T> : DomainEventHandler where T : DomainEvent {
-        public DomainEventHandler(params string[] registeredNames) : base(registeredNames) { }
+        public DomainEventHandler(string type) : base(type) { }
 
         public override void Handle(DomainEvent evt) {
             if (!(evt is T typedEvent)) {

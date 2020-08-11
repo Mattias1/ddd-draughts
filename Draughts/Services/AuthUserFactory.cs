@@ -1,5 +1,3 @@
-using Draughts.Common.Events;
-using Draughts.Domain.AuthUserAggregate.Events;
 using Draughts.Domain.AuthUserAggregate.Models;
 using Draughts.Domain.AuthUserAggregate.Specifications;
 using Draughts.Domain.UserAggregate.Models;
@@ -8,16 +6,16 @@ using Draughts.Repositories;
 namespace Draughts.Services {
     public class AuthUserFactory : IAuthUserFactory {
         private readonly IAuthUserRepository _authUserRepository;
-        private readonly IEventQueue _eventQueue;
+        private readonly IEventFactory _eventFactory;
         private readonly IIdGenerator _idGenerator;
         private readonly IRoleRepository _roleRepository;
 
         public AuthUserFactory(
-            IAuthUserRepository authUserRepository, IEventQueue eventQueue,
+            IAuthUserRepository authUserRepository, IEventFactory eventFactory,
             IIdGenerator idGenerator, IRoleRepository roleRepository
         ) {
             _authUserRepository = authUserRepository;
-            _eventQueue = eventQueue;
+            _eventFactory = eventFactory;
             _idGenerator = idGenerator;
             _roleRepository = roleRepository;
         }
@@ -34,7 +32,7 @@ namespace Draughts.Services {
 
             _authUserRepository.Save(authUser);
 
-            _eventQueue.Raise(new AuthUserCreated(authUser));
+            _eventFactory.RaiseAuthUserCreated(authUser);
 
             return authUser;
         }
