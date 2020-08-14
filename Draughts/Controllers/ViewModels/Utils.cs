@@ -29,7 +29,7 @@ namespace Draughts.Controllers.ViewModels {
         }
 
         public static HtmlString SideMenu(MenuViewModel menuViewModel) {
-            string s = "<ul>";
+            string s = $"<h4>{menuViewModel.Title}</h4><ul>";
             foreach (var (name, url) in menuViewModel.Menu) {
                 s += $"<li><a href=\"{UrlE(url)}\">{E(name)}</a></li>";
             }

@@ -2,7 +2,11 @@
     ViewBag.Title = "Pending games";
 }
 
-<div class="text-container">
+<nav class="side-menu">
+    @Utils.SideMenu(Model)
+</nav>
+
+<div class="text-side-menu-container">
     <h1>Pending games</h1>
     <p>Todo</p>
 </div>

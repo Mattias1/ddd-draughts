@@ -18,7 +18,7 @@ namespace Draughts.Controllers {
         public IActionResult HexagonalArchitecture() => ViewWithMenu();
 
         private IActionResult ViewWithMenu() {
-            return View(new MenuViewModel(
+            return View(new MenuViewModel("Subpages",
                 ("Overview", "/documentation"),
                 ("Authentication and authorization", "/documentation/auth"),
                 ("Bounded contexts", "/documentation/boundedcontexts"),

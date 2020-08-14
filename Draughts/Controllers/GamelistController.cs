@@ -1,5 +1,6 @@
 using Draughts.Common;
 using Draughts.Controllers.Attributes;
+using Draughts.Controllers.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using static Draughts.Domain.AuthUserAggregate.Models.Permission;
 
@@ -8,17 +9,26 @@ namespace Draughts.Controllers {
     public class GamelistController : BaseController {
         [HttpGet]
         public IActionResult Pending() {
-            return View();
+            return ViewWithMenu();
         }
 
         [HttpGet]
         public IActionResult Active() {
-            return View();
+            return ViewWithMenu();
         }
 
         [HttpGet]
         public IActionResult Finished() {
-            return View();
+            return ViewWithMenu();
+        }
+
+        private IActionResult ViewWithMenu() {
+            return View(new MenuViewModel("Your games",
+                ("Pending games", "/gamelist/pending"),
+                ("Active games", "/gamelist/active"),
+                ("Finished games", "/gamelist/finished"),
+                ("Create a new game", "/lobby/create")
+            ));
         }
     }
 }
