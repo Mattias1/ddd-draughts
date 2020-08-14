@@ -32,6 +32,10 @@ p {
     padding: 0;
     margin: 16px 6px;
 }
+div.p-like {
+    padding: 0;
+    margin: 16px 6px;
+}
 
 a, button.link, input[type=submit].link {
     color: #fd3;

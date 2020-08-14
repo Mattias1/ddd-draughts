@@ -1,0 +1,23 @@
+@{
+    ViewBag.Title = "Create a game";
+}
+
+<div class="text-container">
+    <h1>Create a game</h1>
+    <div>
+        <form class="form-horizontal" action="/lobby/create" method="post">
+            <h3>Choose the game settings</h3>
+            <label>
+                <span>Game type:</span>
+                <select name="game-type">
+                    <option value="international">International</option>
+                    <option value="english-draughts">English draughts (American checkers)</option>
+                </select>
+            </label>
+            <label>
+                <span></span>
+                <input type="submit" value="Create game" />
+            </label>
+        </form>
+    </div>
+</div>

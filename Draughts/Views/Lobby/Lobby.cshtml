@@ -1,0 +1,11 @@
+@{
+    ViewBag.Title = "Game lobby";
+}
+
+<div class="text-container">
+    <h1>Game lobby</h1>
+    @if (Utils.Can(ViewBag.Permissions, Permissions.PlayGame)) {
+        <p>Join one of the open games, or <a href="/lobby/create">create a new game</a>.</p>
+    }
+    <p>Todo: list pending games and add a link to all active games.</p>
+</div>

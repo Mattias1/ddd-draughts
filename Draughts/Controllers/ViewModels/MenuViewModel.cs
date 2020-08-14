@@ -3,9 +3,13 @@ using System.Linq;
 
 namespace Draughts.Controllers.ViewModels {
     public class MenuViewModel {
+        public string Title { get; }
         public IReadOnlyList<(string name, string url)> Menu { get; }
 
-        public MenuViewModel(params (string name, string url)[] menu) : this(menu.ToList().AsReadOnly()) { }
-        public MenuViewModel(IReadOnlyList<(string name, string url)> menu) => Menu = menu;
+        public MenuViewModel(string title, params (string name, string url)[] menu) : this(title, menu.ToList().AsReadOnly()) { }
+        public MenuViewModel(string title, IReadOnlyList<(string name, string url)> menu) {
+            Title = title;
+            Menu = menu;
+        }
     }
 }
