@@ -86,6 +86,17 @@ namespace Draughts.Repositories.Database {
         public static List<DomainEvent> DomainEventsTable { get; } = new List<DomainEvent>();
     }
 
+    public static class GameDatabase {
+        public static List<InMemoryGame> TempGamesTable { get; } = new List<InMemoryGame>();
+        public static List<InMemoryGame> GamesTable { get; } = new List<InMemoryGame>();
+
+        public static List<InMemoryPlayer> TempPlayersTable { get; } = new List<InMemoryPlayer>();
+        public static List<InMemoryPlayer> PlayersTable { get; } = new List<InMemoryPlayer>();
+
+        public static List<DomainEvent> TempDomainEventsTable { get; } = new List<DomainEvent>();
+        public static List<DomainEvent> DomainEventsTable { get; } = new List<DomainEvent>();
+    }
+
     public static class MiscDatabase {
         public static List<AvailableId> IdGenerationTable { get; } = new List<AvailableId>(1) {
             new AvailableId { Id = UserDatabase.START_FOR_NEXT_IDS }

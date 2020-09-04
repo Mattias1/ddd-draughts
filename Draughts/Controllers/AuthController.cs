@@ -71,8 +71,8 @@ namespace Draughts.Controllers {
                 }
 
                 // Do I want this transaction in a controller? Probably not right? Because we might need transactions
-                // for different domains. And they should be accessed from inside a non-domain service.
-                // Although, we do always need events for that right? So this might just be fine.
+                // (or at least read only db connections) for different domains. And they should be accessed from inside
+                // a non-domain service.
                 _unitOfWork.WithTransaction(TransactionDomain.AuthUser, tran => {
                     _authUserFactory.CreateAuthUser(request.Name, request.Email, request.Password);
 

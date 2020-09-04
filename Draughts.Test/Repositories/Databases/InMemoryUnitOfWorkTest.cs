@@ -1,5 +1,5 @@
 using Draughts.Common.Events;
-using Draughts.Common.Utils;
+using Draughts.Common.Utilities;
 using Draughts.Domain.AuthUserAggregate.Events;
 using Draughts.Repositories.Database;
 using Draughts.Repositories.Databases;
@@ -13,9 +13,9 @@ using System;
 namespace Draughts.Test.Repositories.Databases {
     [TestClass]
     public class InMemoryUnitOfWorkTest {
-        private FakeClock _clock;
-        private FakeDomainEventHandler _fakeDomainEventHandler;
-        private IUnitOfWork _unitOfWork;
+        private readonly FakeClock _clock;
+        private readonly FakeDomainEventHandler _fakeDomainEventHandler;
+        private readonly IUnitOfWork _unitOfWork;
 
         public InMemoryUnitOfWorkTest() {
             _clock = FakeClock.FromUtc(2020, 02, 29);

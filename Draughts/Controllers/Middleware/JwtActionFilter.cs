@@ -1,5 +1,5 @@
 using Draughts.Common;
-using Draughts.Common.Utils;
+using Draughts.Common.Utilities;
 using Draughts.Controllers.Attributes;
 using Draughts.Services;
 using Microsoft.AspNetCore.Http;

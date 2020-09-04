@@ -64,10 +64,12 @@ namespace Draughts.Repositories.Databases {
             public const string KEY = "Game";
             public override string Key => KEY;
 
-            public override List<DomainEvent> TempDomainEventsTable => throw new NotImplementedException();
+            public override List<DomainEvent> TempDomainEventsTable => GameDatabase.TempDomainEventsTable;
 
             protected override void ApplyForAllTablePairs(IPairTableFunction func) {
-                throw new NotImplementedException();
+                func.Apply(GameDatabase.TempPlayersTable, GameDatabase.PlayersTable);
+                func.Apply(GameDatabase.TempGamesTable, GameDatabase.GamesTable);
+                func.Apply(GameDatabase.TempDomainEventsTable, GameDatabase.DomainEventsTable);
             }
         }
 

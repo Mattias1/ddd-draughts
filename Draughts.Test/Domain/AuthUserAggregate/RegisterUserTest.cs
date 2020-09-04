@@ -7,7 +7,7 @@ using System;
 
 namespace Draughts.Test.Domain.AuthUserAggregate {
     [TestClass]
-    public class AuthUserTest {
+    public class RegisterUserTest {
         private static readonly Role PendingRole = RoleTestHelper.PendingRegistration().Build();
         private static readonly Role RegisteredRole = RoleTestHelper.RegisteredUser().Build();
 

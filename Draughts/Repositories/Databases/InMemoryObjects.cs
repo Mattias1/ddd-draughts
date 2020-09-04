@@ -1,3 +1,6 @@
+using Draughts.Domain.GameAggregate.Models;
+using Microsoft.AspNetCore.Http.Connections;
+using NodaTime;
 using System;
 
 namespace Draughts.Repositories.Databases {
@@ -30,6 +33,34 @@ namespace Draughts.Repositories.Databases {
         public string[] Permissions;
 
         public bool Equals(InMemoryRole? other) => Id.Equals(other?.Id);
+    }
+
+    public class InMemoryGame : IEquatable<InMemoryGame> {
+        public long Id;
+        public int BoardSize;
+        public bool FirstMoveColorIsBlack;
+        public bool FlyingKings;
+        public bool MenCaptureBackwards;
+        public GameSettings.DraughtsCaptureConstraints CaptureConstraints;
+        public ZonedDateTime CreatedAt;
+        public ZonedDateTime? StartedAt;
+        public ZonedDateTime? FinishedAt;
+        public long? TurnPlayerId;
+        public ZonedDateTime? TurnCreatedAt;
+        public ZonedDateTime? TurnExpiresAt;
+        public long[] PlayerIds;
+
+        public bool Equals(InMemoryGame? other) => Id.Equals(other?.Id);
+    }
+
+    public class InMemoryPlayer : IEquatable<InMemoryPlayer> {
+        public long Id;
+        public long UserId;
+        public string Username;
+        public string Rank;
+        public bool ColorIsBlack;
+
+        public bool Equals(InMemoryPlayer? other) => Id.Equals(other?.Id);
     }
 #pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
 }
