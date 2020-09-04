@@ -1,6 +1,6 @@
 using System;
 
-namespace Draughts.Common.Utils {
+namespace Draughts.Common.Utilities {
     public static class ComparisonUtils {
         public static bool NullSafeEquals<T>(T? left, T? right) where T : class {
             return left is null ? right is null : left.Equals(right);

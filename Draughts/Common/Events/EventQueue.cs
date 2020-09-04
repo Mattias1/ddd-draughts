@@ -1,4 +1,4 @@
-using Draughts.Common.Utils;
+using Draughts.Common.Utilities;
 using NodaTime;
 using System;
 using System.Collections.Generic;

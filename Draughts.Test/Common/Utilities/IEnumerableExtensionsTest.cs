@@ -1,9 +1,9 @@
-using Draughts.Common.Utils;
+using Draughts.Common.Utilities;
 using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.Generic;
 
-namespace Draughts.Test.Common.Utils {
+namespace Draughts.Test.Common.Utilities {
     [TestClass]
     public class IEnumerableExtensionsTest {
         [TestMethod]

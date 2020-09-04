@@ -1,5 +1,5 @@
 using Draughts.Common.Events;
-using Draughts.Common.Utils;
+using Draughts.Common.Utilities;
 using Draughts.Domain.AuthUserAggregate.Events;
 using Draughts.Test.TestHelpers;
 using FluentAssertions;

@@ -21,14 +21,18 @@ namespace Draughts.Common {
             services.AddSingleton<FinishUserRegistrationEventHandler>();
 
             services.AddSingleton<IAuthService, AuthService>();
+            services.AddSingleton<IGameService, GameService>();
 
             services.AddSingleton<IAuthUserRepository, InMemoryAuthUserRepository>();
             services.AddSingleton<IRoleRepository, InMemoryRoleRepository>();
             services.AddSingleton<IUserRepository, InMemoryUserRepository>();
+            services.AddSingleton<IPlayerRepository, InMemoryPlayerRepository>();
+            services.AddSingleton<IGameRepository, InMemoryGameRepository>();
 
             services.AddSingleton<IAuthUserFactory, AuthUserFactory>();
             services.AddSingleton<IEventFactory, EventFactory>();
             services.AddSingleton<IUserFactory, UserFactory>();
+            services.AddSingleton<IGameFactory, GameFactory>();
 
             services.AddScoped<JwtActionFilter>();
             services.AddScoped<AuthContextActionFilter>();

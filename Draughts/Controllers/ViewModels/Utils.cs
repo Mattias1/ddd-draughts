@@ -1,9 +1,11 @@
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text.Encodings.Web;
 using Draughts.Domain.AuthUserAggregate.Models;
 using Draughts.Domain.UserAggregate.Models;
 using Microsoft.AspNetCore.Html;
+using NodaTime;
 
 namespace Draughts.Controllers.ViewModels {
     public static class Utils {
@@ -38,5 +40,9 @@ namespace Draughts.Controllers.ViewModels {
         }
 
         public static bool Can(IReadOnlyList<Permission> permissions, Permission permission) => permissions.Contains(permission);
+
+        public static string DateTime(ZonedDateTime datetime) {
+            return datetime.ToString("dd MMM yyyy, HH:mm", CultureInfo.InvariantCulture);
+        }
     }
 }

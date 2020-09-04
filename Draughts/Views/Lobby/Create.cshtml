@@ -8,12 +8,51 @@
         <form class="form-horizontal" action="/lobby/create" method="post">
             <h3>Choose the game settings</h3>
             <label>
-                <span>Game type:</span>
-                <select name="game-type">
-                    <option value="international">International</option>
+                <span>Presets:</span>
+                <select id="cgp-presets">
+                    <option value="international" selected="selected">International</option>
                     <option value="english-draughts">English draughts (American checkers)</option>
                 </select>
             </label>
+
+            <h4>The board</h4>
+            <div class="radio-label">
+                <span>Board size:</span>
+                <label><input type="radio" name="boardSize" value="8" /> 8x8</label>
+                <label><input type="radio" name="boardSize" value="10" checked="checked" /> 10x10</label>
+                <label><input type="radio" name="boardSize" value="12" /> 12x12</label>
+            </div>
+            <div class="radio-label">
+                <span>First move:</span>
+                <label><input type="radio" name="whiteHasFirstMove" value="true" checked="checked" /> White</label>
+                <label><input type="radio" name="whiteHasFirstMove" value="false" /> Black</label>
+            </div>
+
+            <h4>The rules</h4>
+            <div class="radio-label">
+                <span>Flying kings:</span>
+                <label><input type="radio" name="flyingKings" value="true" checked="checked" /> Yes</label>
+                <label><input type="radio" name="flyingKings" value="false" /> No</label>
+            </div>
+            <div class="radio-label">
+                <span>Men capture backwards:</span>
+                <label><input type="radio" name="menCaptureBackwards" value="true" checked="checked" /> Yes</label>
+                <label><input type="radio" name="menCaptureBackwards" value="false" /> No</label>
+            </div>
+            <div class="radio-label">
+                <span>Capture constraints:</span>
+                <label><input type="radio" name="captureConstraints" value="max" checked="checked" /> The maximum pieces</label>
+                <label><input type="radio" name="captureConstraints" value="seq" /> Any finished sequence</label>
+            </div>
+
+            <h4>Finish up</h4>
+            <div class="radio-label">
+                <span>Join as:</span>
+                <label><input type="radio" name="joinAs" value="white" /> White</label>
+                <label><input type="radio" name="joinAs" value="black" /> Black</label>
+                <label><input type="radio" name="joinAs" value="random" checked="checked" /> Coin toss</label>
+            </div>
+
             <label>
                 <span></span>
                 <input type="submit" value="Create game" />

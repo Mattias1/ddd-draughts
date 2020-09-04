@@ -7,5 +7,30 @@
     @if (Utils.Can(ViewBag.Permissions, Permissions.PlayGame)) {
         <p>Join one of the open games, or <a href="/lobby/create">create a new game</a>.</p>
     }
-    <p>Todo: list pending games and add a link to all active games.</p>
+
+    <table class="page-table">
+        <thead>
+            <tr>
+                <th class="left normal">Game id</th>
+                <th class="left normal">Opponent</th>
+                <th class="left">Settings</th>
+                <th class="left large">Created at</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var game in Model.Games) {
+                <tr>
+                    <td><a href="/game/@game.Id">Game @game.Id</a></td>
+                    <td>@Utils.UserLink(@game.Players[0].UserId, @game.Players[0].Username)</td>
+                    <td>Board size @(game.Settings.BoardSize)x@(game.Settings.BoardSize)</td>
+                    <td>@Utils.DateTime(@game.CreatedAt)</td>
+                </tr>
+            }
+            @if (Model.Games.Count == 0) {
+                <tr><td colspan="4">No games found.</td></tr>
+            }
+        </tbody>
+    </table>
+
+    <p>Todo: add a link to all active games.</p>
 </div>

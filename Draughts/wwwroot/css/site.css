@@ -25,12 +25,12 @@ h3 {
 h4 {
     font-size: 16px;
     font-weight: bold;
-    margin: 6px 0;
+    margin: 16px 0 6px 0;
 }
 
 p {
     padding: 0;
-    margin: 16px 6px;
+    margin: 6px 6px 16px 6px;
 }
 div.p-like {
     padding: 0;
@@ -115,13 +115,17 @@ button:hover:not(.link), input[type=submit]:hover:not(.link) {
     background-color: #bbb;
 }
 
-.form-horizontal label {
+.form-horizontal label, .form-horizontal div.radio-label {
     display: block;
     padding: 3px 6px;
 }
-.form-horizontal label span {
+.form-horizontal label span, .form-horizontal div.radio-label span {
     display: inline-block;
     min-width: 200px;
+}
+.form-horizontal div.radio-label label {
+    display: inline-block;
+    padding: initial;
 }
 
 .post-link-form {
