@@ -1,6 +1,6 @@
 using Draughts.Common;
 using Draughts.Controllers.Attributes;
-using Draughts.Controllers.ViewModels;
+using Draughts.Controllers.Shared.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using static Draughts.Domain.AuthUserAggregate.Models.Permission;
 

@@ -2,12 +2,13 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Text.Encodings.Web;
+using Draughts.Controllers.Shared.ViewModels;
 using Draughts.Domain.AuthUserAggregate.Models;
 using Draughts.Domain.UserAggregate.Models;
 using Microsoft.AspNetCore.Html;
 using NodaTime;
 
-namespace Draughts.Controllers.ViewModels {
+namespace Draughts.Controllers.Shared {
     public static class Utils {
         public static string E(string text) => HtmlEncoder.Default.Encode(text);
         public static string UrlE(string url)

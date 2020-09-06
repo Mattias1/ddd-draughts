@@ -3,7 +3,7 @@ using NodaTime;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Draughts.Controllers.ViewModels {
+namespace Draughts.Controllers.Shared.ViewModels {
     public class GameViewModel {
         public GameId Id { get; }
         public IReadOnlyList<PlayerViewModel> Players { get; }

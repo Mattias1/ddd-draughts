@@ -2,7 +2,7 @@ using Draughts.Domain.AuthUserAggregate.Models;
 using Draughts.Domain.GameAggregate.Models;
 using Draughts.Domain.UserAggregate.Models;
 
-namespace Draughts.Controllers.ViewModels {
+namespace Draughts.Controllers.Shared.ViewModels {
     public class PlayerViewModel {
         public PlayerId Id { get; }
         public UserId UserId { get; }

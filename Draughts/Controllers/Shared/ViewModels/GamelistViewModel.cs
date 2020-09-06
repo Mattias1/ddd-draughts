@@ -2,7 +2,7 @@ using Draughts.Domain.GameAggregate.Models;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Draughts.Controllers.ViewModels {
+namespace Draughts.Controllers.Shared.ViewModels {
     public class GamelistViewModel {
         public IReadOnlyList<GameViewModel> Games { get; set; }
 
