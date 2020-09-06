@@ -1,6 +1,6 @@
 using Draughts.Common;
 using Draughts.Common.Utilities;
-using Draughts.Controllers.Attributes;
+using Draughts.Controllers.Shared.Attributes;
 using Draughts.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -11,7 +11,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Net;
 
-namespace Draughts.Controllers.Middleware {
+namespace Draughts.Controllers.Shared.Middleware {
     public class JwtActionFilter : IAuthorizationFilter {
         private readonly IClock _clock;
         private readonly IAuthService _authService;

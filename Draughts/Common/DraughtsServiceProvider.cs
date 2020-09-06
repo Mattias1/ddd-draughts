@@ -1,5 +1,4 @@
 using Draughts.Services;
-using Draughts.Controllers.Middleware;
 using Draughts.Repositories;
 using Draughts.Repositories.Database;
 using Microsoft.Extensions.DependencyInjection;
@@ -7,6 +6,7 @@ using NodaTime;
 using Draughts.EventHandlers;
 using System;
 using Draughts.Repositories.Databases;
+using Draughts.Controllers.Shared.Middleware;
 
 namespace Draughts.Common {
     public static class DraughtsServiceProvider {
