@@ -2,7 +2,7 @@ using Draughts.Domain.UserAggregate.Models;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Draughts.Controllers.ViewModels {
+namespace Draughts.Controllers.Shared.ViewModels {
     public class UserlistViewModel {
         public IReadOnlyList<UserViewModel> Users { get; set; }
 

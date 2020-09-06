@@ -1,6 +1,6 @@
 using Draughts.Common;
 using Draughts.Controllers.Attributes;
-using Draughts.Controllers.ViewModels;
+using Draughts.Controllers.Shared.ViewModels;
 using Draughts.Domain.GameAggregate.Models;
 using Draughts.Repositories;
 using Microsoft.AspNetCore.Mvc;

@@ -1,7 +1,7 @@
 using Draughts.Domain.AuthUserAggregate.Models;
 using Draughts.Domain.UserAggregate.Models;
 
-namespace Draughts.Controllers.ViewModels {
+namespace Draughts.Controllers.Shared.ViewModels {
     public class UserViewModel {
         public UserId Id { get; }
         public AuthUserId AuthUserId { get; }

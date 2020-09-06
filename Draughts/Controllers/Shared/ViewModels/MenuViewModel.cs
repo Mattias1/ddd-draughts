@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Draughts.Controllers.ViewModels {
+namespace Draughts.Controllers.Shared.ViewModels {
     public class MenuViewModel {
         public string Title { get; }
         public IReadOnlyList<(string name, string url)> Menu { get; }

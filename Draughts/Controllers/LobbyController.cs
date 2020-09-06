@@ -1,7 +1,7 @@
 using Draughts.Common;
 using Draughts.Common.Utilities;
 using Draughts.Controllers.Attributes;
-using Draughts.Controllers.ViewModels;
+using Draughts.Controllers.Shared.ViewModels;
 using Draughts.Domain.GameAggregate.Models;
 using Draughts.Domain.GameAggregate.Specifications;
 using Draughts.Repositories;
