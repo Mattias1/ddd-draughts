@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Mvc.Filters;
 using System;
 
-namespace Draughts.Controllers.Attributes {
+namespace Draughts.Controllers.Shared.Attributes {
     /// <summary>
     /// Identifies an acion that can be visited by guests, and does not require authorization.
     /// </summary>

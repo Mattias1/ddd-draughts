@@ -3,8 +3,8 @@ using Draughts.Repositories;
 using Draughts.Domain.UserAggregate.Models;
 using Draughts.Domain.UserAggregate.Specifications;
 using Draughts.Common;
-using Draughts.Controllers.Attributes;
 using Draughts.Controllers.Shared.ViewModels;
+using Draughts.Controllers.Shared.Attributes;
 
 namespace Draughts.Controllers {
     public class UserController : BaseController {

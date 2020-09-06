@@ -1,9 +1,9 @@
 using Microsoft.AspNetCore.Mvc;
 using Draughts.Common;
-using Draughts.Controllers.Middleware;
-using Draughts.Controllers.Attributes;
 using Draughts.Services;
 using Draughts.Repositories.Databases;
+using Draughts.Controllers.Shared.Attributes;
+using Draughts.Controllers.Shared.Middleware;
 
 namespace Draughts.Controllers {
     public class AuthController : BaseController {
@@ -32,7 +32,7 @@ namespace Draughts.Controllers {
             try {
                 var jwt = _authService.GenerateJwt(request.Name, request.Password);
                 var permissions = _authService.PermissionsForJwt(jwt);
-                AuthContext.AttachToHttpContext(jwt, permissions, HttpContext);
+                AuthContext authContext = AuthContext.AttachToHttpContext(jwt, permissions, HttpContext);
 
                 return Redirect("/");
             }

@@ -1,8 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Draughts.Common;
-using Draughts.Controllers.Attributes;
 using System.Net;
+using Draughts.Controllers.Shared.Attributes;
 
 namespace Draughts.Controllers {
     public class StaticPagesController : BaseController {

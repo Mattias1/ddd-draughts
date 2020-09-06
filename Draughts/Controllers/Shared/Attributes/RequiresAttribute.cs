@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Draughts.Controllers.Attributes {
+namespace Draughts.Controllers.Shared.Attributes {
     /// <summary>
     /// Marks the permissions that are required for this route.
     /// </summary>

@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 
-namespace Draughts.Controllers.Middleware {
+namespace Draughts.Controllers.Shared.Middleware {
     public class AuthContext {
         public const string AUTHORIZATION_HEADER = "Authorization";
         public const string BEARER_PREFIX = "Bearer ";
