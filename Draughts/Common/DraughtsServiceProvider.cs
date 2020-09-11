@@ -4,11 +4,11 @@ using Microsoft.Extensions.DependencyInjection;
 using NodaTime;
 using System;
 using Draughts.Repositories.Databases;
-using Draughts.Controllers.Shared.Middleware;
-using Draughts.Controllers.Auth.Services;
-using Draughts.Controllers.Lobby.Services;
-using Draughts.Controllers.Shared.Services;
-using Draughts.Controllers.Auth;
+using Draughts.Application.Shared.Middleware;
+using Draughts.Application.Auth.Services;
+using Draughts.Application.Lobby.Services;
+using Draughts.Application.Shared.Services;
+using Draughts.Application.Auth;
 
 namespace Draughts.Common {
     public static class DraughtsServiceProvider {
