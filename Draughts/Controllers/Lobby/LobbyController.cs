@@ -1,16 +1,16 @@
 using Draughts.Common;
 using Draughts.Common.Utilities;
+using Draughts.Controllers.Lobby.Services;
 using Draughts.Controllers.Shared.Attributes;
 using Draughts.Controllers.Shared.ViewModels;
 using Draughts.Domain.GameAggregate.Models;
 using Draughts.Domain.GameAggregate.Specifications;
 using Draughts.Repositories;
-using Draughts.Services;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using static Draughts.Domain.AuthUserAggregate.Models.Permission;
 
-namespace Draughts.Controllers {
+namespace Draughts.Controllers.Lobby {
     public class LobbyController : BaseController {
         private readonly IGameRepository _gameRepository;
         private readonly IGameService _gameService;

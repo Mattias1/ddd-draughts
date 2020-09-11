@@ -4,7 +4,7 @@ using Draughts.Common;
 using System.Net;
 using Draughts.Controllers.Shared.Attributes;
 
-namespace Draughts.Controllers {
+namespace Draughts.Controllers.StaticPages {
     public class StaticPagesController : BaseController {
         private readonly ILogger<StaticPagesController> _logger;
 

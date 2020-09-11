@@ -3,7 +3,7 @@ using Draughts.Domain.UserAggregate.Models;
 using Draughts.Repositories;
 using Draughts.Repositories.Databases;
 
-namespace Draughts.Services {
+namespace Draughts.Controllers.Lobby.Services {
     // Note: This name is way to generic. In the future I'll put everything in here. So I'll rename it then :)
     public class GameService : IGameService {
         private readonly IGameFactory _gameFactory;

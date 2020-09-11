@@ -6,7 +6,7 @@ using NodaTime;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Draughts.Services {
+namespace Draughts.Controllers.Auth.Services {
     public class AuthService : IAuthService {
         private readonly IAuthUserRepository _authUserRepository;
         private readonly IClock _clock;

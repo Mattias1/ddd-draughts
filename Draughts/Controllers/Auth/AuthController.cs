@@ -1,11 +1,11 @@
 using Microsoft.AspNetCore.Mvc;
 using Draughts.Common;
-using Draughts.Services;
 using Draughts.Repositories.Databases;
 using Draughts.Controllers.Shared.Attributes;
 using Draughts.Controllers.Shared.Middleware;
+using Draughts.Controllers.Auth.Services;
 
-namespace Draughts.Controllers {
+namespace Draughts.Controllers.Auth {
     public class AuthController : BaseController {
         private const string ALREADY_LOGGED_IN_ERROR = "You're already logged in.";
 

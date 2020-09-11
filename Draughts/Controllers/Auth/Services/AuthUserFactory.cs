@@ -1,9 +1,10 @@
+using Draughts.Controllers.Shared.Services;
 using Draughts.Domain.AuthUserAggregate.Models;
 using Draughts.Domain.AuthUserAggregate.Specifications;
 using Draughts.Domain.UserAggregate.Models;
 using Draughts.Repositories;
 
-namespace Draughts.Services {
+namespace Draughts.Controllers.Auth.Services {
     public class AuthUserFactory : IAuthUserFactory {
         private readonly IAuthUserRepository _authUserRepository;
         private readonly IEventFactory _eventFactory;

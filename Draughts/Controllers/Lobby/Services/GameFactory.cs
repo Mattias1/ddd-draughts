@@ -1,10 +1,11 @@
 using Draughts.Common.Utilities;
+using Draughts.Controllers.Shared.Services;
 using Draughts.Domain.GameAggregate.Models;
 using Draughts.Domain.UserAggregate.Models;
 using Draughts.Repositories;
 using NodaTime;
 
-namespace Draughts.Services {
+namespace Draughts.Controllers.Lobby.Services {
     public class GameFactory : IGameFactory {
         private readonly IClock _clock;
         private readonly IEventFactory _eventFactory;

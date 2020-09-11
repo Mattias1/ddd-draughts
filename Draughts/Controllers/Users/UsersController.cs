@@ -6,25 +6,25 @@ using Draughts.Common;
 using Draughts.Controllers.Shared.ViewModels;
 using Draughts.Controllers.Shared.Attributes;
 
-namespace Draughts.Controllers {
-    public class UserController : BaseController {
+namespace Draughts.Controllers.Users {
+    public class UsersController : BaseController {
         private readonly IUserRepository _userRepository;
 
-        public UserController(IUserRepository userRepository) => _userRepository = userRepository;
+        public UsersController(IUserRepository userRepository) => _userRepository = userRepository;
 
         [HttpGet("/user/{userId:long}"), GuestRoute]
-        public IActionResult Index(long userId) {
+        public IActionResult Userprofile(long userId) {
             var user = _userRepository.FindByIdOrNull(new UserId(userId));
             if (user is null) {
-                List(); // This call is needed to set the view model :(
+                Userlist(); // This call is needed to set the view model :(
                 return ErrorRedirect("/user/list", $"User not found with id {userId}.");
             }
 
             return View(new UserViewModel(user));
         }
 
-        [HttpGet, GuestRoute]
-        public IActionResult List() {
+        [HttpGet("/user/list"), GuestRoute]
+        public IActionResult Userlist() {
             var users = _userRepository.List(new RankSort());
 
             return View(new UserlistViewModel(users));
