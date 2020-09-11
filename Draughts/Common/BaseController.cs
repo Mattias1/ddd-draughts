@@ -1,4 +1,4 @@
-using Draughts.Controllers.Shared.Middleware;
+using Draughts.Application.Shared.Middleware;
 using Draughts.Domain.AuthUserAggregate.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
