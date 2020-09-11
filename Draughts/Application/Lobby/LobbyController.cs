@@ -1,8 +1,9 @@
-using Draughts.Common;
-using Draughts.Common.Utilities;
 using Draughts.Application.Lobby.Services;
+using Draughts.Application.Shared;
 using Draughts.Application.Shared.Attributes;
 using Draughts.Application.Shared.ViewModels;
+using Draughts.Common;
+using Draughts.Common.Utilities;
 using Draughts.Domain.GameAggregate.Models;
 using Draughts.Domain.GameAggregate.Specifications;
 using Draughts.Repositories;

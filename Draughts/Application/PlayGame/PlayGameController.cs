@@ -1,4 +1,4 @@
-using Draughts.Common;
+using Draughts.Application.Shared;
 using Draughts.Application.Shared.Attributes;
 using Draughts.Application.Shared.ViewModels;
 using Draughts.Domain.GameAggregate.Models;

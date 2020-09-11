@@ -1,4 +1,4 @@
-using Draughts.Common;
+using Draughts.Application.Shared;
 using Draughts.Application.Shared.Attributes;
 using Microsoft.AspNetCore.Mvc;
 using static Draughts.Domain.AuthUserAggregate.Models.Permission;
