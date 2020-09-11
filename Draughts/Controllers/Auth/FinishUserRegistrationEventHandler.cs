@@ -1,9 +1,9 @@
 using Draughts.Common.Events;
+using Draughts.Controllers.Auth.Services;
 using Draughts.Domain.AuthUserAggregate.Events;
 using Draughts.Repositories.Databases;
-using Draughts.Services;
 
-namespace Draughts.EventHandlers {
+namespace Draughts.Controllers.Auth {
     public class FinishUserRegistrationEventHandler : DomainEventHandler<UserCreated> {
         private readonly IAuthUserFactory _authUserFactory;
         private readonly IUnitOfWork _unitOfWork;
