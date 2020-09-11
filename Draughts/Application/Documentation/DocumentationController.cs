@@ -1,7 +1,7 @@
-using Draughts.Common;
 using Draughts.Application.Shared.Attributes;
 using Draughts.Application.Shared.ViewModels;
 using Microsoft.AspNetCore.Mvc;
+using Draughts.Application.Shared;
 
 namespace Draughts.Application.Documentation {
     public class DocumentationController : BaseController {

@@ -1,8 +1,8 @@
-using Draughts.Common;
 using Draughts.Application.Shared.Attributes;
 using Draughts.Application.Shared.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using static Draughts.Domain.AuthUserAggregate.Models.Permission;
+using Draughts.Application.Shared;
 
 namespace Draughts.Application {
     [Requires(Permissions.PLAY_GAME)]

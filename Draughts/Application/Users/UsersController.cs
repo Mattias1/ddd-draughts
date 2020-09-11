@@ -1,10 +1,10 @@
-using Microsoft.AspNetCore.Mvc;
-using Draughts.Repositories;
+using Draughts.Application.Shared;
+using Draughts.Application.Shared.Attributes;
+using Draughts.Application.Shared.ViewModels;
 using Draughts.Domain.UserAggregate.Models;
 using Draughts.Domain.UserAggregate.Specifications;
-using Draughts.Common;
-using Draughts.Application.Shared.ViewModels;
-using Draughts.Application.Shared.Attributes;
+using Draughts.Repositories;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Draughts.Application.Users {
     public class UsersController : BaseController {

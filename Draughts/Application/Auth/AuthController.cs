@@ -4,6 +4,7 @@ using Draughts.Repositories.Databases;
 using Draughts.Application.Shared.Attributes;
 using Draughts.Application.Shared.Middleware;
 using Draughts.Application.Auth.Services;
+using Draughts.Application.Shared;
 
 namespace Draughts.Application.Auth {
     public class AuthController : BaseController {
