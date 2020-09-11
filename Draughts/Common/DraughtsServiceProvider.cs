@@ -1,4 +1,3 @@
-using Draughts.Services;
 using Draughts.Repositories;
 using Draughts.Repositories.Database;
 using Microsoft.Extensions.DependencyInjection;
@@ -7,6 +6,9 @@ using Draughts.EventHandlers;
 using System;
 using Draughts.Repositories.Databases;
 using Draughts.Controllers.Shared.Middleware;
+using Draughts.Controllers.Auth.Services;
+using Draughts.Controllers.Lobby.Services;
+using Draughts.Controllers.Shared.Services;
 
 namespace Draughts.Common {
     public static class DraughtsServiceProvider {

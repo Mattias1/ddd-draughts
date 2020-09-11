@@ -3,7 +3,7 @@ using Draughts.Controllers.Shared.Attributes;
 using Draughts.Controllers.Shared.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Draughts.Controllers {
+namespace Draughts.Controllers.Documentation {
     public class DocumentationController : BaseController {
         [HttpGet("/documentation"), GuestRoute]
         public IActionResult Index() => ViewWithMenu();

@@ -5,11 +5,11 @@ using Draughts.Domain.GameAggregate.Models;
 using Draughts.Repositories;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Draughts.Controllers {
-    public class GameController : BaseController {
+namespace Draughts.Controllers.PlayGame {
+    public class PlayGameController : BaseController {
         private readonly IGameRepository _gameRepository;
 
-        public GameController(IGameRepository gameRepository) {
+        public PlayGameController(IGameRepository gameRepository) {
             _gameRepository = gameRepository;
         }
 

@@ -1,7 +1,7 @@
 using Draughts.Common;
 using Draughts.Common.Utilities;
+using Draughts.Controllers.Auth.Services;
 using Draughts.Controllers.Shared.Attributes;
-using Draughts.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;

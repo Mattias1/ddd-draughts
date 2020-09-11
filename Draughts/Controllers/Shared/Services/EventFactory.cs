@@ -8,7 +8,7 @@ using Draughts.Repositories;
 using Draughts.Repositories.Databases;
 using NodaTime;
 
-namespace Draughts.Services {
+namespace Draughts.Controllers.Shared.Services {
     public class EventFactory : IEventFactory {
         private readonly IClock _clock;
         private readonly IIdGenerator _idGenerator;
