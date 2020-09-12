@@ -1,8 +1,36 @@
+@using Draughts.Domain.GameAggregate.Models;
+
+@model GameViewModel
 @{
     ViewBag.Title = "Game " + Model.Id;
+    var settings = Model.Settings;
 }
 
 <div class="text-container">
     <h1>Game @Model.Id</h1>
-    <p>Todo</p>
+    <div id="game-container">
+        <div id="game-board" class="game-board-@(settings.BoardSize)">
+            @for (int y = 0; y < settings.BoardSize; y++) {
+                @for (int x = 0; x < settings.BoardSize; x++) {
+                    <div id="square-@x-@y" class="square" style="left: @(60 * x)px; top: @(60 * y)px;"></div>
+                }
+            }
+        </div>
+        <div id="game-settings">
+            <h3>Game settings</h3>
+            <ul class="p-like">
+                <li>Flying kings: <span>@Utils.YesNo(settings.FlyingKings)</span></li>
+                <li>Men capture backwards: <span>@Utils.YesNo(settings.MenCaptureBackwards)</span></li>
+                <li>
+                    Capture constraints:
+                    @if (settings.CaptureConstraints == GameSettings.DraughtsCaptureConstraints.MaximumPieces) {
+                        <span>The maximum amount of pieces possible.</span>
+                    }
+                    else if (settings.CaptureConstraints == GameSettings.DraughtsCaptureConstraints.AnyFinishedSequence) {
+                        <span>Any finished sequence of pieces.</span>
+                    }
+                </li>
+            </ul>
+        </div>
+    </div>
 </div>

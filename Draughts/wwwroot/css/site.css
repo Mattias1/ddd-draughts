@@ -1,10 +1,17 @@
 /* ------- Global ------- */
+html {
+    width: 100%;
+    height: 100%;
+}
 body {
     color: #eee;
     background-color: #333;
     font-family: Arial, Arial, Helvetica, sans-serif;
     font-size: 16px;
-    margin: 0 0 30px 0; /* Margin bottom by footer height */
+    display: flex;
+    flex-flow: column nowrap;
+    min-height: 100%;
+    margin: 0;
     padding: 0;
     border: none;
 }
@@ -34,7 +41,16 @@ p {
 }
 div.p-like {
     padding: 0;
-    margin: 16px 6px;
+    margin: 6px 6px 16px 6px;
+}
+ul.p-like {
+    padding: 0;
+    margin: 6px 6px 16px 6px;
+}
+ul.p-like li {
+    padding: 0;
+    margin: 0;
+    list-style: none;
 }
 
 a, button.link, input[type=submit].link {
@@ -205,6 +221,10 @@ button.link, input[type=submit].link {
 }
 
 /* ------- Main ------- */
+main {
+    flex: 1;
+}
+
 .page-errors {
     margin: 8px 80px 0 80px;
     padding: 0;
@@ -238,10 +258,6 @@ button.link, input[type=submit].link {
 
 /* ------- Footer ------- */
 .footer {
-    position: absolute;
-    margin: 0;
-    padding: 0;
-    bottom: 0;
     width: 100%;
     white-space: nowrap;
     line-height: 30px;
@@ -251,4 +267,45 @@ button.link, input[type=submit].link {
 }
 .footer div {
     padding: 12px;
+}
+
+/* ------- Game ------- */
+#game-container {
+    display: flex;
+}
+
+#game-board {
+    flex: 0 0 auto;
+    position: relative;
+    box-shadow: 0px 1px 6px #222;
+}
+.game-board-8 {
+    width: 480px;
+    height: 480px;
+    background-image: url("/img/board8.jpg");
+}
+.game-board-10 {
+    width: 600px;
+    height: 600px;
+    background-image: url("/img/board10.jpg");
+}
+.game-board-12 {
+    width: 720px;
+    height: 720px;
+    background-image: url("/img/board12.jpg");
+}
+#game-board .square {
+    position: absolute;
+    width: 60px;
+    height: 60px;
+}
+#game-board .square:hover {
+    box-shadow: 0 0 6px #ddd;
+}
+
+#game-settings {
+    padding: 0 10px;
+}
+#game-settings span {
+    font-weight: bold;
 }
