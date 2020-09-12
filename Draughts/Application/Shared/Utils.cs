@@ -45,5 +45,7 @@ namespace Draughts.Application.Shared {
         public static string DateTime(ZonedDateTime datetime) {
             return datetime.ToString("dd MMM yyyy, HH:mm", CultureInfo.InvariantCulture);
         }
+
+        public static string YesNo(bool b) => b ? "Yes" : "No";
     }
 }
