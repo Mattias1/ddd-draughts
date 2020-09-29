@@ -1,15 +1,11 @@
-@model GamelistAndMenuViewModel 
+@model GamelistViewModel 
 @{
-    ViewBag.Title = "Finished games";
+    ViewBag.Title = "Spectator lounge";
 }
 
-<nav class="side-menu">
-    @Utils.SideMenu(Model.Menu)
-</nav>
-
-<div class="text-side-menu-container">
+<div class="text-container">
     <h1>@ViewBag.Title</h1>
-    <p>Your past games.</p>
+    <p>Watch one of the games currently being played.</p>
 
     <table class="page-table">
         <thead>
@@ -18,7 +14,6 @@
                 <th class="left normal">Players</th>
                 <th class="left">Settings</th>
                 <th class="left large">Created at</th>
-                <th class="left large">Finished at</th>
             </tr>
         </thead>
         <tbody>
@@ -28,12 +23,13 @@
                     <td>@Utils.UserLink(@game.Players[0]) vs @Utils.UserLink(@game.Players[1])</td>
                     <td>@game.Settings.Description</td>
                     <td>@Utils.DateTime(@game.CreatedAt)</td>
-                    <td>@Utils.DateTime(@game.FinishedAt)</td>
                 </tr>
             }
             @if (Model.Games.Count == 0) {
-                <tr><td colspan="5">No finished games found.</td></tr>
+                <tr><td colspan="4">No active games found.</td></tr>
             }
         </tbody>
     </table>
+
+    <p>Go back to the <a href="/lobby">game lobby</a>.</p>
 </div>

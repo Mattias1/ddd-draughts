@@ -1,5 +1,5 @@
+using Draughts.Application.Shared;
 using Draughts.Common.Utilities;
-using Draughts.Application.ViewModels;
 using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NodaTime.Testing;

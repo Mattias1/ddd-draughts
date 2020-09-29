@@ -34,12 +34,25 @@ namespace Draughts.Domain.GameAggregate.Models {
             CaptureConstraints = captureConstraints;
         }
 
+        public string Description {
+            get => this == International ? "International"
+                : this == EnglishAmerican ? "English draughts"
+                : $"Custom {BoardSize}x{BoardSize}";
+        }
+
         protected override IEnumerable<object> GetEqualityComponents() {
             yield return BoardSize;
             yield return FirstMove;
             yield return FlyingKings;
             yield return MenCaptureBackwards;
             yield return CaptureConstraints;
+        }
+
+        public static GameSettings International {
+            get => new GameSettings(10, Color.White, true, true, DraughtsCaptureConstraints.MaximumPieces);
+        }
+        public static GameSettings EnglishAmerican {
+            get => new GameSettings(8, Color.Black, false, false, DraughtsCaptureConstraints.AnyFinishedSequence);
         }
     }
 }

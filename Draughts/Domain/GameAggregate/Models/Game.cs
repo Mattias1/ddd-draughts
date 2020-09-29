@@ -18,6 +18,8 @@ namespace Draughts.Domain.GameAggregate.Models {
 
         public bool HasStarted => StartedAt != null;
 
+        public bool IsFinished => FinishedAt != null;
+
         public Game(GameId id, GameSettings settings, ZonedDateTime createdAt)
             : this(id, new List<Player>(2), null, settings, createdAt, null, null) { }
         public Game(

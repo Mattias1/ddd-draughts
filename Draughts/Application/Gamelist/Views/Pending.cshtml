@@ -1,12 +1,37 @@
+@model GamelistAndMenuViewModel 
 @{
     ViewBag.Title = "Pending games";
 }
 
 <nav class="side-menu">
-    @Utils.SideMenu(Model)
+    @Utils.SideMenu(Model.Menu)
 </nav>
 
 <div class="text-side-menu-container">
-    <h1>Pending games</h1>
-    <p>Todo</p>
+    <h1>@ViewBag.Title</h1>
+    <p>Your games waiting for a player to start.</p>
+
+    <table class="page-table">
+        <thead>
+            <tr>
+                <th class="left normal">Game id</th>
+                <th class="left normal">Opponent</th>
+                <th class="left">Settings</th>
+                <th class="left large">Created at</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var game in Model.Games) {
+                <tr>
+                    <td><a href="/game/@game.Id">Game @game.Id</a></td>
+                    <td>@Utils.UserLink(@game.Players[0])</td>
+                    <td>@game.Settings.Description</td>
+                    <td>@Utils.DateTime(@game.CreatedAt)</td>
+                </tr>
+            }
+            @if (Model.Games.Count == 0) {
+                <tr><td colspan="4">No pending games found.</td></tr>
+            }
+        </tbody>
+    </table>
 </div>
