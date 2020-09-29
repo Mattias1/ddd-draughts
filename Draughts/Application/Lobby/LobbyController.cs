@@ -3,7 +3,6 @@ using Draughts.Application.Shared;
 using Draughts.Application.Shared.Attributes;
 using Draughts.Application.Shared.ViewModels;
 using Draughts.Common;
-using Draughts.Common.Utilities;
 using Draughts.Domain.GameAggregate.Models;
 using Draughts.Domain.GameAggregate.Specifications;
 using Draughts.Repositories;
@@ -24,6 +23,12 @@ namespace Draughts.Application.Lobby {
         [HttpGet("/lobby"), GuestRoute]
         public IActionResult Lobby() {
             var pendingGames = _gameRepository.List(new PendingGameSpecification());
+            return View(new GamelistViewModel(pendingGames));
+        }
+
+        [HttpGet("/lobby/spectate"), GuestRoute]
+        public IActionResult Spectate() {
+            var pendingGames = _gameRepository.List(new ActiveGameSpecification());
             return View(new GamelistViewModel(pendingGames));
         }
 
@@ -50,7 +55,7 @@ namespace Draughts.Application.Lobby {
         {
             "white" => Color.White,
             "black" => Color.Black,
-            "random" => Rand.NextBool() ? Color.White : Color.Black,
+            "random" => Color.Random,
             _ => throw new ManualValidationException("Unknown color choice.")
         };
 

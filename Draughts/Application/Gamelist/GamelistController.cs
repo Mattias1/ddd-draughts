@@ -1,34 +1,46 @@
+using Draughts.Application.Shared;
 using Draughts.Application.Shared.Attributes;
 using Draughts.Application.Shared.ViewModels;
+using Draughts.Domain.GameAggregate.Specifications;
+using Draughts.Domain.UserAggregate.Models;
+using Draughts.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using static Draughts.Domain.AuthUserAggregate.Models.Permission;
-using Draughts.Application.Shared;
 
 namespace Draughts.Application {
     [Requires(Permissions.PLAY_GAME)]
     public class GamelistController : BaseController {
+        private readonly IGameRepository _gameRepository;
+
+        public GamelistController(IGameRepository gameRepository) {
+            _gameRepository = gameRepository;
+        }
+
         [HttpGet]
         public IActionResult Pending() {
-            return ViewWithMenu();
+            var games = _gameRepository.List(new PendingGameSpecification().And(new ContainsPlayerSpecification(AuthContext.UserId)));
+            return View(new GamelistAndMenuViewModel(games, BuildMenu()));
         }
 
         [HttpGet]
         public IActionResult Active() {
-            return ViewWithMenu();
+            var games = _gameRepository.List(new ActiveGameSpecification().And(new ContainsPlayerSpecification(AuthContext.UserId)));
+            return View(new GamelistAndMenuViewModel(games, BuildMenu()));
         }
 
         [HttpGet]
         public IActionResult Finished() {
-            return ViewWithMenu();
+            var games = _gameRepository.List(new FinishedGameSpecification().And(new ContainsPlayerSpecification(AuthContext.UserId)));
+            return View(new GamelistAndMenuViewModel(games, BuildMenu()));
         }
 
-        private IActionResult ViewWithMenu() {
-            return View(new MenuViewModel("Your games",
+        private MenuViewModel BuildMenu() {
+            return new MenuViewModel("Your games",
                 ("Pending games", "/gamelist/pending"),
                 ("Active games", "/gamelist/active"),
                 ("Finished games", "/gamelist/finished"),
                 ("Create a new game", "/lobby/create")
-            ));
+            );
         }
     }
 }
