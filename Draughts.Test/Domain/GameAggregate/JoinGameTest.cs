@@ -72,12 +72,12 @@ namespace Draughts.Test.Domain.GameAggregate {
 
         [TestMethod]
         public void JoinGame_WhenSecondPlayer_ThenStartGame() {
-            var whitePlayer = PlayerTestHelper.White().Build();
-            var game = GameTestHelper.PendingInternationalGame(whitePlayer).Build();
-
             var blackPlayer = PlayerTestHelper.Black().Build();
+            var game = GameTestHelper.PendingInternationalGame(blackPlayer).Build();
 
-            game.JoinGame(blackPlayer, _fakeClock.UtcNow());
+            var whitePlayer = PlayerTestHelper.White().Build();
+
+            game.JoinGame(whitePlayer, _fakeClock.UtcNow());
 
             game.Players.Should().BeEquivalentTo(whitePlayer, blackPlayer);
             game.HasStarted.Should().BeTrue();

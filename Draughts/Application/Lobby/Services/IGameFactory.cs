@@ -4,5 +4,6 @@ using Draughts.Domain.UserAggregate.Models;
 namespace Draughts.Application.Lobby.Services {
     public interface IGameFactory {
         Game CreateGame(GameSettings settings, User creator, Color creatorColor);
+        void JoinGame(Game game, User user, Color color);
     }
 }
