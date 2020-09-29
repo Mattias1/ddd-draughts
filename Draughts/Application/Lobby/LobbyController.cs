@@ -51,6 +51,20 @@ namespace Draughts.Application.Lobby {
             }
         }
 
+        [HttpPost("lobby/join"), Requires(Permissions.PLAY_GAME)]
+        public IActionResult PostJoin([FromForm] GameJoinRequest request) {
+            try {
+                var joinColor = request.Color is null ? null : ColorFromRequest(request.Color);
+                _gameService.JoinGame(AuthContext.UserId, new GameId(request.GameId), joinColor);
+
+                return Redirect("/game/" + request.GameId);
+            }
+            catch (ManualValidationException e) {
+                Lobby();
+                return ErrorRedirect("/lobby", e.Message);
+            }
+        }
+
         private Color ColorFromRequest(string? color) => color switch
         {
             "white" => Color.White,
@@ -78,6 +92,11 @@ namespace Draughts.Application.Lobby {
 
                 return new GameSettings(BoardSize, firstMove, FlyingKings, MenCaptureBackwards, capConstraints);
             }
+        }
+
+        public class GameJoinRequest {
+            public int GameId { get; set; }
+            public string? Color { get; set; }
         }
     }
 }

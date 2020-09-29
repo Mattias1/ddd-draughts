@@ -19,7 +19,7 @@ namespace Draughts.Repositories {
                 new UserId(p.UserId),
                 new Username(p.Username),
                 Ranks.All.Single(r => r.Name == p.Rank),
-                p.ColorIsBlack ? Color.Black : Color.White
+                p.ColorIsWhite ? Color.Black : Color.White
             )).ToList();
         }
 
@@ -29,7 +29,7 @@ namespace Draughts.Repositories {
                 UserId = entity.UserId,
                 Username = entity.Username,
                 Rank = entity.Rank.Name,
-                ColorIsBlack = entity.Color == Color.Black
+                ColorIsWhite = entity.Color == Color.Black
             };
 
             _unitOfWork.Store(player, GameDatabase.TempPlayersTable);

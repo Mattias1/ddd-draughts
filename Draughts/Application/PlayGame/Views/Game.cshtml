@@ -4,6 +4,8 @@
 @{
     ViewBag.Title = "Game " + Model.Id;
     var settings = Model.Settings;
+    var player1 = Model.Players.SingleOrDefault(p => p.Color == settings.FirstMove);
+    var player2 = Model.Players.SingleOrDefault(p => p.Color == settings.FirstMove.Other);
 }
 
 <div class="text-container">
@@ -12,11 +14,34 @@
         <div id="game-board" class="game-board-@(settings.BoardSize)">
             @for (int y = 0; y < settings.BoardSize; y++) {
                 @for (int x = 0; x < settings.BoardSize; x++) {
-                    <div id="square-@x-@y" class="square" style="left: @(60 * x)px; top: @(60 * y)px;"></div>
+                    <div id="square-@x-@y" class="square@((x + y) % 2 == 1 ? " playable" : "")" style="left: @(60 * x)px; top: @(60 * y)px;"></div>
                 }
             }
+            @for (int i = 0; i < settings.BoardSize; i++) {
+                <div id="row-@i" class="square row" style="left: -60px; top: @(60 * i)px">@(settings.BoardSize - i)</div>
+                <div id="col-@i" class="square col" style="left: @(60 * i)px; top: @(60 * settings.BoardSize)px">@((char)('a' + i))</div>
+            }
         </div>
-        <div id="game-settings">
+
+        <div id="game-sidebar">
+            <h3>Players</h3>
+            <ul class="p-like">
+                @if (player1 is null) {
+                    <li>@Utils.PostLink($"Join as {settings.FirstMove}", "/lobby/join",
+                        ("gameId", Model.Id), ("color", settings.FirstMove.ToString()))</li>
+                }
+                else {
+                    <li>@player1.Color: @Utils.UserLinkWithRank(player1)</li>
+                }
+                @if (player2 is null) {
+                    <li>@Utils.PostLink($"Join as {settings.FirstMove.Other}", "/lobby/join",
+                        ("gameId", Model.Id), ("color", settings.FirstMove.Other.ToString()))</li>
+                }
+                else {
+                    <li>@player2.Color: @Utils.UserLinkWithRank(player2)</li>
+                }
+            </ul>
+
             <h3>Game settings</h3>
             <ul class="p-like">
                 <li>Flying kings: <span>@Utils.YesNo(settings.FlyingKings)</span></li>

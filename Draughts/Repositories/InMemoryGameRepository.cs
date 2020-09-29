@@ -28,7 +28,7 @@ namespace Draughts.Repositories {
             )).ToList();
         }
 
-        private Color GetFirstMoveColor(InMemoryGame g) => g.FirstMoveColorIsBlack ? Color.Black : Color.White;
+        private Color GetFirstMoveColor(InMemoryGame g) => g.FirstMoveColorIsWhite ? Color.White : Color.Black;
         private Turn? GetTurn(InMemoryGame g, Dictionary<long, Player> players) {
             return g.TurnPlayerId is null || g.TurnCreatedAt is null || g.TurnExpiresAt is null
                 ? null
@@ -42,7 +42,7 @@ namespace Draughts.Repositories {
             var game = new InMemoryGame {
                 Id = entity.Id,
                 BoardSize = entity.Settings.BoardSize,
-                FirstMoveColorIsBlack = entity.Settings.FirstMove == Color.Black,
+                FirstMoveColorIsWhite = entity.Settings.FirstMove == Color.White,
                 FlyingKings = entity.Settings.FlyingKings,
                 MenCaptureBackwards = entity.Settings.MenCaptureBackwards,
                 CaptureConstraints = entity.Settings.CaptureConstraints,

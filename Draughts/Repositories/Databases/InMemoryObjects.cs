@@ -1,5 +1,4 @@
 using Draughts.Domain.GameAggregate.Models;
-using Microsoft.AspNetCore.Http.Connections;
 using NodaTime;
 using System;
 
@@ -38,7 +37,7 @@ namespace Draughts.Repositories.Databases {
     public class InMemoryGame : IEquatable<InMemoryGame> {
         public long Id;
         public int BoardSize;
-        public bool FirstMoveColorIsBlack;
+        public bool FirstMoveColorIsWhite;
         public bool FlyingKings;
         public bool MenCaptureBackwards;
         public GameSettings.DraughtsCaptureConstraints CaptureConstraints;
@@ -58,7 +57,7 @@ namespace Draughts.Repositories.Databases {
         public long UserId;
         public string Username;
         public string Rank;
-        public bool ColorIsBlack;
+        public bool ColorIsWhite;
 
         public bool Equals(InMemoryPlayer? other) => Id.Equals(other?.Id);
     }

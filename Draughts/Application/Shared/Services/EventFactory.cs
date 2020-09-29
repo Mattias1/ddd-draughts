@@ -1,8 +1,6 @@
 using Draughts.Common.Events;
 using Draughts.Domain.AuthUserAggregate.Events;
 using Draughts.Domain.AuthUserAggregate.Models;
-using Draughts.Domain.GameAggregate.Events;
-using Draughts.Domain.GameAggregate.Models;
 using Draughts.Domain.UserAggregate.Models;
 using Draughts.Repositories;
 using Draughts.Repositories.Databases;
@@ -27,11 +25,6 @@ namespace Draughts.Application.Shared.Services {
 
         public void RaiseUserCreated(User user) {
             var evt = new UserCreated(user, NextId(), Now());
-            _unitOfWork.Raise(evt);
-        }
-
-        public void RaiseGameCreated(Game game, User creator) {
-            var evt = new GameCreated(game, creator.Id, NextId(), Now());
             _unitOfWork.Raise(evt);
         }
 

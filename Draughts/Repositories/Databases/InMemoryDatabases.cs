@@ -1,7 +1,10 @@
 using Draughts.Common.Events;
+using Draughts.Common.Utilities;
 using Draughts.Domain.AuthUserAggregate.Models;
+using Draughts.Domain.GameAggregate.Models;
 using Draughts.Domain.UserAggregate.Models;
 using Draughts.Repositories.Databases;
+using NodaTime;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,7 +21,7 @@ namespace Draughts.Repositories.Database {
         public const long JackDeHaasId = 6;
         public const long BobbyId = 7;
 
-        public const long START_FOR_NEXT_IDS = 10;
+        public const long START_FOR_NEXT_IDS = 15;
 
         public static List<InMemoryUser> TempUsersTable { get; } = new List<InMemoryUser>();
         public static List<InMemoryUser> UsersTable { get; } = new List<InMemoryUser> {
@@ -88,13 +91,49 @@ namespace Draughts.Repositories.Database {
 
     public static class GameDatabase {
         public static List<InMemoryGame> TempGamesTable { get; } = new List<InMemoryGame>();
-        public static List<InMemoryGame> GamesTable { get; } = new List<InMemoryGame>();
+        public static List<InMemoryGame> GamesTable { get; } = new List<InMemoryGame> {
+            CreatePendingGame(8, GameSettings.International, 11),
+            CreatePendingGame(9, GameSettings.International, 12),
+            CreatePendingGame(10, GameSettings.EnglishAmerican, 13)
+        };
 
         public static List<InMemoryPlayer> TempPlayersTable { get; } = new List<InMemoryPlayer>();
-        public static List<InMemoryPlayer> PlayersTable { get; } = new List<InMemoryPlayer>();
+        public static List<InMemoryPlayer> PlayersTable { get; } = new List<InMemoryPlayer> {
+            CreatePlayer(11, UserDatabase.UserId, "User", Color.White, Ranks.WarrantOfficer),
+            CreatePlayer(12, UserDatabase.MathyId, "Mathy", Color.Black, Ranks.LanceCorporal),
+            CreatePlayer(13, UserDatabase.UserId, "User", Color.Black, Ranks.WarrantOfficer)
+        };
 
         public static List<DomainEvent> TempDomainEventsTable { get; } = new List<DomainEvent>();
         public static List<DomainEvent> DomainEventsTable { get; } = new List<DomainEvent>();
+
+        private static InMemoryGame CreatePendingGame(long id, GameSettings settings, long playerId) {
+            if (id >= UserDatabase.START_FOR_NEXT_IDS) {
+                throw new InvalidOperationException("START_FOR_NEXT_IDS too low!");
+            }
+            var now = SystemClock.Instance.UtcNow();
+            return new InMemoryGame {
+                Id = id,
+                BoardSize = settings.BoardSize,
+                FirstMoveColorIsWhite = settings.FirstMove == Color.White,
+                FlyingKings = settings.FlyingKings,
+                MenCaptureBackwards = settings.MenCaptureBackwards,
+                CaptureConstraints = settings.CaptureConstraints,
+                CreatedAt = now, StartedAt = null, FinishedAt = null,
+                TurnPlayerId = null, TurnCreatedAt = null, TurnExpiresAt = null,
+                PlayerIds = new long[] { playerId }
+            };
+        }
+
+        private static InMemoryPlayer CreatePlayer(long id, long userId, string name, Color color, Rank rank) {
+            if (id >= UserDatabase.START_FOR_NEXT_IDS) {
+                throw new InvalidOperationException("START_FOR_NEXT_IDS too low!");
+            }
+            return new InMemoryPlayer {
+                Id = id, UserId = userId, Username = name,
+                ColorIsWhite = color == Color.White, Rank = rank.Name
+            };
+        }
     }
 
     public static class MiscDatabase {

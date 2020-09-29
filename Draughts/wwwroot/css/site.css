@@ -53,6 +53,10 @@ ul.p-like li {
     list-style: none;
 }
 
+.disabled {
+    color: #aaa;
+}
+
 a, button.link, input[type=submit].link {
     color: #fd3;
     text-decoration: none;
@@ -278,34 +282,48 @@ main {
     flex: 0 0 auto;
     position: relative;
     box-shadow: 0px 1px 6px #222;
+    background-repeat: no-repeat;
+    margin: 0 0 30px 0;
 }
 .game-board-8 {
     width: 480px;
     height: 480px;
-    background-image: url("/img/board8.jpg");
+    background-image: url("/img/board8x8.jpg");
 }
 .game-board-10 {
     width: 600px;
     height: 600px;
-    background-image: url("/img/board10.jpg");
+    background-image: url("/img/board10x10.jpg");
 }
 .game-board-12 {
     width: 720px;
     height: 720px;
-    background-image: url("/img/board12.jpg");
+    background-image: url("/img/board12x12.jpg");
 }
 #game-board .square {
     position: absolute;
     width: 60px;
     height: 60px;
 }
-#game-board .square:hover {
+#game-board .square.playable:hover {
     box-shadow: 0 0 6px #ddd;
 }
+#game-board .square.row {
+    text-align: right;
+    line-height: 60px;
+    width: 52px;
+    color: #aaa;
+}
+#game-board .square.col {
+    text-align: center;
+    padding-top: 6px;
+    height: 54px;
+    color: #aaa;
+}
 
-#game-settings {
+#game-sidebar {
     padding: 0 10px;
 }
-#game-settings span {
+#game-sidebar span {
     font-weight: bold;
 }

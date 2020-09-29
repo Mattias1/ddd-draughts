@@ -58,7 +58,12 @@ namespace Draughts.Domain.GameAggregate.Models {
 
         private void StartGame(ZonedDateTime startedAt) {
             StartedAt = startedAt;
-            Turn = new Turn(GetPlayerForColor(Settings.FirstMove), startedAt, Settings.MaxTurnLength);
+            var startingPlayer = GetPlayerForColor(Settings.FirstMove);
+            if (_players[0] != startingPlayer) {
+                _players[1] = _players[0];
+                _players[0] = startingPlayer;
+            }
+            Turn = new Turn(startingPlayer, startedAt, Settings.MaxTurnLength);
         }
 
         private Player GetPlayerForColor(Color color) => _players.Single(p => p.Color == color);

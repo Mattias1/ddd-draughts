@@ -18,6 +18,7 @@
                 <th class="left normal">Game id</th>
                 <th class="left normal">Opponent</th>
                 <th class="left">Settings</th>
+                <th class="left"></th>
                 <th class="left large">Created at</th>
             </tr>
         </thead>
@@ -27,11 +28,18 @@
                     <td><a href="/game/@game.Id">Game @game.Id</a></td>
                     <td>@Utils.UserLink(@game.Players[0])</td>
                     <td>@game.Settings.Description</td>
+                    <td>
+                        @if (game.Players.Any(p => p.UserId == ViewBag.UserId)) {
+                            <span class="disabled">joined</span>
+                        } else {
+                            @Utils.PostLink("join", "lobby/join", ("gameId", game.Id))
+                        }
+                    </td>
                     <td>@Utils.DateTime(@game.CreatedAt)</td>
                 </tr>
             }
             @if (Model.Games.Count == 0) {
-                <tr><td colspan="4">No games found.</td></tr>
+                <tr><td colspan="5">No games found.</td></tr>
             }
         </tbody>
     </table>
