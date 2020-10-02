@@ -1,6 +1,8 @@
 using Draughts.Application.Shared.Middleware;
 using Draughts.Domain.AuthUserAggregate.Models;
+using Flurl;
 using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -44,22 +46,16 @@ namespace Draughts.Application.Shared {
             return View();
         }
 
-        public ViewResult ErrorRedirect(string url, string error) => ErrorRedirect(url, "", error);
-        public ViewResult ErrorRedirect(string url, string field, string error) {
-            if (url == "/") {
-                url = "/StaticPages/Home";
-            }
-            AddError(field, error);
-            return View($"~/Views{url}.cshtml");
+        public IActionResult ErrorRedirect(Url url, IEnumerable<string> errors) {
+            var errorMessages = string.Join(AuthContextActionFilter.ERROR_SEPARATOR, errors);
+            return ErrorRedirect(url, errorMessages);
         }
-
-        public ViewResult ErrorRedirect(string url, IEnumerable<string> errors) => ErrorRedirect(url, errors.Select(e => ("", e)));
-        public ViewResult ErrorRedirect(string url, IEnumerable<(string field, string error)> errors) {
-            if (url == "/") {
-                url = "/StaticPages/Home";
+        public IActionResult ErrorRedirect(Url url, string error) {
+            if (url.QueryParams.ContainsKey(AuthContextActionFilter.ERROR_PARAM)) {
+                throw new InvalidOperationException($"You shouldn't set the {AuthContextActionFilter.ERROR_PARAM} param manually.");
             }
-            AddErrors(errors);
-            return View($"~/Views{url}.cshtml");
+            url.SetQueryParam(AuthContextActionFilter.ERROR_PARAM, error);
+            return Redirect(url);
         }
 
         public void UpdateViewBag() {

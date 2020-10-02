@@ -46,7 +46,6 @@ namespace Draughts.Application.Lobby {
                 return Redirect("/lobby");
             }
             catch (ManualValidationException e) {
-                Create();
                 return ErrorRedirect("/lobby/create", e.Message);
             }
         }
@@ -60,7 +59,6 @@ namespace Draughts.Application.Lobby {
                 return Redirect("/game/" + request.GameId);
             }
             catch (ManualValidationException e) {
-                Lobby();
                 return ErrorRedirect("/lobby", e.Message);
             }
         }
