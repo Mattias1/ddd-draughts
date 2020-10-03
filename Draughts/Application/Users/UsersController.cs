@@ -15,8 +15,9 @@ namespace Draughts.Application.Users {
         [HttpGet("/user/{userId:long}"), GuestRoute]
         public IActionResult Userprofile(long userId) {
             var user = _userRepository.FindByIdOrNull(new UserId(userId));
+
             if (user is null) {
-                return ErrorRedirect("/user/list", $"User not found with id {userId}.");
+                return NotFound();
             }
 
             return View(new UserViewModel(user));

@@ -3,6 +3,7 @@ using Draughts.Application.Shared.Attributes;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System.Net;
+using System.Text.RegularExpressions;
 
 namespace Draughts.Application.StaticPages {
     public class StaticPagesController : BaseController {
@@ -22,7 +23,7 @@ namespace Draughts.Application.StaticPages {
         [HttpGet("/error"), GuestRoute]
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error(HttpStatusCode? status) {
-            ViewBag.StatusString = status?.ToString() ?? "Error";
+            ViewBag.StatusString = Regex.Replace(status?.ToString() ?? "Error", "(?<=[a-z])([A-Z])", " $1");
             ViewBag.StatusCode = (int)(status ?? HttpStatusCode.InternalServerError);
 
             return View();
