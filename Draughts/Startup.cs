@@ -1,10 +1,12 @@
 using Draughts.Common;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Razor;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using System.Threading.Tasks;
 
 namespace Draughts {
     public class Startup {
@@ -33,16 +35,23 @@ namespace Draughts {
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env) {
+            // Use a custom error page
+            app.UseStatusCodePagesWithReExecute("/error", "?status={0}");
+
+            // Catch exceptions and show the stacktrace / custom error page
             if (env.IsDevelopment()) {
                 app.UseDeveloperExceptionPage();
             }
             else {
-                app.UseExceptionHandler("/StaticPages/Error");
+                app.UseExceptionHandler(exApp => exApp.Run(ctx => {
+                    ctx.Response.StatusCode = StatusCodes.Status500InternalServerError;
+                    return Task.CompletedTask;
+                }));
             }
-            app.UseStaticFiles();
 
             DraughtsServiceProvider.RegisterEventHandlers(app.ApplicationServices);
 
+            app.UseStaticFiles();
             app.UseRouting();
 
             app.UseEndpoints(endpoints => {
