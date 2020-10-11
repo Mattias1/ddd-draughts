@@ -41,6 +41,7 @@ namespace Draughts.Repositories.Databases {
         public bool FlyingKings;
         public bool MenCaptureBackwards;
         public GameSettings.DraughtsCaptureConstraints CaptureConstraints;
+        public string CurrentGameState;
         public ZonedDateTime CreatedAt;
         public ZonedDateTime? StartedAt;
         public ZonedDateTime? FinishedAt;

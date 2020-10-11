@@ -12,24 +12,25 @@ namespace Draughts.Domain.GameAggregate.Models {
         public IReadOnlyList<Player> Players => _players.AsReadOnly();
         public Turn? Turn { get; private set; }
         public GameSettings Settings { get; }
+        public GameState GameState { get; private set; }
         public ZonedDateTime CreatedAt { get; }
         public ZonedDateTime? StartedAt { get; private set; }
         public ZonedDateTime? FinishedAt { get; private set; }
 
         public bool HasStarted => StartedAt != null;
-
         public bool IsFinished => FinishedAt != null;
 
         public Game(GameId id, GameSettings settings, ZonedDateTime createdAt)
-            : this(id, new List<Player>(2), null, settings, createdAt, null, null) { }
+            : this(id, new List<Player>(2), null, settings, GameState.InitialState(id, settings.BoardSize), createdAt, null, null) { }
         public Game(
-            GameId id, List<Player> players, Turn? turn, GameSettings settings,
+            GameId id, List<Player> players, Turn? turn, GameSettings settings, GameState gameState,
             ZonedDateTime createdAt, ZonedDateTime? startedAt, ZonedDateTime? finishedAt
         ) {
             Id = id;
             _players = players;
             Turn = turn;
             Settings = settings;
+            GameState = gameState;
             CreatedAt = createdAt;
             StartedAt = startedAt;
             FinishedAt = finishedAt;

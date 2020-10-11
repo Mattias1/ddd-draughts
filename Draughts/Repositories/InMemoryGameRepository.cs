@@ -22,6 +22,7 @@ namespace Draughts.Repositories {
                 g.PlayerIds.Select(p => players[p]).ToList(),
                 GetTurn(g, players),
                 new GameSettings(g.BoardSize, GetFirstMoveColor(g), g.FlyingKings, g.MenCaptureBackwards, g.CaptureConstraints),
+                GameState.FromStorage(new GameId(g.Id), g.CurrentGameState),
                 g.CreatedAt,
                 g.StartedAt,
                 g.FinishedAt
@@ -46,6 +47,7 @@ namespace Draughts.Repositories {
                 FlyingKings = entity.Settings.FlyingKings,
                 MenCaptureBackwards = entity.Settings.MenCaptureBackwards,
                 CaptureConstraints = entity.Settings.CaptureConstraints,
+                CurrentGameState = entity.GameState.ToStorage(),
                 CreatedAt = entity.CreatedAt,
                 StartedAt = entity.StartedAt,
                 FinishedAt = entity.FinishedAt,

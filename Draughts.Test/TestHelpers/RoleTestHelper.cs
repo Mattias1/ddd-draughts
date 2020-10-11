@@ -1,4 +1,5 @@
 using Draughts.Domain.AuthUserAggregate.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using static Draughts.Domain.AuthUserAggregate.Models.Permission;
@@ -21,8 +22,8 @@ namespace Draughts.Test.TestHelpers {
 
 
         public class RoleBuilder {
-            private RoleId _id;
-            private string _rolename = "";
+            private RoleId? _id;
+            private string? _rolename;
             private List<Permission> _permissions = new List<Permission>();
 
             public RoleBuilder WithId(long id) => WithId(new RoleId(id));
@@ -43,6 +44,13 @@ namespace Draughts.Test.TestHelpers {
             }
 
             public Role Build() {
+                if (_id is null) {
+                    throw new InvalidOperationException("Id is not nullable");
+                }
+                if (_rolename is null) {
+                    throw new InvalidOperationException("Rolename is not nullable");
+                }
+
                 return new Role(_id, _rolename, _permissions.ToArray());
             }
         }

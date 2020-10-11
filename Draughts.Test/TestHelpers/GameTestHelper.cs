@@ -16,9 +16,11 @@ namespace Draughts.Test.TestHelpers {
                 flyingKings: true, menCaptureBackwards: true,
                 GameSettings.DraughtsCaptureConstraints.AnyFinishedSequence);
 
+            var gameId = new GameId(IdTestHelper.Next());
             return new GameBuilder()
-                .WithId(IdTestHelper.Next())
+                .WithId(gameId)
                 .WithSettings(settings)
+                .WithGameState(GameState.InitialState(gameId, settings.BoardSize))
                 .WithCreatedAt(Feb29);
         }
 
@@ -39,6 +41,7 @@ namespace Draughts.Test.TestHelpers {
             private List<Player> _players = new List<Player>(2);
             private Turn? _turn;
             private GameSettings? _settings;
+            private GameState? _gameState;
             private ZonedDateTime? _createdAt;
             private ZonedDateTime? _startedAt;
             private ZonedDateTime? _finishedAt;
@@ -65,6 +68,11 @@ namespace Draughts.Test.TestHelpers {
                 return this;
             }
 
+            public GameBuilder WithGameState(GameState gameState) {
+                _gameState = gameState;
+                return this;
+            }
+
             public GameBuilder WithCreatedAt(ZonedDateTime createdAt) {
                 _createdAt = createdAt;
                 return this;
@@ -87,11 +95,14 @@ namespace Draughts.Test.TestHelpers {
                 if (_settings is null) {
                     throw new InvalidOperationException("Settings is not nullable");
                 }
+                if (_gameState is null) {
+                    throw new InvalidOperationException("GameState is not nullable");
+                }
                 if (_createdAt is null) {
                     throw new InvalidOperationException("CreatedAt is not nullable");
                 }
 
-                return new Game(_id, _players, _turn, _settings, _createdAt.Value, _startedAt, _finishedAt);
+                return new Game(_id, _players, _turn, _settings, _gameState, _createdAt.Value, _startedAt, _finishedAt);
             }
         }
     }

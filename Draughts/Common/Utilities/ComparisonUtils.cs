@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Draughts.Common.Utilities {
     public static class ComparisonUtils {
@@ -20,6 +22,14 @@ namespace Draughts.Common.Utilities {
                 where TLeft : class, IEquatable<TRight>
                 where TRight : class {
             return !EquatableNullSafeEquals(left, right);
+        }
+
+        public static int GetHashCode(IEnumerable<object> equalityComponents) {
+            return equalityComponents.Aggregate(1, (current, obj) => {
+                unchecked {
+                    return current * 23 + (obj?.GetHashCode() ?? 0);
+                }
+            });
         }
     }
 }

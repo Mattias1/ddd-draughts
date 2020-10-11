@@ -1,5 +1,6 @@
 using Draughts.Domain.AuthUserAggregate.Models;
 using Draughts.Domain.UserAggregate.Models;
+using System;
 
 namespace Draughts.Test.TestHelpers {
     public class UserTestHelper {
@@ -15,11 +16,11 @@ namespace Draughts.Test.TestHelpers {
 
 
         public class UserBuilder {
-            private UserId _id;
-            private AuthUserId _authUserId;
-            private Username _username;
-            private Rating _rating;
-            private Rank _rank;
+            private UserId? _id;
+            private AuthUserId? _authUserId;
+            private Username? _username;
+            private Rating? _rating;
+            private Rank? _rank;
             private int _gamesPlayed;
 
             public UserBuilder WithId(long id) => WithId(new UserId(id));
@@ -57,6 +58,22 @@ namespace Draughts.Test.TestHelpers {
             }
 
             public User Build() {
+                if (_id is null) {
+                    throw new InvalidOperationException("Id is not nullable");
+                }
+                if (_authUserId is null) {
+                    throw new InvalidOperationException("AuthUserId is not nullable");
+                }
+                if (_username is null) {
+                    throw new InvalidOperationException("Username is not nullable");
+                }
+                if (_rating is null) {
+                    throw new InvalidOperationException("Rating is not nullable");
+                }
+                if (_rank is null) {
+                    throw new InvalidOperationException("Rank is not nullable");
+                }
+
                 return new User(_id, _authUserId, _username, _rating, _rank, _gamesPlayed);
             }
         }
