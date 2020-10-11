@@ -119,6 +119,7 @@ namespace Draughts.Repositories.Database {
                 FlyingKings = settings.FlyingKings,
                 MenCaptureBackwards = settings.MenCaptureBackwards,
                 CaptureConstraints = settings.CaptureConstraints,
+                CurrentGameState = GameState.InitialState(new GameId(id), settings.BoardSize).ToStorage(),
                 CreatedAt = now, StartedAt = null, FinishedAt = null,
                 TurnPlayerId = null, TurnCreatedAt = null, TurnExpiresAt = null,
                 PlayerIds = new long[] { playerId }
