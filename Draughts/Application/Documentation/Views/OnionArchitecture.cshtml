@@ -1,0 +1,23 @@
+@{
+    ViewBag.Title = "Documentation";
+}
+
+<nav class="side-menu">
+    @Utils.SideMenu(Model)
+</nav>
+
+<div class="text-side-menu-container">
+    <h1>@ViewBag.Title</h1>
+
+    <h3>Onion architecture</h3>
+    <p>
+        This is often called <em>Hexagonal architecture</em>, though I'm not sure what the 6 sides would refer too.
+        I usually define the onion having 3 sides.
+    </p>
+    <p>
+        Todo. On references being only inwards or sideways, never outwards.
+    </p>
+    <p>
+        A note that auth should be done outside the domain?
+    </p>
+</div>

@@ -10,9 +10,9 @@
 <div class="text-side-menu-container">
     <h1>@ViewBag.Title</h1>
 
-    <h3>Domain driven design</h3>
+    <h3>Domain-driven design</h3>
     <p>
-        There's a lot you can say about Domain driven design (DDD). It is a concept in which the structure of the code,
+        There's a lot you can say about Domain-driven design (DDD). It is a concept in which the structure of the code,
         the team and the processes are focussed on the business domain (and not, for example, on features or on the
         database).
         The term was coined by Erik Evans in <a class="extern" href="https://dddcommunity.org/book/evans_2003/">
@@ -30,18 +30,18 @@
 
     <h2>Design choices</h2>
 
-    <h4>Authentication and authorization</h4>
-    <p>
-        I implemented the whole authentication and authorization myself, partly because it's fun and partly because
-        that's the best way to learn how it works.
-        <a href="/documentation/auth">Read more</a>.
-    </p>
-
     <h4>Bounded contexts</h4>
     <p>
         A bounded context is an important concept in DDD. It marks explicit boundaries between models, and allows you to
         achieve tight cohesion and loose coupling on an architectural level.
         For Draughts, we have three bounded contexts: Game, User and AuthUser.
         <a href="/documentation/boundedcontexts">Read more</a>.
+    </p>
+
+    <h4>Authentication and authorization</h4>
+    <p>
+        I implemented the whole authentication and authorization myself, partly because it's fun and partly because
+        that's the best way to learn how it works.
+        <a href="/documentation/auth">Read more</a>.
     </p>
 </div>
