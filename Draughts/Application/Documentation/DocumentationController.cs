@@ -6,23 +6,27 @@ using Draughts.Application.Shared;
 namespace Draughts.Application.Documentation {
     public class DocumentationController : BaseController {
         [HttpGet("/documentation"), GuestRoute]
-        public IActionResult Index() => ViewWithMenu();
+        public IActionResult DocumentationOverview() => ViewWithMenu();
 
         [HttpGet, GuestRoute]
-        public IActionResult Auth() => ViewWithMenu();
+        public IActionResult DesignPrinciples() => ViewWithMenu();
 
         [HttpGet, GuestRoute]
         public IActionResult BoundedContexts() => ViewWithMenu();
 
         [HttpGet, GuestRoute]
-        public IActionResult HexagonalArchitecture() => ViewWithMenu();
+        public IActionResult OnionArchitecture() => ViewWithMenu();
+
+        [HttpGet, GuestRoute]
+        public IActionResult Auth() => ViewWithMenu();
 
         private IActionResult ViewWithMenu() {
             return View(new MenuViewModel("Subpages",
                 ("Overview", "/documentation"),
-                ("Authentication and authorization", "/documentation/auth"),
+                ("Design principles", "/documentation/designprinciples"),
                 ("Bounded contexts", "/documentation/boundedcontexts"),
-                ("Hexagonal architecture", "/documentation/hexagonalarchitecture")
+                ("Onion architecture", "/documentation/onionarchitecture"),
+                ("Authentication and authorization", "/documentation/auth")
             ));
         }
     }
