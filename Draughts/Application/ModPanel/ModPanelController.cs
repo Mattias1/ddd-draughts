@@ -7,7 +7,7 @@ namespace Draughts.Application.ModPanel {
     [Requires(Permissions.VIEW_MOD_PANEL)]
     public class ModPanelController : BaseController {
         [HttpGet("/modpanel")]
-        public IActionResult Index() {
+        public IActionResult ModPanel() {
             return View();
         }
     }

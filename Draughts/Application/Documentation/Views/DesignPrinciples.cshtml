@@ -1,0 +1,57 @@
+@{
+    ViewBag.Title = "Documentation";
+}
+
+<nav class="side-menu">
+    @Utils.SideMenu(Model)
+</nav>
+
+<div class="text-side-menu-container">
+    <h1>@ViewBag.Title</h1>
+
+    <h3>Design principles</h3>
+    <p>
+        To really understand Domain-driven design, you'll also need to understand the design principles that are
+        fundamental to implementing DDD and writing maintainable code in general.
+        On this page I've attempted a summary of what I think the most important principles are.
+    </p>
+    <p>
+        If you want to read about them in dept there are plenty of articles on the internet. You could start with
+        <a class="extern" href="https://enterprisecraftsmanship.com/posts/most-valuable-software-development-principles/">
+            the enterprise craftsmanship blog</a>
+        or with <a class="extern" href="https://en.wikipedia.org/wiki/SOLID">the wikipedia page on SOLID</a> for example.
+    </p>
+
+    <h4>The single responsibility principle</h4>
+    <p>
+        Each class or function should do one thing, and do it well. Or differently put, it should have only one reason
+        to change. If you start using words like <em>and</em>, it's time to split up your classes or functions.
+    </p>
+
+    <h4>High cohesion and low coupling</h4>
+    <p>
+        Having a high cohesion means that stuff that belongs together, is grouped together. Low coupling means things
+        are mostly independend from one another.
+        This holds at all levels of your code. From applications talking to one another to the functions in a class.
+    </p>
+
+    <h4>Fail fast</h4>
+    <p>
+        If something goes wrong, just stop and throw an exception. If something breaks, or an assumption doesn't hold
+        anymore, make sure you will notice it quickly instead of allowing it to corrupt your data or internal state.
+    </p>
+
+    <h4>Principle of least astonishment</h4>
+    <p>
+        Other people (and future you) will read your code. Make sure they'll have a good idea what it does without
+        having to read every detail.
+    </p>
+
+    <h4>YAGNI and KISS</h4>
+    <p>
+        These stand for <em>You Ain't Gonna Need It</em> and <em>Keep It Simple, Stupid</em>.
+        The idea is to not waste time, energy and readability by implementing things or abstracting things away because
+        'in the future we may need it'. If you don't need it now, don't do it. The future often tends to work out
+        differently and even if it doesn't, we can just change it then.
+    </p>
+</div>
