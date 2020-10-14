@@ -1,4 +1,5 @@
 using Draughts.Application.Shared.Middleware;
+using Draughts.Common;
 using Draughts.Domain.AuthUserAggregate.Models;
 using Flurl;
 using Microsoft.AspNetCore.Mvc;
@@ -24,6 +25,12 @@ namespace Draughts.Application.Shared {
         public AuthContext? AuthContextOrNull => _authContext ??= AuthContext.GetFromHttpContextOrNull(HttpContext);
 
         public IReadOnlyList<(string field, string error)> Errors => _errors.AsReadOnly();
+
+        public void ValidateNotNull(params object?[] parameters) {
+            if (parameters.Any(p => p is null)) {
+                throw new ManualValidationException("Parameter is null.");
+            }
+        }
 
         public void AddError(string error) => AddError("", error);
         public void AddError(string field, string error) => AddErrors(new[] { (field, error) });

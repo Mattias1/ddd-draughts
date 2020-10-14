@@ -1,6 +1,8 @@
+using Draughts.Common;
 using Draughts.Domain.GameAggregate.Models;
 using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
 
 namespace Draughts.Test.Domain.GameAggregate {
     [TestClass]
@@ -18,6 +20,12 @@ namespace Draughts.Test.Domain.GameAggregate {
         [DataRow(6, 7, 32)]
         public void CoordinateToNumberOn8x8Board(int x, int y, int n) {
             SquareNumber.FromPosition(x, y, 8).Should().Be(new SquareNumber(n));
+        }
+
+        [TestMethod]
+        public void NonPlayableCoordinatesShouldThrow() {
+            Action fromPosition = () => SquareNumber.FromPosition(1, 1, 8);
+            fromPosition.Should().Throw<ManualValidationException>();
         }
 
         [TestMethod]

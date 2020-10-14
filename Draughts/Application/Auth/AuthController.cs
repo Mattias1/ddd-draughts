@@ -29,9 +29,11 @@ namespace Draughts.Application.Auth {
         }
 
         [HttpPost, GuestRoute]
-        public IActionResult Login([FromForm] LoginRequest request) {
+        public IActionResult Login([FromForm] LoginRequest? request) {
             try {
-                var jwt = _authService.GenerateJwt(request.Name, request.Password);
+                ValidateNotNull(request?.Name, request?.Password);
+
+                var jwt = _authService.GenerateJwt(request!.Name, request.Password);
                 var permissions = _authService.PermissionsForJwt(jwt);
                 AuthContext authContext = AuthContext.AttachToHttpContext(jwt, permissions, HttpContext);
 
@@ -60,14 +62,16 @@ namespace Draughts.Application.Auth {
         }
 
         [HttpPost, GuestRoute]
-        public IActionResult Register([FromForm] RegistrationRequest request) {
+        public IActionResult Register([FromForm] RegistrationRequest? request) {
             if (IsLoggedIn) {
                 return ErrorRedirect("/", ALREADY_LOGGED_IN_ERROR);
             }
 
             try {
+                ValidateNotNull(request?.Name, request?.Email, request?.Password, request?.PasswordConfirm);
+
                 // This is no domain logic, but let's-help-the-user logic. It's fine in here.
-                if (request.Password != request.PasswordConfirm) {
+                if (request!.Password != request.PasswordConfirm) {
                     throw new ManualValidationException("PasswordConfirm", "The passwords do not match.");
                 }
 

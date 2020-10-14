@@ -14,6 +14,7 @@ namespace Draughts.Domain.GameAggregate.Models {
         }
 
         public bool IsEmpty => RawValue == 0;
+        public bool IsNotEmpty => RawValue != 0;
         public Color? Color => IsEmpty ? null : (RawValue & 0b001) == 0 ? Color.Black : Color.White;
         public bool IsMan => (RawValue & 0b110) == 0b100;
         public bool IsKing => RawValue >= 0b110;
@@ -25,8 +26,8 @@ namespace Draughts.Domain.GameAggregate.Models {
         }
 
         public static Piece Empty => new Piece(0b000);
-        public static Piece BlackPiece => new Piece(0b100);
-        public static Piece WhitePiece => new Piece(0b101);
+        public static Piece BlackMan => new Piece(0b100);
+        public static Piece WhiteMan => new Piece(0b101);
         public static Piece BlackKing => new Piece(0b110);
         public static Piece WhiteKing => new Piece(0b111);
     }

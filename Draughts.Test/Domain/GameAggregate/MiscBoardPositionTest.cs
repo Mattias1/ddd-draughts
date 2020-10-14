@@ -4,7 +4,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Draughts.Test.Domain.GameAggregate {
     [TestClass]
-    public class BoardPositionTest {
+    public class MiscBoardPositionTest {
         [TestMethod]
         public void InitialBoard4x4() {
             var board = BoardPosition.InitialSetup(4);
@@ -15,10 +15,10 @@ namespace Draughts.Test.Domain.GameAggregate {
             for (int y = 0; y < board.Height; y++) {
                 for (int x = 0; x < board.Width; x++) {
                     if (y == 0 && (x == 1 || x == 3)) {
-                        board[x, y].Should().Be(Piece.BlackPiece);
+                        board[x, y].Should().Be(Piece.BlackMan);
                     }
                     else if (y == 3 && (x == 0 || x == 2)) {
-                        board[x, y].Should().Be(Piece.WhitePiece);
+                        board[x, y].Should().Be(Piece.WhiteMan);
                     }
                     else {
                         board[x, y].Should().Be(Piece.Empty, $"because we're at ({x}, {y})");
@@ -33,13 +33,13 @@ namespace Draughts.Test.Domain.GameAggregate {
         [TestMethod]
         public void InitialBoard8x8() {
             var board = BoardPosition.InitialSetup(8);
-            board.Should().Be(BoardPosition.FromString("4444,4444,4444,0000,0000,5555,5555,5555", " ", ","));
+            board.Should().Be(BoardPosition.FromString("4444,4444,4444,0000,0000,5555,5555,5555", ","));
         }
 
         [TestMethod]
         public void InitialBoard10x10() {
             var board = BoardPosition.InitialSetup(10);
-            board.Should().Be(BoardPosition.FromString("44444,44444,44444,44444,00000,00000,55555,55555,55555,55555", " ", ","));
+            board.Should().Be(BoardPosition.FromString("44444,44444,44444,44444,00000,00000,55555,55555,55555,55555", ","));
         }
 
         [TestMethod]
@@ -49,7 +49,7 @@ namespace Draughts.Test.Domain.GameAggregate {
 
         [TestMethod]
         public void BoardToLongString() {
-            BoardPosition.InitialSetup(4).ToLongString(" ", ",").Should().Be(" 4 4,0 0 , 0 0,5 5 ");
+            BoardPosition.InitialSetup(4).ToLongString(",").Should().Be(" 4 4,0 0 , 0 0,5 5 ");
         }
 
         [TestMethod]
@@ -59,7 +59,7 @@ namespace Draughts.Test.Domain.GameAggregate {
 
         [TestMethod]
         public void LongStringToBoard() {
-            BoardPosition.FromString(" 4 4,0 0 , 0 0,5 5 ", " ", ",").Should().Be(BoardPosition.InitialSetup(4));
+            BoardPosition.FromString(" 4 4,0 0 , 0 0,5 5 ", ",").Should().Be(BoardPosition.InitialSetup(4));
         }
 
         [TestMethod]
