@@ -17,7 +17,9 @@
                     <div id="square-@x-@y"
                          class="square@(BoardPosition.IsPlayable(x, y) ? " playable" : "")
                              @(board[x, y].Color)@(board[x, y].IsMan ? " man" : "")@(board[x, y].IsKing ? " king" : "")"
-                         style="left: @(60 * x)px; top: @(60 * y)px;">
+                         style="left: @(60 * x)px; top: @(60 * y)px;"
+                         data-number="@(BoardPosition.IsPlayable(x, y) ? @SquareNumber.FromPosition(x, y, settings.BoardSize) : "")"
+                         data-gameid="@Model.Id">
                     </div>
                 }
             }
@@ -65,3 +67,7 @@
         </div>
     </div>
 </div>
+
+@section Scripts {
+    <script src="/js/playgame.js" asp-append-version="true"></script>
+}
