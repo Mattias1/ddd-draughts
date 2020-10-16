@@ -20,6 +20,7 @@ namespace Draughts.Domain.GameAggregate.Models {
             12 => 30,
             10 => 20,
             8 => 12,
+            6 => 6,
             _ => throw new InvalidOperationException("Unknown boardsize: " + BoardSize)
         };
 
@@ -37,6 +38,7 @@ namespace Draughts.Domain.GameAggregate.Models {
         public string Description {
             get => this == International ? "International"
                 : this == EnglishAmerican ? "English draughts"
+                : this == Mini ? "Mini 6x6"
                 : $"Custom {BoardSize}x{BoardSize}";
         }
 
@@ -53,6 +55,9 @@ namespace Draughts.Domain.GameAggregate.Models {
         }
         public static GameSettings EnglishAmerican {
             get => new GameSettings(8, Color.Black, false, false, DraughtsCaptureConstraints.AnyFinishedSequence);
+        }
+        public static GameSettings Mini {
+            get => new GameSettings(6, Color.White, true, true, DraughtsCaptureConstraints.MaximumPieces);
         }
     }
 }
