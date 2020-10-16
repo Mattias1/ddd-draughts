@@ -1,5 +1,6 @@
 using Draughts.Common;
 using Draughts.Common.Utilities;
+using Draughts.Domain.GameAggregate.Models;
 using Draughts.Test.TestHelpers;
 using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -68,6 +69,7 @@ namespace Draughts.Test.Domain.GameAggregate {
 
             game.Players.Should().OnlyContain(p => p == whitePlayer);
             game.HasStarted.Should().BeFalse();
+            game.Turn.Should().BeNull();
         }
 
         [TestMethod]
@@ -81,6 +83,8 @@ namespace Draughts.Test.Domain.GameAggregate {
 
             game.Players.Should().BeEquivalentTo(whitePlayer, blackPlayer);
             game.HasStarted.Should().BeTrue();
+            game.Turn.Should().NotBeNull();
+            game.Turn!.Player.Color.Should().Be(Color.White);
         }
     }
 }

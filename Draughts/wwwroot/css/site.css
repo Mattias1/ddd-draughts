@@ -283,7 +283,7 @@ main {
     position: relative;
     box-shadow: 0px 1px 6px #222;
     background-repeat: no-repeat;
-    margin: 0 0 30px 0;
+    margin: 15px 0 30px 0;
 }
 .game-board-8 {
     width: 480px;
@@ -304,9 +304,23 @@ main {
     position: absolute;
     width: 60px;
     height: 60px;
+    background-repeat: no-repeat;
+    background-position: center;
 }
 #game-board .square.playable:hover {
     box-shadow: 0 0 6px #ddd;
+}
+#game-board .square.white.man {
+    background-image: url("/img/piece-white.png");
+}
+#game-board .square.black.man {
+    background-image: url("/img/piece-black.png");
+}
+#game-board .square.white.king {
+    background-image: url("/img/piece-white-king.png");
+}
+#game-board .square.black.king {
+    background-image: url("/img/piece-black-black-king.png");
 }
 #game-board .square.row {
     text-align: right;

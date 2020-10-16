@@ -5,11 +5,11 @@ namespace Draughts.Domain.GameAggregate.Models {
     public class GameId : IdValueObject<GameId> {
         public override long Id { get; }
 
-        public GameId(long id) {
-            if (id <= 0) {
+        public GameId(long? id) {
+            if (id is null || id.Value <= 0) {
                 throw new ManualValidationException("Invalid game id.");
             }
-            Id = id;
+            Id = id.Value;
         }
 
         public static implicit operator long(GameId gameId) => gameId.Id;

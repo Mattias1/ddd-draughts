@@ -1,6 +1,7 @@
 using Draughts.Domain.AuthUserAggregate.Models;
 using Draughts.Domain.GameAggregate.Models;
 using Draughts.Domain.UserAggregate.Models;
+using System;
 
 namespace Draughts.Test.TestHelpers {
     public class PlayerTestHelper {
@@ -24,11 +25,11 @@ namespace Draughts.Test.TestHelpers {
 
 
         public class PlayerBuilder {
-            private PlayerId _id;
-            private UserId _userId;
-            private Username _username;
-            private Rank _rank;
-            private Color _color;
+            private PlayerId? _id;
+            private UserId? _userId;
+            private Username? _username;
+            private Rank? _rank;
+            private Color? _color;
 
             public PlayerBuilder WithId(long id) => WithId(new PlayerId(id));
             public PlayerBuilder WithId(PlayerId id) {
@@ -59,6 +60,22 @@ namespace Draughts.Test.TestHelpers {
             }
 
             public Player Build() {
+                if (_id is null) {
+                    throw new InvalidOperationException("Id is not nullable");
+                }
+                if (_userId is null) {
+                    throw new InvalidOperationException("UserId is not nullable");
+                }
+                if (_username is null) {
+                    throw new InvalidOperationException("Username is not nullable");
+                }
+                if (_rank is null) {
+                    throw new InvalidOperationException("Rank is not nullable");
+                }
+                if (_color is null) {
+                    throw new InvalidOperationException("Color is not nullable");
+                }
+
                 return new Player(_id, _userId, _username, _rank, _color);
             }
         }

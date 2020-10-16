@@ -1,5 +1,6 @@
 using Draughts.Domain.AuthUserAggregate.Models;
 using Draughts.Domain.UserAggregate.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -21,11 +22,11 @@ namespace Draughts.Test.TestHelpers {
 
 
         public class AuthUserBuilder {
-            private AuthUserId _id;
-            private UserId _userId;
-            private Username _username;
-            private PasswordHash _passwordHash;
-            private Email _email;
+            private AuthUserId? _id;
+            private UserId? _userId;
+            private Username? _username;
+            private PasswordHash? _passwordHash;
+            private Email? _email;
             private List<Role> _roles = new List<Role>();
 
             public AuthUserBuilder WithId(long id) => WithId(new AuthUserId(id));
@@ -64,6 +65,22 @@ namespace Draughts.Test.TestHelpers {
             }
 
             public AuthUser Build() {
+                if (_id is null) {
+                    throw new InvalidOperationException("Id is not nullable");
+                }
+                if (_userId is null) {
+                    throw new InvalidOperationException("UserId is not nullable");
+                }
+                if (_username is null) {
+                    throw new InvalidOperationException("Username is not nullable");
+                }
+                if (_passwordHash is null) {
+                    throw new InvalidOperationException("PasswordHash is not nullable");
+                }
+                if (_email is null) {
+                    throw new InvalidOperationException("Email is not nullable");
+                }
+
                 return new AuthUser(_id, _userId, _username, _passwordHash, _email, _roles);
             }
         }

@@ -11,13 +11,7 @@ namespace Draughts.Common.OoConcepts {
         public bool Equals(T? other) => other is object && EqualsCore(other);
         protected bool EqualsCore(T other) => GetEqualityComponents().SequenceEqual(other.GetEqualityComponents());
 
-        public override int GetHashCode() {
-            return GetEqualityComponents().Aggregate(1, (current, obj) => {
-                unchecked {
-                    return current * 23 + (obj?.GetHashCode() ?? 0);
-                }
-            });
-        }
+        public override int GetHashCode() => ComparisonUtils.GetHashCode(GetEqualityComponents());
 
         public static bool operator ==(ValueObject<T>? left, ValueObject<T>? right) => ComparisonUtils.NullSafeEquals(left, right);
         public static bool operator !=(ValueObject<T>? left, ValueObject<T>? right) => ComparisonUtils.NullSafeNotEquals(left, right);
@@ -47,6 +41,32 @@ namespace Draughts.Common.OoConcepts {
 
         public static bool operator ==(IdValueObject<T>? left, long? right) => left?.Id == right;
         public static bool operator !=(IdValueObject<T>? left, long? right) => left?.Id != right;
+    }
+
+    public abstract class IntValueObject<T> : ValueObject<T>, IEquatable<int?>, IComparable<T> where T : IntValueObject<T> {
+        public abstract int Value { get; }
+
+        public override string ToString() => Value.ToString();
+
+        public int CompareTo(T? other) => Value.CompareTo(other?.Value);
+
+        protected override IEnumerable<object> GetEqualityComponents() {
+            yield return Value;
+        }
+
+        public override bool Equals(object? obj) => obj switch
+        {
+            IntValueObject<T> v => Equals(v),
+            int value => Equals(value),
+            _ => false
+        };
+        public bool Equals(IntValueObject<T>? obj) => Value == obj?.Value;
+        public bool Equals(int? id) => Value == id;
+
+        public override int GetHashCode() => Value.GetHashCode();
+
+        public static bool operator ==(IntValueObject<T>? left, int? right) => left?.Value == right;
+        public static bool operator !=(IntValueObject<T>? left, int? right) => left?.Value != right;
     }
 
     public abstract class StringValueObject<T> : ValueObject<T>, IEquatable<string>, IComparable<T> where T : StringValueObject<T> {

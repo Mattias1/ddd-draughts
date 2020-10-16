@@ -9,6 +9,7 @@ using Draughts.Application.Auth.Services;
 using Draughts.Application.Lobby.Services;
 using Draughts.Application.Shared.Services;
 using Draughts.Application.Auth;
+using Draughts.Application.PlayGame.Services;
 
 namespace Draughts.Common {
     public static class DraughtsServiceProvider {
@@ -24,6 +25,7 @@ namespace Draughts.Common {
 
             services.AddSingleton<IAuthService, AuthService>();
             services.AddSingleton<IGameService, GameService>();
+            services.AddSingleton<IPlayGameService, PlayGameService>();
 
             services.AddSingleton<IAuthUserRepository, InMemoryAuthUserRepository>();
             services.AddSingleton<IRoleRepository, InMemoryRoleRepository>();
