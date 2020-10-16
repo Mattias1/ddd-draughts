@@ -101,13 +101,15 @@ namespace Draughts.Repositories.Database {
             CreatePendingGame(10, GameSettings.International, 14),
             CreatePendingGame(11, GameSettings.International, 15),
             CreatePendingGame(12, GameSettings.EnglishAmerican, 16)
+            CreatePendingGame(13, GameSettings.Mini, 17)
         };
 
         public static List<InMemoryPlayer> TempPlayersTable { get; } = new List<InMemoryPlayer>();
         public static List<InMemoryPlayer> PlayersTable { get; } = new List<InMemoryPlayer> {
             CreatePlayer(14, UserDatabase.UserId, "User", Color.White, Ranks.WarrantOfficer),
             CreatePlayer(15, UserDatabase.MathyId, "Mathy", Color.Black, Ranks.LanceCorporal),
-            CreatePlayer(16, UserDatabase.UserId, "User", Color.Black, Ranks.WarrantOfficer)
+            CreatePlayer(16, UserDatabase.UserId, "User", Color.Black, Ranks.WarrantOfficer),
+            CreatePlayer(17, UserDatabase.MathyId, "Mathy", Color.Black, Ranks.LanceCorporal)
         };
 
         public static List<DomainEvent> TempDomainEventsTable { get; } = new List<DomainEvent>();

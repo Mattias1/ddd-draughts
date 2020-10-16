@@ -19,6 +19,10 @@ function applyPresets(preset) {
         val('menCaptureBackwards', false);
         val('captureConstraints', 'seq');
     }
+    else if (preset === 'mini') {
+        applyPresets('international');
+        val('boardSize', 6);
+    }
 }
 
 function val(name, value) {
