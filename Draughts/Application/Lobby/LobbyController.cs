@@ -7,7 +7,6 @@ using Draughts.Domain.GameAggregate.Models;
 using Draughts.Domain.GameAggregate.Specifications;
 using Draughts.Repositories;
 using Microsoft.AspNetCore.Mvc;
-using System;
 using static Draughts.Domain.AuthUserAggregate.Models.Permission;
 
 namespace Draughts.Application.Lobby {
@@ -38,10 +37,13 @@ namespace Draughts.Application.Lobby {
         }
 
         [HttpPost("lobby/create"), Requires(Permissions.PLAY_GAME)]
-        public IActionResult PostCreate([FromForm] GameCreationRequest request) {
+        public IActionResult PostCreate([FromForm] GameCreationRequest? request) {
             try {
-                var joinColor = ColorFromRequest(request.JoinAs);
-                _gameService.CreateGame(AuthContext.UserId, request.BuildGameSettings(), joinColor);
+                ValidateNotNull(request?.BoardSize, request?.WhiteHasFirstMove, request?.FlyingKings,
+                    request?.MenCaptureBackwards, request?.CaptureConstraints, request?.JoinAs);
+
+                var joinColor = ColorFromRequest(request!.JoinAs);
+                _gameService.CreateGame(AuthContext.UserId, request!.BuildGameSettings(), joinColor);
 
                 return Redirect("/lobby");
             }
@@ -51,9 +53,11 @@ namespace Draughts.Application.Lobby {
         }
 
         [HttpPost("lobby/join"), Requires(Permissions.PLAY_GAME)]
-        public IActionResult PostJoin([FromForm] GameJoinRequest request) {
+        public IActionResult PostJoin([FromForm] GameJoinRequest? request) {
             try {
-                var joinColor = request.Color is null ? null : ColorFromRequest(request.Color);
+                ValidateNotNull(request?.GameId, request?.Color);
+
+                var joinColor = request!.Color is null ? null : ColorFromRequest(request.Color);
                 _gameService.JoinGame(AuthContext.UserId, new GameId(request.GameId), joinColor);
 
                 return Redirect("/game/" + request.GameId);
@@ -72,28 +76,28 @@ namespace Draughts.Application.Lobby {
         };
 
         public class GameCreationRequest {
-            public int BoardSize { get; set; }
-            public bool WhiteHasFirstMove { get; set; }
-            public bool FlyingKings { get; set; }
-            public bool MenCaptureBackwards { get; set; }
+            public int? BoardSize { get; set; }
+            public bool? WhiteHasFirstMove { get; set; }
+            public bool? FlyingKings { get; set; }
+            public bool? MenCaptureBackwards { get; set; }
             public string? CaptureConstraints { get; set; }
             public string? JoinAs { get; set; }
 
             public GameSettings BuildGameSettings() {
-                var firstMove = WhiteHasFirstMove ? Color.White : Color.Black;
+                var firstMove = WhiteHasFirstMove!.Value ? Color.White : Color.Black;
                 var capConstraints = CaptureConstraints switch
                 {
                     "max" => GameSettings.DraughtsCaptureConstraints.MaximumPieces,
                     "seq" => GameSettings.DraughtsCaptureConstraints.AnyFinishedSequence,
-                    _ => throw new InvalidOperationException("Unknown capture constraint.")
+                    _ => throw new ManualValidationException("Unknown capture constraint.")
                 };
 
-                return new GameSettings(BoardSize, firstMove, FlyingKings, MenCaptureBackwards, capConstraints);
+                return new GameSettings(BoardSize!.Value, firstMove, FlyingKings!.Value, MenCaptureBackwards!.Value, capConstraints);
             }
         }
 
         public class GameJoinRequest {
-            public int GameId { get; set; }
+            public int? GameId { get; set; }
             public string? Color { get; set; }
         }
     }
