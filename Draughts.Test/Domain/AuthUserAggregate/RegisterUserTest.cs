@@ -2,16 +2,15 @@ using Draughts.Common;
 using Draughts.Domain.AuthUserAggregate.Models;
 using Draughts.Test.TestHelpers;
 using FluentAssertions;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
+using Xunit;
 
 namespace Draughts.Test.Domain.AuthUserAggregate {
-    [TestClass]
     public class RegisterUserTest {
         private static readonly Role PendingRole = RoleTestHelper.PendingRegistration().Build();
         private static readonly Role RegisteredRole = RoleTestHelper.RegisteredUser().Build();
 
-        [TestMethod]
+        [Fact]
         public void Register_WhenRoleIsNotRegisteredUser_ThenThrow() {
             var authUser = AuthUserTestHelper.User().WithRoles(PendingRole).Build();
             var wrongRole = PendingRole;
@@ -21,7 +20,7 @@ namespace Draughts.Test.Domain.AuthUserAggregate {
             registration.Should().Throw<ArgumentException>();
         }
 
-        [TestMethod]
+        [Fact]
         public void Register_WhenUserHasNoRoles_ThenValidationError() {
             var authUser = AuthUserTestHelper.User().WithRoles().Build();
 
@@ -30,7 +29,7 @@ namespace Draughts.Test.Domain.AuthUserAggregate {
             registration.Should().Throw<ManualValidationException>();
         }
 
-        [TestMethod]
+        [Fact]
         public void Register_WhenUserHasMultipleRoles_ThenValidationError() {
             var authUser = AuthUserTestHelper.User().WithRoles(PendingRole, RegisteredRole).Build();
 
@@ -39,7 +38,7 @@ namespace Draughts.Test.Domain.AuthUserAggregate {
             registration.Should().Throw<ManualValidationException>();
         }
 
-        [TestMethod]
+        [Fact]
         public void Register_WhenRoleIsNotPending_ThenValidationError() {
             var wrongRole = RegisteredRole;
             var authUser = AuthUserTestHelper.User().WithRoles(wrongRole).Build();
@@ -49,7 +48,7 @@ namespace Draughts.Test.Domain.AuthUserAggregate {
             registration.Should().Throw<ManualValidationException>();
         }
 
-        [TestMethod]
+        [Fact]
         public void Register_WhenAllIsWell_ThenSwapOutRoles() {
             var authUser = AuthUserTestHelper.User().WithRoles(PendingRole).Build();
 

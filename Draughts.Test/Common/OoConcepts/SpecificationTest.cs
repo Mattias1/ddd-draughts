@@ -1,37 +1,36 @@
 using Draughts.Common.OoConcepts;
 using FluentAssertions;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Linq.Expressions;
+using Xunit;
 
 namespace Draughts.Test.Common.OoConcepts {
-    [TestClass]
     public class SpecificationTest {
-        [TestMethod]
-        [DataRow(-1, -1, false)]
-        [DataRow(1, -1, false)]
-        [DataRow(-1, 1, false)]
-        [DataRow(1, 1, true)]
+        [Theory]
+        [InlineData(-1, -1, false)]
+        [InlineData(1, -1, false)]
+        [InlineData(-1, 1, false)]
+        [InlineData(1, 1, true)]
         public void TestAndSpecification(int a, int b, bool result) {
             var aSpec = new PositiveSignSpecification(a);
             var bSpec = new PositiveSignSpecification(b);
             aSpec.And(bSpec).IsSatisfiedBy(42).Should().Be(result);
         }
 
-        [TestMethod]
-        [DataRow(-1, -1, false)]
-        [DataRow(1, -1, true)]
-        [DataRow(-1, 1, true)]
-        [DataRow(1, 1, true)]
+        [Theory]
+        [InlineData(-1, -1, false)]
+        [InlineData(1, -1, true)]
+        [InlineData(-1, 1, true)]
+        [InlineData(1, 1, true)]
         public void TestOrSpecification(int a, int b, bool result) {
             var aSpec = new PositiveSignSpecification(a);
             var bSpec = new PositiveSignSpecification(b);
             aSpec.Or(bSpec).IsSatisfiedBy(42).Should().Be(result);
         }
 
-        [TestMethod]
-        [DataRow(-1, true)]
-        [DataRow(1, false)]
+        [Theory]
+        [InlineData(-1, true)]
+        [InlineData(1, false)]
         public void TestNotSpecification(int input, bool result) {
             var spec = new PositiveSignSpecification(input);
             spec.Not().IsSatisfiedBy(42).Should().Be(result);
