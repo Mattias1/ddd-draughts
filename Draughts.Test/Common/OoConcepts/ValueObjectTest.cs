@@ -1,12 +1,11 @@
 using Draughts.Common.OoConcepts;
 using FluentAssertions;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.Generic;
+using Xunit;
 
 namespace Draughts.Test.Common.OoConcepts {
-    [TestClass]
     public class ValueObjectTest {
-        [TestMethod]
+        [Fact]
         public void ValueObjects_ShouldBeEqual_WhenComponentsAreEqual() {
             var left = new TestValueObject(1, "caseless", "ABcd");
             var right = new TestValueObject(1, "caseLESS", "ABcd");
@@ -18,10 +17,10 @@ namespace Draughts.Test.Common.OoConcepts {
             left.GetHashCode().Should().Be(right.GetHashCode());
         }
 
-        [TestMethod]
-        [DataRow(1, "caseless", "ABcd", 2, "caseless", "ABcd")]
-        [DataRow(1, "caseless", "ABcd", 1, "different", "ABcd")]
-        [DataRow(1, "caseless", "ABcd", 1, "caseless", "abCD")]
+        [Theory]
+        [InlineData(1, "caseless", "ABcd", 2, "caseless", "ABcd")]
+        [InlineData(1, "caseless", "ABcd", 1, "different", "ABcd")]
+        [InlineData(1, "caseless", "ABcd", 1, "caseless", "abCD")]
         public void ValueObjects_ShouldNotBeEqual_WhenComponentsAreDifferent(
             int leftId, string leftCaseless, string leftCaseSensitive,
             int rightId, string rightCaseless, string rightCaseSensitive
@@ -35,7 +34,7 @@ namespace Draughts.Test.Common.OoConcepts {
             (left != right).Should().BeTrue();
         }
 
-        [TestMethod]
+        [Fact]
         public void ValueObjects_ShouldNotBeEqual_WhenTheOtherIsNull() {
             var left = new TestValueObject(1, "caseless", "Blah");
             TestValueObject? right = null;
@@ -49,7 +48,7 @@ namespace Draughts.Test.Common.OoConcepts {
             (right != left).Should().BeTrue();
         }
 
-        [TestMethod]
+        [Fact]
         public void ValueObjects_ShouldBeEqual_WhenBothAreNull() {
             TestValueObject? left = null;
             TestValueObject? right = null;

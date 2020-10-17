@@ -1,11 +1,10 @@
 using Draughts.Common.OoConcepts;
 using FluentAssertions;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Xunit;
 
 namespace Draughts.Test.Common.OoConcepts {
-    [TestClass]
     public class StringValueObjectTest {
-        [TestMethod]
+        [Fact]
         public void Entities_ShouldBeEqual_WhenValuesAreEqual() {
             var left = new TestString("Howdy?");
             var right = new TestString("Howdy?");
@@ -17,7 +16,7 @@ namespace Draughts.Test.Common.OoConcepts {
             left.GetHashCode().Should().Be(right.GetHashCode());
         }
 
-        [TestMethod]
+        [Fact]
         public void Entities_ShouldBeEqual_WhenValuesHaveDifferentCasing() {
             var left = new TestString("CASELESS");
             var right = new TestString("CaSeLeSS");
@@ -29,7 +28,7 @@ namespace Draughts.Test.Common.OoConcepts {
             left.GetHashCode().Should().Be(right.GetHashCode());
         }
 
-        [TestMethod]
+        [Fact]
         public void Entities_ShouldBeEqual_WhenContainingWeirdCharacters() {
             var left = new TestString("Iñtërnâtiônàlizætiøn_𐐒𐐌_あ");
             var right = new TestString("Iñtërnâtiônàlizætiøn_𐐒𐐌_あ");
@@ -41,7 +40,7 @@ namespace Draughts.Test.Common.OoConcepts {
             left.GetHashCode().Should().Be(right.GetHashCode());
         }
 
-        [TestMethod]
+        [Fact]
         public void Entities_ShouldNotBeEqual_WhenValuesAreDifferent() {
             var left = new TestString("left");
             var right = new TestString("right");
@@ -52,7 +51,7 @@ namespace Draughts.Test.Common.OoConcepts {
             (left != right).Should().BeTrue();
         }
 
-        [TestMethod]
+        [Fact]
         public void Entities_ShouldNotBeEqual_WhenTheOtherIsNull() {
             var left = new TestString("left");
             TestString? right = null;
@@ -66,7 +65,7 @@ namespace Draughts.Test.Common.OoConcepts {
             (right != left).Should().BeTrue();
         }
 
-        [TestMethod]
+        [Fact]
         public void Entities_ShouldBeEqual_WhenBothAreNull() {
             TestString? left = null;
             TestString? right = null;

@@ -1,22 +1,20 @@
 using Draughts.Common;
 using Draughts.Domain.AuthUserAggregate.Models;
-using Draughts.Domain.UserAggregate.Models;
 using Draughts.Test.TestHelpers;
 using FluentAssertions;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NodaTime;
 using NodaTime.Testing;
+using Xunit;
 using static Draughts.Domain.AuthUserAggregate.Models.Permission;
 
 namespace Draughts.Test.Common {
-    [TestClass]
     public class JsonWebTokenTest {
         public static readonly AuthUserId AuthUserId = new AuthUserId(1);
         public static readonly string JWT_STRING = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJEcmF1Z2h0cyIsImV" +
             "4cCI6MTU3OTI2MjQwMCwiYXV1IjoxLCJ1c3IiOjEsInVuYSI6IlVzZXIiLCJyb2wiOlsyXX0.ApProjWhz0l1FSbqyYvLxBoQjPGV_O" +
             "lbJfu_TSGZQoU";
 
-        [TestMethod]
+        [Fact]
         public void TestGenerateJwtString() {
             var registeredUser = new Role(new RoleId(2), "Registered user", Permissions.PlayGame);
             var authUser = BuildAuthUser(AuthUserId, "User", registeredUser);
@@ -29,7 +27,7 @@ namespace Draughts.Test.Common {
             jwtString.Should().Be(JWT_STRING);
         }
 
-        [TestMethod]
+        [Fact]
         public void TryParseJwtString_WhenAlright_ThenParseCorrectly() {
             var clock = new FakeClock(new LocalDateTime(2020, 01, 16, 12, 0).InUtc().ToInstant());
 
@@ -40,7 +38,7 @@ namespace Draughts.Test.Common {
             jwt!.AuthUserId.Should().Be(AuthUserId);
         }
 
-        [TestMethod]
+        [Fact]
         public void TryParseJwtString_WhenExpired_ThenAbort() {
             var clock = new FakeClock(new LocalDateTime(2021, 01, 16, 12, 0).InUtc().ToInstant());
 
@@ -50,7 +48,7 @@ namespace Draughts.Test.Common {
             jwt.Should().BeNull();
         }
 
-        [TestMethod]
+        [Fact]
         public void TryParseJwtString_WhenInvalidHash_ThenAbort() {
             var clock = new FakeClock(new LocalDateTime(2020, 01, 16, 12, 0).InUtc().ToInstant());
 
