@@ -22,13 +22,14 @@ namespace Draughts.Application.Lobby.Services {
             _userRepository = userRepository;
         }
 
-        public void CreateGame(UserId userId, GameSettings gameSettings, Color joinColor) {
+        public Game CreateGame(UserId userId, GameSettings gameSettings, Color joinColor) {
             var user = _userRepository.FindById(userId);
 
-            _unitOfWork.WithTransaction(TransactionDomain.Game, tran => {
-                _gameFactory.CreateGame(gameSettings, user, joinColor);
+            return _unitOfWork.WithTransaction(TransactionDomain.Game, tran => {
+                var game = _gameFactory.CreateGame(gameSettings, user, joinColor);
 
                 tran.Commit();
+                return game;
             });
         }
 

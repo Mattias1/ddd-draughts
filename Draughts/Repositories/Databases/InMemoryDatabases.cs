@@ -20,8 +20,10 @@ namespace Draughts.Repositories.Database {
         public const long MathyId = 5;
         public const long JackDeHaasId = 6;
         public const long BobbyId = 7;
+        public const long TestPlayerBlack = 8;
+        public const long TestPlayerWhite = 9;
 
-        public const long START_FOR_NEXT_IDS = 15;
+        public const long START_FOR_NEXT_IDS = 20;
 
         public static List<InMemoryUser> TempUsersTable { get; } = new List<InMemoryUser>();
         public static List<InMemoryUser> UsersTable { get; } = new List<InMemoryUser> {
@@ -32,6 +34,8 @@ namespace Draughts.Repositories.Database {
             CreateUser(MathyId, "Mathy", 800, Ranks.LanceCorporal, 12),
             CreateUser(JackDeHaasId, "JackDeHaas", 9001, Ranks.FieldMarshal, 1337),
             CreateUser(BobbyId, "<script>alert('Hi, my name is Bobby');</script>", 1000, Ranks.Private, 0),
+            CreateUser(TestPlayerBlack, "TestPlayerBlack", 1000, Ranks.Private, 0),
+            CreateUser(TestPlayerWhite, "TestPlayerWhite", 1000, Ranks.Private, 0),
         };
 
         private static InMemoryUser CreateUser(long id, string name, int rating, Rank rank, int gamesPlayed) {
@@ -72,6 +76,8 @@ namespace Draughts.Repositories.Database {
             CreateAuthUser(UserDatabase.MathyId, "Mathy", registeredUser),
             CreateAuthUser(UserDatabase.JackDeHaasId, "JackDeHaas", registeredUser),
             CreateAuthUser(UserDatabase.BobbyId, "<script>alert('Hi, my name is Bobby');</script>", pendingRegistration),
+            CreateAuthUser(UserDatabase.TestPlayerBlack, "TestPlayerBlack", registeredUser),
+            CreateAuthUser(UserDatabase.TestPlayerWhite, "TestPlayerWhite", registeredUser),
         };
 
         private static InMemoryAuthUser CreateAuthUser(long id, string name, params InMemoryRole[] roles) {
@@ -92,16 +98,16 @@ namespace Draughts.Repositories.Database {
     public static class GameDatabase {
         public static List<InMemoryGame> TempGamesTable { get; } = new List<InMemoryGame>();
         public static List<InMemoryGame> GamesTable { get; } = new List<InMemoryGame> {
-            CreatePendingGame(8, GameSettings.International, 11),
-            CreatePendingGame(9, GameSettings.International, 12),
-            CreatePendingGame(10, GameSettings.EnglishAmerican, 13)
+            CreatePendingGame(10, GameSettings.International, 14),
+            CreatePendingGame(11, GameSettings.International, 15),
+            CreatePendingGame(12, GameSettings.EnglishAmerican, 16)
         };
 
         public static List<InMemoryPlayer> TempPlayersTable { get; } = new List<InMemoryPlayer>();
         public static List<InMemoryPlayer> PlayersTable { get; } = new List<InMemoryPlayer> {
-            CreatePlayer(11, UserDatabase.UserId, "User", Color.White, Ranks.WarrantOfficer),
-            CreatePlayer(12, UserDatabase.MathyId, "Mathy", Color.Black, Ranks.LanceCorporal),
-            CreatePlayer(13, UserDatabase.UserId, "User", Color.Black, Ranks.WarrantOfficer)
+            CreatePlayer(14, UserDatabase.UserId, "User", Color.White, Ranks.WarrantOfficer),
+            CreatePlayer(15, UserDatabase.MathyId, "Mathy", Color.Black, Ranks.LanceCorporal),
+            CreatePlayer(16, UserDatabase.UserId, "User", Color.Black, Ranks.WarrantOfficer)
         };
 
         public static List<DomainEvent> TempDomainEventsTable { get; } = new List<DomainEvent>();
