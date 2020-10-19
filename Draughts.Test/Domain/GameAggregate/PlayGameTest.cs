@@ -2,15 +2,14 @@ using Draughts.Common.Utilities;
 using Draughts.Domain.GameAggregate.Models;
 using Draughts.Test.TestHelpers;
 using FluentAssertions;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NodaTime.Testing;
+using Xunit;
 
 namespace Draughts.Test.Domain.GameAggregate {
-    [TestClass]
     public class PlayGameTest {
         FakeClock _fakeClock = FakeClock.FromUtc(2020, 02, 29);
 
-        [TestMethod]
+        [Fact]
         public void DoMoveShouldUpdateBoardAndSwitchTurn() {
             var game = GameTestHelper.StartedInternationalGame().Build();
             var from = SquareNumber.FromPosition(3, 6, game.Settings.BoardSize);

@@ -2,6 +2,7 @@ using Draughts.Application.Shared.Middleware;
 using Draughts.Common;
 using Draughts.Domain.AuthUserAggregate.Models;
 using Flurl;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -44,12 +45,14 @@ namespace Draughts.Application.Shared {
         public ViewResult ErrorView(string error) => ErrorView("", error);
         public ViewResult ErrorView(string field, string error) {
             AddError(field, error);
+            HttpContext.Response.StatusCode = StatusCodes.Status400BadRequest;
             return View();
         }
 
         public ViewResult ErrorView(IEnumerable<string> errors) => ErrorView(errors.Select(e => ("", e)));
         public ViewResult ErrorView(IEnumerable<(string field, string error)> errors) {
             AddErrors(errors);
+            HttpContext.Response.StatusCode = StatusCodes.Status400BadRequest;
             return View();
         }
 

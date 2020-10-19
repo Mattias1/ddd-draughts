@@ -3,16 +3,15 @@ using Draughts.Common.Utilities;
 using Draughts.Domain.GameAggregate.Models;
 using Draughts.Test.TestHelpers;
 using FluentAssertions;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NodaTime.Testing;
 using System;
+using Xunit;
 
 namespace Draughts.Test.Domain.GameAggregate {
-    [TestClass]
     public class JoinGameTest {
         FakeClock _fakeClock = FakeClock.FromUtc(2020, 02, 29);
 
-        [TestMethod]
+        [Fact]
         public void JoinGame_WhenGameStarted_ThenValidationError() {
             var game = GameTestHelper.StartedInternationalGame().Build();
 
@@ -26,7 +25,7 @@ namespace Draughts.Test.Domain.GameAggregate {
             joinGame.Should().Throw<ManualValidationException>();
         }
 
-        [TestMethod]
+        [Fact]
         public void JoinGame_WhenAlreadyInGame_ThenValidationError() {
             var whitePlayer = PlayerTestHelper.White().Build();
             var game = GameTestHelper.PendingInternationalGame(whitePlayer).Build();
@@ -36,7 +35,7 @@ namespace Draughts.Test.Domain.GameAggregate {
             joinGame.Should().Throw<ManualValidationException>();
         }
 
-        [TestMethod]
+        [Fact]
         public void JoinGame_WhenUserIdOccupied_ThenValidationError() {
             var whitePlayer = PlayerTestHelper.White().WithUserId(9999).Build();
             var game = GameTestHelper.PendingInternationalGame(whitePlayer).Build();
@@ -48,7 +47,7 @@ namespace Draughts.Test.Domain.GameAggregate {
             joinGame.Should().Throw<ManualValidationException>();
         }
 
-        [TestMethod]
+        [Fact]
         public void JoinGame_WhenColorOccupied_ThenValidationError() {
             var whitePlayer = PlayerTestHelper.White().Build();
             var game = GameTestHelper.PendingInternationalGame(whitePlayer).Build();
@@ -60,7 +59,7 @@ namespace Draughts.Test.Domain.GameAggregate {
             joinGame.Should().Throw<ManualValidationException>();
         }
 
-        [TestMethod]
+        [Fact]
         public void JoinGame_WhenFirstPlayer_ThenJoinGame() {
             var game = GameTestHelper.PendingInternationalGame().Build();
             var whitePlayer = PlayerTestHelper.White().Build();
@@ -72,7 +71,7 @@ namespace Draughts.Test.Domain.GameAggregate {
             game.Turn.Should().BeNull();
         }
 
-        [TestMethod]
+        [Fact]
         public void JoinGame_WhenSecondPlayer_ThenStartGame() {
             var blackPlayer = PlayerTestHelper.Black().Build();
             var game = GameTestHelper.PendingInternationalGame(blackPlayer).Build();

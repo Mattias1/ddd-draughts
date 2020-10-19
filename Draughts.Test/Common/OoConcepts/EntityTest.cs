@@ -1,11 +1,10 @@
 using Draughts.Common.OoConcepts;
 using FluentAssertions;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Xunit;
 
 namespace Draughts.Test.Common.OoConcepts {
-    [TestClass]
     public class EntityTest {
-        [TestMethod]
+        [Fact]
         public void Entities_ShouldBeEqual_WhenIdsAreEqual() {
             var left = new TestEntity(new TestId(1), "left");
             var right = new TestEntity(new TestId(1), "right");
@@ -17,7 +16,7 @@ namespace Draughts.Test.Common.OoConcepts {
             left.GetHashCode().Should().Be(right.GetHashCode());
         }
 
-        [TestMethod]
+        [Fact]
         public void Entities_ShouldNotBeEqual_WhenIdsAreDifferent() {
             var left = new TestEntity(new TestId(1), "whatever");
             var right = new TestEntity(new TestId(2), "whatever");
@@ -28,7 +27,7 @@ namespace Draughts.Test.Common.OoConcepts {
             (left != right).Should().BeTrue();
         }
 
-        [TestMethod]
+        [Fact]
         public void Entities_ShouldNotBeEqual_WhenTheOtherIsNull() {
             var left = new TestEntity(new TestId(1), "left");
             TestEntity? right = null;
@@ -42,7 +41,7 @@ namespace Draughts.Test.Common.OoConcepts {
             (right != left).Should().BeTrue();
         }
 
-        [TestMethod]
+        [Fact]
         public void Entities_ShouldBeEqual_WhenBothAreNull() {
             TestEntity? left = null;
             TestEntity? right = null;

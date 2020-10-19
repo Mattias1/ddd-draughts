@@ -6,12 +6,11 @@ using Draughts.Repositories.Databases;
 using Draughts.Test.Fakes;
 using Draughts.Test.TestHelpers;
 using FluentAssertions;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NodaTime.Testing;
 using System;
+using Xunit;
 
 namespace Draughts.Test.Repositories.Databases {
-    [TestClass]
     public class InMemoryUnitOfWorkTest {
         private readonly FakeClock _clock;
         private readonly FakeDomainEventHandler _fakeDomainEventHandler;
@@ -27,7 +26,7 @@ namespace Draughts.Test.Repositories.Databases {
             AuthUserDatabase.DomainEventsTable.Clear();
         }
 
-        [TestMethod]
+        [Fact]
         public void BeginTransaction_DoesntPersistAnything_WhenNotCommitting() {
             using (var tran = _unitOfWork.BeginTransaction(TransactionDomain.AuthUser)) {
                 StoreTestRole(1);
@@ -39,7 +38,7 @@ namespace Draughts.Test.Repositories.Databases {
             AuthUserDatabase.TempRolesTable.Should().BeEmpty();
         }
 
-        [TestMethod]
+        [Fact]
         public void BeginTransaction_PersistsUntillFlush_WhenFlushingButNotCommitting() {
             using (var tran = _unitOfWork.BeginTransaction(TransactionDomain.AuthUser)) {
                 StoreTestRole(1);
@@ -56,7 +55,7 @@ namespace Draughts.Test.Repositories.Databases {
             AuthUserDatabase.TempRolesTable.Should().BeEmpty();
         }
 
-        [TestMethod]
+        [Fact]
         public void BeginTransaction_PersistsEverything_WhenCommitting() {
             using (var tran = _unitOfWork.BeginTransaction(TransactionDomain.AuthUser)) {
                 StoreTestRole(1);
@@ -71,7 +70,7 @@ namespace Draughts.Test.Repositories.Databases {
             AuthUserDatabase.TempRolesTable.Should().BeEmpty();
         }
 
-        [TestMethod]
+        [Fact]
         public void BeginTransaction_Throw_WhenATransactionWithThisDomainIsAlreadyStarted() {
             using (var tran = _unitOfWork.BeginTransaction(TransactionDomain.AuthUser)) {
                 Action beginTransAction = () => _unitOfWork.BeginTransaction(TransactionDomain.AuthUser);
@@ -79,14 +78,14 @@ namespace Draughts.Test.Repositories.Databases {
             }
         }
 
-        [TestMethod]
+        [Fact]
         public void Store_ShouldThrow_WhenNoTransactionIsOpen() {
             Action storeAction = () => StoreTestRole(1);
 
             storeAction.Should().Throw<InvalidOperationException>();
         }
 
-        [TestMethod]
+        [Fact]
         public void WithTransaction_ShouldNotFireEvent_WhenRollbacking() {
             _unitOfWork.Register(_fakeDomainEventHandler);
 
@@ -99,7 +98,7 @@ namespace Draughts.Test.Repositories.Databases {
             _fakeDomainEventHandler.HandledEvents.Should().BeEmpty();
         }
 
-        [TestMethod]
+        [Fact]
         public void WithTransaction_ShouldFireEvent_WhenCommitting() {
             _unitOfWork.Register(_fakeDomainEventHandler);
 
@@ -113,7 +112,7 @@ namespace Draughts.Test.Repositories.Databases {
             _fakeDomainEventHandler.HandledEvents.Should().HaveCount(1);
         }
 
-        [TestMethod]
+        [Fact]
         public void WithTransaction_ShouldFireEventOnlyOnce_WhenCommittingAndReFiringAll() {
             _unitOfWork.Register(_fakeDomainEventHandler);
 
@@ -128,7 +127,7 @@ namespace Draughts.Test.Repositories.Databases {
             _fakeDomainEventHandler.HandledEvents.Should().HaveCount(1);
         }
 
-        [TestMethod]
+        [Fact]
         public void Raise_ShouldThrow_WhenNoTransactionIsOpen() {
             _unitOfWork.Register(_fakeDomainEventHandler);
 
