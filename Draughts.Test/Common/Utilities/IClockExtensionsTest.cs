@@ -1,12 +1,11 @@
 using Draughts.Common.Utilities;
 using FluentAssertions;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NodaTime.Testing;
+using Xunit;
 
 namespace Draughts.Test.Common.Utilities {
-    [TestClass]
     public class IClockExtensionsTest {
-        [TestMethod]
+        [Fact]
         public void TestUtcNow() {
             var clock = FakeClock.FromUtc(2020, 02, 29, 23, 59, 18);
 

@@ -3,12 +3,11 @@ using Draughts.Common.Utilities;
 using Draughts.Domain.AuthUserAggregate.Events;
 using Draughts.Test.TestHelpers;
 using FluentAssertions;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Xunit;
 using NodaTime;
 using NodaTime.Testing;
 
 namespace Draughts.Test.Common.Events {
-    [TestClass]
     public class DomainEventTest {
         private readonly IClock _clock;
 
@@ -16,7 +15,7 @@ namespace Draughts.Test.Common.Events {
             _clock = FakeClock.FromUtc(2020, 02, 29);
         }
 
-        [TestMethod]
+        [Fact]
         public void Events_ShouldBeEqual_WhenIdsAreEqual() {
             var pendingRole = RoleTestHelper.PendingRegistration().WithId(11).Build();
             var left = new RoleCreated(pendingRole, new DomainEventId(1), _clock.UtcNow());
@@ -31,7 +30,7 @@ namespace Draughts.Test.Common.Events {
             left.GetHashCode().Should().Be(right.GetHashCode());
         }
 
-        [TestMethod]
+        [Fact]
         public void Events_ShouldNotBeEqual_WhenIdsAreDifferent() {
             var role = RoleTestHelper.PendingRegistration().WithId(11).Build();
             var left = new RoleCreated(role, new DomainEventId(1), _clock.UtcNow());
@@ -43,7 +42,7 @@ namespace Draughts.Test.Common.Events {
             (left != right).Should().BeTrue();
         }
 
-        [TestMethod]
+        [Fact]
         public void Events_ShouldNotBeEqual_WhenTheOtherIsNull() {
             var role = RoleTestHelper.PendingRegistration().WithId(11).Build();
             var left = new RoleCreated(role, new DomainEventId(1), _clock.UtcNow());
@@ -58,7 +57,7 @@ namespace Draughts.Test.Common.Events {
             (right != left).Should().BeTrue();
         }
 
-        [TestMethod]
+        [Fact]
         public void Events_ShouldBeEqual_WhenBothAreNull() {
             RoleCreated? left = null;
             RoleCreated? right = null;
@@ -67,7 +66,7 @@ namespace Draughts.Test.Common.Events {
             (left != right).Should().BeFalse();
         }
 
-        [TestMethod]
+        [Fact]
         public void RegisterFailedAttempt_ShouldUpdateDateAndNrOfAttempts() {
             var role = RoleTestHelper.PendingRegistration().Build();
             var evt = new RoleCreated(role, new DomainEventId(IdTestHelper.Next()), _clock.UtcNow().PlusHours(-1));

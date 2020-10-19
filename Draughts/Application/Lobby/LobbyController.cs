@@ -43,9 +43,9 @@ namespace Draughts.Application.Lobby {
                     request?.MenCaptureBackwards, request?.CaptureConstraints, request?.JoinAs);
 
                 var joinColor = ColorFromRequest(request!.JoinAs);
-                _gameService.CreateGame(AuthContext.UserId, request!.BuildGameSettings(), joinColor);
+                var game = _gameService.CreateGame(AuthContext.UserId, request!.BuildGameSettings(), joinColor);
 
-                return Redirect("/lobby");
+                return Redirect($"/game/{game.Id}");
             }
             catch (ManualValidationException e) {
                 return ErrorRedirect("/lobby/create", e.Message);
@@ -55,7 +55,7 @@ namespace Draughts.Application.Lobby {
         [HttpPost("lobby/join"), Requires(Permissions.PLAY_GAME)]
         public IActionResult PostJoin([FromForm] GameJoinRequest? request) {
             try {
-                ValidateNotNull(request?.GameId, request?.Color);
+                ValidateNotNull(request?.GameId);
 
                 var joinColor = request!.Color is null ? null : ColorFromRequest(request.Color);
                 _gameService.JoinGame(AuthContext.UserId, new GameId(request.GameId), joinColor);
@@ -97,7 +97,7 @@ namespace Draughts.Application.Lobby {
         }
 
         public class GameJoinRequest {
-            public int? GameId { get; set; }
+            public long? GameId { get; set; }
             public string? Color { get; set; }
         }
     }
