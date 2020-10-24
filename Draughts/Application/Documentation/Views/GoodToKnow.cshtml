@@ -1,0 +1,37 @@
+@{
+    ViewBag.Title = "Documentation";
+}
+
+<nav class="side-menu">
+    @Utils.SideMenu(Model)
+</nav>
+
+<div class="text-side-menu-container">
+    <h1>@ViewBag.Title</h1>
+    <p>
+        Some annoying things that I ran into when implementing DDD that weren't obvious right away.
+        <!-- TODO: Add blog links / more explanations for these? -->
+    </p>
+
+    <h4>Database id's</h4>
+    <p>
+        A domain does not know about the existence of a database (see <a href="/documentation/onionarchitecture">onion
+        architecture</a>), so how do we assign id's to a new entity?
+        The answer is to use unique id generators that don't rely on database calls, such as the HiLo algorithm.
+    </p>
+
+    <h4>Repositories and their interface</h4>
+    <p>
+        One of the rules of the <a href="/documentation/onionarchitecture">onion architecture</a> is that dependencies
+        point inside, meaning that you are allowed to call classes in layers closer to the center (or your own layer),
+        but not the other way around. This causes a problem with repositories, as they are in the outer most layer, but
+        need to be called from the inside (the application layer).
+    </p>
+    <p>
+        Some people 'solve' this by saying that the interface of the repository does not reside in the outermost layer,
+        so now application services (or even domain services) can call repositories, but that feels like cheating to me.
+        I 'solved' this myself by admitting the world isn't perfect and we'll make do with this one exception, but if
+        you happen to know a good solution here (or have a good argument why the interface really does live on a
+        different level than it's implementation) then please tell me :).
+    </p>
+</div>
