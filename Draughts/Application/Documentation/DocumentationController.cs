@@ -21,6 +21,9 @@ namespace Draughts.Application.Documentation {
         public IActionResult BuildingBlocks() => ViewWithMenu();
 
         [HttpGet, GuestRoute]
+        public IActionResult GoodToKnow() => ViewWithMenu();
+
+        [HttpGet, GuestRoute]
         public IActionResult Auth() => ViewWithMenu();
 
         private IActionResult ViewWithMenu() {
@@ -30,6 +33,7 @@ namespace Draughts.Application.Documentation {
                 ("Bounded contexts", "/documentation/boundedcontexts"),
                 ("Onion architecture", "/documentation/onionarchitecture"),
                 ("Building blocks", "/documentation/buildingblocks"),
+                ("Good to know", "/documentation/goodtoknow"),
                 ("Authentication and authorization", "/documentation/auth")
             ));
         }
