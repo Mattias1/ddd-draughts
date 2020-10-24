@@ -2,6 +2,7 @@ using Draughts.Common;
 using Draughts.Common.OoConcepts;
 
 namespace Draughts.Domain.GameAggregate.Models {
+    // TODO: Maybe make this it's own aggregate?
     public class GameState : Entity<GameState, GameId> {
         public enum MoveResult { NextTurn, MoreCapturesAvailable, GameOver };
 
