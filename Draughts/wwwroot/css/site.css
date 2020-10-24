@@ -316,16 +316,16 @@ main {
     box-shadow: 0 0 6px #ddd;
 }
 #game-board .square.white.man {
-    background-image: url("/img/piece-white.png");
+    background-image: url("/img/white-piece.png");
 }
 #game-board .square.black.man {
-    background-image: url("/img/piece-black.png");
+    background-image: url("/img/black-piece.png");
 }
 #game-board .square.white.king {
-    background-image: url("/img/piece-white-king.png");
+    background-image: url("/img/white-king.png");
 }
 #game-board .square.black.king {
-    background-image: url("/img/piece-black-black-king.png");
+    background-image: url("/img/black-king.png");
 }
 #game-board .square.row {
     text-align: right;
