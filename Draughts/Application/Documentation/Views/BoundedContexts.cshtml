@@ -9,8 +9,75 @@
 <div class="text-side-menu-container">
     <h1>@ViewBag.Title</h1>
 
-    <h3>Bounded contexts</h3>
+    <h3>What is a bounded context?</h3>
     <p>
-        Todo
+        If you have a small application, you can make one unified model that contains all your data and your logic.
+        Not that everything should be in one class of course, but all the classes can have reference to the others and
+        maintain all the invariants for your model.
+        As your application grows, you'll want to separate parts of your application, lest it becomes unmaintainable and
+        slow. The extreme version of separation is a microservice architecture, where every part of the application is
+        an application on itself, but it's not always necessary to go that far.
+    </p>
+    <p>
+        A bounded context is the concept used in DDD to define how to separate those parts of your application and how
+        they work together. It has the following properties:
+    </p>
+    <ul>
+        <li>
+            It has it's own <em>ubiquitous language</em>. While different bounded contexts may talk about the same real
+            life object, they do not necessarily use the same names for them. For example, the same person may be called
+            'AuthUser' in one context, just 'User' in the next and 'Player' in a third context.
+            Inside a bounded context everyone in the team speaks the same language. So domain experts, developers,
+            helpdesk personel and everyone else should use the same names for things related to the project.
+        </li>
+        <li>
+            All communication between bounded contexts is either read only or event based.
+        </li>
+        <li>
+            You may want to set explicit boundaries between bounded contexts outside the domain related code as well.
+            For example, you can put the corresponding database tables in different databases or schema's.
+            You could put the code in different projects and repositories and have different teams working on them.
+        </li>
+    </ul>
+
+    <p>
+        <em>Note:</em> The ubiquitous language is a pretty important concept in DDD. I'm focussing on code architecture
+        however, so I won't say too much about it here.
+    </p>
+
+    <h3>What is an aggregate?</h3>
+    <p>
+        An aggregate is a group of domain objects (entities and value objects) that should be treated as a single unit.
+        The most important entity in an aggregate is called the <em>Aggregate root</em>. All communication from the
+        outside goes through this root, to maintain the invariants that should always be true inside the aggregate.
+        An aggregate has the following properties:
+    </p>
+    <ul>
+        <li>
+            It is a part of a bounded context. A bounded context can contain several aggregates, but aggregates can
+            never span accross bounded contexts.
+        </li>
+        <li>
+            It should never reference domain objects outside the aggregate. If you need to reference to objects in other
+            aggregates, store their IDs.
+        </li>
+        <li>
+            It is a transactional unit and should be updated as a whole (or not at all). I think it's fine to update
+            multiple aggregates in one transaction (assuming that doesn't harm performance).
+        </li>
+        <li>
+            You want to keep aggregates small.
+        </li>
+    </ul>
+
+    <h3>The architecture of Draughts</h3>
+    <p>
+        For draughts we have 3 bounded contexts: Game, User and AuthUser. Currently each of them has one aggregate. I
+        might split off the GameState and make it an aggregate on its own in the future.
+    </p>
+    <p>
+        If you care about the terminology specifics: the Game context is part of what is called the <em>core domain</em>,
+        the User context is part of a <em>supporting subdomain</em> and the AuthUser is part of a
+        <em>generic subdomain</em>.
     </p>
 </div>
