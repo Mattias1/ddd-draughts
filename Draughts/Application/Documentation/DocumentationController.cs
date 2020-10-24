@@ -18,6 +18,9 @@ namespace Draughts.Application.Documentation {
         public IActionResult OnionArchitecture() => ViewWithMenu();
 
         [HttpGet, GuestRoute]
+        public IActionResult BuildingBlocks() => ViewWithMenu();
+
+        [HttpGet, GuestRoute]
         public IActionResult Auth() => ViewWithMenu();
 
         private IActionResult ViewWithMenu() {
@@ -26,6 +29,7 @@ namespace Draughts.Application.Documentation {
                 ("Design principles", "/documentation/designprinciples"),
                 ("Bounded contexts", "/documentation/boundedcontexts"),
                 ("Onion architecture", "/documentation/onionarchitecture"),
+                ("Building blocks", "/documentation/buildingblocks"),
                 ("Authentication and authorization", "/documentation/auth")
             ));
         }
