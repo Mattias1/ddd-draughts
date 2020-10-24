@@ -11,8 +11,13 @@
 
     <h3>Authentication and authorization</h3>
     <p>
-        Draughts is a stateless application using Json Web Tokens for authorization.
+        Although not strictly a part of DDD, I implemented the whole authentication and authorization myself, partly
+        because it's fun and partly because that's the best way to learn how it works.
+    </p>
+    <p>
+        Because I wanted this to be a stateless webapplication, I used Json Web Tokens for authorization.
         Visit <a class="extern" href="https://jwt.io">jwt.io</a> for more information on the JWT standard.
+        <!-- TODO: Drawbacks of JWT as 'stateless session': login invalidation, long JWT timeout/stale data, not battle tested -->
     </p>
 
     <h4>The JWT action filter</h4>
