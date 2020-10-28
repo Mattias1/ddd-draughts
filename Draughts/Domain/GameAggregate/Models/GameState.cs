@@ -7,6 +7,7 @@ namespace Draughts.Domain.GameAggregate.Models {
         public enum MoveResult { NextTurn, MoreCapturesAvailable, GameOver };
 
         public BoardPosition Board { get; }
+        public SquareNumber? CaptureSequencePreviousSquare { get; private set; }
 
         public override GameId Id { get; }
 
@@ -29,11 +30,18 @@ namespace Draughts.Domain.GameAggregate.Models {
             }
             else {
                 Board.Capture(from, to);
+
+                // TODO: If chain capture, return that.
             }
 
-            // TODO: Promote if necessary
+            if (Board.CanPromote(to)) {
+                Board.Promote(to);
+            }
 
-            return MoveResult.NextTurn; // TODO
+            // TODO
+            // if (Board.NrOfPiecesPerColor(<other>) == 0) { return MoveResult.GameOver; }
+
+            return MoveResult.NextTurn;
         }
 
         public string ToStorage() => Board.ToString();

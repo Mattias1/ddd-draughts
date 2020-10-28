@@ -3,6 +3,7 @@ using Draughts.Common.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 
 namespace Draughts.Domain.GameAggregate.Models {
@@ -23,8 +24,6 @@ namespace Draughts.Domain.GameAggregate.Models {
         }
 
         public int Size => _squares.GetLength(0);
-        public int Width => _squares.GetLength(0);
-        public int Height => _squares.GetLength(1);
 
         private BoardPosition(Piece[,] squares) => _squares = squares;
 
@@ -44,15 +43,28 @@ namespace Draughts.Domain.GameAggregate.Models {
             }
 
             var (fromX, fromY, toX, toY) = ExtractPositions(from, to);
-            var (victimX, victimY) = FirstNonEmptySpotBetween(from, to)!.ToPosition(Size);
+            var (victimX, victimY) = OnlyNonEmptySpotBetween(from, to)!.ToPosition(Size);
             _squares[toX, toY] = _squares[fromX, fromY];
             _squares[fromX, fromY] = Piece.Empty;
             _squares[victimX, victimY] = Piece.Empty;
         }
 
-        // TODO: (non-)flying kings, moving backwards, etc.
+        // TODO: (non-)flying kings, etc.
         public bool IsMove(SquareNumber from, SquareNumber to) {
-            return this[from].IsNotEmpty && this[to].IsEmpty && DiagonalDistance(from, to) == 1;
+            return this[from].IsMan ? IsManMove(from, to) : IsKingMove(from, to);
+        }
+
+        public bool IsManMove(SquareNumber from, SquareNumber to) {
+            var (_, fromY, _, toY) = ExtractPositions(from, to);
+            return this[from].IsNotEmpty && this[to].IsEmpty
+                && DiagonalDistance(from, to) == 1
+                && fromY + ForwardsYDirection(from) == toY;
+        }
+
+        public bool IsKingMove(SquareNumber from, SquareNumber to) {
+            return this[from].IsNotEmpty
+                && IsDiagonalMove(from, to, out _)
+                && IsEmptyDiagonal(from, to);
         }
 
         public bool IsCapture(SquareNumber from, SquareNumber to) {
@@ -60,32 +72,56 @@ namespace Draughts.Domain.GameAggregate.Models {
             if (this[from].IsEmpty || this[to].IsNotEmpty || distance < 2 || distance > 2 && this[from].IsMan) {
                 return false;
             }
-            // TODO: Make sure you only jump one piece.
-            var pos = FirstNonEmptySpotBetween(from, to);
+            var pos = OnlyNonEmptySpotBetween(from, to);
             return pos != null && this[pos].Color != this[from].Color;
         }
 
-        // TODO: This should either not throw (but then return a boolean???) or the diagonal part should be checked separately.
         private int DiagonalDistance(SquareNumber from, SquareNumber to) {
-            var (fromX, fromY, toX, toY) = ExtractPositions(from, to);
-            int distance = Math.Abs(fromX - toX);
-            if (Math.Abs(fromY - toY) != distance) {
-                throw new ManualValidationException("Horizontal and vertical distances are different, every move should be along a diagonal.");
+            if (!IsDiagonalMove(from, to, out int distance)) {
+                throw new InvalidOperationException("Every move should be along a diagonal.");
             }
             return distance;
         }
 
-        private SquareNumber? FirstNonEmptySpotBetween(SquareNumber from, SquareNumber to) {
+        private bool IsDiagonalMove(SquareNumber from, SquareNumber to, out int distance) {
+            var (fromX, fromY, toX, toY) = ExtractPositions(from, to);
+            distance = Math.Abs(fromX - toX);
+            return Math.Abs(fromY - toY) == distance;
+        }
+
+        private SquareNumber? OnlyNonEmptySpotBetween(SquareNumber from, SquareNumber to) {
             // Assumes from and to are on a diagonal
-            var (fromX, fromY, toX, _) = ExtractPositions(from, to);
+            SquareNumber? result = null;
+            var (x, y, toX, toY) = ExtractPositions(from, to);
             var (dirX, dirY) = Direction(from, to);
-            var (x, y) = (fromX + dirX, fromY + dirY);
             while (x != toX) {
-                if (this[x, y].IsNotEmpty) {
-                    return SquareNumber.FromPosition(x, y, Size);
+                (x, y) = (x + dirX, y + dirY);
+                if (_squares[x, y].IsNotEmpty) {
+                    if (result is null) {
+                        result = SquareNumber.FromPosition(x, y, Size);
+                    }
+                    else {
+                        return null;
+                    }
                 }
             }
-            return null;
+            if (_squares[toX, toY].IsNotEmpty) {
+                return null;
+            }
+            return result;
+        }
+
+        private bool IsEmptyDiagonal(SquareNumber from, SquareNumber to) {
+            // Assumes from and to are on a diagonal
+            var (x, y, toX, _) = ExtractPositions(from, to);
+            var (dirX, dirY) = Direction(from, to);
+            while (x != toX) {
+                (x, y) = (x + dirX, y + dirY);
+                if (_squares[x, y].IsNotEmpty) {
+                    return false;
+                }
+            }
+            return true;
         }
 
         private (int, int) Direction(SquareNumber from, SquareNumber to) {
@@ -94,18 +130,46 @@ namespace Draughts.Domain.GameAggregate.Models {
             return (fromX > toX ? -1 : 1, fromY > toY ? -1 : 1);
         }
 
+        private int ForwardsYDirection(SquareNumber from) {
+            var color = this[from].Color;
+            if (color is null) {
+                throw new ManualValidationException("Invalid move.");
+            }
+            return color == Color.Black ? 1 : -1;
+        }
+
         private (int, int, int, int) ExtractPositions(SquareNumber from, SquareNumber to) {
             var (fromX, fromY) = from.ToPosition(Size);
             var (toX, toY) = to.ToPosition(Size);
             return (fromX, fromY, toX, toY);
         }
 
+        public void Promote(SquareNumber square) {
+            if (!CanPromote(square)) {
+                throw new ManualValidationException("Invalid move.");
+            }
+            var (x, y) = square.ToPosition(Size);
+            _squares[x, y] = _squares[x, y].Promoted();
+        }
+
+        public bool CanPromote(SquareNumber square) {
+            var color = this[square].Color;
+            if (color is null) {
+                return false;
+            }
+            if (this[square].IsKing) {
+                return false;
+            }
+            int y = square.ToPosition(Size).y;
+            return color == Color.Black ? y == Size - 1 : y == 0;
+        }
+
         public int NrOfPiecesPerColor(Color color) => All.Count(s => s.Color == color);
 
         private IEnumerable<Piece> All {
             get {
-                for (int y = 0; y < Height; y++) {
-                    for (int x = 0; x < Width; x++) {
+                for (int y = 0; y < Size; y++) {
+                    for (int x = 0; x < Size; x++) {
                         yield return _squares[x, y];
                     }
                 }
@@ -115,11 +179,11 @@ namespace Draughts.Domain.GameAggregate.Models {
         public override string ToString() => ToLongString("", "");
         public string ToLongString(string separator = "\n", string empty = " ") {
             var sb = new StringBuilder(_squares.Length + Size);
-            for (int y = 0; y < Height; y++) {
-                for (int x = 0; x < Width; x++) {
+            for (int y = 0; y < Size; y++) {
+                for (int x = 0; x < Size; x++) {
                     sb.Append(IsPlayable(x, y) ? _squares[x, y].RawValue.ToString() : empty);
                 }
-                if (y != Height - 1) {
+                if (y != Size - 1) {
                     sb.Append(separator);
                 }
             }

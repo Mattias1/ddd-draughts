@@ -32,6 +32,7 @@ $(document).ready(function () {
         else {
             console.log('Select square', squareNumber);
             selectedSquare = squareNumber;
+            squareEl.addClass('selected');
         }
     }
 });

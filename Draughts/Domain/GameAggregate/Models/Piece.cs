@@ -21,6 +21,8 @@ namespace Draughts.Domain.GameAggregate.Models {
 
         public char ToChar() => char.Parse(RawValue.ToString());
 
+        public Piece Promoted() => new Piece((byte)(RawValue | 0b010));
+
         protected override IEnumerable<object> GetEqualityComponents() {
             yield return RawValue;
         }
