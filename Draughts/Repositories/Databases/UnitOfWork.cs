@@ -38,7 +38,8 @@ namespace Draughts.Repositories.Databases {
         public Transaction BeginTransaction(TransactionDomain domain) {
             lock (_lock) {
                 if (_openTransactions.ContainsKey(domain.Key)) {
-                    throw new InvalidOperationException("Errr, this transaction is already started.");
+                    string open = _openTransactions[domain.Key].IsOpen ? "open" : "closed";
+                    throw new InvalidOperationException($"Errr, this transaction is already started ({open}).");
                 }
 
                 _currentTransactionDomain.Value = domain;

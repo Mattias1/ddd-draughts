@@ -314,6 +314,11 @@ main {
 }
 #game-board .square.playable:hover {
     box-shadow: 0 0 6px #ddd;
+    background-color: #7777;
+}
+#game-board .square.playable.selected {
+    box-shadow: 0 0 6px #ddd;
+    background-color: #5555;
 }
 #game-board .square.white.man {
     background-image: url("/img/white-piece.png");

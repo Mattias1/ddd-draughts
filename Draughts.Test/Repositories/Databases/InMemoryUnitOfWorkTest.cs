@@ -56,6 +56,28 @@ namespace Draughts.Test.Repositories.Databases {
         }
 
         [Fact]
+        public void WithTransaction_ShouldRollback_WhenThrowing() {
+            try {
+                _unitOfWork.WithTransaction(TransactionDomain.AuthUser, tran => {
+                    StoreTestRole(1);
+                    int zero = 0;
+                    int result = 42 / zero;
+                });
+            }
+            catch (DivideByZeroException) {
+                _unitOfWork.WithTransaction(TransactionDomain.AuthUser, tran => {
+                    StoreTestRole(2);
+
+                    tran.Commit();
+                });
+            }
+
+            AuthUserDatabase.RolesTable.Should().Contain(r => r.Id == 2);
+            AuthUserDatabase.RolesTable.Should().HaveCount(1);
+            AuthUserDatabase.TempRolesTable.Should().BeEmpty();
+        }
+
+        [Fact]
         public void BeginTransaction_PersistsEverything_WhenCommitting() {
             using (var tran = _unitOfWork.BeginTransaction(TransactionDomain.AuthUser)) {
                 StoreTestRole(1);

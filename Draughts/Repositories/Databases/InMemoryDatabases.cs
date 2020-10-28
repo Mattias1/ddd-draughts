@@ -100,7 +100,7 @@ namespace Draughts.Repositories.Database {
         public static List<InMemoryGame> GamesTable { get; } = new List<InMemoryGame> {
             CreatePendingGame(10, GameSettings.International, 14),
             CreatePendingGame(11, GameSettings.International, 15),
-            CreatePendingGame(12, GameSettings.EnglishAmerican, 16)
+            CreatePendingGame(12, GameSettings.EnglishAmerican, 16),
             CreatePendingGame(13, GameSettings.Mini, 17)
         };
 
