@@ -8,11 +8,10 @@ namespace Draughts.Test.Domain.GameAggregate {
         public void InitialBoard4x4() {
             var board = BoardPosition.InitialSetup(4);
 
-            board.Width.Should().Be(4);
-            board.Height.Should().Be(4);
+            board.Size.Should().Be(4);
 
-            for (int y = 0; y < board.Height; y++) {
-                for (int x = 0; x < board.Width; x++) {
+            for (int y = 0; y < board.Size; y++) {
+                for (int x = 0; x < board.Size; x++) {
                     if (y == 0 && (x == 1 || x == 3)) {
                         board[x, y].Should().Be(Piece.BlackMan);
                     }

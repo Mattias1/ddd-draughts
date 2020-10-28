@@ -38,7 +38,7 @@ namespace Draughts.Application.PlayGame {
 
                 return Ok();
             }
-            catch(ManualValidationException e) {
+            catch (ManualValidationException e) {
                 return BadRequest(e.Message);
             }
         }
