@@ -12,8 +12,8 @@ namespace Draughts.Test.Domain.GameAggregate {
         [Fact]
         public void DoMoveShouldUpdateBoardAndSwitchTurn() {
             var game = GameTestHelper.StartedInternationalGame().Build();
-            var from = SquareNumber.FromPosition(3, 6, game.Settings.BoardSize);
-            var to = SquareNumber.FromPosition(4, 5, game.Settings.BoardSize);
+            var from = Square.FromPosition(3, 6, game.Settings.BoardSize);
+            var to = Square.FromPosition(4, 5, game.Settings.BoardSize);
 
             var result = game.DoMove(from, to, _fakeClock.UtcNow());
 

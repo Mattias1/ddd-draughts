@@ -18,7 +18,7 @@
                          class="square@(BoardPosition.IsPlayable(x, y) ? " playable" : "")
                              @(board[x, y].Color)@(board[x, y].IsMan ? " man" : "")@(board[x, y].IsKing ? " king" : "")"
                          style="left: @(60 * x)px; top: @(60 * y)px;"
-                         data-number="@(BoardPosition.IsPlayable(x, y) ? @SquareNumber.FromPosition(x, y, settings.BoardSize) : "")"
+                         data-number="@(BoardPosition.IsPlayable(x, y) ? Square.FromPosition(x, y, settings.BoardSize) : "")"
                          data-gameid="@Model.Id">
                     </div>
                 }
@@ -47,6 +47,10 @@
                 }
                 else {
                     <li><span id="nr@(player2.Color)"></span> @player2.Color: @Utils.UserLinkWithRank(player2)</li>
+                }
+
+                @if (Model.Turn != null) {
+                    <li>Turn: <span>@Model.Turn.Player.Color</span></li>
                 }
             </ul>
 
