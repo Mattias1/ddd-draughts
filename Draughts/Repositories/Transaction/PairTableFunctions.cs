@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Draughts.Repositories.Databases {
+namespace Draughts.Repositories.Transaction {
     // Sort of inverted visitor pattern?
     public class PairTableFunctions {
         public interface IPairTableFunction {

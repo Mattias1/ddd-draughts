@@ -3,7 +3,7 @@ using Draughts.Domain.AuthUserAggregate.Events;
 using Draughts.Domain.AuthUserAggregate.Models;
 using Draughts.Domain.UserAggregate.Models;
 using Draughts.Repositories;
-using Draughts.Repositories.Databases;
+using Draughts.Repositories.Transaction;
 using NodaTime;
 
 namespace Draughts.Application.Shared.Services {
@@ -29,6 +29,6 @@ namespace Draughts.Application.Shared.Services {
         }
 
         private ZonedDateTime Now() => _clock.GetCurrentInstant().InUtc();
-        private DomainEventId NextId() => new DomainEventId(_idGenerator.Next());
+        private DomainEventId NextId() => new DomainEventId(_idGenerator.ReservePool(1).Next());
     }
 }

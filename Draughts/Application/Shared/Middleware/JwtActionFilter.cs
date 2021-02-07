@@ -10,15 +10,18 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Net;
+using Draughts.Repositories.Transaction;
 
 namespace Draughts.Application.Shared.Middleware {
     public class JwtActionFilter : IAuthorizationFilter {
         private readonly IClock _clock;
         private readonly IAuthService _authService;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public JwtActionFilter(IClock clock, IAuthService authService) {
+        public JwtActionFilter(IClock clock, IAuthService authService, IUnitOfWork unitOfWork) {
             _clock = clock;
             _authService = authService;
+            _unitOfWork = unitOfWork;
         }
 
         public void OnAuthorization(AuthorizationFilterContext context) {
@@ -35,7 +38,10 @@ namespace Draughts.Application.Shared.Middleware {
                 return;
             }
 
-            var userPermissions = _authService.PermissionsForJwt(jwt!);
+            var userPermissions = _unitOfWork.WithAuthUserTransaction(tran => {
+                var permissions = _authService.PermissionsForJwt(jwt!);
+                return tran.CommitWith(permissions);
+            });
             AuthContext.AttachToHttpContext(jwt!, userPermissions, context.HttpContext);
 
             if (!hasGuestAttribute) {

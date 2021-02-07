@@ -1,10 +1,11 @@
 using Draughts.Common.Events;
 using NodaTime;
+using SqlQueryBuilder.Builder;
 using System;
 using System.Collections.Generic;
 using System.Threading;
 
-namespace Draughts.Repositories.Databases {
+namespace Draughts.Repositories.Transaction {
     public class InMemoryUnitOfWork : IUnitOfWork {
         private readonly AsyncLocal<TransactionDomain?> _currentTransactionDomain;
         private readonly List<IDomainEventHandler> _eventHandlers;
@@ -24,29 +25,40 @@ namespace Draughts.Repositories.Databases {
             _openTransactions = new Dictionary<string, Transaction>();
         }
 
-        public void WithTransaction(TransactionDomain domain, Action<Transaction> function) {
+        public void WithAuthUserTransaction(Action<ITransaction> function) => WithTransaction(TransactionDomain.AuthUser, function);
+        public void WithGameTransaction(Action<ITransaction> function) => WithTransaction(TransactionDomain.Game, function);
+        public void WithUserTransaction(Action<ITransaction> function) => WithTransaction(TransactionDomain.User, function);
+        public T WithAuthUserTransaction<T>(Func<ITransaction, T> function) => WithTransaction(TransactionDomain.AuthUser, function);
+        public T WithGameTransaction<T>(Func<ITransaction, T> function) => WithTransaction(TransactionDomain.Game, function);
+        public T WithUserTransaction<T>(Func<ITransaction, T> function) => WithTransaction(TransactionDomain.User, function);
+
+        public void WithTransaction(TransactionDomain domain, Action<ITransaction> function) {
             using (var transaction = BeginTransaction(domain)) {
                 function(transaction);
             }
         }
-        public T WithTransaction<T>(TransactionDomain domain, Func<Transaction, T> function) {
+        public T WithTransaction<T>(TransactionDomain domain, Func<ITransaction, T> function) {
             using (var transaction = BeginTransaction(domain)) {
                 return function(transaction);
             }
         }
 
-        public Transaction BeginTransaction(TransactionDomain domain) {
+        public ITransaction BeginTransaction(TransactionDomain domain) {
             lock (_lock) {
                 if (_openTransactions.ContainsKey(domain.Key)) {
                     string open = _openTransactions[domain.Key].IsOpen ? "open" : "closed";
                     throw new InvalidOperationException($"Errr, this transaction is already started ({open}).");
                 }
 
+               if (_currentTransactionDomain.Value != null) {
+                   throw new InvalidOperationException("You already have a transaction within this thread.");
+               }
+
                 _currentTransactionDomain.Value = domain;
 
                 var transaction = new Transaction(domain);
-                transaction.OnOpened += (o, e) => OnOpenedTransaction(o, e);
-                transaction.OnClosed += (o, e) => OnClosedTransaction(o, e);
+                transaction.OnOpened += (o, e) => OnOpenedTransaction((Transaction)o, e);
+                transaction.OnClosed += (o, e) => OnClosedTransaction((Transaction)o, e);
                 transaction.Start();
 
                 return transaction;
@@ -69,10 +81,6 @@ namespace Draughts.Repositories.Databases {
             }
         }
 
-        public void Store<T>(T obj, List<T> table) where T : IEquatable<T> {
-            CurrentTransactionDomain.InMemoryStore(obj, table);
-        }
-
         public void Register(IDomainEventHandler eventHandler) => _eventHandlers.Add(eventHandler);
 
         public void Raise(DomainEvent evt) {
@@ -82,15 +90,21 @@ namespace Draughts.Repositories.Databases {
 
         public void FireAll() => _eventQueue.FireAll();
 
-        public class Transaction : IDisposable {
-            private List<DomainEvent> _flushedEvents;
+        public void Store<T>(T obj, List<T> table) where T : IEquatable<T> {
+            CurrentTransactionDomain.InMemoryStore(obj, table);
+        }
+
+        public IInitialQueryBuilder Query(TransactionDomain domain) {
+            throw new InvalidOperationException("Use the Store method, not queries.");
+        }
+
+        public class Transaction : ITransaction {
+            private List<DomainEvent> _committedEvents;
             private readonly TransactionDomain _transactionDomain;
 
             public bool IsOpen { get; private set; }
             public bool Succeeded { get; private set; }
-            public IReadOnlyList<DomainEvent> RaisedEvents => _flushedEvents.AsReadOnly();
-
-            public delegate void TransactionEventHandler(Transaction transaction, TransactionEventArgs e);
+            public IReadOnlyList<DomainEvent> RaisedEvents => _committedEvents.AsReadOnly();
 
             /// <summary>
             /// Called after the transaction is opened
@@ -102,31 +116,35 @@ namespace Draughts.Repositories.Databases {
             public event TransactionEventHandler? OnClosed;
 
             public Transaction(TransactionDomain domain) {
-                _flushedEvents = new List<DomainEvent>();
+                _committedEvents = new List<DomainEvent>();
                 _transactionDomain = domain;
                 IsOpen = false;
             }
 
             public void Start() {
+                if (IsOpen) {
+                    throw new InvalidOperationException("Cannot start a transaction twice.");
+                }
+
                 IsOpen = true;
+                Succeeded = false;
                 OnOpened?.Invoke(this, new TransactionEventArgs(_transactionDomain));
             }
 
-            public void Flush() {
-                _flushedEvents.AddRange(_transactionDomain.TempDomainEventsTable);
-
-                _transactionDomain.InMemoryFlush();
+            public T CommitWith<T>(T result) {
+                Commit();
+                return result;
             }
-
             public void Commit() {
                 if (!IsOpen) {
                     throw new InvalidOperationException("Cannot commit the transaction because it isn't open.");
                 }
 
-                Flush();
+                _committedEvents.AddRange(_transactionDomain.TempDomainEventsTable);
+                _transactionDomain.InMemoryFlush();
+
                 IsOpen = false;
                 Succeeded = true;
-                OnClosed?.Invoke(this, new TransactionEventArgs(_transactionDomain));
             }
 
             public void Rollback() {
@@ -135,20 +153,16 @@ namespace Draughts.Repositories.Databases {
                 }
 
                 _transactionDomain.InMemoryRollback();
+
                 IsOpen = false;
-                OnClosed?.Invoke(this, new TransactionEventArgs(_transactionDomain));
             }
 
             public void Dispose() {
                 if (IsOpen) {
                     Rollback();
                 }
+                OnClosed?.Invoke(this, new TransactionEventArgs(_transactionDomain));
             }
-        }
-
-        public class TransactionEventArgs : EventArgs {
-            public TransactionDomain TransactionDomain { get; }
-            public TransactionEventArgs(TransactionDomain domain) => TransactionDomain = domain;
         }
     }
 }

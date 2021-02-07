@@ -10,20 +10,6 @@ namespace Draughts.Test.TestHelpers {
     public class GameTestHelper {
         private static readonly ZonedDateTime Feb29 = FakeClock.FromUtc(2020, 02, 29).UtcNow();
 
-        public static GameBuilder PendingInternationalGame(Player creator) => PendingInternationalGame().WithPlayers(creator);
-        public static GameBuilder PendingInternationalGame() {
-            var settings = new GameSettings(10, Color.White,
-                flyingKings: true, menCaptureBackwards: true,
-                GameSettings.DraughtsCaptureConstraints.AnyFinishedSequence);
-
-            var gameId = new GameId(IdTestHelper.Next());
-            return new GameBuilder()
-                .WithId(gameId)
-                .WithSettings(settings)
-                .WithGameState(GameState.InitialState(gameId, settings.BoardSize))
-                .WithCreatedAt(Feb29);
-        }
-
         public static GameBuilder StartedInternationalGame() {
             var whitePlayer = PlayerTestHelper.White().Build();
             var blackPlayer = PlayerTestHelper.Black().Build();
@@ -33,6 +19,19 @@ namespace Draughts.Test.TestHelpers {
                 .WithPlayers(whitePlayer, blackPlayer)
                 .WithTurn(turn)
                 .WithStartedAt(Feb29);
+        }
+
+        public static GameBuilder PendingInternationalGame(Player creator) => PendingInternationalGame().WithPlayers(creator);
+        public static GameBuilder PendingInternationalGame() => PendingGame(GameSettings.International);
+
+        public static GameBuilder PendingGame(GameSettings settings, Player creator) => PendingGame(settings).WithPlayers(creator);
+        public static GameBuilder PendingGame(GameSettings settings) {
+            var gameId = new GameId(IdTestHelper.Next());
+            return new GameBuilder()
+                .WithId(gameId)
+                .WithSettings(settings)
+                .WithGameState(GameState.InitialState(gameId, settings.BoardSize))
+                .WithCreatedAt(Feb29);
         }
 
 

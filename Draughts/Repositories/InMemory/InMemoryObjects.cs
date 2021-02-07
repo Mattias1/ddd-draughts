@@ -2,7 +2,7 @@ using Draughts.Domain.GameAggregate.Models;
 using NodaTime;
 using System;
 
-namespace Draughts.Repositories.Databases {
+namespace Draughts.Repositories.InMemory {
 #pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
     public class InMemoryUser : IEquatable<InMemoryUser> {
         public long Id;
@@ -11,6 +11,7 @@ namespace Draughts.Repositories.Databases {
         public int Rating;
         public string Rank;
         public int GamesPlayed;
+        public ZonedDateTime CreatedAt;
 
         public bool Equals(InMemoryUser? other) => Id.Equals(other?.Id);
     }
@@ -22,6 +23,7 @@ namespace Draughts.Repositories.Databases {
         public string PasswordHash;
         public string Email;
         public long[] RoleIds;
+        public ZonedDateTime CreatedAt;
 
         public bool Equals(InMemoryAuthUser? other) => Id.Equals(other?.Id);
     }
@@ -30,6 +32,7 @@ namespace Draughts.Repositories.Databases {
         public long Id;
         public string Rolename;
         public string[] Permissions;
+        public ZonedDateTime CreatedAt;
 
         public bool Equals(InMemoryRole? other) => Id.Equals(other?.Id);
     }
@@ -59,8 +62,15 @@ namespace Draughts.Repositories.Databases {
         public string Username;
         public string Rank;
         public bool ColorIsWhite;
+        public ZonedDateTime CreatedAt;
 
         public bool Equals(InMemoryPlayer? other) => Id.Equals(other?.Id);
+    }
+
+    public class InMemoryAvailableId : IEquatable<InMemoryAvailableId> {
+        public long Id { get; set; }
+
+        public bool Equals(InMemoryAvailableId? other) => Id.Equals(other?.Id);
     }
 #pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
 }
