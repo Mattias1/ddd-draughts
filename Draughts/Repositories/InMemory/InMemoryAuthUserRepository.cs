@@ -1,12 +1,11 @@
 using Draughts.Domain.AuthUserAggregate.Models;
 using Draughts.Domain.AuthUserAggregate.Specifications;
 using Draughts.Domain.UserAggregate.Models;
-using Draughts.Repositories.Database;
-using Draughts.Repositories.Databases;
+using Draughts.Repositories.Transaction;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Draughts.Repositories {
+namespace Draughts.Repositories.InMemory {
     public class InMemoryAuthUserRepository : InMemoryRepository<AuthUser>, IAuthUserRepository {
         private readonly IRoleRepository _roleRepository;
         private readonly IUnitOfWork _unitOfWork;
@@ -24,6 +23,7 @@ namespace Draughts.Repositories {
                 new Username(u.Username),
                 PasswordHash.FromStorage(u.PasswordHash),
                 new Email(u.Email),
+                u.CreatedAt,
                 u.RoleIds.Select(r => roles[r]).ToList()
             )).ToList();
         }
@@ -38,6 +38,7 @@ namespace Draughts.Repositories {
                 Username = entity.Username,
                 PasswordHash = entity.PasswordHash.ToStorage(),
                 Email = entity.Email,
+                CreatedAt = entity.CreatedAt,
                 RoleIds = entity.Roles.Select(r => r.Id.Id).ToArray()
             };
 

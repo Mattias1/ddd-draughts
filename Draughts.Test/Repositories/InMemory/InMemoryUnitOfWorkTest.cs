@@ -1,8 +1,8 @@
 using Draughts.Common.Events;
 using Draughts.Common.Utilities;
 using Draughts.Domain.AuthUserAggregate.Events;
-using Draughts.Repositories.Database;
-using Draughts.Repositories.Databases;
+using Draughts.Repositories.InMemory;
+using Draughts.Repositories.Transaction;
 using Draughts.Test.Fakes;
 using Draughts.Test.TestHelpers;
 using FluentAssertions;
@@ -10,7 +10,7 @@ using NodaTime.Testing;
 using System;
 using Xunit;
 
-namespace Draughts.Test.Repositories.Databases {
+namespace Draughts.Test.Repositories.InMemory {
     public class InMemoryUnitOfWorkTest {
         private readonly FakeClock _clock;
         private readonly FakeDomainEventHandler _fakeDomainEventHandler;
@@ -35,23 +35,6 @@ namespace Draughts.Test.Repositories.Databases {
             }
 
             AuthUserDatabase.RolesTable.Should().BeEmpty();
-            AuthUserDatabase.TempRolesTable.Should().BeEmpty();
-        }
-
-        [Fact]
-        public void BeginTransaction_PersistsUntillFlush_WhenFlushingButNotCommitting() {
-            using (var tran = _unitOfWork.BeginTransaction(TransactionDomain.AuthUser)) {
-                StoreTestRole(1);
-
-                tran.Flush();
-
-                StoreTestRole(2);
-
-                tran.Rollback(); // No commit
-            }
-
-            AuthUserDatabase.RolesTable.Should().Contain(r => r.Id == 1);
-            AuthUserDatabase.RolesTable.Should().HaveCount(1);
             AuthUserDatabase.TempRolesTable.Should().BeEmpty();
         }
 

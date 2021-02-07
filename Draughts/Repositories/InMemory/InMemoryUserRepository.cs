@@ -1,13 +1,12 @@
 using Draughts.Domain.AuthUserAggregate.Models;
 using Draughts.Domain.AuthUserAggregate.Specifications;
 using Draughts.Domain.UserAggregate.Models;
-using Draughts.Repositories.Database;
-using Draughts.Repositories.Databases;
+using Draughts.Repositories.Transaction;
 using System.Collections.Generic;
 using System.Linq;
 using static Draughts.Domain.UserAggregate.Models.Rank;
 
-namespace Draughts.Repositories {
+namespace Draughts.Repositories.InMemory {
     public class InMemoryUserRepository : InMemoryRepository<User>, IUserRepository {
         private readonly IUnitOfWork _unitOfWork;
 
@@ -20,7 +19,8 @@ namespace Draughts.Repositories {
                 new Username(u.Username),
                 new Rating(u.Rating),
                 Ranks.All.Single(r => r.Name == u.Rank),
-                u.GamesPlayed)
+                u.GamesPlayed,
+                u.CreatedAt)
             ).ToList();
         }
 
@@ -34,7 +34,8 @@ namespace Draughts.Repositories {
                 Username = entity.Username,
                 Rating = entity.Rating,
                 Rank = entity.Rank.Name,
-                GamesPlayed = entity.GamesPlayed
+                GamesPlayed = entity.GamesPlayed,
+                CreatedAt = entity.CreatedAt
             };
 
             _unitOfWork.Store(user, UserDatabase.TempUsersTable);

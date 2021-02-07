@@ -1,11 +1,32 @@
+using Draughts.Common.Utilities;
 using Draughts.Domain.AuthUserAggregate.Models;
 using Draughts.Domain.UserAggregate.Models;
+using NodaTime;
+using NodaTime.Testing;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace Draughts.Test.TestHelpers {
     public class AuthUserTestHelper {
+        private static readonly ZonedDateTime Feb29 = FakeClock.FromUtc(2020, 02, 29).UtcNow();
+
+        public static AuthUserBuilder FromUser(User user) {
+            var registeredUserRole = RoleTestHelper.RegisteredUser().Build();
+            return FromUserAndRoles(user, registeredUserRole);
+        }
+
+        public static AuthUserBuilder FromUserAndRoles(User user, params Role[] roles) {
+            return new AuthUserBuilder()
+                .WithId(user.AuthUserId)
+                .WithUserId(user.Id)
+                .WithUsername(user.Username)
+                .WithEmail($"{user.Username}@example.com")
+                .WithPasswordHash(user.Username)
+                .WithCreatedAt(user.CreatedAt)
+                .WithRoles(roles);
+        }
+
         public static AuthUserBuilder User(string name = "user") {
             var authUserId = new AuthUserId(IdTestHelper.Next());
             var username = new Username(name);
@@ -16,7 +37,8 @@ namespace Draughts.Test.TestHelpers {
                 .WithUserId(IdTestHelper.Next())
                 .WithUsername(username)
                 .WithEmail($"{name}@example.com")
-                .WithPasswordHash(PasswordHash.Generate(name, authUserId, username))
+                .WithPasswordHash(name)
+                .WithCreatedAt(Feb29)
                 .WithRoles(registeredUserRole);
         }
 
@@ -27,6 +49,7 @@ namespace Draughts.Test.TestHelpers {
             private Username? _username;
             private PasswordHash? _passwordHash;
             private Email? _email;
+            private ZonedDateTime? _createdAt;
             private List<Role> _roles = new List<Role>();
 
             public AuthUserBuilder WithId(long id) => WithId(new AuthUserId(id));
@@ -47,6 +70,12 @@ namespace Draughts.Test.TestHelpers {
                 return this;
             }
 
+            public AuthUserBuilder WithPasswordHash(string plaintextPassword) {
+                if (_id is null || _username is null) {
+                    throw new InvalidOperationException("The id and username should be set (and not changed)");
+                }
+                return WithPasswordHash(PasswordHash.Generate(plaintextPassword, _id, _username));
+            }
             public AuthUserBuilder WithPasswordHash(PasswordHash passwordHash) {
                 _passwordHash = passwordHash;
                 return this;
@@ -55,6 +84,11 @@ namespace Draughts.Test.TestHelpers {
             public AuthUserBuilder WithEmail(string email) => WithEmail(new Email(email));
             public AuthUserBuilder WithEmail(Email email) {
                 _email = email;
+                return this;
+            }
+
+            public AuthUserBuilder WithCreatedAt(ZonedDateTime createdAt) {
+                _createdAt = createdAt;
                 return this;
             }
 
@@ -80,8 +114,11 @@ namespace Draughts.Test.TestHelpers {
                 if (_email is null) {
                     throw new InvalidOperationException("Email is not nullable");
                 }
+                if (_createdAt is null) {
+                    throw new InvalidOperationException("CreatedAt is not nullable");
+                }
 
-                return new AuthUser(_id, _userId, _username, _passwordHash, _email, _roles);
+                return new AuthUser(_id, _userId, _username, _passwordHash, _email, _createdAt.Value, _roles);
             }
         }
     }

@@ -4,18 +4,19 @@ using System.Threading.Tasks;
 using Xunit;
 using static Draughts.Application.Lobby.LobbyController;
 
-namespace Draughts.IntegrationTest {
-    public class LobbyIT {
-        private readonly ApiTester _apiTest;
+namespace Draughts.IntegrationTest.EndToEnd.InMemory {
+    public class InMemoryLobbyIT {
+        private readonly InMemoryApiTester _apiTest;
         private GameId? _gameId;
 
-        public LobbyIT() {
-            _apiTest = new ApiTester();
+        public InMemoryLobbyIT() {
+            _apiTest = new InMemoryApiTester();
         }
 
         [Fact]
         public async Task CreateAndJoinGame() {
             await VisitLobbyPageAsGuest();
+            await VisitSpectatorPageAsGuest();
 
             _apiTest.LoginAsTestPlayerBlack();
             await VisitLobbyPage();
@@ -29,7 +30,13 @@ namespace Draughts.IntegrationTest {
         private async Task VisitLobbyPageAsGuest() {
             string page = await _apiTest.GetString("/lobby");
             page.Should().Contain("<h1>Game lobby</h1>", "This is what guest sees in the the lobby.");
-            page.Should().Contain("The list of open games");
+            page.Should().Contain("The list of open games.");
+        }
+
+        private async Task VisitSpectatorPageAsGuest() {
+            string page = await _apiTest.GetString("/lobby/spectate");
+            page.Should().Contain("<h1>Spectator lounge</h1>", "This is what guest sees in the the spectator lounge.");
+            page.Should().Contain("Watch one of the games currently being played.");
         }
 
         private async Task VisitLobbyPage() {

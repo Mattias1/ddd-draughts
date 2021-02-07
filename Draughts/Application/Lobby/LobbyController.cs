@@ -6,6 +6,7 @@ using Draughts.Common;
 using Draughts.Domain.GameAggregate.Models;
 using Draughts.Domain.GameAggregate.Specifications;
 using Draughts.Repositories;
+using Draughts.Repositories.Transaction;
 using Microsoft.AspNetCore.Mvc;
 using static Draughts.Domain.AuthUserAggregate.Models.Permission;
 
@@ -13,22 +14,30 @@ namespace Draughts.Application.Lobby {
     public class LobbyController : BaseController {
         private readonly IGameRepository _gameRepository;
         private readonly IGameService _gameService;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public LobbyController(IGameRepository gameRepository, IGameService gameService) {
+        public LobbyController(IGameRepository gameRepository, IGameService gameService, IUnitOfWork unitOfWork) {
             _gameRepository = gameRepository;
             _gameService = gameService;
+            _unitOfWork = unitOfWork;
         }
 
         [HttpGet("/lobby"), GuestRoute]
         public IActionResult Lobby() {
-            var pendingGames = _gameRepository.List(new PendingGameSpecification());
+            var pendingGames = _unitOfWork.WithGameTransaction(tran => {
+                var games = _gameRepository.List(new PendingGameSpecification());
+                return tran.CommitWith(games);
+            });
             return View(new GamelistViewModel(pendingGames));
         }
 
         [HttpGet("/lobby/spectate"), GuestRoute]
         public IActionResult Spectate() {
-            var pendingGames = _gameRepository.List(new ActiveGameSpecification());
-            return View(new GamelistViewModel(pendingGames));
+            var activeGames = _unitOfWork.WithGameTransaction(tran => {
+                var games = _gameRepository.List(new ActiveGameSpecification());
+                return tran.CommitWith(games);
+            });
+            return View(new GamelistViewModel(activeGames));
         }
 
         [HttpGet("lobby/create"), Requires(Permissions.PLAY_GAME)]

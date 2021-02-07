@@ -5,6 +5,7 @@ using Draughts.Application.Shared.ViewModels;
 using Draughts.Common;
 using Draughts.Domain.GameAggregate.Models;
 using Draughts.Repositories;
+using Draughts.Repositories.Transaction;
 using Microsoft.AspNetCore.Mvc;
 using static Draughts.Domain.AuthUserAggregate.Models.Permission;
 
@@ -12,15 +13,20 @@ namespace Draughts.Application.PlayGame {
     public class PlayGameController : BaseController {
         private readonly IGameRepository _gameRepository;
         private readonly IPlayGameService _playGameService;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public PlayGameController(IGameRepository gameRepository, IPlayGameService playGameService) {
+        public PlayGameController(IGameRepository gameRepository, IPlayGameService playGameService, IUnitOfWork unitOfWork) {
             _gameRepository = gameRepository;
             _playGameService = playGameService;
+            _unitOfWork = unitOfWork;
         }
 
         [HttpGet("/game/{gameId:long}"), GuestRoute]
         public IActionResult Game(long gameId) {
-            var game = _gameRepository.FindByIdOrNull(new GameId(gameId));
+            var game = _unitOfWork.WithGameTransaction(tran => {
+                var game = _gameRepository.FindByIdOrNull(new GameId(gameId));
+                return tran.CommitWith(game);
+            });
 
             if (game is null) {
                 return NotFound();

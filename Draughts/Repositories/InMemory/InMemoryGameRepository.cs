@@ -1,11 +1,11 @@
 using Draughts.Domain.GameAggregate.Models;
 using Draughts.Domain.GameAggregate.Specifications;
 using Draughts.Repositories.Database;
-using Draughts.Repositories.Databases;
+using Draughts.Repositories.Transaction;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Draughts.Repositories {
+namespace Draughts.Repositories.InMemory {
     public class InMemoryGameRepository : InMemoryRepository<Game>, IGameRepository {
         private readonly IPlayerRepository _playerRepository;
         private readonly IUnitOfWork _unitOfWork;

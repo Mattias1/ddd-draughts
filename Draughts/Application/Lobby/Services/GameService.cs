@@ -2,7 +2,7 @@ using Draughts.Common;
 using Draughts.Domain.GameAggregate.Models;
 using Draughts.Domain.UserAggregate.Models;
 using Draughts.Repositories;
-using Draughts.Repositories.Databases;
+using Draughts.Repositories.Transaction;
 using System.Linq;
 
 namespace Draughts.Application.Lobby.Services {
@@ -10,40 +10,45 @@ namespace Draughts.Application.Lobby.Services {
     public class GameService : IGameService {
         private readonly IGameFactory _gameFactory;
         private readonly IGameRepository _gameRepository;
+        private readonly IIdGenerator _idGenerator;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IUserRepository _userRepository;
 
         public GameService(IGameFactory gameFactory, IGameRepository gameRepository,
-            IUnitOfWork unitOfWork, IUserRepository userRepository
-        ) {
+                IIdGenerator idGenerator, IUnitOfWork unitOfWork, IUserRepository userRepository) {
             _gameFactory = gameFactory;
             _gameRepository = gameRepository;
+            _idGenerator = idGenerator;
             _unitOfWork = unitOfWork;
             _userRepository = userRepository;
         }
 
         public Game CreateGame(UserId userId, GameSettings gameSettings, Color joinColor) {
-            var user = _userRepository.FindById(userId);
+            var user = _unitOfWork.WithUserTransaction(tran => {
+                var user = _userRepository.FindById(userId);
+                return tran.CommitWith(user);
+            });
 
-            return _unitOfWork.WithTransaction(TransactionDomain.Game, tran => {
-                var game = _gameFactory.CreateGame(gameSettings, user, joinColor);
-
-                tran.Commit();
-                return game;
+            return _unitOfWork.WithGameTransaction(tran => {
+                var game = _gameFactory.CreateGame(_idGenerator.ReservePool(), gameSettings, user, joinColor);
+                return tran.CommitWith(game);
             });
         }
 
         public void JoinGame(UserId userId, GameId gameId, Color? color) {
-            var user = _userRepository.FindById(userId);
+            var user = _unitOfWork.WithUserTransaction(tran => {
+                var user = _userRepository.FindById(userId);
+                return tran.CommitWith(user);
+            });
 
-            _unitOfWork.WithTransaction(TransactionDomain.Game, tran => {
+            _unitOfWork.WithGameTransaction(tran => {
                 var game = _gameRepository.FindByIdOrNull(gameId);
 
                 if (game is null) {
                     throw new ManualValidationException("Game not found");
                 }
 
-                _gameFactory.JoinGame(game, user, color ?? GetRemainingColor(game));
+                _gameFactory.JoinGame(_idGenerator.ReservePool(), game, user, color ?? GetRemainingColor(game));
 
                 tran.Commit();
             });

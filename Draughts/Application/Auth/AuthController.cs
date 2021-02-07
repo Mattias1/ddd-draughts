@@ -1,10 +1,11 @@
 using Microsoft.AspNetCore.Mvc;
 using Draughts.Common;
-using Draughts.Repositories.Databases;
+using Draughts.Repositories.Transaction;
 using Draughts.Application.Shared.Attributes;
 using Draughts.Application.Shared.Middleware;
 using Draughts.Application.Auth.Services;
 using Draughts.Application.Shared;
+using Draughts.Repositories;
 
 namespace Draughts.Application.Auth {
     public class AuthController : BaseController {
@@ -12,11 +13,14 @@ namespace Draughts.Application.Auth {
 
         private readonly IAuthService _authService;
         private readonly IAuthUserFactory _authUserFactory;
+        private readonly IIdGenerator _idGenerator;
         private readonly IUnitOfWork _unitOfWork;
 
-        public AuthController(IAuthService authService, IAuthUserFactory authUserFactory, IUnitOfWork unitOfWork) {
+        public AuthController(IAuthService authService, IAuthUserFactory authUserFactory, IIdGenerator idGenerator,
+                IUnitOfWork unitOfWork) {
             _authService = authService;
             _authUserFactory = authUserFactory;
+            _idGenerator = idGenerator;
             _unitOfWork = unitOfWork;
         }
 
@@ -33,8 +37,12 @@ namespace Draughts.Application.Auth {
             try {
                 ValidateNotNull(request?.Name, request?.Password);
 
-                var jwt = _authService.GenerateJwt(request!.Name, request.Password);
-                var permissions = _authService.PermissionsForJwt(jwt);
+                var (jwt, permissions) = _unitOfWork.WithAuthUserTransaction(tran => {
+                    var jwt = _authService.GenerateJwt(request!.Name, request.Password);
+                    var permissions = _authService.PermissionsForJwt(jwt);
+
+                    return tran.CommitWith((jwt, permissions));
+                });
                 AuthContext authContext = AuthContext.AttachToHttpContext(jwt, permissions, HttpContext);
 
                 return Redirect("/");
@@ -78,8 +86,8 @@ namespace Draughts.Application.Auth {
                 // Do I want this transaction in a controller? Probably not right? Because we might need transactions
                 // (or at least read only db connections) for different domains. And they should be accessed from inside
                 // a non-domain service.
-                _unitOfWork.WithTransaction(TransactionDomain.AuthUser, tran => {
-                    _authUserFactory.CreateAuthUser(request.Name, request.Email, request.Password);
+                _unitOfWork.WithAuthUserTransaction(tran => {
+                    _authUserFactory.CreateAuthUser(_idGenerator.ReservePool(), request.Name, request.Email, request.Password);
 
                     tran.Commit();
                 });

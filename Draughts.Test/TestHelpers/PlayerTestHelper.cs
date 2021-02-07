@@ -1,17 +1,23 @@
+using Draughts.Common.Utilities;
 using Draughts.Domain.AuthUserAggregate.Models;
 using Draughts.Domain.GameAggregate.Models;
 using Draughts.Domain.UserAggregate.Models;
+using NodaTime;
+using NodaTime.Testing;
 using System;
 
 namespace Draughts.Test.TestHelpers {
     public class PlayerTestHelper {
+        private static readonly ZonedDateTime Feb29 = FakeClock.FromUtc(2020, 02, 29).UtcNow();
+
         public static PlayerBuilder White() {
             return new PlayerBuilder()
                 .WithId(IdTestHelper.Next())
                 .WithUserId(IdTestHelper.Next())
                 .WithUsername("White player")
                 .WithRank(Rank.Ranks.Private)
-                .WithColor(Color.White);
+                .WithColor(Color.White)
+                .WithCreatedAt(Feb29);
         }
 
         public static PlayerBuilder Black() {
@@ -20,7 +26,18 @@ namespace Draughts.Test.TestHelpers {
                 .WithUserId(IdTestHelper.Next())
                 .WithUsername("Black player")
                 .WithRank(Rank.Ranks.Private)
-                .WithColor(Color.Black);
+                .WithColor(Color.Black)
+                .WithCreatedAt(Feb29);
+        }
+
+        public static PlayerBuilder FromUser(User user) {
+            return new PlayerBuilder()
+                .WithId(IdTestHelper.Next())
+                .WithUserId(user.Id)
+                .WithUsername(user.Username)
+                .WithRank(user.Rank)
+                .WithColor(Color.Black)
+                .WithCreatedAt(user.CreatedAt);
         }
 
 
@@ -30,6 +47,7 @@ namespace Draughts.Test.TestHelpers {
             private Username? _username;
             private Rank? _rank;
             private Color? _color;
+            private ZonedDateTime? _createdAt;
 
             public PlayerBuilder WithId(long id) => WithId(new PlayerId(id));
             public PlayerBuilder WithId(PlayerId id) {
@@ -59,6 +77,11 @@ namespace Draughts.Test.TestHelpers {
                 return this;
             }
 
+            public PlayerBuilder WithCreatedAt(ZonedDateTime createdAt) {
+                _createdAt = createdAt;
+                return this;
+            }
+
             public Player Build() {
                 if (_id is null) {
                     throw new InvalidOperationException("Id is not nullable");
@@ -75,8 +98,11 @@ namespace Draughts.Test.TestHelpers {
                 if (_color is null) {
                     throw new InvalidOperationException("Color is not nullable");
                 }
+                if (_createdAt is null) {
+                    throw new InvalidOperationException("CreatedAt is not nullable");
+                }
 
-                return new Player(_id, _userId, _username, _rank, _color);
+                return new Player(_id, _userId, _username, _rank, _color, _createdAt.Value);
             }
         }
     }

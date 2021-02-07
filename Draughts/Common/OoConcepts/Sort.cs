@@ -1,3 +1,4 @@
+using SqlQueryBuilder.Builder;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,6 +15,12 @@ namespace Draughts.Common.OoConcepts {
         public TKey SortKey(T entity) {
             Func<T, TKey> predicate = ToExpression().Compile();
             return predicate(entity);
+        }
+
+        public abstract IQueryBuilder ApplyQueryBuilder(IQueryBuilder builder);
+
+        protected IQueryBuilder ApplyColumnSort(IQueryBuilder builder, string column) {
+            return SortDescending ? builder.OrderByDesc(column) : builder.OrderByAsc(column);
         }
 
         public Sort<T, TKey> Asc() {
