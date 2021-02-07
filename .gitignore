@@ -5,6 +5,7 @@
 [Bb]in/
 [Oo]bj/
 *.vs/
+*.vscode/
 
 # MSTest test Results
 [Tt]est[Rr]esult*/
