@@ -7,7 +7,7 @@ namespace Draughts.Domain.GameAggregate.Models {
         public enum MoveResult { NextTurn, MoreCapturesAvailable, GameOver };
 
         public BoardPosition Board { get; }
-        public SquareNumber? CaptureSequencePreviousSquare { get; private set; }
+        public Square? CaptureSequencePreviousSquare { get; private set; }
 
         public override GameId Id { get; }
 
@@ -16,8 +16,12 @@ namespace Draughts.Domain.GameAggregate.Models {
             Board = board;
         }
 
-        public MoveResult AddMove(SquareNumber from, SquareNumber to) {
+        public MoveResult AddMove(Square from, Square to, Color currentTurn) {
             // TODO: Validate if from and to fit on the board
+            if (currentTurn != Board[from].Color) {
+                throw new ManualValidationException("It's not your turn.");
+            }
+
             bool isNormalMove = Board.IsMove(from, to);
             if (!isNormalMove && !Board.IsCapture(from, to)) {
                 throw new ManualValidationException("Invalid move.");
@@ -38,8 +42,9 @@ namespace Draughts.Domain.GameAggregate.Models {
                 Board.Promote(to);
             }
 
-            // TODO
-            // if (Board.NrOfPiecesPerColor(<other>) == 0) { return MoveResult.GameOver; }
+            if (Board.NrOfPiecesPerColor(currentTurn.Other) == 0) {
+                return MoveResult.GameOver;
+            }
 
             return MoveResult.NextTurn;
         }

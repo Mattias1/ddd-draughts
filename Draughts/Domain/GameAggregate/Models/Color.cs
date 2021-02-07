@@ -1,3 +1,4 @@
+using Draughts.Common;
 using Draughts.Common.OoConcepts;
 using Draughts.Common.Utilities;
 using System.Collections.Generic;
@@ -21,5 +22,10 @@ namespace Draughts.Domain.GameAggregate.Models {
         public static Color White => new Color(true);
         public static Color Black => new Color(false);
         public static Color Random => Rand.NextBool() ? White : Black;
+        public static Color FromString(string color) => color switch {
+            "white" => Color.White,
+            "black" => Color.Black,
+            _ => throw new ManualValidationException($"Unknown color: {color}")
+        };
     }
 }

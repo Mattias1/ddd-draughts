@@ -68,16 +68,19 @@ namespace Draughts.Domain.GameAggregate.Models {
 
         private Player GetPlayerForColor(Color color) => _players.Single(p => p.Color == color);
 
-        public GameState.MoveResult DoMove(SquareNumber from, SquareNumber to, ZonedDateTime movedAt) {
-            // TODO: Make sure it's the right players turn and so on and so forth.
-            var result = GameState.AddMove(from, to);
+        public GameState.MoveResult DoMove(Square from, Square to, ZonedDateTime movedAt) {
+            if (!HasStarted || IsFinished || Turn is null) {
+                throw new ManualValidationException("This game is not active.");
+            }
+
+            var result = GameState.AddMove(from, to, Turn.Player.Color);
 
             switch (result) {
                 case GameState.MoveResult.NextTurn:
                     SwitchTurn(movedAt);
                     return result;
                 case GameState.MoveResult.MoreCapturesAvailable:
-                    return result; // Don't do anything, the user will do the next move.
+                    return result; // No need to do anything, the user will do the next move.
                 case GameState.MoveResult.GameOver:
                     FinishGame(movedAt);
                     return result;
@@ -87,7 +90,7 @@ namespace Draughts.Domain.GameAggregate.Models {
         }
 
         private void SwitchTurn(ZonedDateTime switchedAt) {
-            var player = Turn is null ? GetPlayerForColor(Settings.FirstMove) : Players.Single(p => p != Turn!.Player);
+            var player = Turn is null ? GetPlayerForColor(Settings.FirstMove) : Players.Single(p => p != Turn.Player);
             Turn = new Turn(player, switchedAt, Settings.MaxTurnLength);
         }
 
