@@ -1,0 +1,29 @@
+version: '3.8'
+services:
+  draughts-db:
+    image: mariadb:10
+    container_name: draughts-db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_INITDB_SKIP_TZINFO: skippls
+    volumes:
+      - draughts-db-data:/var/lib/mysql
+      # Files in this directory are executed in alphabetical order when initializing
+      - ./draughts-db/structure.sql:/docker-entrypoint-initdb.d/aa-structure.sql
+      - ./draughts-db/userprivileges.sql:/docker-entrypoint-initdb.d/bb-userprivileges.sql
+    ports:
+      - 52506:3306 # SQL Port
+
+  # Adminer is a web tool used to manage databases
+  adminer:
+    image: adminer
+    container_name: draughts-adminer
+    restart: always
+    environment:
+      ADMINER_DEFAULT_SERVER: draughts-db
+    ports:
+      - 52580:8080 # Webinterface: HTTP
+
+volumes:
+  draughts-db-data:
