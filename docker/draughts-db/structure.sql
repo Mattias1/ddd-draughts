@@ -1,0 +1,139 @@
+-- User --
+CREATE DATABASE `draughts_user`;
+USE `draughts_user`;
+
+CREATE TABLE `user` (
+    `id` BIGINT NOT NULL,
+    `authuser_id` BIGINT NOT NULL,
+    `username` VARCHAR(50) NOT NULL,
+    `rating` INT NOT NULL,
+    `rank` VARCHAR(50) NOT NULL,
+    `games_played` INT NOT NULL,
+    `created_at` DATETIME NOT NULL,
+
+    PRIMARY KEY (`id`)
+);
+
+CREATE TABLE `event` (
+    `id` BIGINT NOT NULL,
+    `type` VARCHAR(50) NOT NULL,
+    `created_at` DATETIME NOT NULL,
+    `last_attempted_at` DATETIME NOT NULL,
+    `nr_of_attempts` INT NOT NULL,
+
+    PRIMARY KEY (`id`)
+);
+
+
+-- Auth user --
+CREATE DATABASE `draughts_authuser`;
+USE `draughts_authuser`;
+
+CREATE TABLE `authuser` (
+    `id` BIGINT NOT NULL,
+    `user_id` BIGINT NOT NULL,
+    `username` VARCHAR(50) NOT NULL,
+    `password_hash` VARCHAR(200) NOT NULL,
+    `email` VARCHAR(200) NOT NULL,
+    `created_at` DATETIME NOT NULL,
+
+    PRIMARY KEY (`id`)
+);
+
+CREATE TABLE `role` (
+    `id` BIGINT NOT NULL,
+    `rolename` VARCHAR(50) NOT NULL,
+    `created_at` DATETIME NOT NULL,
+
+    PRIMARY KEY (`id`)
+);
+
+CREATE TABLE `authuser_role` (
+    `authuser_id` BIGINT NOT NULL,
+    `role_id` BIGINT NOT NULL,
+
+    PRIMARY KEY (`authuser_id`, `role_id`),
+    CONSTRAINT fk_aur_au FOREIGN KEY (`authuser_id`)
+        REFERENCES `authuser` (`id`)
+        ON UPDATE RESTRICT ON DELETE CASCADE,
+    CONSTRAINT fk_aur_role FOREIGN KEY (`role_id`)
+        REFERENCES `role` (`id`)
+        ON UPDATE RESTRICT ON DELETE CASCADE
+);
+
+CREATE TABLE `permission_role` (
+    `role_id` BIGINT NOT NULL,
+    `permission` VARCHAR(50) NOT NULL,
+
+    PRIMARY KEY (`role_id`, `permission`),
+    CONSTRAINT fk_pr_role FOREIGN KEY (`role_id`)
+        REFERENCES `role` (`id`)
+        ON UPDATE RESTRICT ON DELETE CASCADE
+);
+
+CREATE TABLE `event` (
+    `id` BIGINT NOT NULL,
+    `type` VARCHAR(50) NOT NULL,
+    `created_at` DATETIME NOT NULL,
+    `last_attempted_at` DATETIME NOT NULL,
+    `nr_of_attempts` INT NOT NULL,
+
+    PRIMARY KEY (`id`)
+);
+
+
+-- Game --
+CREATE DATABASE `draughts_game`;
+USE `draughts_game`;
+
+CREATE TABLE `game` (
+    `id` BIGINT NOT NULL,
+    `board_size` INT NOT NULL,
+    `first_move_color_is_white` BIT NOT NULL,
+    `flying_kings` BIT NOT NULL,
+    `men_capture_backwards` BIT NOT NULL,
+    `capture_constraints` VARCHAR(3) NOT NULL,
+    `current_game_state` VARCHAR(72) NOT NULL,
+    `created_at` DATETIME NOT NULL,
+    `started_at` DATETIME NULL,
+    `finished_at` DATETIME NULL,
+    `turn_player_id` BIGINT NULL,
+    `turn_created_at` DATETIME NULL,
+    `turn_expires_at` DATETIME NULL,
+
+    PRIMARY KEY (`id`)
+);
+
+CREATE TABLE `player` (
+    `id` BIGINT NOT NULL,
+    `user_id` BIGINT NOT NULL,
+    `game_id` BIGINT NOT NULL,
+    `username` VARCHAR(50) NOT NULL,
+    `rank` VARCHAR(50) NOT NULL,
+    `color` BIT NOT NULL,
+    `created_at` DATETIME NOT NULL,
+
+    PRIMARY KEY (`id`),
+    CONSTRAINT fk_p_game FOREIGN KEY (`game_id`)
+        REFERENCES `game` (`id`)
+        ON UPDATE RESTRICT ON DELETE CASCADE
+);
+
+CREATE TABLE `event` (
+    `id` BIGINT NOT NULL,
+    `type` VARCHAR(50) NOT NULL,
+    `created_at` DATETIME NOT NULL,
+    `last_attempted_at` DATETIME NOT NULL,
+    `nr_of_attempts` INT NOT NULL,
+
+    PRIMARY KEY (`id`)
+);
+
+
+-- Misc --
+CREATE DATABASE `draughts_misc`;
+USE `draughts_misc`;
+
+CREATE TABLE `id_generation` (
+    `available_id` BIGINT NOT NULL
+);
