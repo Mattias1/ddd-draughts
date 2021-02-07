@@ -17,7 +17,7 @@ namespace Draughts.Application.PlayGame.Services {
             _unitOfWork = unitOfWork;
         }
 
-        public void DoMove(GameId gameId, SquareNumber from, SquareNumber to) {
+        public void DoMove(GameId gameId, Square from, Square to) {
             _unitOfWork.WithTransaction(TransactionDomain.Game, tran => {
                 var game = _gameRepository.FindByIdOrNull(gameId) ?? throw new ManualValidationException("Game not found.");
                 game.DoMove(from, to, _clock.UtcNow());
