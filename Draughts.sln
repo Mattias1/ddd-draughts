@@ -14,6 +14,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		.editorconfig = .editorconfig
 	EndProjectSection
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Draughts.Command", "Draughts.Command\Draughts.Command.csproj", "{89B9F24A-A907-4564-A4FB-C3FDD8AEDFBF}"
+EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SqlQueryBuilder", "SqlQueryBuilder", "{8C0CB3FC-D171-441F-9814-9B1E282C9924}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SqlQueryBuilder", "QueryBuilder\SqlQueryBuilder.csproj", "{6BAAB97F-6544-4BA8-A2F6-9FBC65467DC6}"
@@ -38,6 +40,10 @@ Global
 		{3175D762-2B32-46BB-A684-6886BADB6F62}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3175D762-2B32-46BB-A684-6886BADB6F62}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3175D762-2B32-46BB-A684-6886BADB6F62}.Release|Any CPU.Build.0 = Release|Any CPU
+		{89B9F24A-A907-4564-A4FB-C3FDD8AEDFBF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{89B9F24A-A907-4564-A4FB-C3FDD8AEDFBF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{89B9F24A-A907-4564-A4FB-C3FDD8AEDFBF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{89B9F24A-A907-4564-A4FB-C3FDD8AEDFBF}.Release|Any CPU.Build.0 = Release|Any CPU
 		{6BAAB97F-6544-4BA8-A2F6-9FBC65467DC6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{6BAAB97F-6544-4BA8-A2F6-9FBC65467DC6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6BAAB97F-6544-4BA8-A2F6-9FBC65467DC6}.Release|Any CPU.ActiveCfg = Release|Any CPU

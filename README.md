@@ -27,6 +27,8 @@ To run the application without IDE, you need some patience `;)` __WIP__.
 
 ### Setup development environment
 Start the develop dependencies with `sudo ./run-dev.sh start`.
+To initialise the database, run `dotnet build Draughts.Command/Draughts.Command.csproj`
+and `dotnet run --project Draughts.Command/Draughts.Command.csproj data:essential data:dummy`.
 
 You can then edit and run the application with your favourite IDE. It should open at
 <http://localhost:52588>.
