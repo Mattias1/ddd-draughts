@@ -2,7 +2,7 @@ using Draughts.Common;
 using Draughts.Common.Utilities;
 using Draughts.Domain.GameAggregate.Models;
 using Draughts.Repositories;
-using Draughts.Repositories.Databases;
+using Draughts.Repositories.Transaction;
 using NodaTime;
 
 namespace Draughts.Application.PlayGame.Services {

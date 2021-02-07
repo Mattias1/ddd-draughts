@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using Xunit;
 using static Draughts.Application.Auth.AuthController;
 
-namespace Draughts.IntegrationTest {
+namespace Draughts.IntegrationTest.EndToEnd.Database {
     public class AuthenticationIT {
         private readonly ApiTester _apiTest;
 

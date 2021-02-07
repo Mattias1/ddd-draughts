@@ -3,6 +3,8 @@ using System.Collections.Generic;
 
 namespace Draughts.Repositories {
     public interface IRepository<T> where T : class {
+        long Count();
+        long Count(Specification<T> spec);
         T Find(Specification<T> spec);
         T? FindOrNull(Specification<T> spec);
         IReadOnlyList<T> List();

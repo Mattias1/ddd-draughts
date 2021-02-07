@@ -3,7 +3,6 @@ using Draughts.Common.Utilities;
 using Draughts.Domain.AuthUserAggregate.Models;
 using Draughts.Domain.GameAggregate.Models;
 using Draughts.Domain.UserAggregate.Models;
-using Draughts.Repositories.Databases;
 using NodaTime;
 using System;
 using System.Collections.Generic;
@@ -11,7 +10,7 @@ using System.Linq;
 using static Draughts.Domain.AuthUserAggregate.Models.Permission;
 using static Draughts.Domain.UserAggregate.Models.Rank;
 
-namespace Draughts.Repositories.Database {
+namespace Draughts.Repositories.InMemory {
     public static class UserDatabase {
         public const long AdminId = 1;
         public const long UserId = 2;
@@ -42,8 +41,10 @@ namespace Draughts.Repositories.Database {
             if (id >= START_FOR_NEXT_IDS) {
                 throw new InvalidOperationException("START_FOR_NEXT_IDS too low!");
             }
+            var now = SystemClock.Instance.UtcNow();
             return new InMemoryUser {
-                Id = id, AuthUserId = id, Username = name, Rating = rating, Rank = rank.Name, GamesPlayed = gamesPlayed
+                Id = id, AuthUserId = id, Username = name, Rating = rating, Rank = rank.Name,
+                GamesPlayed = gamesPlayed, CreatedAt = now
             };
         }
 
@@ -85,9 +86,10 @@ namespace Draughts.Repositories.Database {
                 throw new InvalidOperationException("START_FOR_NEXT_IDS too low!");
             }
             var hash = PasswordHash.Generate("admin", new AuthUserId(id), new Username(name)).ToStorage();
+            var now = SystemClock.Instance.UtcNow();
             return new InMemoryAuthUser {
                 Id = id, UserId = id, Username = name, PasswordHash = hash, Email = $"{name}@example.com",
-                RoleIds = roles.Select(r => r.Id).ToArray()
+                RoleIds = roles.Select(r => r.Id).ToArray(), CreatedAt = now
             };
         }
 
@@ -138,16 +140,17 @@ namespace Draughts.Repositories.Database {
             if (id >= UserDatabase.START_FOR_NEXT_IDS) {
                 throw new InvalidOperationException("START_FOR_NEXT_IDS too low!");
             }
+            var now = SystemClock.Instance.UtcNow();
             return new InMemoryPlayer {
                 Id = id, UserId = userId, Username = name,
-                ColorIsWhite = color == Color.White, Rank = rank.Name
+                ColorIsWhite = color == Color.White, Rank = rank.Name, CreatedAt = now
             };
         }
     }
 
     public static class MiscDatabase {
-        public static List<AvailableId> IdGenerationTable { get; } = new List<AvailableId>(1) {
-            new AvailableId { Id = UserDatabase.START_FOR_NEXT_IDS }
+        public static List<InMemoryAvailableId> IdGenerationTable { get; } = new List<InMemoryAvailableId>(1) {
+            new InMemoryAvailableId { Id = UserDatabase.START_FOR_NEXT_IDS }
         };
     }
 }

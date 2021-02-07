@@ -1,11 +1,14 @@
 using Draughts.Common.Events;
+using Draughts.Common.Utilities;
 using Draughts.Repositories.Database;
+using Draughts.Repositories.InMemory;
+using SqlQueryBuilder.Options;
 using System;
 using System.Collections.Generic;
-using static Draughts.Repositories.Databases.PairTableFunctions;
+using static Draughts.Repositories.Transaction.PairTableFunctions;
 
-namespace Draughts.Repositories.Databases {
-    public abstract class TransactionDomain {
+namespace Draughts.Repositories.Transaction {
+    public abstract class TransactionDomain : IEquatable<TransactionDomain> {
         public static TransactionDomain AuthUser => new AuthUserTransactionDomain();
         public static TransactionDomain User => new UserTransactionDomain();
         public static TransactionDomain Game => new GameTransactionDomain();
@@ -35,6 +38,16 @@ namespace Draughts.Repositories.Databases {
 
         protected abstract void ApplyForAllTablePairs(IPairTableFunction func);
 
+        public abstract ISqlTransactionFlavor BeginTransaction();
+
+        public override bool Equals(object? obj) => obj is TransactionDomain tdObj && tdObj.Key.Equals(Key);
+        public bool Equals(TransactionDomain? other) => other?.Key == Key;
+
+        public override int GetHashCode() => Key.GetHashCode();
+
+        public static bool operator ==(TransactionDomain? left, TransactionDomain? right) => ComparisonUtils.NullSafeEquals(left, right);
+        public static bool operator !=(TransactionDomain? left, TransactionDomain? right) => ComparisonUtils.NullSafeNotEquals(left, right);
+
         public class AuthUserTransactionDomain : TransactionDomain {
             public const string KEY = "AuthUser";
             public override string Key => KEY;
@@ -46,6 +59,8 @@ namespace Draughts.Repositories.Databases {
                 func.Apply(AuthUserDatabase.TempAuthUsersTable, AuthUserDatabase.AuthUsersTable);
                 func.Apply(AuthUserDatabase.TempDomainEventsTable, AuthUserDatabase.DomainEventsTable);
             }
+
+            public override ISqlTransactionFlavor BeginTransaction() => DbContext.Get.AuthUserTransaction();
         }
 
         public class UserTransactionDomain : TransactionDomain {
@@ -58,6 +73,8 @@ namespace Draughts.Repositories.Databases {
                 func.Apply(UserDatabase.TempUsersTable, UserDatabase.UsersTable);
                 func.Apply(UserDatabase.TempDomainEventsTable, UserDatabase.DomainEventsTable);
             }
+
+            public override ISqlTransactionFlavor BeginTransaction() => DbContext.Get.UserTransaction();
         }
 
         public class GameTransactionDomain : TransactionDomain {
@@ -71,6 +88,8 @@ namespace Draughts.Repositories.Databases {
                 func.Apply(GameDatabase.TempGamesTable, GameDatabase.GamesTable);
                 func.Apply(GameDatabase.TempDomainEventsTable, GameDatabase.DomainEventsTable);
             }
+
+            public override ISqlTransactionFlavor BeginTransaction() => DbContext.Get.GameTransaction();
         }
 
         public static class InMemoryDatabaseUtils {

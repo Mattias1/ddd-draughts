@@ -1,11 +1,11 @@
 using Draughts.Domain.AuthUserAggregate.Models;
 using Draughts.Domain.AuthUserAggregate.Specifications;
 using Draughts.Repositories.Database;
-using Draughts.Repositories.Databases;
+using Draughts.Repositories.Transaction;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Draughts.Repositories {
+namespace Draughts.Repositories.InMemory {
     public class InMemoryRoleRepository : InMemoryRepository<Role>, IRoleRepository {
         private readonly IUnitOfWork _unitOfWork;
 
@@ -15,6 +15,7 @@ namespace Draughts.Repositories {
             return AuthUserDatabase.RolesTable.Select(r => new Role(
                 new RoleId(r.Id),
                 r.Rolename,
+                r.CreatedAt,
                 r.Permissions.Select(p => new Permission(p)).ToArray()
             )).ToList();
         }
@@ -28,6 +29,7 @@ namespace Draughts.Repositories {
             var role = new InMemoryRole {
                 Id = entity.Id,
                 Rolename = entity.Rolename,
+                CreatedAt = entity.CreatedAt,
                 Permissions = entity.Permissions.Select(p => p.Value).ToArray()
             };
 

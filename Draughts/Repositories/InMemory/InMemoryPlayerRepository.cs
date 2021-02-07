@@ -1,13 +1,12 @@
 using Draughts.Domain.AuthUserAggregate.Models;
 using Draughts.Domain.GameAggregate.Models;
 using Draughts.Domain.UserAggregate.Models;
-using Draughts.Repositories.Database;
-using Draughts.Repositories.Databases;
+using Draughts.Repositories.Transaction;
 using System.Collections.Generic;
 using System.Linq;
 using static Draughts.Domain.UserAggregate.Models.Rank;
 
-namespace Draughts.Repositories {
+namespace Draughts.Repositories.InMemory {
     public class InMemoryPlayerRepository : InMemoryRepository<Player>, IPlayerRepository {
         private readonly IUnitOfWork _unitOfWork;
 
@@ -19,17 +18,20 @@ namespace Draughts.Repositories {
                 new UserId(p.UserId),
                 new Username(p.Username),
                 Ranks.All.Single(r => r.Name == p.Rank),
-                p.ColorIsWhite ? Color.Black : Color.White
+                p.ColorIsWhite ? Color.White : Color.Black,
+                p.CreatedAt
             )).ToList();
         }
 
+        public void Save(Player entity, GameId gameId) => Save(entity);
         public override void Save(Player entity) {
             var player = new InMemoryPlayer {
                 Id = entity.Id,
                 UserId = entity.UserId,
                 Username = entity.Username,
                 Rank = entity.Rank.Name,
-                ColorIsWhite = entity.Color == Color.Black
+                ColorIsWhite = entity.Color == Color.White,
+                CreatedAt = entity.CreatedAt
             };
 
             _unitOfWork.Store(player, GameDatabase.TempPlayersTable);

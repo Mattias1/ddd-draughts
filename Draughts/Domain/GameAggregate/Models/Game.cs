@@ -23,10 +23,8 @@ namespace Draughts.Domain.GameAggregate.Models {
 
         public Game(GameId id, GameSettings settings, ZonedDateTime createdAt)
             : this(id, new List<Player>(2), null, settings, GameState.InitialState(id, settings.BoardSize), createdAt, null, null) { }
-        public Game(
-            GameId id, List<Player> players, Turn? turn, GameSettings settings, GameState gameState,
-            ZonedDateTime createdAt, ZonedDateTime? startedAt, ZonedDateTime? finishedAt
-        ) {
+        public Game(GameId id, List<Player> players, Turn? turn, GameSettings settings, GameState gameState,
+                ZonedDateTime createdAt, ZonedDateTime? startedAt, ZonedDateTime? finishedAt) {
             Id = id;
             _players = players;
             Turn = turn;

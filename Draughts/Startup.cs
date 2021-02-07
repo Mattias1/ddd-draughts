@@ -12,6 +12,8 @@ namespace Draughts {
     public class Startup {
         public IConfiguration Configuration { get; }
 
+        protected virtual bool useInMemoryDatabase => false;
+
         public Startup(IConfiguration configuration) {
             Configuration = configuration;
         }
@@ -19,14 +21,15 @@ namespace Draughts {
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services) {
             services.AddControllersWithViews();
-            DraughtsServiceProvider.ConfigureServices(services);
+
+            DraughtsServiceProvider.ConfigureServices(services, useInMemoryDatabase);
 
             ConfigureRazorViewLocations(services);
         }
 
         private void ConfigureRazorViewLocations(IServiceCollection services) {
             services.Configure<RazorViewEngineOptions>(o => {
-                // {2} is area, {1} is controller, {0} is the action    
+                // {2} is area, {1} is controller, {0} is the action
                 o.ViewLocationFormats.Clear();
                 o.ViewLocationFormats.Add("/Application/{1}/Views/{0}" + RazorViewEngine.ViewExtension);
                 o.ViewLocationFormats.Add("/Application/Shared/Views/{0}" + RazorViewEngine.ViewExtension);
@@ -60,5 +63,11 @@ namespace Draughts {
                     pattern: "{controller=StaticPages}/{action=Home}/{id?}");
             });
         }
+    }
+
+    public class InMemoryStartup : Startup {
+        protected override bool useInMemoryDatabase => true;
+
+        public InMemoryStartup(IConfiguration configuration) : base(configuration) { }
     }
 }

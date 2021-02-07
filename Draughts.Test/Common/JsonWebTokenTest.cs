@@ -5,7 +5,6 @@ using FluentAssertions;
 using NodaTime;
 using NodaTime.Testing;
 using Xunit;
-using static Draughts.Domain.AuthUserAggregate.Models.Permission;
 
 namespace Draughts.Test.Common {
     public class JsonWebTokenTest {
@@ -16,7 +15,7 @@ namespace Draughts.Test.Common {
 
         [Fact]
         public void TestGenerateJwtString() {
-            var registeredUser = new Role(new RoleId(2), "Registered user", Permissions.PlayGame);
+            var registeredUser = RoleTestHelper.RegisteredUser().WithId(2).Build();
             var authUser = BuildAuthUser(AuthUserId, "User", registeredUser);
 
             var clock = new FakeClock(new LocalDateTime(2020, 01, 16, 12, 0).InUtc().ToInstant());

@@ -1,4 +1,7 @@
+using Draughts.Common.Utilities;
 using Draughts.Domain.AuthUserAggregate.Models;
+using NodaTime;
+using NodaTime.Testing;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -6,10 +9,13 @@ using static Draughts.Domain.AuthUserAggregate.Models.Permission;
 
 namespace Draughts.Test.TestHelpers {
     public class RoleTestHelper {
+        private static readonly ZonedDateTime Feb29 = FakeClock.FromUtc(2020, 02, 29).UtcNow();
+
         public static RoleBuilder PendingRegistration() {
             return new RoleBuilder()
                 .WithId(IdTestHelper.Next())
                 .WithRolename(Role.PENDING_REGISTRATION_ROLENAME)
+                .WithCreatedAt(Feb29)
                 .WithPermissions(Permissions.PendingRegistration);
         }
 
@@ -17,13 +23,23 @@ namespace Draughts.Test.TestHelpers {
             return new RoleBuilder()
                 .WithId(IdTestHelper.Next())
                 .WithRolename(Role.REGISTERED_USER_ROLENAME)
+                .WithCreatedAt(Feb29)
                 .WithPermissions(Permissions.PlayGame);
+        }
+
+        public static RoleBuilder Admin() {
+            return new RoleBuilder()
+                .WithId(IdTestHelper.Next())
+                .WithRolename(Role.ADMIN_ROLENAME)
+                .WithCreatedAt(Feb29)
+                .WithPermissions(Permissions.ViewModPanel, Permissions.EditRoles, Permissions.PlayGame);
         }
 
 
         public class RoleBuilder {
             private RoleId? _id;
             private string? _rolename;
+            private ZonedDateTime? _createdAt;
             private List<Permission> _permissions = new List<Permission>();
 
             public RoleBuilder WithId(long id) => WithId(new RoleId(id));
@@ -34,6 +50,11 @@ namespace Draughts.Test.TestHelpers {
 
             public RoleBuilder WithRolename(string rolename) {
                 _rolename = rolename;
+                return this;
+            }
+
+            public RoleBuilder WithCreatedAt(ZonedDateTime createdAt) {
+                _createdAt = createdAt;
                 return this;
             }
 
@@ -50,8 +71,11 @@ namespace Draughts.Test.TestHelpers {
                 if (_rolename is null) {
                     throw new InvalidOperationException("Rolename is not nullable");
                 }
+                if (_createdAt is null) {
+                    throw new InvalidOperationException("CreatedAt is not nullable");
+                }
 
-                return new Role(_id, _rolename, _permissions.ToArray());
+                return new Role(_id, _rolename, _createdAt.Value, _permissions.ToArray());
             }
         }
     }
