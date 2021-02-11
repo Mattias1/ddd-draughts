@@ -1,6 +1,5 @@
 using Draughts.Domain.GameAggregate.Models;
 using Draughts.Domain.GameAggregate.Specifications;
-using Draughts.Repositories.Database;
 using Draughts.Repositories.Transaction;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,7 +21,7 @@ namespace Draughts.Repositories.InMemory {
                 g.PlayerIds.Select(p => players[p]).ToList(),
                 GetTurn(g, players),
                 new GameSettings(g.BoardSize, GetFirstMoveColor(g), g.FlyingKings, g.MenCaptureBackwards, g.CaptureConstraints),
-                GameState.FromStorage(new GameId(g.Id), g.CurrentGameState),
+                GameState.FromStorage(new GameId(g.Id), g.CurrentGameState, g.CaptureSequenceFrom),
                 g.CreatedAt,
                 g.StartedAt,
                 g.FinishedAt
@@ -47,7 +46,8 @@ namespace Draughts.Repositories.InMemory {
                 FlyingKings = entity.Settings.FlyingKings,
                 MenCaptureBackwards = entity.Settings.MenCaptureBackwards,
                 CaptureConstraints = entity.Settings.CaptureConstraints,
-                CurrentGameState = entity.GameState.ToStorage(),
+                CurrentGameState = entity.GameState.StorageString(),
+                CaptureSequenceFrom = entity.GameState.CaptureSequenceFrom?.Value,
                 CreatedAt = entity.CreatedAt,
                 StartedAt = entity.StartedAt,
                 FinishedAt = entity.FinishedAt,

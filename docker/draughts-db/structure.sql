@@ -19,7 +19,7 @@ CREATE TABLE `event` (
     `type` VARCHAR(50) NOT NULL,
     `created_at` DATETIME NOT NULL,
     `last_attempted_at` DATETIME NOT NULL,
-    `nr_of_attempts` INT NOT NULL,
+    `nr_of_attempts` SMALLINT UNSIGNED NOT NULL,
 
     PRIMARY KEY (`id`)
 );
@@ -76,7 +76,7 @@ CREATE TABLE `event` (
     `type` VARCHAR(50) NOT NULL,
     `created_at` DATETIME NOT NULL,
     `last_attempted_at` DATETIME NOT NULL,
-    `nr_of_attempts` INT NOT NULL,
+    `nr_of_attempts` SMALLINT UNSIGNED NOT NULL,
 
     PRIMARY KEY (`id`)
 );
@@ -88,12 +88,13 @@ USE `draughts_game`;
 
 CREATE TABLE `game` (
     `id` BIGINT NOT NULL,
-    `board_size` INT NOT NULL,
+    `board_size` TINYINT UNSIGNED NOT NULL,
     `first_move_color_is_white` BIT NOT NULL,
     `flying_kings` BIT NOT NULL,
     `men_capture_backwards` BIT NOT NULL,
     `capture_constraints` VARCHAR(3) NOT NULL,
     `current_game_state` VARCHAR(72) NOT NULL,
+    `capture_sequence_from` TINYINT UNSIGNED NULL,
     `created_at` DATETIME NOT NULL,
     `started_at` DATETIME NULL,
     `finished_at` DATETIME NULL,
@@ -124,7 +125,7 @@ CREATE TABLE `event` (
     `type` VARCHAR(50) NOT NULL,
     `created_at` DATETIME NOT NULL,
     `last_attempted_at` DATETIME NOT NULL,
-    `nr_of_attempts` INT NOT NULL,
+    `nr_of_attempts` SMALLINT UNSIGNED NOT NULL,
 
     PRIMARY KEY (`id`)
 );

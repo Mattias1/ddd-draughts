@@ -48,7 +48,7 @@ namespace Draughts.Repositories.Database {
                     players,
                     GetTurn(g, players),
                     GetGameSettings(g),
-                    GameState.FromStorage(new GameId(g.Id), g.CurrentGameState),
+                    GameState.FromStorage(new GameId(g.Id), g.CurrentGameState, g.CaptureSequenceFrom),
                     g.CreatedAt,
                     g.StartedAt,
                     g.FinishedAt
@@ -65,7 +65,7 @@ namespace Draughts.Repositories.Database {
                 players,
                 GetTurn(g, players),
                 GetGameSettings(g),
-                GameState.FromStorage(new GameId(g.Id), g.CurrentGameState),
+                GameState.FromStorage(new GameId(g.Id), g.CurrentGameState, g.CaptureSequenceFrom),
                 g.CreatedAt,
                 g.StartedAt,
                 g.FinishedAt

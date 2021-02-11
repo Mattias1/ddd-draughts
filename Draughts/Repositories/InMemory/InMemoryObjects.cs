@@ -45,6 +45,7 @@ namespace Draughts.Repositories.InMemory {
         public bool MenCaptureBackwards;
         public GameSettings.DraughtsCaptureConstraints CaptureConstraints;
         public string CurrentGameState;
+        public int? CaptureSequenceFrom;
         public ZonedDateTime CreatedAt;
         public ZonedDateTime? StartedAt;
         public ZonedDateTime? FinishedAt;

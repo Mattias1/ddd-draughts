@@ -7,36 +7,31 @@ namespace Draughts.Domain.GameAggregate.Models {
         public enum MoveResult { NextTurn, MoreCapturesAvailable, GameOver };
 
         public BoardPosition Board { get; }
-        public Square? CaptureSequencePreviousSquare { get; private set; }
+        public Square? CaptureSequenceFrom { get; private set; }
 
         public override GameId Id { get; }
 
-        private GameState(GameId gameId, BoardPosition board) {
+        private GameState(GameId gameId, BoardPosition board, Square? captureSequenceFrom) {
             Id = gameId;
             Board = board;
+            CaptureSequenceFrom = captureSequenceFrom;
         }
 
         public MoveResult AddMove(Square from, Square to, Color currentTurn) {
-            // TODO: Validate if from and to fit on the board
+            if (from > Board.NrOfPlayableSquares || to > Board.NrOfPlayableSquares) {
+                throw new ManualValidationException("Invalid move.");
+            }
             if (currentTurn != Board[from].Color) {
                 throw new ManualValidationException("It's not your turn.");
             }
 
-            bool isNormalMove = Board.IsMove(from, to);
-            if (!isNormalMove && !Board.IsCapture(from, to)) {
-                throw new ManualValidationException("Invalid move.");
-            }
+            PerformMove(from, to, out bool canCaptureMore);
 
-            // TODO: Add the event.
-
-            if (isNormalMove) {
-                Board.Move(from, to);
+            if (canCaptureMore) {
+                CaptureSequenceFrom = to;
+                return MoveResult.MoreCapturesAvailable;
             }
-            else {
-                Board.Capture(from, to);
-
-                // TODO: If chain capture, return that.
-            }
+            CaptureSequenceFrom = null;
 
             if (Board.CanPromote(to)) {
                 Board.Promote(to);
@@ -49,10 +44,27 @@ namespace Draughts.Domain.GameAggregate.Models {
             return MoveResult.NextTurn;
         }
 
-        public string ToStorage() => Board.ToString();
+        private void PerformMove(Square from, Square to, out bool canCaptureMore) {
+            if (CaptureSequenceFrom is null) {
+                Board.PerformNewMove(from, to, out canCaptureMore);
+            }
+            else {
+                if (CaptureSequenceFrom != from) {
+                    throw new ManualValidationException("Invalid move, you have to continue the capture sequence.");
+                }
+                Board.PerformChainCaptureMove(from, to, out canCaptureMore);
+            }
+        }
 
-        public static GameState FromStorage(GameId gameId, string storage) => new GameState(gameId, BoardPosition.FromString(storage));
+        public string StorageString() => Board.ToString();
 
-        public static GameState InitialState(GameId gameId, int boardsize) => new GameState(gameId, BoardPosition.InitialSetup(boardsize));
+        public static GameState FromStorage(GameId gameId, string storage, int? fromSquare) {
+            var captureSequenceFrom = fromSquare is null ? null : new Square(fromSquare);
+            return new GameState(gameId, BoardPosition.FromString(storage), captureSequenceFrom);
+        }
+
+        public static GameState InitialState(GameId gameId, int boardsize) {
+            return new GameState(gameId, BoardPosition.InitialSetup(boardsize), null);
+        }
     }
 }
