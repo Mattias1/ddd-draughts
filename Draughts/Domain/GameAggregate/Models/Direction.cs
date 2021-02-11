@@ -17,7 +17,7 @@ namespace Draughts.Domain.GameAggregate.Models {
 
         public bool IsForwardsDirection(Color color) => ForwardsYDirection(color) == DY;
 
-        public static int ForwardsYDirection(Color color) => color == Color.Black ? 1 : -1;
+        private static int ForwardsYDirection(Color color) => color == Color.Black ? 1 : -1;
 
         public static Direction BetweenPositions(int fromX, int fromY, int toX, int toY) {
             // Assumes from and to are on a diagonal

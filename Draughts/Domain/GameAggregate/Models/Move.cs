@@ -20,4 +20,15 @@ namespace Draughts.Domain.GameAggregate.Models {
             yield return To;
         }
     }
+
+    public class PossibleMove : Move {
+        public bool MoreCapturesAvailable;
+        public Square? Victim { get; }
+
+        public PossibleMove(Square from, Square to, Square? victim = null, bool moreCapturesAvailable = false)
+                : base(from, to, victim != null) {
+            MoreCapturesAvailable = moreCapturesAvailable;
+            Victim = victim;
+        }
+    }
 }
