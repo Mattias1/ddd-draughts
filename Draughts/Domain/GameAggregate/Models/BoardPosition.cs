@@ -8,24 +8,25 @@ using System.Text;
 namespace Draughts.Domain.GameAggregate.Models {
     // This class is like a mutuable value object. It could be immutable, but that'd be not very performant. Maybe. Hmmm. :/
     public class BoardPosition : IEquatable<BoardPosition> {
-        private readonly Piece[,] _squares;
+        private readonly Piece[] _pieces;
+        public int Size { get; }
 
         /// <summary>
         /// The square at (x, y).
         /// The top left square is (0, 0).
         /// </summary>
-        public Piece this[int x, int y] => _squares[x, y];
+        public Piece this[int x, int y] => IsPlayable(x, y) ? this[Square.FromPosition(x, y, Size)] : Piece.Empty;
         public Piece this[Square n] {
-            get {
-                var (x, y) = n.ToPosition(Size);
-                return this[x, y];
-            }
+            get => _pieces[n.Value - 1];
+            set => _pieces[n.Value - 1] = value;
         }
 
-        public int Size => _squares.GetLength(0);
-        public int NrOfPlayableSquares => Size * Size / 2;
+        public int NrOfPlayableSquares => _pieces.Length;
 
-        private BoardPosition(Piece[,] squares) => _squares = squares;
+        private BoardPosition(int size, Piece[] pieces) {
+            Size = size;
+            _pieces = pieces;
+        }
 
         public void PerformNewMove(Square from, Square to, out bool canCaptureMore) {
             var currentTurn = this[from].Color ?? throw new ManualValidationException("Invalid move.");
@@ -44,29 +45,20 @@ namespace Draughts.Domain.GameAggregate.Models {
                 throw new ManualValidationException("Invalid move.");
             }
 
-            var (fromX, fromY, toX, toY) = ExtractPositions(from, to);
-            _squares[toX, toY] = _squares[fromX, fromY];
-            _squares[fromX, fromY] = Piece.Empty;
+            this[to] = this[from];
+            this[from] = Piece.Empty;
             if (move.Victim != null) {
-                var (victimX, victimY) = move.Victim.ToPosition(Size);
-                _squares[victimX, victimY] = Piece.Empty;
+                this[move.Victim] = Piece.Empty;
             }
 
             canCaptureMore = move.MoreCapturesAvailable;
-        }
-
-        private (int, int, int, int) ExtractPositions(Square from, Square to) {
-            var (fromX, fromY) = from.ToPosition(Size);
-            var (toX, toY) = to.ToPosition(Size);
-            return (fromX, fromY, toX, toY);
         }
 
         public void Promote(Square square) {
             if (!CanPromote(square)) {
                 throw new ManualValidationException("Invalid move.");
             }
-            var (x, y) = square.ToPosition(Size);
-            _squares[x, y] = _squares[x, y].Promoted();
+            this[square] = this[square].Promoted();
         }
 
         public bool CanPromote(Square square) {
@@ -81,24 +73,14 @@ namespace Draughts.Domain.GameAggregate.Models {
             return color == Color.Black ? y == Size - 1 : y == 0;
         }
 
-        public int NrOfPiecesPerColor(Color color) => All.Count(s => s.Color == color);
-
-        private IEnumerable<Piece> All {
-            get {
-                for (int y = 0; y < Size; y++) {
-                    for (int x = 0; x < Size; x++) {
-                        yield return _squares[x, y];
-                    }
-                }
-            }
-        }
+        public int NrOfPiecesPerColor(Color color) => _pieces.Count(p => p.Color == color);
 
         public override string ToString() => ToLongString("", "");
         public string ToLongString(string separator = "\n", string empty = " ") {
-            var sb = new StringBuilder(_squares.Length + Size);
+            var sb = new StringBuilder(_pieces.Length * 2 + Size);
             for (int y = 0; y < Size; y++) {
                 for (int x = 0; x < Size; x++) {
-                    sb.Append(IsPlayable(x, y) ? _squares[x, y].RawValue.ToString() : empty);
+                    sb.Append(IsPlayable(x, y) ? this[x, y].RawValue.ToString() : empty);
                 }
                 if (y != Size - 1) {
                     sb.Append(separator);
@@ -108,37 +90,33 @@ namespace Draughts.Domain.GameAggregate.Models {
         }
 
         public static BoardPosition FromString(string input, string separator = "\n", string empty = " ") {
-            var chars = input.ToCharArray().Select(c => c.ToString())
+            var pieces = input.ToCharArray().Select(c => c.ToString())
                 .Where(s => s != empty && s != separator)
-                .Select(s => byte.Parse(s))
+                .Select(s => new Piece(byte.Parse(s)))
                 .ToArray();
-            int size = Convert.ToInt32(Math.Sqrt(chars.Length * 2));
-            var squares = new Piece[size, size];
-            for (int y = 0; y < size; y++) {
-                for (int x = 0; x < size; x++) {
-                    squares[x, y] = IsPlayable(x, y)
-                        ? new Piece(chars[Square.FromPosition(x, y, size) - 1])
-                        : Piece.Empty;
-                }
-            }
-            return new BoardPosition(squares);
+            int size = Convert.ToInt32(Math.Sqrt(pieces.Length * 2));
+            return new BoardPosition(size, pieces);
         }
 
         public static BoardPosition InitialSetup(int boardsize) {
             int nrOfStartingPieces = boardsize * (boardsize - 2) / 4;
-            return FromString(new StringBuilder()
-                .Append(Piece.BlackMan.ToChar(), nrOfStartingPieces)
-                .Append(Piece.Empty.ToChar(), boardsize)
-                .Append(Piece.WhiteMan.ToChar(), nrOfStartingPieces)
-                .ToString());
+            var pieces = new Piece[nrOfStartingPieces + boardsize + nrOfStartingPieces];
+            for (int i = 0; i < nrOfStartingPieces; i++) {
+                pieces[i] = Piece.BlackMan;
+                pieces[pieces.Length - i - 1] = Piece.WhiteMan;
+            }
+            for (int i=0; i < boardsize; i++) {
+                pieces[i + nrOfStartingPieces] = Piece.Empty;
+            }
+            return new BoardPosition(boardsize, pieces);
         }
 
         public static bool IsPlayable(int x, int y) => (x + y) % 2 == 1;
 
         public override bool Equals(object? obj) => Equals(obj as BoardPosition);
-        public bool Equals(BoardPosition? other) => other is object && All.SequenceEqual(other.All);
+        public bool Equals(BoardPosition? other) => other is object && _pieces.SequenceEqual(other._pieces);
 
-        public override int GetHashCode() => ComparisonUtils.GetHashCode(All);
+        public override int GetHashCode() => ComparisonUtils.GetHashCode(_pieces);
 
         public static bool operator ==(BoardPosition? left, BoardPosition? right) => ComparisonUtils.NullSafeEquals(left, right);
         public static bool operator !=(BoardPosition? left, BoardPosition? right) => ComparisonUtils.NullSafeNotEquals(left, right);
@@ -182,11 +160,10 @@ namespace Draughts.Domain.GameAggregate.Models {
                 yield return _restrictedTo;
             }
             else {
-                for (int y = 0; y < _board.Size; y++) {
-                    for (int x = 0; x < _board.Size; x++) {
-                        if (_board[x, y].Color == _currentTurn) {
-                            yield return Square.FromPosition(x, y, _board.Size);
-                        }
+                for (int i = 1; i <= _board.NrOfPlayableSquares; i++) {
+                    var square = new Square(i);
+                    if (_board[square].Color == _currentTurn) {
+                        yield return square;
                     }
                 }
             }
