@@ -6,13 +6,6 @@ using Xunit;
 namespace Draughts.Test.Domain.GameAggregate {
     public class DirectionTest {
         [Theory]
-        [InlineData("black", 1)]
-        [InlineData("white", -1)]
-        public void ForwardsYPosition(string color, int dy) {
-            Direction.ForwardsYDirection(Color.FromString(color)).Should().Be(dy);
-        }
-
-        [Theory]
         [InlineData("black", "nw", false)]
         [InlineData("black", "ne", false)]
         [InlineData("black", "se", true)]

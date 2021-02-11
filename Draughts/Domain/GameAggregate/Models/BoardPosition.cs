@@ -23,118 +23,36 @@ namespace Draughts.Domain.GameAggregate.Models {
         }
 
         public int Size => _squares.GetLength(0);
+        public int NrOfPlayableSquares => Size * Size / 2;
 
         private BoardPosition(Piece[,] squares) => _squares = squares;
 
-        public void Move(Square from, Square to) {
-            if (!IsMove(from, to)) {
+        public void PerformNewMove(Square from, Square to, out bool canCaptureMore) {
+            var currentTurn = this[from].Color ?? throw new ManualValidationException("Invalid move.");
+            var possibleMoves = PossibleMoveCalculator.ForNewTurn(this, currentTurn).Calculate();
+            PerformMove(from, to, possibleMoves, out canCaptureMore);
+        }
+
+        public void PerformChainCaptureMove(Square from, Square to, out bool canCaptureMore) {
+            var possibleMoves = PossibleMoveCalculator.ForChainCaptures(this, from).Calculate();
+            PerformMove(from, to, possibleMoves, out canCaptureMore);
+        }
+
+        private void PerformMove(Square from, Square to, IReadOnlyList<PossibleMove> possibleMoves, out bool canCaptureMore) {
+            var move = possibleMoves.SingleOrDefault(m => m.From == from && m.To == to);
+            if (move is null) {
                 throw new ManualValidationException("Invalid move.");
             }
 
             var (fromX, fromY, toX, toY) = ExtractPositions(from, to);
             _squares[toX, toY] = _squares[fromX, fromY];
             _squares[fromX, fromY] = Piece.Empty;
-        }
-
-        public void Capture(Square from, Square to) {
-            if (!IsCapture(from, to)) {
-                throw new ManualValidationException("Invalid capture.");
+            if (move.Victim != null) {
+                var (victimX, victimY) = move.Victim.ToPosition(Size);
+                _squares[victimX, victimY] = Piece.Empty;
             }
 
-            var (fromX, fromY, toX, toY) = ExtractPositions(from, to);
-            var (victimX, victimY) = OnlyNonEmptySpotBetween(from, to)!.ToPosition(Size);
-            _squares[toX, toY] = _squares[fromX, fromY];
-            _squares[fromX, fromY] = Piece.Empty;
-            _squares[victimX, victimY] = Piece.Empty;
-        }
-
-        // TODO: (non-)flying kings, etc.
-        public bool IsMove(Square from, Square to) {
-            return this[from].IsMan ? IsManMove(from, to) : IsKingMove(from, to);
-        }
-
-        public bool IsManMove(Square from, Square to) {
-            var (_, fromY, _, toY) = ExtractPositions(from, to);
-            return this[from].IsNotEmpty && this[to].IsEmpty
-                && DiagonalDistance(from, to) == 1
-                && fromY + ForwardsYDirection(from) == toY;
-        }
-
-        public bool IsKingMove(Square from, Square to) {
-            return this[from].IsNotEmpty
-                && IsDiagonalMove(from, to, out _)
-                && IsEmptyDiagonal(from, to);
-        }
-
-        public bool IsCapture(Square from, Square to) {
-            int distance = DiagonalDistance(from, to);
-            if (this[from].IsEmpty || this[to].IsNotEmpty || distance < 2 || distance > 2 && this[from].IsMan) {
-                return false;
-            }
-            var pos = OnlyNonEmptySpotBetween(from, to);
-            return pos != null && this[pos].Color != this[from].Color;
-        }
-
-        private int DiagonalDistance(Square from, Square to) {
-            if (!IsDiagonalMove(from, to, out int distance)) {
-                throw new InvalidOperationException("Every move should be along a diagonal.");
-            }
-            return distance;
-        }
-
-        private bool IsDiagonalMove(Square from, Square to, out int distance) {
-            var (fromX, fromY, toX, toY) = ExtractPositions(from, to);
-            distance = Math.Abs(fromX - toX);
-            return Math.Abs(fromY - toY) == distance;
-        }
-
-        private Square? OnlyNonEmptySpotBetween(Square from, Square to) {
-            // Assumes from and to are on a diagonal
-            Square? result = null;
-            var (x, y, toX, toY) = ExtractPositions(from, to);
-            var (dirX, dirY) = Direction(from, to);
-            while (x != toX) {
-                (x, y) = (x + dirX, y + dirY);
-                if (_squares[x, y].IsNotEmpty) {
-                    if (result is null) {
-                        result = Square.FromPosition(x, y, Size);
-                    }
-                    else {
-                        return null;
-                    }
-                }
-            }
-            if (_squares[toX, toY].IsNotEmpty) {
-                return null;
-            }
-            return result;
-        }
-
-        private bool IsEmptyDiagonal(Square from, Square to) {
-            // Assumes from and to are on a diagonal
-            var (x, y, toX, _) = ExtractPositions(from, to);
-            var (dirX, dirY) = Direction(from, to);
-            while (x != toX) {
-                (x, y) = (x + dirX, y + dirY);
-                if (_squares[x, y].IsNotEmpty) {
-                    return false;
-                }
-            }
-            return true;
-        }
-
-        private Direction Direction(Square from, Square to) {
-            // Assumes from and to are on a diagonal
-            var (fromX, fromY, toX, toY) = ExtractPositions(from, to);
-            return Models.Direction.BetweenPositions(fromX, fromY, toX, toY);
-        }
-
-        private int ForwardsYDirection(Square from) {
-            var color = this[from].Color;
-            if (color is null) {
-                throw new ManualValidationException("Invalid move.");
-            }
-            return Models.Direction.ForwardsYDirection(color);
+            canCaptureMore = move.MoreCapturesAvailable;
         }
 
         private (int, int, int, int) ExtractPositions(Square from, Square to) {
@@ -226,6 +144,7 @@ namespace Draughts.Domain.GameAggregate.Models {
         public static bool operator !=(BoardPosition? left, BoardPosition? right) => ComparisonUtils.NullSafeNotEquals(left, right);
     }
 
+    // TODO: (non-)flying kings, etc.
     public class PossibleMoveCalculator {
         private BoardPosition _board;
         private Color _currentTurn;
@@ -243,8 +162,8 @@ namespace Draughts.Domain.GameAggregate.Models {
             }
         }
 
-        public IReadOnlyList<Move> Calculate() {
-            var possibleMoves = new List<Move>();
+        public IReadOnlyList<PossibleMove> Calculate() {
+            var possibleMoves = new List<PossibleMove>();
             foreach (var from in AllLoopPositions()) {
                 foreach (var dir in Direction.All) {
                     if (_board[from].IsMan) {
@@ -273,7 +192,7 @@ namespace Draughts.Domain.GameAggregate.Models {
             }
         }
 
-        private void AddManMovesFrom(List<Move> possibleMoves, Square from, Direction direction) {
+        private void AddManMovesFrom(List<PossibleMove> possibleMoves, Square from, Direction direction) {
             if (!from.TryGetBorder(direction, _board.Size, out Square? next)) {
                 return;
             }
@@ -287,45 +206,46 @@ namespace Draughts.Domain.GameAggregate.Models {
                     _mustCapture = true;
                     possibleMoves.Clear();
                 }
-                possibleMoves.Add(new Move(from, jump, true));
+                possibleMoves.Add(new PossibleMove(from, jump, next));
                 // TODO: Recurse to determine chain length. If longer, clear all previous moves again :)
                 return;
             }
 
             if (nextColor is null && !_mustCapture && direction.IsForwardsDirection(_currentTurn)) {
-                possibleMoves.Add(new Move(from, next, false));
+                possibleMoves.Add(new PossibleMove(from, next));
             }
         }
 
-        private void AddKingMovesFrom(List<Move> possibleMoves, Square from, Direction direction) {
+        private void AddKingMovesFrom(List<PossibleMove> possibleMoves, Square from, Direction direction) {
             Square? next = from;
-            bool hasCaptured = false;
+            Square? victim = null;
             while(next.TryGetBorder(direction, _board.Size, out next)) {
                 Color? nextColor = _board[next].Color;
 
-                if (nextColor is null && hasCaptured) {
-                    possibleMoves.Add(new Move(from, next, true));
+                if (nextColor is null && victim != null) {
+                    // TODO: Recurse to determine chain length. If longer, clear all previous moves again :)
+                    possibleMoves.Add(new PossibleMove(from, next, victim, false));
                     continue;
                 }
 
-                if (nextColor == _currentTurn.Other) {
-                    if (hasCaptured || !next.TryGetBorder(direction, _board.Size, out Square? jump) || _board[jump].IsNotEmpty) {
+                if (nextColor == _currentTurn.Other || victim != null) {
+                    if (!next.TryGetBorder(direction, _board.Size, out Square? jump) || _board[jump].IsNotEmpty) {
                         return;
                     }
                     if (!_mustCapture) {
                         _mustCapture = true;
                         possibleMoves.Clear();
                     }
-                    possibleMoves.Add(new Move(from, jump, true));
-                    hasCaptured = true;
-                    next = jump;
                     // TODO: Recurse to determine chain length. If longer, clear all previous moves again :)
+                    possibleMoves.Add(new PossibleMove(from, jump, next, false));
+                    victim = next;
+                    next = jump;
                     continue;
                 }
 
                 if (nextColor is null) {
                     if (!_mustCapture) {
-                        possibleMoves.Add(new Move(from, next, false));
+                        possibleMoves.Add(new PossibleMove(from, next));
                     }
                     continue;
                 }
@@ -333,15 +253,12 @@ namespace Draughts.Domain.GameAggregate.Models {
             }
         }
 
-        public static PossibleMoveCalculator ForNewTurn(BoardPosition board, Color turn) {
-            return new PossibleMoveCalculator(board, turn, null, false);
+        public static PossibleMoveCalculator ForNewTurn(BoardPosition board, Color currentTurn) {
+            return new PossibleMoveCalculator(board, currentTurn, null, false);
         }
         public static PossibleMoveCalculator ForChainCaptures(BoardPosition board, Square from) {
-            var fromColor = board[from].Color;
-            if (fromColor is null) {
-                throw new InvalidOperationException("Invalid from.");
-            }
-            return new PossibleMoveCalculator(board, fromColor, from, true);
+            var currentTurn = board[from].Color ?? throw new ManualValidationException("Invalid move.");
+            return new PossibleMoveCalculator(board, currentTurn, from, true);
         }
     }
 }

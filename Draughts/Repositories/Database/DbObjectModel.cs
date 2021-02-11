@@ -1,7 +1,6 @@
 using Draughts.Domain.AuthUserAggregate.Models;
 using Draughts.Domain.GameAggregate.Models;
 using Draughts.Domain.UserAggregate.Models;
-using Draughts.Repositories.InMemory;
 using NodaTime;
 using System;
 
@@ -87,6 +86,7 @@ namespace Draughts.Repositories.Database {
         public bool MenCaptureBackwards { get; set; }
         public string CaptureConstraints { get; set; }
         public string CurrentGameState { get; set; }
+        public byte? CaptureSequenceFrom { get; set; }
         public ZonedDateTime CreatedAt { get; set; }
         public ZonedDateTime? StartedAt { get; set; }
         public ZonedDateTime? FinishedAt { get; set; }
@@ -110,7 +110,8 @@ namespace Draughts.Repositories.Database {
                 FlyingKings = entity.Settings.FlyingKings,
                 MenCaptureBackwards = entity.Settings.MenCaptureBackwards,
                 CaptureConstraints = captureConstraints,
-                CurrentGameState = entity.GameState.ToStorage(),
+                CurrentGameState = entity.GameState.StorageString(),
+                CaptureSequenceFrom = (byte?)entity.GameState.CaptureSequenceFrom?.Value,
                 CreatedAt = entity.CreatedAt,
                 StartedAt = entity.StartedAt,
                 FinishedAt = entity.FinishedAt,
