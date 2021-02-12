@@ -16,10 +16,10 @@ namespace Draughts.Test.Domain.GameAggregate {
         [InlineData(0, 3, 7)]
         [InlineData(2, 3, 8)]
         public void CoordinateToNumberOn4x4Board(int x, int y, int n) {
-            /*|_|1|_|2|
-              |3|_|4|_|
-              |_|5|_|6|
-              |7|_|8|_|*/
+            // |_|1|_|2|
+            // |3|_|4|_|
+            // |_|5|_|6|
+            // |7|_|8|_|
             Square.FromPosition(x, y, 4).Should().Be(new Square(n));
         }
 
@@ -35,19 +35,19 @@ namespace Draughts.Test.Domain.GameAggregate {
         [InlineData(2, 3, 14)]
         [InlineData(6, 7, 32)]
         public void CoordinateToNumberOn8x8Board(int x, int y, int n) {
-            /*|_|1|_|2|
-              |3|_|4|_|
-              |_|5|_|6|
-              |7|_|8|_|*/
+            // |_|1|_|2|
+            // |3|_|4|_|
+            // |_|5|_|6|
+            // |7|_|8|_|
             Square.FromPosition(x, y, 8).Should().Be(new Square(n));
         }
 
         [Fact]
         public void NonPlayableCoordinatesShouldThrow() {
-            /*|_|.|_|.|
-              |.|x|.|_|
-              |_|.|_|.|
-              |.|_|.|_|*/
+            // |_|.|_|.|
+            // |.|x|.|_|
+            // |_|.|_|.|
+            // |.|_|.|_|
             Action fromPosition = () => Square.FromPosition(1, 1, 4);
             fromPosition.Should().Throw<ManualValidationException>();
         }
@@ -62,10 +62,10 @@ namespace Draughts.Test.Domain.GameAggregate {
         [InlineData(7, 0, 3)]
         [InlineData(8, 2, 3)]
         public void NumberToCoordinateOn4x4Board(int n, int x, int y) {
-            /*|_|1|_|2|
-              |3|_|4|_|
-              |_|5|_|6|
-              |7|_|8|_|*/
+            // |_|1|_|2|
+            // |3|_|4|_|
+            // |_|5|_|6|
+            // |7|_|8|_|
             new Square(n).ToPosition(4).Should().Be((x, y));
         }
 
