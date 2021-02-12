@@ -20,16 +20,16 @@ namespace Draughts.Domain.GameAggregate.Models {
             return (x, y);
         }
 
-        public bool TryGetBorder(Direction direction, int size, [NotNullWhen(returnValue: true)] out Square? result) {
+        public bool TryGetBorder(Direction direction, int size, [NotNullWhen(returnValue: true)] out Square? border) {
             var (x, y) = ToPosition(size);
             if (x <= 0 && direction.DX < 0
                     || x >= size - 1 && direction.DX > 0
                     || y <= 0 && direction.DY < 0
                     || y >= size - 1 && direction.DY > 0) {
-                result = null;
+                border = null;
                 return false;
             }
-            result = FromPosition(x + direction.DX, y + direction.DY, size);
+            border = FromPosition(x + direction.DX, y + direction.DY, size);
             return true;
         }
 

@@ -7,7 +7,7 @@ namespace Draughts.Domain.GameAggregate.Models {
         public Square To { get; }
         public bool IsCapture { get; }
 
-        public Move(Square from, Square to, bool isCapture) {
+        protected Move(Square from, Square to, bool isCapture) {
             From = from;
             To = to;
             IsCapture = isCapture;
@@ -25,10 +25,15 @@ namespace Draughts.Domain.GameAggregate.Models {
         public bool MoreCapturesAvailable;
         public Square? Victim { get; }
 
-        public PossibleMove(Square from, Square to, Square? victim = null, bool moreCapturesAvailable = false)
+        private PossibleMove(Square from, Square to, Square? victim, bool moreCapturesAvailable)
                 : base(from, to, victim != null) {
             MoreCapturesAvailable = moreCapturesAvailable;
             Victim = victim;
+        }
+
+        public static PossibleMove NormalMove(Square from, Square to) => new PossibleMove(from, to, null, false);
+        public static PossibleMove CaptureMove(Square from, Square to, Square? victim, bool moreCapturesAvailable) {
+            return new PossibleMove(from, to, victim, moreCapturesAvailable);
         }
     }
 }
