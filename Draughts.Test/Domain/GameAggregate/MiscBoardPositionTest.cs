@@ -6,10 +6,10 @@ namespace Draughts.Test.Domain.GameAggregate {
     public class MiscBoardPositionTest {
         [Fact]
         public void InitialBoard4x4() {
-            /*|_|4|_|4|
-              |.|_|.|_|
-              |_|.|_|.|
-              |5|_|5|_|*/
+            // |_|4|_|4|
+            // |.|_|.|_|
+            // |_|.|_|.|
+            // |5|_|5|_|
             var board = BoardPosition.InitialSetup(4);
 
             board.Size.Should().Be(4);
