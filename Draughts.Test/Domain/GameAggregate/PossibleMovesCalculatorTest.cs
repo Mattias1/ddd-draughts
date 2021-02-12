@@ -3,6 +3,7 @@ using FluentAssertions;
 using System.Collections.Generic;
 using System.Linq;
 using Xunit;
+using static Draughts.Domain.GameAggregate.Models.BoardPosition;
 
 namespace Draughts.Test.Domain.GameAggregate {
     public class PossibleMoveCalculatorTest {
@@ -50,12 +51,48 @@ namespace Draughts.Test.Domain.GameAggregate {
         public void KingCaptures() {
             // |_|.|_|.|_|.|
             // |.|_|5|_|.|_|
-            // |_|6|_|4|_|4|
-            // |.|_|.|_|7|_|
+            // |_|6|_|.|_|4|
+            // |.|_|4|_|7|_|
             // |_|.|_|4|_|.|
             // |7|_|.|_|.|_|
-            CalculatePossibleMoves("000 050 644 007 040 700", Color.White)
-                .Should().BeEquivalentTo("5x10", "12x17", "16x6", "16x3");
+            CalculatePossibleMoves("000 050 604 047 040 700", Color.White)
+                .Should().BeEquivalentTo("5x10", "12x17", "16x8", "16x6", "16x3");
+        }
+
+        [Fact]
+        public void ChainCaptures() {
+            // |_|.|_|.|_|.|
+            // |.|_|4|_|.|_|
+            // |_|.|_|.|_|.|
+            // |.|_|4|_|4|_|
+            // |_|.|_|5|_|.|
+            // |.|_|.|_|.|_|
+            CalculatePossibleMoves("000 040 000 044 050 000", Color.White)
+                .Should().BeEquivalentTo("14x7");
+        }
+
+        [Fact]
+        public void LongestChainCapturesMan() {
+            // |_|.|_|.|_|.|
+            // |5|_|.|_|.|_|
+            // |_|4|_|4|_|.|
+            // |.|_|.|_|.|_|
+            // |_|4|_|4|_|.|
+            // |.|_|5|_|.|_|
+            CalculatePossibleMoves("000 500 440 000 440 050", Color.White)
+                .Should().BeEquivalentTo("17x10", "17x12");
+        }
+
+        [Fact]
+        public void LongestChainCapturesKing() {
+            // |_|.|_|.|_|7|
+            // |.|_|4|_|4|_|
+            // |_|.|_|.|_|.|
+            // |.|_|.|_|.|_|
+            // |_|4|_|4|_|.|
+            // |.|_|7|_|.|_|
+            CalculatePossibleMoves("007 044 000 000 440 070", Color.White)
+                .Should().BeEquivalentTo("17x10", "17x9");
         }
 
         private static List<string> CalculatePossibleMoves(string boardString, Color color) {
