@@ -22,7 +22,7 @@ namespace Draughts.Domain.GameAggregate.Models {
                 throw new ManualValidationException("Invalid move.");
             }
             if (currentTurn != Board[from].Color) {
-                throw new ManualValidationException("It's not your turn.");
+                throw new ManualValidationException($"You can only move {currentTurn} pieces.");
             }
 
             PerformMove(from, to, out bool canCaptureMore);

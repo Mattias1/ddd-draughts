@@ -1,5 +1,6 @@
 using Draughts.Common.Utilities;
 using Draughts.Domain.GameAggregate.Models;
+using Draughts.Domain.UserAggregate.Models;
 using Draughts.Test.TestHelpers;
 using FluentAssertions;
 using NodaTime.Testing;
@@ -15,7 +16,7 @@ namespace Draughts.Test.Domain.GameAggregate {
             var from = Square.FromPosition(3, 6, game.Settings.BoardSize);
             var to = Square.FromPosition(4, 5, game.Settings.BoardSize);
 
-            var result = game.DoMove(from, to, _fakeClock.UtcNow());
+            var result = game.DoMove(game.Turn!.Player.UserId, from, to, _fakeClock.UtcNow());
 
             result.Should().Be(GameState.MoveResult.NextTurn);
             game.GameState.Board[3, 6].Should().Be(Piece.Empty);

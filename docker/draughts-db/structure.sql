@@ -93,6 +93,7 @@ CREATE TABLE `game` (
     `flying_kings` BIT NOT NULL,
     `men_capture_backwards` BIT NOT NULL,
     `capture_constraints` VARCHAR(3) NOT NULL,
+    `victor` BIGINT NULL,
     `current_game_state` VARCHAR(72) NOT NULL,
     `capture_sequence_from` TINYINT UNSIGNED NULL,
     `created_at` DATETIME NOT NULL,

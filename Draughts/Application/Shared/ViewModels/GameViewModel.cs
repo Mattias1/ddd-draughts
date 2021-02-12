@@ -9,6 +9,7 @@ namespace Draughts.Application.Shared.ViewModels {
         public IReadOnlyList<PlayerViewModel> Players { get; }
         public Turn? Turn { get; }
         public GameSettings Settings { get; }
+        public Player? Victor { get; }
         public GameState CurrentGameState { get; }
         public ZonedDateTime CreatedAt { get; }
         public ZonedDateTime? StartedAt { get; }
@@ -19,6 +20,7 @@ namespace Draughts.Application.Shared.ViewModels {
             Players = game.Players.Select(p => new PlayerViewModel(p)).ToList().AsReadOnly();
             Turn = game.Turn;
             Settings = game.Settings;
+            Victor = game.Victor;
             CurrentGameState = game.GameState;
             CreatedAt = game.CreatedAt;
             StartedAt = game.StartedAt;

@@ -1,5 +1,6 @@
 using Draughts.Common.Utilities;
 using Draughts.Domain.GameAggregate.Models;
+using Draughts.Domain.UserAggregate.Models;
 using NodaTime;
 using NodaTime.Testing;
 using System;
@@ -40,6 +41,7 @@ namespace Draughts.Test.TestHelpers {
             private List<Player> _players = new List<Player>(2);
             private Turn? _turn;
             private GameSettings? _settings;
+            private Player? _victor;
             private GameState? _gameState;
             private ZonedDateTime? _createdAt;
             private ZonedDateTime? _startedAt;
@@ -64,6 +66,11 @@ namespace Draughts.Test.TestHelpers {
 
             public GameBuilder WithSettings(GameSettings settings) {
                 _settings = settings;
+                return this;
+            }
+
+            public GameBuilder WithVictor(Player? victor) {
+                _victor = victor;
                 return this;
             }
 
@@ -101,7 +108,7 @@ namespace Draughts.Test.TestHelpers {
                     throw new InvalidOperationException("CreatedAt is not nullable");
                 }
 
-                return new Game(_id, _players, _turn, _settings, _gameState, _createdAt.Value, _startedAt, _finishedAt);
+                return new Game(_id, _players, _turn, _settings, _victor, _gameState, _createdAt.Value, _startedAt, _finishedAt);
             }
         }
     }

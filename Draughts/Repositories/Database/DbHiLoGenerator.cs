@@ -12,7 +12,7 @@ namespace Draughts.Repositories.Database {
                 var lo = idGenerationRow.AvailableId;
 
                 idGenerationRow.AvailableId += IntervalSize;
-                DbContext.Get.Query(tranFlavor).InsertInto("id_generation").InsertFrom(idGenerationRow);
+                DbContext.Get.Query(tranFlavor).Update("id_generation").SetFrom(idGenerationRow).Execute();
 
                 tranFlavor.Commit();
 

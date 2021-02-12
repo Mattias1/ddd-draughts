@@ -23,7 +23,7 @@ namespace Draughts.Repositories {
         private long Next() {
             lock (_lock) {
                 var interval = FirstNonEmptyInterval();
-                return interval.Lo++;
+                return interval.Next();
             }
         }
 
@@ -58,11 +58,13 @@ namespace Draughts.Repositories {
         protected abstract HiLoInterval ReserveNewInterval();
 
         protected class HiLoInterval {
-            public long Lo { get; set; } // The lowest available id (inclusive).
-            public long Hi { get; set; } // The maximum reserved id (exclusive).
+            public long Lo { get; private set; } // The lowest available id (inclusive).
+            public long Hi { get; } // The maximum reserved id (exclusive).
 
             public int Count => (int)(Hi - Lo);
             public bool IsEmpty() => Lo >= Hi;
+
+            public long Next() => Lo++;
 
             public HiLoInterval(long lo, long hi) {
                 if (lo >= hi) {
