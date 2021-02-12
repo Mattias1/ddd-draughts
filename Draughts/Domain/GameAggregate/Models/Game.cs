@@ -1,5 +1,6 @@
 using Draughts.Common;
 using Draughts.Common.OoConcepts;
+using Draughts.Domain.UserAggregate.Models;
 using NodaTime;
 using System;
 using System.Collections.Generic;
@@ -13,6 +14,7 @@ namespace Draughts.Domain.GameAggregate.Models {
         public IReadOnlyList<Player> Players => _players.AsReadOnly();
         public Turn? Turn { get; private set; }
         public GameSettings Settings { get; }
+        public Player? Victor { get; private set; }
         public GameState GameState { get; private set; }
         public ZonedDateTime CreatedAt { get; }
         public ZonedDateTime? StartedAt { get; private set; }
@@ -22,13 +24,15 @@ namespace Draughts.Domain.GameAggregate.Models {
         public bool IsFinished => FinishedAt != null;
 
         public Game(GameId id, GameSettings settings, ZonedDateTime createdAt)
-            : this(id, new List<Player>(2), null, settings, GameState.InitialState(id, settings.BoardSize), createdAt, null, null) { }
-        public Game(GameId id, List<Player> players, Turn? turn, GameSettings settings, GameState gameState,
-                ZonedDateTime createdAt, ZonedDateTime? startedAt, ZonedDateTime? finishedAt) {
+            : this(id, new List<Player>(2), null, settings, null,
+                GameState.InitialState(id, settings.BoardSize), createdAt, null, null) { }
+        public Game(GameId id, List<Player> players, Turn? turn, GameSettings settings, Player? victor,
+                GameState gameState, ZonedDateTime createdAt, ZonedDateTime? startedAt, ZonedDateTime? finishedAt) {
             Id = id;
             _players = players;
             Turn = turn;
             Settings = settings;
+            Victor = victor;
             GameState = gameState;
             CreatedAt = createdAt;
             StartedAt = startedAt;
@@ -68,9 +72,12 @@ namespace Draughts.Domain.GameAggregate.Models {
 
         private Player GetPlayerForColor(Color color) => _players.Single(p => p.Color == color);
 
-        public GameState.MoveResult DoMove(Square from, Square to, ZonedDateTime movedAt) {
+        public GameState.MoveResult DoMove(UserId currentUser, Square from, Square to, ZonedDateTime movedAt) {
             if (!HasStarted || IsFinished || Turn is null) {
                 throw new ManualValidationException("This game is not active.");
+            }
+            if (Turn.Player.UserId != currentUser) {
+                throw new ManualValidationException("It's not your turn.");
             }
 
             var result = GameState.AddMove(from, to, Turn.Player.Color);
@@ -82,7 +89,7 @@ namespace Draughts.Domain.GameAggregate.Models {
                 case GameState.MoveResult.MoreCapturesAvailable:
                     return result; // No need to do anything, the user will do the next move.
                 case GameState.MoveResult.GameOver:
-                    FinishGame(movedAt);
+                    FinishGame(movedAt, Turn.Player);
                     return result;
                 default:
                     throw new InvalidOperationException("Unknown MoveResult");
@@ -94,8 +101,9 @@ namespace Draughts.Domain.GameAggregate.Models {
             Turn = new Turn(player, switchedAt, Settings.MaxTurnLength);
         }
 
-        private void FinishGame(ZonedDateTime finishedAt) {
+        private void FinishGame(ZonedDateTime finishedAt, Player? victor) {
             FinishedAt = finishedAt;
+            Victor = victor;
             Turn = null;
         }
     }

@@ -19,9 +19,9 @@ namespace Draughts.Application.Lobby.Services {
 
         public Game CreateGame(IIdPool idPool, GameSettings settings, User creator, Color creatorColor) {
             var nextId = new GameId(idPool.Next());
+            var game = new Game(nextId, settings, _clock.UtcNow());
 
             var player = BuildPlayer(idPool, creator, creatorColor);
-            var game = new Game(nextId, settings, _clock.UtcNow());
             game.JoinGame(player, _clock.UtcNow());
 
             _gameRepository.Save(game);

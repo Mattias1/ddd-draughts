@@ -52,6 +52,11 @@
                 @if (Model.Turn != null) {
                     <li>Turn: <span>@Model.Turn.Player.Color</span></li>
                 }
+                @if (Model.FinishedAt != null) {
+                    <li>
+                        Victor: @if (Model.Victor is null) { <span>Draw</span> } else { <span>@Model.Victor.Username</span> }
+                    </li>
+                }
             </ul>
 
             <h3>Game settings</h3>
@@ -74,4 +79,15 @@
 
 @section Scripts {
     <script src="/js/playgame.js" asp-append-version="true"></script>
+
+    @if (Model.CurrentGameState.CaptureSequenceFrom != null) {
+        var (x, y) = Model.CurrentGameState.CaptureSequenceFrom.ToPosition(settings.BoardSize);
+        <text>
+            <script>
+                $(document).ready(function () {
+                    selectSquare(@(Model.CurrentGameState.CaptureSequenceFrom), $('#square-@(x)-@(y)'));
+                });
+            </script>
+        </text>
+    }
 }

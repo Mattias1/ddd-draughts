@@ -85,6 +85,7 @@ namespace Draughts.Repositories.Database {
         public bool FlyingKings { get; set; }
         public bool MenCaptureBackwards { get; set; }
         public string CaptureConstraints { get; set; }
+        public long? Victor { get; set; }
         public string CurrentGameState { get; set; }
         public byte? CaptureSequenceFrom { get; set; }
         public ZonedDateTime CreatedAt { get; set; }
@@ -110,6 +111,7 @@ namespace Draughts.Repositories.Database {
                 FlyingKings = entity.Settings.FlyingKings,
                 MenCaptureBackwards = entity.Settings.MenCaptureBackwards,
                 CaptureConstraints = captureConstraints,
+                Victor = entity.Victor?.UserId.Id,
                 CurrentGameState = entity.GameState.StorageString(),
                 CaptureSequenceFrom = (byte?)entity.GameState.CaptureSequenceFrom?.Value,
                 CreatedAt = entity.CreatedAt,

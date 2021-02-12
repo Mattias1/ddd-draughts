@@ -129,6 +129,7 @@ namespace Draughts.Repositories.InMemory {
                 FlyingKings = settings.FlyingKings,
                 MenCaptureBackwards = settings.MenCaptureBackwards,
                 CaptureConstraints = settings.CaptureConstraints,
+                Victor = null,
                 CurrentGameState = GameState.InitialState(new GameId(id), settings.BoardSize).StorageString(),
                 CaptureSequenceFrom = null,
                 CreatedAt = now, StartedAt = null, FinishedAt = null,

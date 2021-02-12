@@ -44,6 +44,7 @@ namespace Draughts.Repositories.InMemory {
         public bool FlyingKings;
         public bool MenCaptureBackwards;
         public GameSettings.DraughtsCaptureConstraints CaptureConstraints;
+        public long? Victor;
         public string CurrentGameState;
         public int? CaptureSequenceFrom;
         public ZonedDateTime CreatedAt;

@@ -1,5 +1,6 @@
+var selectedSquare = null;
+
 $(document).ready(function () {
-    var selectedSquare = null;
     $('#game-board div.square').click(function () {
         onSquareClick($(this));
     });
@@ -30,9 +31,13 @@ $(document).ready(function () {
             });
         }
         else {
-            console.log('Select square', square);
-            selectedSquare = square;
-            squareEl.addClass('selected');
+            selectSquare(square, squareEl);
         }
     }
 });
+
+function selectSquare(square, squareEl) {
+    console.log('Select square', square);
+    selectedSquare = square;
+    squareEl.addClass('selected');
+}
