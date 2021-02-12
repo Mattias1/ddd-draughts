@@ -40,7 +40,8 @@ namespace Draughts.Application.PlayGame {
             try {
                 ValidateNotNull(request?.From, request?.To);
 
-                _playGameService.DoMove(new GameId(gameId), new Square(request!.From), new Square(request.To));
+                _playGameService.DoMove(AuthContext.UserId, new GameId(gameId),
+                    new Square(request!.From), new Square(request.To));
 
                 return Ok();
             }

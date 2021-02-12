@@ -1,6 +1,7 @@
 using Draughts.Common;
 using Draughts.Common.Utilities;
 using Draughts.Domain.GameAggregate.Models;
+using Draughts.Domain.UserAggregate.Models;
 using Draughts.Repositories;
 using Draughts.Repositories.Transaction;
 using NodaTime;
@@ -17,10 +18,10 @@ namespace Draughts.Application.PlayGame.Services {
             _unitOfWork = unitOfWork;
         }
 
-        public void DoMove(GameId gameId, Square from, Square to) {
+        public void DoMove(UserId currentUser, GameId gameId, Square from, Square to) {
             _unitOfWork.WithTransaction(TransactionDomain.Game, tran => {
                 var game = _gameRepository.FindByIdOrNull(gameId) ?? throw new ManualValidationException("Game not found.");
-                game.DoMove(from, to, _clock.UtcNow());
+                game.DoMove(currentUser, from, to, _clock.UtcNow());
 
                 _gameRepository.Save(game);
 
