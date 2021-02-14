@@ -28,14 +28,14 @@ namespace Draughts.Domain.GameAggregate.Models {
             _pieces = pieces;
         }
 
-        public void PerformNewMove(Square from, Square to, out bool canCaptureMore) {
+        public void PerformNewMove(Square from, Square to, GameSettings settings,out bool canCaptureMore) {
             var currentTurn = this[from].Color ?? throw new ManualValidationException("Invalid move.");
-            var possibleMoves = PossibleMoveCalculator.ForNewTurn(this, currentTurn).Calculate();
+            var possibleMoves = PossibleMoveCalculator.ForNewTurn(this, currentTurn, settings).Calculate();
             PerformMove(from, to, possibleMoves, out canCaptureMore);
         }
 
-        public void PerformChainCaptureMove(Square from, Square to, out bool canCaptureMore) {
-            var possibleMoves = PossibleMoveCalculator.ForChainCaptures(this, from).Calculate();
+        public void PerformChainCaptureMove(Square from, Square to, GameSettings settings, out bool canCaptureMore) {
+            var possibleMoves = PossibleMoveCalculator.ForChainCaptures(this, from, settings).Calculate();
             PerformMove(from, to, possibleMoves, out canCaptureMore);
         }
 
@@ -109,17 +109,17 @@ namespace Draughts.Domain.GameAggregate.Models {
             return new BoardPosition(size, pieces);
         }
 
-        public static BoardPosition InitialSetup(int boardsize) {
-            int nrOfStartingPieces = boardsize * (boardsize - 2) / 4;
-            var pieces = new Piece[nrOfStartingPieces + boardsize + nrOfStartingPieces];
+        public static BoardPosition InitialSetup(int boardSize) {
+            int nrOfStartingPieces = boardSize * (boardSize - 2) / 4;
+            var pieces = new Piece[nrOfStartingPieces + boardSize + nrOfStartingPieces];
             for (int i = 0; i < nrOfStartingPieces; i++) {
                 pieces[i] = Piece.BlackMan;
                 pieces[pieces.Length - i - 1] = Piece.WhiteMan;
             }
-            for (int i=0; i < boardsize; i++) {
+            for (int i=0; i < boardSize; i++) {
                 pieces[i + nrOfStartingPieces] = Piece.Empty;
             }
-            return new BoardPosition(boardsize, pieces);
+            return new BoardPosition(boardSize, pieces);
         }
 
         public static bool IsPlayable(int x, int y) => (x + y) % 2 == 1;

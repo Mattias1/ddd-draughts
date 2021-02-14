@@ -5,7 +5,13 @@ using System;
 using Xunit;
 
 namespace Draughts.Test.Domain.GameAggregate {
-    public class BoardPositionTest {
+    public class BoardPositionMoveTest {
+        private GameSettings _settings;
+
+        public BoardPositionMoveTest() {
+            _settings = GameSettings.International;
+        }
+
         [Fact]
         public void InvalidMoveTrows() {
             // |_|4|_|.|
@@ -13,7 +19,7 @@ namespace Draughts.Test.Domain.GameAggregate {
             // |_|.|_|.|
             // |.|_|5|_|
             var board = Board("40 00 00 05");
-            Action doMove = () => board.PerformNewMove(Pos(1, 0), Pos(1, 2), out bool canCaptureMore);
+            Action doMove = () => board.PerformNewMove(Pos(1, 0), Pos(1, 2), _settings, out bool canCaptureMore);
             doMove.Should().Throw<ManualValidationException>();
             board.ToLongString(" ", "").Should().Be("40 00 00 05");
         }
@@ -25,7 +31,7 @@ namespace Draughts.Test.Domain.GameAggregate {
             // |_|.|_|.|
             // |.|_|5|_|
             var board = Board("40 00 00 05");
-            board.PerformNewMove(Pos(1, 0), Pos(0, 1), out bool canCaptureMore);
+            board.PerformNewMove(Pos(1, 0), Pos(0, 1), _settings, out bool canCaptureMore);
             board.ToLongString(" ", "").Should().Be("00 40 00 05");
             canCaptureMore.Should().BeFalse();
         }
@@ -37,7 +43,7 @@ namespace Draughts.Test.Domain.GameAggregate {
             // |_|.|_|.|
             // |.|_|5|_|
             var board = Board("40 05 00 05");
-            board.PerformNewMove(Pos(1, 0), Pos(3, 2), out bool canCaptureMore);
+            board.PerformNewMove(Pos(1, 0), Pos(3, 2), _settings, out bool canCaptureMore);
             board.ToLongString(" ", "").Should().Be("00 00 04 05");
             canCaptureMore.Should().BeFalse();
         }
@@ -49,7 +55,7 @@ namespace Draughts.Test.Domain.GameAggregate {
             // |_|4|_|.|
             // |.|_|5|_|
             var board = Board("40 05 40 05");
-            Action doMove = () => board.PerformChainCaptureMove(Pos(1, 0), Pos(3, 0), out bool canCaptureMore);
+            Action doMove = () => board.PerformChainCaptureMove(Pos(1, 0), Pos(3, 0), _settings, out bool canCaptureMore);
             doMove.Should().Throw<ManualValidationException>();
             board.ToLongString(" ", "").Should().Be("40 05 40 05");
         }
@@ -61,7 +67,7 @@ namespace Draughts.Test.Domain.GameAggregate {
             // |_|4|_|.|
             // |.|_|5|_|
             var board = Board("40 05 40 05");
-            Action doMove = () => board.PerformChainCaptureMove(Pos(1, 0), Pos(0, 1), out bool canCaptureMore);
+            Action doMove = () => board.PerformChainCaptureMove(Pos(1, 0), Pos(0, 1), _settings, out bool canCaptureMore);
             doMove.Should().Throw<ManualValidationException>();
             board.ToLongString(" ", "").Should().Be("40 05 40 05");
         }
@@ -73,7 +79,7 @@ namespace Draughts.Test.Domain.GameAggregate {
             // |_|4|_|.|
             // |.|_|5|_|
             var board = Board("40 05 40 05");
-            board.PerformChainCaptureMove(Pos(1, 0), Pos(3, 2), out bool canCaptureMore);
+            board.PerformChainCaptureMove(Pos(1, 0), Pos(3, 2), _settings, out bool canCaptureMore);
             board.ToLongString(" ", "").Should().Be("00 00 44 05");
             canCaptureMore.Should().BeFalse();
         }

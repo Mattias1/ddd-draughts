@@ -1,6 +1,5 @@
 using Draughts.Common;
 using Draughts.Common.OoConcepts;
-using System;
 using System.Diagnostics.CodeAnalysis;
 
 namespace Draughts.Domain.GameAggregate.Models {
