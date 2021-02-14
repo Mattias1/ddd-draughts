@@ -2,19 +2,22 @@ using Draughts.Common;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using static Draughts.Domain.GameAggregate.Models.GameSettings;
 
 namespace Draughts.Domain.GameAggregate.Models {
-    // TODO: (non-)flying kings, etc.
     public class PossibleMoveCalculator {
         private BoardPosition _board;
+        private GameSettings _settings;
         private Color _currentTurn;
         private Square? _restrictedTo;
         private int _minCaptureSequence;
 
         private bool MustCapture => _minCaptureSequence > 0;
 
-        private PossibleMoveCalculator(BoardPosition board, Color currentTurn, Square? restrictedTo, int minCaptureSequence) {
+        private PossibleMoveCalculator(BoardPosition board, GameSettings settings,
+                Color currentTurn, Square? restrictedTo, int minCaptureSequence) {
             _board = board;
+            _settings = settings;
             _currentTurn = currentTurn;
             _restrictedTo = restrictedTo;
             _minCaptureSequence = minCaptureSequence;
@@ -28,11 +31,11 @@ namespace Draughts.Domain.GameAggregate.Models {
             var possibleMoves = new List<PossibleMove>();
             foreach (var from in AllLoopPositions()) {
                 foreach (var dir in Direction.All) {
-                    if (_board[from].IsMan) {
-                        AddManMovesFrom(possibleMoves, from, dir);
+                    if (!_settings.FlyingKings || _board[from].IsMan) {
+                        AddNormalMovesFrom(possibleMoves, from, dir);
                     }
                     else {
-                        AddKingMovesFrom(possibleMoves, from, dir);
+                        AddFlyingMovesFrom(possibleMoves, from, dir);
                     }
                 }
             }
@@ -53,16 +56,16 @@ namespace Draughts.Domain.GameAggregate.Models {
             }
         }
 
-        private void AddManMovesFrom(List<PossibleMove> possibleMoves, Square from, Direction dir) {
+        private void AddNormalMovesFrom(List<PossibleMove> possibleMoves, Square from, Direction dir) {
             if (!TryGetBorderOf(from, dir, out var next, out var nextColor)) {
                 return;
             }
 
             if (nextColor == _currentTurn.Other) {
-                if (!TryGetBorderTo(next, dir, out var jump, c => c is null)) {
+                if (!CanCaptureInDirection(dir, from) || !TryGetBorderTo(next, dir, out var jump, c => c is null)) {
                     return;
                 }
-                int chainLength = ChainLengthMan(from, jump, next);
+                int chainLength = NormalChainLength(from, jump, next);
                 if (chainLength > _minCaptureSequence) {
                     _minCaptureSequence = chainLength;
                     possibleMoves.Clear();
@@ -73,20 +76,25 @@ namespace Draughts.Domain.GameAggregate.Models {
                 return;
             }
 
-            if (nextColor is null && !MustCapture && dir.IsForwardsDirection(_currentTurn)) {
+            if (nextColor is null && !MustCapture && CanMoveInDirection(dir, from)) {
                 possibleMoves.Add(PossibleMove.NormalMove(from, next));
             }
         }
 
-        private int ChainLengthMan(Square from, Square to, Square victim) {
+        private int NormalChainLength(Square from, Square to, Square victim) {
             var capturedPiece = _board[victim];
             _board.PerformMoveUnsafe(from, to, victim);
 
             int maxChainLength = 1;
             foreach (var dir in Direction.All) {
-                if (TryGetBorderTo(to, dir, out var target, c => c == _currentTurn.Other)
+                if (CanCaptureInDirection(dir, to)
+                        && TryGetBorderTo(to, dir, out var target, c => c == _currentTurn.Other)
                         && TryGetBorderTo(target, dir, out var jump, c => c is null)) {
-                    int length = 1 + ChainLengthMan(to, jump, target);
+                    if (_settings.CaptureConstraints == DraughtsCaptureConstraints.AnyFinishedSequence) {
+                        maxChainLength = 2;
+                        break;
+                    }
+                    int length = 1 + NormalChainLength(to, jump, target);
                     maxChainLength = Math.Max(maxChainLength, length);
                 }
             }
@@ -95,12 +103,20 @@ namespace Draughts.Domain.GameAggregate.Models {
             return maxChainLength;
         }
 
-        private void AddKingMovesFrom(List<PossibleMove> possibleMoves, Square from, Direction dir) {
+        private bool CanCaptureInDirection(Direction dir, Square from) {
+            return _settings.MenCaptureBackwards || CanMoveInDirection(dir, from);
+        }
+
+        private bool CanMoveInDirection(Direction dir, Square from) {
+            return dir.IsForwardsDirection(_currentTurn) || _board[from].IsKing;
+        }
+
+        private void AddFlyingMovesFrom(List<PossibleMove> possibleMoves, Square from, Direction dir) {
             Square? next = from;
             Square? victim = null;
             while (TryGetBorderOf(next, dir, out next, out var nextColor)) {
                 if (nextColor is null && victim != null) {
-                    int chainLength = ChainLengthKing(from, next, victim);
+                    int chainLength = FlyingChainLength(from, next, victim);
                     if (chainLength > _minCaptureSequence) {
                         _minCaptureSequence = chainLength;
                         possibleMoves.Clear();
@@ -111,11 +127,11 @@ namespace Draughts.Domain.GameAggregate.Models {
                     continue;
                 }
 
-                if (nextColor == _currentTurn.Other || victim != null) {
+                if (nextColor == _currentTurn.Other && victim is null) {
                     if (!TryGetBorderTo(next, dir, out var jump, c => c is null)) {
                         return;
                     }
-                    int chainLength = ChainLengthKing(from, jump, next);
+                    int chainLength = FlyingChainLength(from, jump, next);
                     if (chainLength > _minCaptureSequence) {
                         _minCaptureSequence = chainLength;
                         possibleMoves.Clear();
@@ -138,7 +154,7 @@ namespace Draughts.Domain.GameAggregate.Models {
             }
         }
 
-        private int ChainLengthKing(Square from, Square to, Square victim) {
+        private int FlyingChainLength(Square from, Square to, Square victim) {
             var capturedPiece = _board[victim];
             _board.PerformMoveUnsafe(from, to, victim);
 
@@ -154,11 +170,16 @@ namespace Draughts.Domain.GameAggregate.Models {
 
                 Square? jump = target;
                 while (TryGetBorderTo(jump, dir, out jump, c => c is null)) {
-                    int length = 1 + ChainLengthKing(to, jump, target);
+                    if (_settings.CaptureConstraints == DraughtsCaptureConstraints.AnyFinishedSequence) {
+                        maxChainLength = 2;
+                        goto end_of_loop;
+                    }
+                    int length = 1 + FlyingChainLength(to, jump, target);
                     maxChainLength = Math.Max(maxChainLength, length);
                 }
             }
 
+        end_of_loop:
             _board.UndoMoveUnsafe(from, to, victim, capturedPiece);
             return maxChainLength;
         }
@@ -177,13 +198,13 @@ namespace Draughts.Domain.GameAggregate.Models {
             return origin.TryGetBorder(dir, _board.Size, out border) && predicate(_board[border].Color);
         }
 
-        public static PossibleMoveCalculator ForNewTurn(BoardPosition board, Color currentTurn) {
-            return new PossibleMoveCalculator(board, currentTurn, null, 0);
+        public static PossibleMoveCalculator ForNewTurn(BoardPosition board, Color currentTurn, GameSettings settings) {
+            return new PossibleMoveCalculator(board, settings, currentTurn, null, 0);
         }
 
-        public static PossibleMoveCalculator ForChainCaptures(BoardPosition board, Square from) {
+        public static PossibleMoveCalculator ForChainCaptures(BoardPosition board, Square from, GameSettings settings) {
             var currentTurn = board[from].Color ?? throw new ManualValidationException("Invalid move.");
-            return new PossibleMoveCalculator(board, currentTurn, from, 1);
+            return new PossibleMoveCalculator(board, settings, currentTurn, from, 1);
         }
     }
 }

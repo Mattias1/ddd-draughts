@@ -17,7 +17,7 @@ namespace Draughts.Domain.GameAggregate.Models {
             CaptureSequenceFrom = captureSequenceFrom;
         }
 
-        public MoveResult AddMove(Square from, Square to, Color currentTurn) {
+        public MoveResult AddMove(Square from, Square to, Color currentTurn, GameSettings settings) {
             if (from > Board.NrOfPlayableSquares || to > Board.NrOfPlayableSquares) {
                 throw new ManualValidationException("Invalid move.");
             }
@@ -25,7 +25,7 @@ namespace Draughts.Domain.GameAggregate.Models {
                 throw new ManualValidationException($"You can only move {currentTurn} pieces.");
             }
 
-            PerformMove(from, to, out bool canCaptureMore);
+            PerformMove(from, to, settings, out bool canCaptureMore);
 
             if (canCaptureMore) {
                 CaptureSequenceFrom = to;
@@ -44,15 +44,15 @@ namespace Draughts.Domain.GameAggregate.Models {
             return MoveResult.NextTurn;
         }
 
-        private void PerformMove(Square from, Square to, out bool canCaptureMore) {
+        private void PerformMove(Square from, Square to, GameSettings settings, out bool canCaptureMore) {
             if (CaptureSequenceFrom is null) {
-                Board.PerformNewMove(from, to, out canCaptureMore);
+                Board.PerformNewMove(from, to, settings, out canCaptureMore);
             }
             else {
                 if (CaptureSequenceFrom != from) {
                     throw new ManualValidationException("Invalid move, you have to continue the capture sequence.");
                 }
-                Board.PerformChainCaptureMove(from, to, out canCaptureMore);
+                Board.PerformChainCaptureMove(from, to, settings, out canCaptureMore);
             }
         }
 
@@ -63,8 +63,8 @@ namespace Draughts.Domain.GameAggregate.Models {
             return new GameState(gameId, BoardPosition.FromString(storage), captureSequenceFrom);
         }
 
-        public static GameState InitialState(GameId gameId, int boardsize) {
-            return new GameState(gameId, BoardPosition.InitialSetup(boardsize), null);
+        public static GameState InitialState(GameId gameId, int boardSize) {
+            return new GameState(gameId, BoardPosition.InitialSetup(boardSize), null);
         }
     }
 }

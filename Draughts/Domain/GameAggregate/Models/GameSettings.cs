@@ -21,7 +21,7 @@ namespace Draughts.Domain.GameAggregate.Models {
             10 => 20,
             8 => 12,
             6 => 6,
-            _ => throw new InvalidOperationException("Unknown boardsize: " + BoardSize)
+            _ => throw new InvalidOperationException("Unknown board size: " + BoardSize)
         };
 
         public GameSettings(

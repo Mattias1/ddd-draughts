@@ -3,7 +3,7 @@ using FluentAssertions;
 using Xunit;
 
 namespace Draughts.Test.Domain.GameAggregate {
-    public class MiscBoardPositionTest {
+    public class BoardPositionMiscTest {
         [Fact]
         public void InitialBoard4x4() {
             // |_|4|_|4|
