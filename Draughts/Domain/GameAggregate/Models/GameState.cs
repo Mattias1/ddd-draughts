@@ -4,22 +4,25 @@ using Draughts.Common.OoConcepts;
 namespace Draughts.Domain.GameAggregate.Models {
     // TODO: Maybe make this it's own aggregate?
     public class GameState : Entity<GameState, GameId> {
+        public const string ERROR_INVALID_SQUARES = "Invalid squares.";
+        public const string ERROR_CAPTURE_SEQUENCE = "Continue the capture sequence.";
+
         public enum MoveResult { NextTurn, MoreCapturesAvailable, GameOver };
 
         public BoardPosition Board { get; }
-        public Square? CaptureSequenceFrom { get; private set; }
+        public SquareId? CaptureSequenceFrom { get; private set; }
 
         public override GameId Id { get; }
 
-        private GameState(GameId gameId, BoardPosition board, Square? captureSequenceFrom) {
+        private GameState(GameId gameId, BoardPosition board, SquareId? captureSequenceFrom) {
             Id = gameId;
             Board = board;
             CaptureSequenceFrom = captureSequenceFrom;
         }
 
-        public MoveResult AddMove(Square from, Square to, Color currentTurn, GameSettings settings) {
+        public MoveResult AddMove(SquareId from, SquareId to, Color currentTurn, GameSettings settings) {
             if (from > Board.NrOfPlayableSquares || to > Board.NrOfPlayableSquares) {
-                throw new ManualValidationException("Invalid move.");
+                throw new ManualValidationException(ERROR_INVALID_SQUARES);
             }
             if (currentTurn != Board[from].Color) {
                 throw new ManualValidationException($"You can only move {currentTurn} pieces.");
@@ -44,13 +47,13 @@ namespace Draughts.Domain.GameAggregate.Models {
             return MoveResult.NextTurn;
         }
 
-        private void PerformMove(Square from, Square to, GameSettings settings, out bool canCaptureMore) {
+        private void PerformMove(SquareId from, SquareId to, GameSettings settings, out bool canCaptureMore) {
             if (CaptureSequenceFrom is null) {
                 Board.PerformNewMove(from, to, settings, out canCaptureMore);
             }
             else {
                 if (CaptureSequenceFrom != from) {
-                    throw new ManualValidationException("Invalid move, you have to continue the capture sequence.");
+                    throw new ManualValidationException(ERROR_CAPTURE_SEQUENCE);
                 }
                 Board.PerformChainCaptureMove(from, to, settings, out canCaptureMore);
             }
@@ -58,8 +61,8 @@ namespace Draughts.Domain.GameAggregate.Models {
 
         public string StorageString() => Board.ToString();
 
-        public static GameState FromStorage(GameId gameId, string storage, int? fromSquare) {
-            var captureSequenceFrom = fromSquare is null ? null : new Square(fromSquare);
+        public static GameState FromStorage(GameId gameId, string storage, int? captureFromSquare) {
+            var captureSequenceFrom = captureFromSquare is null ? null : new SquareId(captureFromSquare);
             return new GameState(gameId, BoardPosition.FromString(storage), captureSequenceFrom);
         }
 

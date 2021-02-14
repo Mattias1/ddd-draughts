@@ -7,6 +7,7 @@
     var board = Model.CurrentGameState.Board;
     var player1 = Model.Players.SingleOrDefault(p => p.Color == settings.FirstMove);
     var player2 = Model.Players.SingleOrDefault(p => p.Color == settings.FirstMove.Other);
+    var captureSequenceFrom = Model.CurrentGameState.CaptureSequenceFrom;
 }
 
 <div class="text-container">
@@ -14,13 +15,18 @@
         <div id="game-board" class="game-board-@(settings.BoardSize)">
             @for (int y = 0; y < settings.BoardSize; y++) {
                 @for (int x = 0; x < settings.BoardSize; x++) {
-                    <div id="square-@x-@y"
-                         class="square@(BoardPosition.IsPlayable(x, y) ? " playable" : "")
-                             @(board[x, y].Color)@(board[x, y].IsMan ? " man" : "")@(board[x, y].IsKing ? " king" : "")"
-                         style="left: @(60 * x)px; top: @(60 * y)px;"
-                         data-number="@(BoardPosition.IsPlayable(x, y) ? Square.FromPosition(x, y, settings.BoardSize) : "")"
-                         data-gameid="@Model.Id">
-                    </div>
+                    var square = board[x, y];
+                    if (square is null) {
+                        <div class="square" style="left: @(60 * x)px; top: @(60 * y)px;"></div>
+                    }
+                    else {
+                        <div id="square-@square.Id"
+                            class="square playable @(square.Color)@(square.IsMan ? " man" : "")@(square.IsKing ? " king" : "")"
+                            style="left: @(60 * x)px; top: @(60 * y)px;"
+                            data-number="@(square.Id)"
+                            data-gameid="@Model.Id">
+                        </div>
+                    }
                 }
             }
             @for (int i = 0; i < settings.BoardSize; i++) {
@@ -80,12 +86,11 @@
 @section Scripts {
     <script src="/js/playgame.js" asp-append-version="true"></script>
 
-    @if (Model.CurrentGameState.CaptureSequenceFrom != null) {
-        var (x, y) = Model.CurrentGameState.CaptureSequenceFrom.ToPosition(settings.BoardSize);
+    @if (captureSequenceFrom != null) {
         <text>
             <script>
                 $(document).ready(function () {
-                    selectSquare(@(Model.CurrentGameState.CaptureSequenceFrom), $('#square-@(x)-@(y)'));
+                    selectSquare(@(captureSequenceFrom) $('#square-@(captureSequenceFrom)'));
                 });
             </script>
         </text>

@@ -227,7 +227,7 @@ namespace Draughts.Test.Domain.GameAggregate {
             // |_|4|_|4|
             // |.|_|5|_|
             var board = BoardPosition.FromString("00054405");
-            var posisbleMoves = PossibleMoveCalculator.ForChainCaptures(board, new Square(5), InternationalSettings(4))
+            var posisbleMoves = PossibleMoveCalculator.ForChainCaptures(board, new SquareId(5), InternationalSettings(4))
                 .Calculate()
                 .Select(m => m.ToString())
                 .ToList();
