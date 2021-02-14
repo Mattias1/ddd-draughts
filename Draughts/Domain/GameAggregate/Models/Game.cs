@@ -80,7 +80,7 @@ namespace Draughts.Domain.GameAggregate.Models {
                 throw new ManualValidationException("It's not your turn.");
             }
 
-            var result = GameState.AddMove(from, to, Turn.Player.Color);
+            var result = GameState.AddMove(from, to, Turn.Player.Color, Settings);
 
             switch (result) {
                 case GameState.MoveResult.NextTurn:
