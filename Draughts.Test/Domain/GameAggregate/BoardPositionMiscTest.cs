@@ -17,13 +17,16 @@ namespace Draughts.Test.Domain.GameAggregate {
             for (int y = 0; y < board.Size; y++) {
                 for (int x = 0; x < board.Size; x++) {
                     if (y == 0 && (x == 1 || x == 3)) {
-                        board[x, y].Should().Be(Piece.BlackMan);
+                        board[x, y]!.Piece.Should().Be(Piece.BlackMan);
                     }
                     else if (y == 3 && (x == 0 || x == 2)) {
-                        board[x, y].Should().Be(Piece.WhiteMan);
+                        board[x, y]!.Piece.Should().Be(Piece.WhiteMan);
+                    }
+                    else if (BoardPosition.IsPlayable(x, y)) {
+                        board[x, y]!.Piece.Should().Be(Piece.Empty, $"because we're at ({x}, {y})");
                     }
                     else {
-                        board[x, y].Should().Be(Piece.Empty, $"because we're at ({x}, {y})");
+                        board[x, y].Should().BeNull($"because we're at ({x}, {y})");
                     }
                 }
             }

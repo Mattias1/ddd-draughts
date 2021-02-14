@@ -1,6 +1,5 @@
 using Draughts.Common.Utilities;
 using Draughts.Domain.GameAggregate.Models;
-using Draughts.Domain.UserAggregate.Models;
 using NodaTime;
 using NodaTime.Testing;
 using System;
@@ -10,6 +9,29 @@ using System.Linq;
 namespace Draughts.Test.TestHelpers {
     public class GameTestHelper {
         private static readonly ZonedDateTime Feb29 = FakeClock.FromUtc(2020, 02, 29).UtcNow();
+
+        public static GameBuilder FinishedMiniGame(Color victor) {
+            char c = victor == Color.Black ? '4' : '5';
+            return StartedMiniGame()
+                .WithGameState($"000 000 00{c} 000 000 000")
+                .WithFinishedAt(Feb29)
+                .WithTurn((Turn?)null)
+                .WithVictor(victor);
+        }
+
+        public static GameBuilder StartedMiniGame() {
+            var whitePlayer = PlayerTestHelper.White().Build();
+            var blackPlayer = PlayerTestHelper.Black().Build();
+            var turn = new Turn(whitePlayer, Feb29, Duration.FromHours(24));
+
+            return PendingMiniGame()
+                .WithPlayers(whitePlayer, blackPlayer)
+                .WithTurn(turn)
+                .WithStartedAt(Feb29);
+        }
+
+        public static GameBuilder PendingMiniGame(Player creator) => PendingMiniGame().WithPlayers(creator);
+        public static GameBuilder PendingMiniGame() => PendingGame(GameSettings.Mini);
 
         public static GameBuilder StartedInternationalGame() {
             var whitePlayer = PlayerTestHelper.White().Build();
@@ -59,6 +81,11 @@ namespace Draughts.Test.TestHelpers {
                 return this;
             }
 
+            public GameBuilder WithTurn(Color color) {
+                var player = FindPlayerForColor(color);
+                var createdAt = _startedAt ?? _createdAt ?? Feb29;
+                return WithTurn(new Turn(player, createdAt, Duration.FromHours(24)));
+            }
             public GameBuilder WithTurn(Turn? turn) {
                 _turn = turn;
                 return this;
@@ -69,11 +96,20 @@ namespace Draughts.Test.TestHelpers {
                 return this;
             }
 
+            public GameBuilder WithVictor(Color color) {
+                return WithVictor(FindPlayerForColor(color));
+            }
             public GameBuilder WithVictor(Player? victor) {
                 _victor = victor;
                 return this;
             }
 
+            public GameBuilder WithGameState(string board, int? captureSequenceFrom = null) {
+                if (_id is null) {
+                    throw new InvalidOperationException("Game id is null");
+                }
+                return WithGameState(GameState.FromStorage(_id, board, captureSequenceFrom));
+            }
             public GameBuilder WithGameState(GameState gameState) {
                 _gameState = gameState;
                 return this;
@@ -92,6 +128,14 @@ namespace Draughts.Test.TestHelpers {
             public GameBuilder WithFinishedAt(ZonedDateTime? finishedAt) {
                 _finishedAt = finishedAt;
                 return this;
+            }
+
+            private Player FindPlayerForColor(Color color) {
+                var player = _players.SingleOrDefault(p => p.Color == color);
+                if (player is null) {
+                    throw new InvalidOperationException("No player available with this color");
+                }
+                return player;
             }
 
             public Game Build() {
