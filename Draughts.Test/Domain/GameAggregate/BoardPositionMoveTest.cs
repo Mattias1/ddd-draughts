@@ -145,6 +145,6 @@ namespace Draughts.Test.Domain.GameAggregate {
 
         private BoardPosition Board(string board) => BoardPosition.FromString(board);
 
-        private Square Pos(int x, int y) => Square.FromPosition(x, y, 4);
+        private SquareId Pos(int x, int y) => SquareId.FromPosition(x, y, 4);
     }
 }

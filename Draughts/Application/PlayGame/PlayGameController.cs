@@ -41,7 +41,7 @@ namespace Draughts.Application.PlayGame {
                 ValidateNotNull(request?.From, request?.To);
 
                 _playGameService.DoMove(AuthContext.UserId, new GameId(gameId),
-                    new Square(request!.From), new Square(request.To));
+                    new SquareId(request!.From), new SquareId(request.To));
 
                 return Ok();
             }

@@ -8,6 +8,9 @@ using System.Linq;
 
 namespace Draughts.Domain.GameAggregate.Models {
     public class Game : Entity<Game, GameId> {
+        public const string ERROR_GAME_NOT_ACTIVE = "This game is not active.";
+        public const string ERROR_NOT_YOUR_TURN = "It's not your turn.";
+
         private readonly List<Player> _players;
 
         public override GameId Id { get; }
@@ -72,12 +75,12 @@ namespace Draughts.Domain.GameAggregate.Models {
 
         private Player GetPlayerForColor(Color color) => _players.Single(p => p.Color == color);
 
-        public GameState.MoveResult DoMove(UserId currentUser, Square from, Square to, ZonedDateTime movedAt) {
+        public GameState.MoveResult DoMove(UserId currentUser, SquareId from, SquareId to, ZonedDateTime movedAt) {
             if (!HasStarted || IsFinished || Turn is null) {
-                throw new ManualValidationException("This game is not active.");
+                throw new ManualValidationException(ERROR_GAME_NOT_ACTIVE);
             }
             if (Turn.Player.UserId != currentUser) {
-                throw new ManualValidationException("It's not your turn.");
+                throw new ManualValidationException(ERROR_NOT_YOUR_TURN);
             }
 
             var result = GameState.AddMove(from, to, Turn.Player.Color, Settings);
