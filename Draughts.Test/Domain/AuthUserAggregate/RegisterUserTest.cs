@@ -11,7 +11,7 @@ namespace Draughts.Test.Domain.AuthUserAggregate {
         private static readonly Role RegisteredRole = RoleTestHelper.RegisteredUser().Build();
 
         [Fact]
-        public void Register_WhenRoleIsNotRegisteredUser_ThenThrow() {
+        public void ThrowWhenRoleIsNotRegisteredUser() {
             var authUser = AuthUserTestHelper.User().WithRoles(PendingRole).Build();
             var wrongRole = PendingRole;
 
@@ -21,7 +21,7 @@ namespace Draughts.Test.Domain.AuthUserAggregate {
         }
 
         [Fact]
-        public void Register_WhenUserHasNoRoles_ThenValidationError() {
+        public void ValidationErrorWhenUserHasNoRoles() {
             var authUser = AuthUserTestHelper.User().WithRoles().Build();
 
             Action registration = () => authUser.Register(RegisteredRole);
@@ -30,7 +30,7 @@ namespace Draughts.Test.Domain.AuthUserAggregate {
         }
 
         [Fact]
-        public void Register_WhenUserHasMultipleRoles_ThenValidationError() {
+        public void ValidationErrorWhenUserHasMultipleRoles() {
             var authUser = AuthUserTestHelper.User().WithRoles(PendingRole, RegisteredRole).Build();
 
             Action registration = () => authUser.Register(RegisteredRole);
@@ -39,7 +39,7 @@ namespace Draughts.Test.Domain.AuthUserAggregate {
         }
 
         [Fact]
-        public void Register_WhenRoleIsNotPending_ThenValidationError() {
+        public void ValidationErrorWhenRoleIsNotPending() {
             var wrongRole = RegisteredRole;
             var authUser = AuthUserTestHelper.User().WithRoles(wrongRole).Build();
 
@@ -49,7 +49,7 @@ namespace Draughts.Test.Domain.AuthUserAggregate {
         }
 
         [Fact]
-        public void Register_WhenAllIsWell_ThenSwapOutRoles() {
+        public void SwapOutRolesWhenAllIsWell() {
             var authUser = AuthUserTestHelper.User().WithRoles(PendingRole).Build();
 
             authUser.Register(RegisteredRole);

@@ -16,7 +16,7 @@ namespace Draughts.Test.Common.Events {
         }
 
         [Fact]
-        public void Events_ShouldBeEqual_WhenIdsAreEqual() {
+        public void EqualWhenIdsAreEqual() {
             var pendingRole = RoleTestHelper.PendingRegistration().WithId(11).Build();
             var left = new RoleCreated(pendingRole, new DomainEventId(1), _clock.UtcNow());
 
@@ -31,7 +31,7 @@ namespace Draughts.Test.Common.Events {
         }
 
         [Fact]
-        public void Events_ShouldNotBeEqual_WhenIdsAreDifferent() {
+        public void NotEqualWhenIdsAreDifferent() {
             var role = RoleTestHelper.PendingRegistration().WithId(11).Build();
             var left = new RoleCreated(role, new DomainEventId(1), _clock.UtcNow());
             var right = new RoleCreated(role, new DomainEventId(2), _clock.UtcNow());
@@ -43,7 +43,7 @@ namespace Draughts.Test.Common.Events {
         }
 
         [Fact]
-        public void Events_ShouldNotBeEqual_WhenTheOtherIsNull() {
+        public void NotEqualWhenTheOtherIsNull() {
             var role = RoleTestHelper.PendingRegistration().WithId(11).Build();
             var left = new RoleCreated(role, new DomainEventId(1), _clock.UtcNow());
             RoleCreated? right = null;
@@ -58,7 +58,7 @@ namespace Draughts.Test.Common.Events {
         }
 
         [Fact]
-        public void Events_ShouldBeEqual_WhenBothAreNull() {
+        public void EqualWhenBothAreNull() {
             RoleCreated? left = null;
             RoleCreated? right = null;
 
@@ -67,7 +67,7 @@ namespace Draughts.Test.Common.Events {
         }
 
         [Fact]
-        public void RegisterFailedAttempt_ShouldUpdateDateAndNrOfAttempts() {
+        public void RegisterFailedAttemptShouldUpdateDateAndNrOfAttempts() {
             var role = RoleTestHelper.PendingRegistration().Build();
             var evt = new RoleCreated(role, new DomainEventId(IdTestHelper.Next()), _clock.UtcNow().PlusHours(-1));
 

@@ -12,7 +12,7 @@ namespace Draughts.Test.Domain.GameAggregate {
         FakeClock _fakeClock = FakeClock.FromUtc(2020, 02, 29);
 
         [Fact]
-        public void JoinGame_WhenGameStarted_ThenValidationError() {
+        public void JoiningWhenStartedThrowsValidationError() {
             var game = GameTestHelper.StartedInternationalGame().Build();
 
             var thirdPlayer = PlayerTestHelper.White()
@@ -26,7 +26,7 @@ namespace Draughts.Test.Domain.GameAggregate {
         }
 
         [Fact]
-        public void JoinGame_WhenAlreadyInGame_ThenValidationError() {
+        public void JoiningWhenAlreadyInGameThrowsValidationError() {
             var whitePlayer = PlayerTestHelper.White().Build();
             var game = GameTestHelper.PendingInternationalGame(whitePlayer).Build();
 
@@ -36,7 +36,7 @@ namespace Draughts.Test.Domain.GameAggregate {
         }
 
         [Fact]
-        public void JoinGame_WhenUserIdOccupied_ThenValidationError() {
+        public void JoiningWhenUserIdOccupiedThrowsValidationError() {
             var whitePlayer = PlayerTestHelper.White().WithUserId(9999).Build();
             var game = GameTestHelper.PendingInternationalGame(whitePlayer).Build();
 
@@ -48,7 +48,7 @@ namespace Draughts.Test.Domain.GameAggregate {
         }
 
         [Fact]
-        public void JoinGame_WhenColorOccupied_ThenValidationError() {
+        public void JoiningWhenColorOccupiedThrowsValidationError() {
             var whitePlayer = PlayerTestHelper.White().Build();
             var game = GameTestHelper.PendingInternationalGame(whitePlayer).Build();
 
@@ -60,7 +60,7 @@ namespace Draughts.Test.Domain.GameAggregate {
         }
 
         [Fact]
-        public void JoinGame_WhenFirstPlayer_ThenJoinGame() {
+        public void JoiningAsFirstPlayerJustJoins() {
             var game = GameTestHelper.PendingInternationalGame().Build();
             var whitePlayer = PlayerTestHelper.White().Build();
 
@@ -72,7 +72,7 @@ namespace Draughts.Test.Domain.GameAggregate {
         }
 
         [Fact]
-        public void JoinGame_WhenSecondPlayer_ThenStartGame() {
+        public void JoiningAsSecondPlayerStartsGame() {
             var blackPlayer = PlayerTestHelper.Black().Build();
             var game = GameTestHelper.PendingInternationalGame(blackPlayer).Build();
 
