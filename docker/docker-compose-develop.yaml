@@ -3,7 +3,7 @@ services:
   draughts-db:
     image: mariadb:10
     container_name: draughts-db
-    restart: always
+    restart: "no"
     environment:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_INITDB_SKIP_TZINFO: skippls
@@ -19,7 +19,7 @@ services:
   adminer:
     image: adminer
     container_name: draughts-adminer
-    restart: always
+    restart: "no"
     environment:
       ADMINER_DEFAULT_SERVER: draughts-db
     ports:
