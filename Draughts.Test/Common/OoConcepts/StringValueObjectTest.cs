@@ -5,7 +5,7 @@ using Xunit;
 namespace Draughts.Test.Common.OoConcepts {
     public class StringValueObjectTest {
         [Fact]
-        public void Entities_ShouldBeEqual_WhenValuesAreEqual() {
+        public void EqualWhenValuesAreEqual() {
             var left = new TestString("Howdy?");
             var right = new TestString("Howdy?");
 
@@ -17,7 +17,7 @@ namespace Draughts.Test.Common.OoConcepts {
         }
 
         [Fact]
-        public void Entities_ShouldBeEqual_WhenValuesHaveDifferentCasing() {
+        public void EqualWhenValuesHaveDifferentCasing() {
             var left = new TestString("CASELESS");
             var right = new TestString("CaSeLeSS");
 
@@ -29,7 +29,7 @@ namespace Draughts.Test.Common.OoConcepts {
         }
 
         [Fact]
-        public void Entities_ShouldBeEqual_WhenContainingWeirdCharacters() {
+        public void EqualWhenContainingWeirdCharacters() {
             var left = new TestString("Iñtërnâtiônàlizætiøn_𐐒𐐌_あ");
             var right = new TestString("Iñtërnâtiônàlizætiøn_𐐒𐐌_あ");
 
@@ -41,7 +41,7 @@ namespace Draughts.Test.Common.OoConcepts {
         }
 
         [Fact]
-        public void Entities_ShouldNotBeEqual_WhenValuesAreDifferent() {
+        public void NotEqualWhenValuesAreDifferent() {
             var left = new TestString("left");
             var right = new TestString("right");
 
@@ -52,7 +52,7 @@ namespace Draughts.Test.Common.OoConcepts {
         }
 
         [Fact]
-        public void Entities_ShouldNotBeEqual_WhenTheOtherIsNull() {
+        public void NotEqualWhenTheOtherIsNull() {
             var left = new TestString("left");
             TestString? right = null;
 
@@ -66,7 +66,7 @@ namespace Draughts.Test.Common.OoConcepts {
         }
 
         [Fact]
-        public void Entities_ShouldBeEqual_WhenBothAreNull() {
+        public void EqualWhenBothAreNull() {
             TestString? left = null;
             TestString? right = null;
 
