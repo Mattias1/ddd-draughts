@@ -5,7 +5,7 @@ using Xunit;
 namespace Draughts.Test.Common.OoConcepts {
     public class EntityTest {
         [Fact]
-        public void Entities_ShouldBeEqual_WhenIdsAreEqual() {
+        public void EqualWhenIdsAreEqual() {
             var left = new TestEntity(new TestId(1), "left");
             var right = new TestEntity(new TestId(1), "right");
 
@@ -17,7 +17,7 @@ namespace Draughts.Test.Common.OoConcepts {
         }
 
         [Fact]
-        public void Entities_ShouldNotBeEqual_WhenIdsAreDifferent() {
+        public void NotEqualWhenIdsAreDifferent() {
             var left = new TestEntity(new TestId(1), "whatever");
             var right = new TestEntity(new TestId(2), "whatever");
 
@@ -28,7 +28,7 @@ namespace Draughts.Test.Common.OoConcepts {
         }
 
         [Fact]
-        public void Entities_ShouldNotBeEqual_WhenTheOtherIsNull() {
+        public void NotEqualWhenTheOtherIsNull() {
             var left = new TestEntity(new TestId(1), "left");
             TestEntity? right = null;
 
@@ -42,7 +42,7 @@ namespace Draughts.Test.Common.OoConcepts {
         }
 
         [Fact]
-        public void Entities_ShouldBeEqual_WhenBothAreNull() {
+        public void EqualWhenBothAreNull() {
             TestEntity? left = null;
             TestEntity? right = null;
 

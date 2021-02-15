@@ -27,7 +27,7 @@ namespace Draughts.Test.Repositories.InMemory {
         }
 
         [Fact]
-        public void BeginTransaction_DoesntPersistAnything_WhenNotCommitting() {
+        public void DontPersistAnythingWhenNotCommitting() {
             using (var tran = _unitOfWork.BeginTransaction(TransactionDomain.AuthUser)) {
                 StoreTestRole(1);
 
@@ -39,7 +39,7 @@ namespace Draughts.Test.Repositories.InMemory {
         }
 
         [Fact]
-        public void WithTransaction_ShouldRollback_WhenThrowing() {
+        public void RollbackWhenThrowing() {
             try {
                 _unitOfWork.WithTransaction(TransactionDomain.AuthUser, tran => {
                     StoreTestRole(1);
@@ -61,7 +61,7 @@ namespace Draughts.Test.Repositories.InMemory {
         }
 
         [Fact]
-        public void BeginTransaction_PersistsEverything_WhenCommitting() {
+        public void PersistsEverythingWhenCommitting() {
             using (var tran = _unitOfWork.BeginTransaction(TransactionDomain.AuthUser)) {
                 StoreTestRole(1);
                 StoreTestRole(2);
@@ -76,7 +76,7 @@ namespace Draughts.Test.Repositories.InMemory {
         }
 
         [Fact]
-        public void BeginTransaction_Throw_WhenATransactionWithThisDomainIsAlreadyStarted() {
+        public void ThrowWhenATransactionWithThisDomainIsAlreadyStarted() {
             using (var tran = _unitOfWork.BeginTransaction(TransactionDomain.AuthUser)) {
                 Action beginTransAction = () => _unitOfWork.BeginTransaction(TransactionDomain.AuthUser);
                 beginTransAction.Should().Throw<InvalidOperationException>();
@@ -84,14 +84,14 @@ namespace Draughts.Test.Repositories.InMemory {
         }
 
         [Fact]
-        public void Store_ShouldThrow_WhenNoTransactionIsOpen() {
+        public void StoringThrowsWhenNoTransactionIsOpen() {
             Action storeAction = () => StoreTestRole(1);
 
             storeAction.Should().Throw<InvalidOperationException>();
         }
 
         [Fact]
-        public void WithTransaction_ShouldNotFireEvent_WhenRollbacking() {
+        public void DontFireEventWhenRollbacking() {
             _unitOfWork.Register(_fakeDomainEventHandler);
 
             _unitOfWork.WithTransaction(TransactionDomain.AuthUser, tran => {
@@ -104,7 +104,7 @@ namespace Draughts.Test.Repositories.InMemory {
         }
 
         [Fact]
-        public void WithTransaction_ShouldFireEvent_WhenCommitting() {
+        public void FireEventWhenCommitting() {
             _unitOfWork.Register(_fakeDomainEventHandler);
 
             _unitOfWork.WithTransaction(TransactionDomain.AuthUser, tran => {
@@ -118,7 +118,7 @@ namespace Draughts.Test.Repositories.InMemory {
         }
 
         [Fact]
-        public void WithTransaction_ShouldFireEventOnlyOnce_WhenCommittingAndReFiringAll() {
+        public void FireEventOnlyOnceWhenCommittingAndReFiringAll() {
             _unitOfWork.Register(_fakeDomainEventHandler);
 
             _unitOfWork.WithTransaction(TransactionDomain.AuthUser, tran => {
@@ -133,7 +133,7 @@ namespace Draughts.Test.Repositories.InMemory {
         }
 
         [Fact]
-        public void Raise_ShouldThrow_WhenNoTransactionIsOpen() {
+        public void RaisingEventThrowsWhenNoTransactionIsOpen() {
             _unitOfWork.Register(_fakeDomainEventHandler);
 
             Action raiseAction = () => RaiseEvent(1);

@@ -27,7 +27,7 @@ namespace Draughts.Test.Common {
         }
 
         [Fact]
-        public void TryParseJwtString_WhenAlright_ThenParseCorrectly() {
+        public void ParseValidJwtString() {
             var clock = new FakeClock(new LocalDateTime(2020, 01, 16, 12, 0).InUtc().ToInstant());
 
             bool success = JsonWebToken.TryParseFromJwtString(JWT_STRING, clock, out var jwt);
@@ -38,7 +38,7 @@ namespace Draughts.Test.Common {
         }
 
         [Fact]
-        public void TryParseJwtString_WhenExpired_ThenAbort() {
+        public void AbortParsingJwtStringWhenExpired() {
             var clock = new FakeClock(new LocalDateTime(2021, 01, 16, 12, 0).InUtc().ToInstant());
 
             bool success = JsonWebToken.TryParseFromJwtString(JWT_STRING, clock, out var jwt);
@@ -48,7 +48,7 @@ namespace Draughts.Test.Common {
         }
 
         [Fact]
-        public void TryParseJwtString_WhenInvalidHash_ThenAbort() {
+        public void AbortParsingJwtStringWhenInvalidHash() {
             var clock = new FakeClock(new LocalDateTime(2020, 01, 16, 12, 0).InUtc().ToInstant());
 
             string invalidJwtString = JWT_STRING.Substring(0, JWT_STRING.Length - 1) + 'A';

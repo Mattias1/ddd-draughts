@@ -6,7 +6,7 @@ using Xunit;
 namespace Draughts.Test.Common.OoConcepts {
     public class ValueObjectTest {
         [Fact]
-        public void ValueObjects_ShouldBeEqual_WhenComponentsAreEqual() {
+        public void EqualWhenComponentsAreEqual() {
             var left = new TestValueObject(1, "caseless", "ABcd");
             var right = new TestValueObject(1, "caseLESS", "ABcd");
 
@@ -21,7 +21,7 @@ namespace Draughts.Test.Common.OoConcepts {
         [InlineData(1, "caseless", "ABcd", 2, "caseless", "ABcd")]
         [InlineData(1, "caseless", "ABcd", 1, "different", "ABcd")]
         [InlineData(1, "caseless", "ABcd", 1, "caseless", "abCD")]
-        public void ValueObjects_ShouldNotBeEqual_WhenComponentsAreDifferent(
+        public void NotEqualWhenComponentsAreDifferent(
             int leftId, string leftCaseless, string leftCaseSensitive,
             int rightId, string rightCaseless, string rightCaseSensitive
         ) {
@@ -35,7 +35,7 @@ namespace Draughts.Test.Common.OoConcepts {
         }
 
         [Fact]
-        public void ValueObjects_ShouldNotBeEqual_WhenTheOtherIsNull() {
+        public void NotEqualWhenTheOtherIsNull() {
             var left = new TestValueObject(1, "caseless", "Blah");
             TestValueObject? right = null;
 
@@ -49,7 +49,7 @@ namespace Draughts.Test.Common.OoConcepts {
         }
 
         [Fact]
-        public void ValueObjects_ShouldBeEqual_WhenBothAreNull() {
+        public void EqualWhenBothAreNull() {
             TestValueObject? left = null;
             TestValueObject? right = null;
 

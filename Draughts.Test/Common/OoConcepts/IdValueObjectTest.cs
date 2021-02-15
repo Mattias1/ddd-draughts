@@ -5,7 +5,7 @@ using Xunit;
 namespace Draughts.Test.Common.OoConcepts {
     public class IdValueObjectTest {
         [Fact]
-        public void Entities_ShouldBeEqual_WhenIdsAreEqual() {
+        public void EqualWhenIdsAreEqual() {
             var left = new TestId(1);
             var right = new TestId(1);
 
@@ -17,7 +17,7 @@ namespace Draughts.Test.Common.OoConcepts {
         }
 
         [Fact]
-        public void Entities_ShouldNotBeEqual_WhenIdsAreDifferent() {
+        public void NotEqualWhenIdsAreDifferent() {
             var left = new TestId(1);
             var right = new TestId(2);
 
@@ -28,7 +28,7 @@ namespace Draughts.Test.Common.OoConcepts {
         }
 
         [Fact]
-        public void Entities_ShouldNotBeEqual_WhenTheOtherIsNull() {
+        public void NotEqualWhenTheOtherIsNull() {
             var left = new TestId(1);
             TestId? right = null;
 
@@ -42,7 +42,7 @@ namespace Draughts.Test.Common.OoConcepts {
         }
 
         [Fact]
-        public void Entities_ShouldBeEqual_WhenBothAreNull() {
+        public void EqualWhenBothAreNull() {
             TestId? left = null;
             TestId? right = null;
 
