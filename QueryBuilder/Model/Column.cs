@@ -23,7 +23,7 @@ namespace SqlQueryBuilder.Model {
             else {
                 query.Builder.Append(Function).Append('(').Append(ColumnName).Append(')');
             }
-            if (Alias != null) {
+            if (Alias is not null) {
                 query.Builder.Append(" as ").Append(Alias);
             }
         }

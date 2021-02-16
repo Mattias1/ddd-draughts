@@ -26,7 +26,7 @@ namespace Draughts.Domain.GameAggregate.Models {
         public SquareId? Victim { get; }
 
         private PossibleMove(SquareId from, SquareId to, SquareId? victim, bool moreCapturesAvailable)
-                : base(from, to, victim != null) {
+                : base(from, to, victim is not null) {
             MoreCapturesAvailable = moreCapturesAvailable;
             Victim = victim;
         }

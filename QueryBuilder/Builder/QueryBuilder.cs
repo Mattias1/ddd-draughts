@@ -98,25 +98,25 @@ namespace SqlQueryBuilder.Builder {
         }
 
         public T First<T>() where T : new() => List<T>().First();
-        public T FirstOrDefault<T>() where T : new() => List<T>().FirstOrDefault();
+        public T? FirstOrDefault<T>() where T : new() => List<T>().FirstOrDefault();
         public T Single<T>() where T : new() => List<T>().Single();
-        public T SingleOrDefault<T>() where T : new() => List<T>().SingleOrDefault();
+        public T? SingleOrDefault<T>() where T : new() => List<T>().SingleOrDefault();
         public IReadOnlyList<T> List<T>() where T : new() {
             return Results().Select(d => ComponentModelHelper.ToObject<T>(d, _options.ColumnFormat)).ToList();
         }
 
         public async Task<T> FirstAsync<T>() where T : new() => (await ListAsync<T>()).First();
-        public async Task<T> FirstOrDefaultAsync<T>() where T : new() => (await ListAsync<T>()).FirstOrDefault();
+        public async Task<T?> FirstOrDefaultAsync<T>() where T : new() => (await ListAsync<T>()).FirstOrDefault();
         public async Task<T> SingleAsync<T>() where T : new() => (await ListAsync<T>()).Single();
-        public async Task<T> SingleOrDefaultAsync<T>() where T : new() => (await ListAsync<T>()).SingleOrDefault();
+        public async Task<T?> SingleOrDefaultAsync<T>() where T : new() => (await ListAsync<T>()).SingleOrDefault();
         public async Task<IReadOnlyList<T>> ListAsync<T>() where T : new() {
             return (await ResultsAsync()).Select(d => ComponentModelHelper.ToObject<T>(d, _options.ColumnFormat)).ToList();
         }
 
         public SqlBuilderResultRow FirstResult() => Results().First();
-        public SqlBuilderResultRow FirstOrDefaultResult() => Results().FirstOrDefault();
+        public SqlBuilderResultRow? FirstOrDefaultResult() => Results().FirstOrDefault();
         public SqlBuilderResultRow SingleResult() => Results().Single();
-        public SqlBuilderResultRow SingleOrDefaultResult() => Results().SingleOrDefault();
+        public SqlBuilderResultRow? SingleOrDefaultResult() => Results().SingleOrDefault();
         public IReadOnlyList<SqlBuilderResultRow> Results() {
             string parameterizedSql = ToParameterizedSql();
             try {
@@ -128,9 +128,9 @@ namespace SqlQueryBuilder.Builder {
         }
 
         public async Task<SqlBuilderResultRow> FirstResultAsync() => (await ResultsAsync()).First();
-        public async Task<SqlBuilderResultRow> FirstOrDefaultResultAsync() => (await ResultsAsync()).FirstOrDefault();
+        public async Task<SqlBuilderResultRow?> FirstOrDefaultResultAsync() => (await ResultsAsync()).FirstOrDefault();
         public async Task<SqlBuilderResultRow> SingleResultAsync() => (await ResultsAsync()).Single();
-        public async Task<SqlBuilderResultRow> SingleOrDefaultResultAsync() => (await ResultsAsync()).SingleOrDefault();
+        public async Task<SqlBuilderResultRow?> SingleOrDefaultResultAsync() => (await ResultsAsync()).SingleOrDefault();
         public async Task<IReadOnlyList<SqlBuilderResultRow>> ResultsAsync() {
             string parameterizedSql = ToParameterizedSql();
             try {

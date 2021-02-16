@@ -50,7 +50,7 @@ namespace Draughts.Repositories.Transaction {
                     throw new InvalidOperationException($"Errr, this transaction is already started ({open}).");
                 }
 
-               if (_currentTransactionDomain.Value != null) {
+               if (_currentTransactionDomain.Value is not null) {
                    throw new InvalidOperationException("You already have a transaction within this thread.");
                }
 

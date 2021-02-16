@@ -55,10 +55,10 @@
                     <li><span id="nr@(player2.Color)"></span> @player2.Color: @Utils.UserLinkWithRank(player2)</li>
                 }
 
-                @if (Model.Turn != null) {
+                @if (Model.Turn is not null) {
                     <li>Turn: <span>@Model.Turn.Player.Color</span></li>
                 }
-                @if (Model.FinishedAt != null) {
+                @if (Model.FinishedAt is not null) {
                     <li>
                         Victor: @if (Model.Victor is null) { <span>Draw</span> } else { <span>@Model.Victor.Username</span> }
                     </li>
@@ -86,7 +86,7 @@
 @section Scripts {
     <script src="/js/playgame.js" asp-append-version="true"></script>
 
-    @if (captureSequenceFrom != null) {
+    @if (captureSequenceFrom is not null) {
         <text>
             <script>
                 $(document).ready(function () {

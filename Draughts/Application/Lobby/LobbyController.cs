@@ -105,9 +105,6 @@ namespace Draughts.Application.Lobby {
             }
         }
 
-        public class GameJoinRequest {
-            public long? GameId { get; set; }
-            public string? Color { get; set; }
-        }
+        public record GameJoinRequest(long? GameId, string? Color);
     }
 }

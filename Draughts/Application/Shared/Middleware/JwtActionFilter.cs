@@ -57,7 +57,7 @@ namespace Draughts.Application.Shared.Middleware {
         }
 
         private bool TryGetJwtFromCookieOrHeader(HttpContext httpContext, [NotNullWhen(returnValue: true)] out JsonWebToken? jwt) {
-            if (!httpContext.Request.Cookies.TryGetValue(AuthContext.AUTHORIZATION_HEADER, out string bearerToken)) {
+            if (!httpContext.Request.Cookies.TryGetValue(AuthContext.AUTHORIZATION_HEADER, out string? bearerToken)) {
                 if (!httpContext.Request.Headers.TryGetValue(AuthContext.AUTHORIZATION_HEADER, out var authHeaderValue)) {
                     jwt = null;
                     return false;
@@ -65,7 +65,7 @@ namespace Draughts.Application.Shared.Middleware {
                 bearerToken = authHeaderValue.ToString();
             }
 
-            if (!bearerToken.StartsWith(AuthContext.BEARER_PREFIX)) {
+            if (bearerToken is null || !bearerToken.StartsWith(AuthContext.BEARER_PREFIX)) {
                 jwt = null;
                 return false;
             }

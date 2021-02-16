@@ -57,7 +57,7 @@ namespace SqlQueryBuilder.Model {
                 AppendQueryParts(RawQueryParts);
             }
 
-            if (InsertTable != null) {
+            if (InsertTable is not null) {
                 Builder.Append("insert into ").Append(InsertTable);
                 if (InsertColumns.Count > 0) {
                     Builder.Append(" (");
@@ -76,12 +76,12 @@ namespace SqlQueryBuilder.Model {
                 }
             }
 
-            if (UpdateTable != null) {
+            if (UpdateTable is not null) {
                 Builder.Append("update ").Append(UpdateTable).Append(" set ");
                 AppendQueryParts(UpdateValues);
             }
 
-            if (DeleteTable != null) {
+            if (DeleteTable is not null) {
                 Builder.Append("delete from ").Append(DeleteTable);
             }
 

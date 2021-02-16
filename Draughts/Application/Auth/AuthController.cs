@@ -98,16 +98,7 @@ namespace Draughts.Application.Auth {
             }
         }
 
-        public class LoginRequest {
-            public string? Name { get; set; }
-            public string? Password { get; set; }
-        }
-
-        public class RegistrationRequest {
-            public string? Name { get; set; }
-            public string? Email { get; set; }
-            public string? Password { get; set; }
-            public string? PasswordConfirm { get; set; }
-        }
+        public record LoginRequest(string? Name, string? Password);
+        public record RegistrationRequest(string? Name, string? Email, string? Password, string? PasswordConfirm);
     }
 }

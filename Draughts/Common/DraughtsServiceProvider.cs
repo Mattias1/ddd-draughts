@@ -56,10 +56,10 @@ namespace Draughts.Common {
         }
 
         public static void RegisterEventHandlers(IServiceProvider serviceProvider) {
-            var unitOfWork = serviceProvider.GetService<IUnitOfWork>();
+            var unitOfWork = serviceProvider.GetService<IUnitOfWork>()!;
 
-            unitOfWork.Register(serviceProvider.GetService<SynchronizePendingUserEventHandler>());
-            unitOfWork.Register(serviceProvider.GetService<FinishUserRegistrationEventHandler>());
+            unitOfWork.Register(serviceProvider.GetService<SynchronizePendingUserEventHandler>()!);
+            unitOfWork.Register(serviceProvider.GetService<FinishUserRegistrationEventHandler>()!);
         }
     }
 }
