@@ -24,12 +24,9 @@ namespace Draughts.IntegrationTest.EndToEnd.Database {
 
         private async Task PostRegistration() {
             const string USERNAME = "TestUserRegistration";
-            var result = await _apiTest.PostForm("/auth/register", new RegistrationRequest {
-                Name = USERNAME,
-                Email = $"{USERNAME}@example.com",
-                Password = "Test password; not secure",
-                PasswordConfirm = "Test password; not secure"
-            });
+            var result = await _apiTest.PostForm("/auth/register", new RegistrationRequest(
+                USERNAME, $"{USERNAME}@example.com", "Test password; not secure", "Test password; not secure"
+            ));
             result.StatusCode.Should().Be(302);
             result.Headers.Location.Should().Be("/");
         }
@@ -46,10 +43,7 @@ namespace Draughts.IntegrationTest.EndToEnd.Database {
         }
 
         private async Task PostLogin() {
-            var result = await _apiTest.PostForm("/auth/login", new LoginRequest {
-                Name = "TestPlayerBlack",
-                Password = "admin"
-            });
+            var result = await _apiTest.PostForm("/auth/login", new LoginRequest("TestPlayerBlack", "admin"));
             result.StatusCode.Should().Be(302);
             result.Headers.Location.Should().Be("/");
         }

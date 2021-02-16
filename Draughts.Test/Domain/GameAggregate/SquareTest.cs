@@ -90,16 +90,16 @@ namespace Draughts.Test.Domain.GameAggregate {
             var square = board[new SquareId(n)];
 
             Square? result;
-            square.TryGetBorder(Direction.NW, out result).Should().Be(nw != null);
+            square.TryGetBorder(Direction.NW, out result).Should().Be(nw is not null);
             result?.Id.Value.Should().Be(nw);
 
-            square.TryGetBorder(Direction.NE, out result).Should().Be(ne != null);
+            square.TryGetBorder(Direction.NE, out result).Should().Be(ne is not null);
             result?.Id.Value.Should().Be(ne);
 
-            square.TryGetBorder(Direction.SE, out result).Should().Be(se != null);
+            square.TryGetBorder(Direction.SE, out result).Should().Be(se is not null);
             result?.Id.Value.Should().Be(se);
 
-            square.TryGetBorder(Direction.SW, out result).Should().Be(sw != null);
+            square.TryGetBorder(Direction.SW, out result).Should().Be(sw is not null);
             result?.Id.Value.Should().Be(sw);
         }
     }

@@ -21,7 +21,7 @@ namespace Draughts.Application.Shared {
             UpdateViewBag();
         }
 
-        public bool IsLoggedIn => HttpContext != null && AuthContext.IsLoggedIn(HttpContext);
+        public bool IsLoggedIn => HttpContext is not null && AuthContext.IsLoggedIn(HttpContext);
         public AuthContext AuthContext => _authContext ??= AuthContext.GetFromHttpContext(HttpContext);
         public AuthContext? AuthContextOrNull => _authContext ??= AuthContext.GetFromHttpContextOrNull(HttpContext);
 

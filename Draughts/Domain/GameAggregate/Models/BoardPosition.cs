@@ -56,7 +56,7 @@ namespace Draughts.Domain.GameAggregate.Models {
         internal void PerformMoveUnsafe(SquareId from, SquareId to, SquareId? victim) {
             this[to].Piece = this[from].Piece;
             this[from].Piece = Piece.Empty;
-            if (victim != null) {
+            if (victim is not null) {
                 this[victim].Piece = Piece.Empty;
             }
         }
@@ -64,7 +64,7 @@ namespace Draughts.Domain.GameAggregate.Models {
         internal void UndoMoveUnsafe(SquareId from, SquareId to, SquareId? victim, Piece capturedPiece) {
             this[from].Piece = this[to].Piece;
             this[to].Piece = Piece.Empty;
-            if (victim != null) {
+            if (victim is not null) {
                 this[victim].Piece = capturedPiece;
             }
         }
@@ -127,7 +127,7 @@ namespace Draughts.Domain.GameAggregate.Models {
 
         public override bool Equals(object? obj) => Equals(obj as BoardPosition);
         public bool Equals(BoardPosition? other) {
-            return other != null && _squares.Select(s => s.Piece).SequenceEqual(other._squares.Select(s => s.Piece));
+            return other is not null && _squares.Select(s => s.Piece).SequenceEqual(other._squares.Select(s => s.Piece));
         }
 
         public override int GetHashCode() => ComparisonUtils.GetHashCode(_squares);

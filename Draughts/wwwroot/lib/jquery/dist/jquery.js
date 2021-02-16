@@ -82,7 +82,7 @@ var isFunction = function isFunction( obj ) {
 
 
 var isWindow = function isWindow( obj ) {
-		return obj != null && obj === obj.window;
+		return obj is not null && obj === obj.window;
 	};
 
 
@@ -254,7 +254,7 @@ jQuery.extend = jQuery.fn.extend = function() {
 	for ( ; i < length; i++ ) {
 
 		// Only deal with non-null/undefined values
-		if ( ( options = arguments[ i ] ) != null ) {
+		if ( ( options = arguments[ i ] ) is not null ) {
 
 			// Extend the base object
 			for ( name in options ) {
@@ -377,7 +377,7 @@ jQuery.extend( {
 	makeArray: function( arr, results ) {
 		var ret = results || [];
 
-		if ( arr != null ) {
+		if ( arr is not null ) {
 			if ( isArrayLike( Object( arr ) ) ) {
 				jQuery.merge( ret,
 					typeof arr === "string" ?
@@ -442,7 +442,7 @@ jQuery.extend( {
 			for ( ; i < length; i++ ) {
 				value = callback( elems[ i ], i, arg );
 
-				if ( value != null ) {
+				if ( value is not null ) {
 					ret.push( value );
 				}
 			}
@@ -452,7 +452,7 @@ jQuery.extend( {
 			for ( i in elems ) {
 				value = callback( elems[ i ], i, arg );
 
-				if ( value != null ) {
+				if ( value is not null ) {
 					ret.push( value );
 				}
 			}
@@ -2297,7 +2297,7 @@ function condense( unmatched, map, filter, context, xml ) {
 		newUnmatched = [],
 		i = 0,
 		len = unmatched.length,
-		mapped = map != null;
+		mapped = map is not null;
 
 	for ( ; i < len; i++ ) {
 		if ( (elem = unmatched[i]) ) {
@@ -2487,7 +2487,7 @@ function matcherFromGroupMatchers( elementMatchers, setMatchers ) {
 			// Add elements passing elementMatchers directly to results
 			// Support: IE<9, Safari
 			// Tolerate NodeList properties (IE: "length"; Safari: <number>) matching elements by id
-			for ( ; i !== len && (elem = elems[i]) != null; i++ ) {
+			for ( ; i !== len && (elem = elems[i]) is not null; i++ ) {
 				if ( byElement && elem ) {
 					j = 0;
 					if ( !context && elem.ownerDocument !== document ) {
@@ -3683,7 +3683,7 @@ jQuery.extend( {
 				// Get a promise for this deferred
 				// If obj is provided, the promise aspect is added to the object
 				promise: function( obj ) {
-					return obj != null ? jQuery.extend( obj, promise ) : promise;
+					return obj is not null ? jQuery.extend( obj, promise ) : promise;
 				}
 			},
 			deferred = {};
@@ -4638,7 +4638,7 @@ function showHide( elements, show ) {
 
 	// Set the display of the elements in a second loop to avoid constant reflow
 	for ( index = 0; index < length; index++ ) {
-		if ( values[ index ] != null ) {
+		if ( values[ index ] is not null ) {
 			elements[ index ].style.display = values[ index ];
 		}
 	}
@@ -5481,7 +5481,7 @@ jQuery.each( {
 
 		// Add which for key events
 		if ( event.which == null && rkeyEvent.test( event.type ) ) {
-			return event.charCode != null ? event.charCode : event.keyCode;
+			return event.charCode is not null ? event.charCode : event.keyCode;
 		}
 
 		// Add which for click: 1 === left; 2 === middle; 3 === right
@@ -5775,7 +5775,7 @@ function remove( elem, selector, keepData ) {
 		nodes = selector ? jQuery.filter( selector, elem ) : elem,
 		i = 0;
 
-	for ( ; ( node = nodes[ i ] ) != null; i++ ) {
+	for ( ; ( node = nodes[ i ] ) is not null; i++ ) {
 		if ( !keepData && node.nodeType === 1 ) {
 			jQuery.cleanData( getAll( node ) );
 		}
@@ -5932,7 +5932,7 @@ jQuery.fn.extend( {
 		var elem,
 			i = 0;
 
-		for ( ; ( elem = this[ i ] ) != null; i++ ) {
+		for ( ; ( elem = this[ i ] ) is not null; i++ ) {
 			if ( elem.nodeType === 1 ) {
 
 				// Prevent memory leaks
@@ -6738,7 +6738,7 @@ Tween.propHooks = {
 			// Use a property on the element directly when it is not a DOM element,
 			// or when there is no matching style property that exists.
 			if ( tween.elem.nodeType !== 1 ||
-				tween.elem[ tween.prop ] != null && tween.elem.style[ tween.prop ] == null ) {
+				tween.elem[ tween.prop ] is not null && tween.elem.style[ tween.prop ] == null ) {
 				return tween.elem[ tween.prop ];
 			}
 
@@ -6759,7 +6759,7 @@ Tween.propHooks = {
 			if ( jQuery.fx.step[ tween.prop ] ) {
 				jQuery.fx.step[ tween.prop ]( tween );
 			} else if ( tween.elem.nodeType === 1 &&
-				( tween.elem.style[ jQuery.cssProps[ tween.prop ] ] != null ||
+				( tween.elem.style[ jQuery.cssProps[ tween.prop ] ] is not null ||
 					jQuery.cssHooks[ tween.prop ] ) ) {
 				jQuery.style( tween.elem, tween.prop, tween.now + tween.unit );
 			} else {
@@ -6949,7 +6949,7 @@ function defaultPrefilter( elem, props, opts ) {
 		}
 
 		// Animate inline elements as inline-block
-		if ( display === "inline" || display === "inline-block" && restoreDisplay != null ) {
+		if ( display === "inline" || display === "inline-block" && restoreDisplay is not null ) {
 			if ( jQuery.css( elem, "float" ) === "none" ) {
 
 				// Restore the original display value at the end of pure show/hide animations
@@ -7321,7 +7321,7 @@ jQuery.fn.extend( {
 
 		return this.each( function() {
 			var dequeue = true,
-				index = type != null && type + "queueHooks",
+				index = type is not null && type + "queueHooks",
 				timers = jQuery.timers,
 				data = dataPriv.get( this );
 
@@ -7631,7 +7631,7 @@ jQuery.each( jQuery.expr.match.bool.source.match( /\w+/g ), function( i, name ) 
 			// Avoid an infinite loop by temporarily removing this function from the getter
 			handle = attrHandle[ lowercaseName ];
 			attrHandle[ lowercaseName ] = ret;
-			ret = getter( elem, name, isXML ) != null ?
+			ret = getter( elem, name, isXML ) is not null ?
 				lowercaseName :
 				null;
 			attrHandle[ lowercaseName ] = handle;
@@ -8041,7 +8041,7 @@ jQuery.extend( {
 			get: function( elem ) {
 
 				var val = jQuery.find.attr( elem, "value" );
-				return val != null ?
+				return val is not null ?
 					val :
 
 					// Support: IE <=10 - 11 only
@@ -8429,7 +8429,7 @@ function buildParams( prefix, obj, traditional, add ) {
 
 				// Item is non-scalar (array or object), encode its numeric index.
 				buildParams(
-					prefix + "[" + ( typeof v === "object" && v != null ? i : "" ) + "]",
+					prefix + "[" + ( typeof v === "object" && v is not null ? i : "" ) + "]",
 					v,
 					traditional,
 					add
@@ -9976,10 +9976,10 @@ jQuery.offset = {
 			options = options.call( elem, i, jQuery.extend( {}, curOffset ) );
 		}
 
-		if ( options.top != null ) {
+		if ( options.top is not null ) {
 			props.top = ( options.top - curOffset.top ) + curTop;
 		}
-		if ( options.left != null ) {
+		if ( options.left is not null ) {
 			props.left = ( options.left - curOffset.left ) + curLeft;
 		}
 

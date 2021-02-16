@@ -21,7 +21,7 @@ namespace Draughts.Domain.GameAggregate.Models {
             _restrictedTo = restrictedTo;
             _minCaptureSequence = minCaptureSequence;
 
-            if (_restrictedTo != null && _board[_restrictedTo].Color != _currentTurn) {
+            if (_restrictedTo is not null && _board[_restrictedTo].Color != _currentTurn) {
                 throw new InvalidOperationException("Moves can only be restricted to pieces whose turn it is.");
             }
         }
@@ -42,7 +42,7 @@ namespace Draughts.Domain.GameAggregate.Models {
         }
 
         private IEnumerable<Square> AllLoopPositions() {
-            if (_restrictedTo != null) {
+            if (_restrictedTo is not null) {
                 yield return _board[_restrictedTo];
             }
             else {
@@ -116,8 +116,8 @@ namespace Draughts.Domain.GameAggregate.Models {
 
         private void AddFlyingMovesFrom(List<PossibleMove> possibleMoves, Square from, Direction dir) {
             Square? victim = null;
-            for (var next = from.GetBorder(dir); next != null; next = next.GetBorder(dir)) {
-                if (next.IsEmpty && victim != null) {
+            for (var next = from.GetBorder(dir); next is not null; next = next.GetBorder(dir)) {
+                if (next.IsEmpty && victim is not null) {
                     int chainLength = FlyingChainLength(from, next, victim);
                     if (chainLength > _minCaptureSequence) {
                         _minCaptureSequence = chainLength;
@@ -159,7 +159,7 @@ namespace Draughts.Domain.GameAggregate.Models {
                     continue;
                 }
 
-                for (var jump = target.GetBorder(dir); jump != null && jump.IsEmpty; jump = jump.GetBorder(dir)) {
+                for (var jump = target.GetBorder(dir); jump is not null && jump.IsEmpty; jump = jump.GetBorder(dir)) {
                     if (_settings.CaptureConstraints == DraughtsCaptureConstraints.AnyFinishedSequence) {
                         maxChainLength = 2;
                         goto end_of_loop;
@@ -178,7 +178,7 @@ namespace Draughts.Domain.GameAggregate.Models {
             Square? target = to;
             do {
                 target = target.GetBorder(dir);
-            } while (target != null && target.IsEmpty);
+            } while (target is not null && target.IsEmpty);
             return target;
         }
 

@@ -31,7 +31,7 @@ namespace Draughts.Repositories.Database {
         }
 
         protected virtual IReadOnlyList<T> Parse(IReadOnlyList<TDb> results) => results.Select(Parse).ToList().AsReadOnly();
-        protected virtual T? ParseNullable(TDb result) => result is null ? null : Parse(result);
+        protected virtual T? ParseNullable(TDb? result) => result is null ? null : Parse(result);
         protected abstract T Parse(TDb result);
 
         public abstract void Save(T entity);

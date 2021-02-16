@@ -60,7 +60,7 @@ namespace Draughts.IntegrationTest.EndToEnd.InMemory {
                 JoinAs = "black",
             });
             result.StatusCode.Should().Be(302);
-            if (!_apiTest.TryRegex(result.Headers.Location.ToString(), @"/game/(\d+)", out string? value)) {
+            if (!_apiTest.TryRegex(result.Headers.Location?.ToString(), @"/game/(\d+)", out string? value)) {
                 result.Headers.Location.Should().Be("/game/<some-value>");
                 return;
             }
@@ -69,9 +69,7 @@ namespace Draughts.IntegrationTest.EndToEnd.InMemory {
         }
 
         private async Task PostJoinGame() {
-            var result = await _apiTest.PostForm("/lobby/join", new GameJoinRequest {
-                GameId = _gameId!
-            });
+            var result = await _apiTest.PostForm("/lobby/join", new GameJoinRequest(_gameId!, null));
             result.StatusCode.Should().Be(302);
             result.Headers.Location.Should().Be($"/game/{_gameId}");
         }

@@ -11,15 +11,15 @@ namespace SqlQueryBuilder.Builder {
 
     public interface IQueryBuilderBase {
         T First<T>() where T : new();
-        T FirstOrDefault<T>() where T : new();
+        T? FirstOrDefault<T>() where T : new();
         T Single<T>() where T : new();
-        T SingleOrDefault<T>() where T : new();
+        T? SingleOrDefault<T>() where T : new();
         IReadOnlyList<T> List<T>() where T : new();
 
         Task<T> FirstAsync<T>() where T : new();
-        Task<T> FirstOrDefaultAsync<T>() where T : new();
+        Task<T?> FirstOrDefaultAsync<T>() where T : new();
         Task<T> SingleAsync<T>() where T : new();
-        Task<T> SingleOrDefaultAsync<T>() where T : new();
+        Task<T?> SingleOrDefaultAsync<T>() where T : new();
         Task<IReadOnlyList<T>> ListAsync<T>() where T : new();
 
         int? FirstInt(string column);
@@ -59,15 +59,15 @@ namespace SqlQueryBuilder.Builder {
         Task<string?> SingleStringAsync();
 
         SqlBuilderResultRow FirstResult();
-        SqlBuilderResultRow FirstOrDefaultResult();
+        SqlBuilderResultRow? FirstOrDefaultResult();
         SqlBuilderResultRow SingleResult();
-        SqlBuilderResultRow SingleOrDefaultResult();
+        SqlBuilderResultRow? SingleOrDefaultResult();
         IReadOnlyList<SqlBuilderResultRow> Results();
 
         Task<SqlBuilderResultRow> FirstResultAsync();
-        Task<SqlBuilderResultRow> FirstOrDefaultResultAsync();
+        Task<SqlBuilderResultRow?> FirstOrDefaultResultAsync();
         Task<SqlBuilderResultRow> SingleResultAsync();
-        Task<SqlBuilderResultRow> SingleOrDefaultResultAsync();
+        Task<SqlBuilderResultRow?> SingleOrDefaultResultAsync();
         Task<IReadOnlyList<SqlBuilderResultRow>> ResultsAsync();
 
         bool Execute();
