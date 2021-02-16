@@ -54,8 +54,8 @@ namespace Draughts.Application.Shared.Middleware {
             return GetFromHttpContextOrNull(httpContext) ?? throw new InvalidOperationException(ERROR_NO_AUTH);
         }
         public static AuthContext? GetFromHttpContextOrNull(HttpContext? httpContext) {
-            if (httpContext != null && httpContext.Items.TryGetValue(AUTH_CONTEXT, out var authContext)) {
-                return (AuthContext)authContext;
+            if (httpContext is not null && httpContext.Items.TryGetValue(AUTH_CONTEXT, out var authContext)) {
+                return authContext as AuthContext;
             }
             return null;
         }

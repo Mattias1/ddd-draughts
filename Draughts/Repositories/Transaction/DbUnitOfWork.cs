@@ -42,7 +42,7 @@ namespace Draughts.Repositories.Transaction {
 
         public ITransaction BeginTransaction(TransactionDomain domain) {
             lock (_lock) {
-               if (_currentTransaction.Value != null) {
+               if (_currentTransaction.Value is not null) {
                    throw new InvalidOperationException("You already have a transaction within this thread.");
                }
 

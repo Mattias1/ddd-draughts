@@ -29,7 +29,7 @@ namespace Draughts.Common {
         private JsonWebToken(JwtData data) => Data = data;
 
         public string ToJwtString() {
-            if (_cachedJwtString != null) {
+            if (_cachedJwtString is not null) {
                 return _cachedJwtString;
             }
 

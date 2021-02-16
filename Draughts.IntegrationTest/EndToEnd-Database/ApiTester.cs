@@ -70,15 +70,15 @@ namespace Draughts.IntegrationTest.EndToEnd.Database {
 
         private IFlurlRequest RequestBuilder(Url url) {
             var requestBuilder = Client.Request(BASE_URL, url).AllowAnyHttpStatus();
-            if (_cookie != null) {
+            if (_cookie is not null) {
                 var expires = Clock.UtcNow().PlusSeconds(JsonWebToken.EXPIRATION_SECONDS).ToDateTimeUtc();
                 requestBuilder.WithCookie(AuthContext.AUTHORIZATION_HEADER, _cookie, expires);
             }
             return requestBuilder;
         }
 
-        public bool TryRegex(string haystack, string pattern, [NotNullWhen(returnValue: true)] out string? value, int groupNr = 1) {
-            var matches = new Regex(pattern).Matches(haystack, 0);
+        public bool TryRegex(string? haystack, string pattern, [NotNullWhen(returnValue: true)] out string? value, int groupNr = 1) {
+            var matches = new Regex(pattern).Matches(haystack ?? "", 0);
             if (matches.Count == 0) {
                 value = null;
                 return false;

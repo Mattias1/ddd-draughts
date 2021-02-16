@@ -13,7 +13,7 @@ namespace SqlQueryBuilder.Common {
         public static IReadOnlyDictionary<string, object?> ToDictionary(object source, IColumnFormat columnFormat) {
             var result = new Dictionary<string, object?>();
             foreach (PropertyDescriptor? property in TypeDescriptor.GetProperties(source)) {
-                if (property != null) {
+                if (property is not null) {
                     result.Add(columnFormat.Format(property.Name), property.GetValue(source));
                 }
             }

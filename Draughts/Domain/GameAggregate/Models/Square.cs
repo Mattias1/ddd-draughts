@@ -23,7 +23,7 @@ namespace Draughts.Domain.GameAggregate.Models {
 
         public bool TryGetBorder(Direction direction, [NotNullWhen(returnValue: true)] out Square? square) {
             square = GetBorder(direction);
-            return square != null;
+            return square is not null;
         }
 
         public Square? GetBorder(Direction direction) {

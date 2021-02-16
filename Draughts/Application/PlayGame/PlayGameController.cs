@@ -50,9 +50,6 @@ namespace Draughts.Application.PlayGame {
             }
         }
 
-        public class MoveRequest {
-            public int? From { get; set; }
-            public int? To { get; set; }
-        }
+        public record MoveRequest(int? From, int? To);
     }
 }
