@@ -1,11 +1,8 @@
-using Draughts.Domain.AuthUserAggregate.Models;
 using Draughts.Domain.GameAggregate.Models;
 using Draughts.Domain.GameAggregate.Specifications;
-using Draughts.Domain.UserAggregate.Models;
 using Draughts.Repositories.Transaction;
 using SqlQueryBuilder.Builder;
 using System;
-using System.Linq;
 
 namespace Draughts.Repositories.Database {
     public class DbPlayerRepository : DbRepository<Player, DbPlayer>, IPlayerRepository {
@@ -21,16 +18,7 @@ namespace Draughts.Repositories.Database {
         protected override string TableName => "player";
         protected override IInitialQueryBuilder GetBaseQuery() => _unitOfWork.Query(TransactionDomain.Game);
 
-        protected override Player Parse(DbPlayer q) {
-            return new Player(
-                new PlayerId(q.Id),
-                new UserId(q.UserId),
-                new Username(q.Username),
-                Rank.Ranks.All.Single(r => r.Name == q.Rank),
-                q.Color ? Color.White : Color.Black,
-                q.CreatedAt
-            );
-        }
+        protected override Player Parse(DbPlayer q) => q.ToDomainModel();
 
         public override void Save(Player entity) {
             //  Note: the real fix is to remove this repository, as it should be part of the game aggregate's save operation

@@ -56,7 +56,9 @@ namespace Draughts.Repositories.Transaction {
 
             protected override void ApplyForAllTablePairs(IPairTableFunction func) {
                 func.Apply(AuthUserDatabase.TempRolesTable, AuthUserDatabase.RolesTable);
+                func.Apply(AuthUserDatabase.TempPermissionRolesTable, AuthUserDatabase.PermissionRolesTable);
                 func.Apply(AuthUserDatabase.TempAuthUsersTable, AuthUserDatabase.AuthUsersTable);
+                func.Apply(AuthUserDatabase.TempAuthUserRolesTable, AuthUserDatabase.AuthUserRolesTable);
                 func.Apply(AuthUserDatabase.TempDomainEventsTable, AuthUserDatabase.DomainEventsTable);
             }
 

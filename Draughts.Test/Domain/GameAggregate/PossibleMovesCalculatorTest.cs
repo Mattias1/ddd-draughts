@@ -7,6 +7,8 @@ using static Draughts.Domain.GameAggregate.Models.GameSettings;
 
 namespace Draughts.Test.Domain.GameAggregate {
     public class PossibleMoveCalculatorTest {
+        // TODO: You can't move over captured pieces!!!
+        // AKA: Pieces are only removed after the capture is completed.
         [Fact]
         public void ManMoves() {
             // |_|4|_|.|

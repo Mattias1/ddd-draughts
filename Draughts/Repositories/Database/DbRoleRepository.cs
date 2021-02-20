@@ -33,7 +33,7 @@ namespace Draughts.Repositories.Database {
             var permissionRoles = GetPermissionRoleQuery().Where("role_id").In(qs.Select(q => q.Id)).List<DbPermissionRole>();
             var permissions = permissionRoles.ToLookup(pr => pr.RoleId, pr => new Permission(pr.Permission));
             return qs
-                .Select(q => new Role(new RoleId(q.Id), q.Rolename, q.CreatedAt, permissions[q.Id].ToArray()))
+                .Select(q => q.ToDomainModel(permissions[q.Id].ToArray()))
                 .ToList()
                 .AsReadOnly();
         }
@@ -41,7 +41,7 @@ namespace Draughts.Repositories.Database {
         protected override Role Parse(DbRole q) {
             var permissionRoles = GetPermissionRoleQuery().Where("role_id").Is(q.Id).List<DbPermissionRole>();
             var permissions = permissionRoles.Select(pr => new Permission(pr.Permission)).ToArray();
-            return new Role(new RoleId(q.Id), q.Rolename, q.CreatedAt, permissions);
+            return q.ToDomainModel(permissions);
         }
 
         public override void Save(Role entity) {

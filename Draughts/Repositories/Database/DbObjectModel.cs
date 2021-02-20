@@ -3,6 +3,9 @@ using Draughts.Domain.GameAggregate.Models;
 using Draughts.Domain.UserAggregate.Models;
 using NodaTime;
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using static Draughts.Domain.UserAggregate.Models.Rank;
 
 namespace Draughts.Repositories.Database {
 #pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
@@ -16,6 +19,18 @@ namespace Draughts.Repositories.Database {
         public ZonedDateTime CreatedAt { get; set; }
 
         public bool Equals(DbUser? other) => Id.Equals(other?.Id);
+
+        public User ToDomainModel() {
+            return new User(
+                new UserId(Id),
+                new AuthUserId(AuthuserId),
+                new Username(Username),
+                new Rating(Rating),
+                Ranks.All.Single(r => r.Name == Rank),
+                GamesPlayed,
+                CreatedAt
+            );
+        }
 
         public static DbUser FromDomainModel(User entity) {
             return new DbUser {
@@ -40,6 +55,18 @@ namespace Draughts.Repositories.Database {
 
         public bool Equals(DbAuthUser? other) => Id.Equals(other?.Id);
 
+        public AuthUser ToDomainModel(IReadOnlyList<Role> roles) {
+            return new AuthUser(
+                new AuthUserId(Id),
+                new UserId(UserId),
+                new Username(Username),
+                Domain.AuthUserAggregate.Models.PasswordHash.FromStorage(PasswordHash),
+                new Email(Email),
+                CreatedAt,
+                roles
+            );
+        }
+
         public static DbAuthUser FromDomainModel(AuthUser entity) {
             return new DbAuthUser {
                 Id = entity.Id,
@@ -52,12 +79,25 @@ namespace Draughts.Repositories.Database {
         }
     }
 
+    public class DbAuthUserRole : IEquatable<DbAuthUserRole> {
+        public long AuthuserId { get; set; }
+        public long RoleId { get; set; }
+
+        public bool Equals(DbAuthUserRole? other) {
+            return other is not null && other.AuthuserId == AuthuserId && other.RoleId == RoleId;
+        }
+    }
+
     public class DbRole : IDbObject<DbRole, Role> {
         public long Id { get; set; }
         public string Rolename { get; set; }
         public ZonedDateTime CreatedAt { get; set; }
 
         public bool Equals(DbRole? other) => Id.Equals(other?.Id);
+
+        public Role ToDomainModel(Permission[] permissions) {
+            return new Role(new RoleId(Id), Rolename, CreatedAt, permissions);
+        }
 
         public static DbRole FromDomainModel(Role entity) {
             return new DbRole {
@@ -68,14 +108,13 @@ namespace Draughts.Repositories.Database {
         }
     }
 
-    public class DbAuthUserRole {
-        public long AuthuserId { get; set; }
-        public long RoleId { get; set; }
-    }
-
-    public class DbPermissionRole {
+    public class DbPermissionRole : IEquatable<DbPermissionRole> {
         public long RoleId { get; set; }
         public string Permission { get; set; }
+
+        public bool Equals(DbPermissionRole? other) {
+            return other is not null && other.RoleId == RoleId && other.Permission == Permission;
+        }
     }
 
     public class DbGame : IDbObject<DbGame, Game> {
@@ -96,6 +135,39 @@ namespace Draughts.Repositories.Database {
         public ZonedDateTime? TurnExpiresAt { get; set; }
 
         public bool Equals(DbGame? other) => Id.Equals(other?.Id);
+
+        public Game ToDomainModel(List<Player> players) {
+            return new Game(
+                new GameId(Id),
+                players,
+                GetTurn(players),
+                GetGameSettings(),
+                players.SingleOrDefault(p => p.UserId == Victor),
+                GameState.FromStorage(new GameId(Id), CurrentGameState, CaptureSequenceFrom),
+                CreatedAt,
+                StartedAt,
+                FinishedAt
+            );
+        }
+
+        private Turn? GetTurn(List<Player> players) {
+            return TurnPlayerId is null || TurnCreatedAt is null || TurnExpiresAt is null ? null : new Turn(
+                players.Single(p => p.Id == TurnPlayerId.Value),
+                TurnCreatedAt.Value,
+                TurnExpiresAt.Value - TurnCreatedAt.Value
+            );
+        }
+
+        private GameSettings GetGameSettings() {
+            Color firstMoveColor = FirstMoveColorIsWhite ? Color.White : Color.Black;
+            var capConstraints = CaptureConstraints switch
+            {
+                "max" => GameSettings.DraughtsCaptureConstraints.MaximumPieces,
+                "seq" => GameSettings.DraughtsCaptureConstraints.AnyFinishedSequence,
+                _ => throw new InvalidOperationException("Unknown capture constraint.")
+            };
+            return new GameSettings(BoardSize, firstMoveColor, FlyingKings, MenCaptureBackwards, capConstraints);
+        }
 
         public static DbGame FromDomainModel(Game entity) {
             string captureConstraints = entity.Settings.CaptureConstraints switch
@@ -134,6 +206,17 @@ namespace Draughts.Repositories.Database {
         public ZonedDateTime CreatedAt { get; set; }
 
         public bool Equals(DbPlayer? other) => Id.Equals(other?.Id);
+
+        public Player ToDomainModel() {
+            return new Player(
+                new PlayerId(Id),
+                new UserId(UserId),
+                new Username(Username),
+                Ranks.All.Single(r => r.Name == Rank),
+                Color ? Domain.GameAggregate.Models.Color.White : Domain.GameAggregate.Models.Color.Black,
+                CreatedAt
+            );
+        }
 
         public static DbPlayer FromDomainModel(Player entity, GameId gameId) {
             return new DbPlayer {

@@ -33,7 +33,7 @@ namespace Draughts.IntegrationTest.EndToEnd.InMemory {
             Clock = SystemClock.Instance;
         }
 
-        public void LoginAsTestPlayerBlack() {
+        public string LoginAsTestPlayerBlack() {
             var registeredUserRole = new Role(new RoleId(3), Role.REGISTERED_USER_ROLENAME, Clock.UtcNow(), Permissions.PlayGame);
 
             var authUserId = new AuthUserId(UserDatabase.TestPlayerBlack);
@@ -42,9 +42,9 @@ namespace Draughts.IntegrationTest.EndToEnd.InMemory {
             var authUser = new AuthUser(authUserId, new UserId(authUserId), name, hash,
                 new Email($"{name}@example.com"), Clock.UtcNow(), new[] { registeredUserRole });
 
-            LoginAs(authUser);
+            return LoginAs(authUser);
         }
-        public void LoginAsTestPlayerWhite() {
+        public string LoginAsTestPlayerWhite() {
             var registeredUserRole = new Role(new RoleId(3), Role.REGISTERED_USER_ROLENAME, Clock.UtcNow(), Permissions.PlayGame);
 
             var authUserId = new AuthUserId(UserDatabase.TestPlayerWhite);
@@ -53,10 +53,15 @@ namespace Draughts.IntegrationTest.EndToEnd.InMemory {
             var authUser = new AuthUser(authUserId, new UserId(authUserId), name, hash,
                 new Email($"{name}@example.com"), Clock.UtcNow(), new[] { registeredUserRole });
 
-            LoginAs(authUser);
+            return LoginAs(authUser);
         }
-        public void LoginAs(AuthUser authUser) {
-            _cookie = "Bearer%20" + JsonWebToken.Generate(authUser, Clock).ToJwtString();
+        public string LoginAs(AuthUser authUser) {
+            return _cookie = "Bearer%20" + JsonWebToken.Generate(authUser, Clock).ToJwtString();
+        }
+
+        public InMemoryApiTester As(string cookie) {
+            _cookie = cookie;
+            return this;
         }
 
         public void Logout() => _cookie = null;

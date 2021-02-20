@@ -1,6 +1,7 @@
 using Draughts.Common.Events;
 using Draughts.Common.Utilities;
 using Draughts.Domain.AuthUserAggregate.Events;
+using Draughts.Repositories.Database;
 using Draughts.Repositories.InMemory;
 using Draughts.Repositories.Transaction;
 using Draughts.Test.Fakes;
@@ -152,8 +153,8 @@ namespace Draughts.Test.Repositories.InMemory {
             _unitOfWork.Store(role, AuthUserDatabase.TempRolesTable);
         }
 
-        private InMemoryRole BuildTestRole(long id) {
-            return new InMemoryRole { Id = id, Permissions = new string[0], Rolename = $"Test {id}" };
+        private DbRole BuildTestRole(long id) {
+            return new DbRole { Id = id, Rolename = $"Test {id}" };
         }
     }
 }
