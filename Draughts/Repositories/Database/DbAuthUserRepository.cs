@@ -2,7 +2,6 @@ using Draughts.Common.OoConcepts;
 using Draughts.Common.Utilities;
 using Draughts.Domain.AuthUserAggregate.Models;
 using Draughts.Domain.AuthUserAggregate.Specifications;
-using Draughts.Domain.UserAggregate.Models;
 using Draughts.Repositories.Transaction;
 using SqlQueryBuilder.Builder;
 using System.Collections.Generic;
@@ -42,29 +41,16 @@ namespace Draughts.Repositories.Database {
             var userRoles = GetAuthuserRoleQuery().Where("authuser_id").In(qs.Select(q => q.Id)).List<DbAuthUserRole>();
             var roleIds = userRoles.ToLookup(ur => ur.AuthuserId, ur => ur.RoleId);
             var roles = _roleRepository.List(new RoleIdsSpecification(userRoles.Select(ur => ur.RoleId)));
-            return qs.Select(q => new AuthUser(
-                new AuthUserId(q.Id),
-                new UserId(q.UserId),
-                new Username(q.Username),
-                PasswordHash.FromStorage(q.PasswordHash),
-                new Email(q.Email),
-                q.CreatedAt,
-                roles.IntersectBy(roleIds[q.Id], r => r.Id).ToArray()
-            )).ToList().AsReadOnly();
+            return qs
+                .Select(q => q.ToDomainModel(roles.IntersectBy(roleIds[q.Id], r => r.Id).ToArray()))
+                .ToList()
+                .AsReadOnly();
         }
 
         protected override AuthUser Parse(DbAuthUser q) {
             var userRoles = GetAuthuserRoleQuery().Where("authuser_id").Is(q.Id).List<DbAuthUserRole>();
             var roles = _roleRepository.List(new RoleIdsSpecification(userRoles.Select(ur => ur.RoleId)));
-            return new AuthUser(
-                new AuthUserId(q.Id),
-                new UserId(q.UserId),
-                new Username(q.Username),
-                PasswordHash.FromStorage(q.PasswordHash),
-                new Email(q.Email),
-                q.CreatedAt,
-                roles
-            );
+            return q.ToDomainModel(roles);
         }
 
         public override void Save(AuthUser entity) {

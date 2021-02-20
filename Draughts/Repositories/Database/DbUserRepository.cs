@@ -1,9 +1,7 @@
-using Draughts.Domain.AuthUserAggregate.Models;
 using Draughts.Domain.AuthUserAggregate.Specifications;
 using Draughts.Domain.UserAggregate.Models;
 using Draughts.Repositories.Transaction;
 using SqlQueryBuilder.Builder;
-using System.Linq;
 
 namespace Draughts.Repositories.Database {
     public class DbUserRepository : DbRepository<User, DbUser>, IUserRepository {
@@ -19,17 +17,7 @@ namespace Draughts.Repositories.Database {
         protected override string TableName => "user";
         protected override IInitialQueryBuilder GetBaseQuery() => _unitOfWork.Query(TransactionDomain.User);
 
-        protected override User Parse(DbUser q) {
-            return new User(
-                new UserId(q.Id),
-                new AuthUserId(q.AuthuserId),
-                new Username(q.Username),
-                new Rating(q.Rating),
-                Rank.Ranks.All.Single(r => r.Name == q.Rank),
-                q.GamesPlayed,
-                q.CreatedAt
-            );
-        }
+        protected override User Parse(DbUser q) => q.ToDomainModel();
 
         public override void Save(User entity) {
             var obj = DbUser.FromDomainModel(entity);

@@ -3,7 +3,6 @@ using Draughts.Common;
 using Draughts.Common.Utilities;
 using Draughts.Domain.AuthUserAggregate.Models;
 using Draughts.Domain.AuthUserAggregate.Specifications;
-using Draughts.Domain.UserAggregate.Models;
 using Draughts.Repositories;
 using Draughts.Repositories.Database;
 using Draughts.Repositories.Transaction;
@@ -16,7 +15,6 @@ using System.Diagnostics.CodeAnalysis;
 using System.Net.Http;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using static Draughts.Domain.AuthUserAggregate.Models.Permission;
 
 namespace Draughts.IntegrationTest.EndToEnd.Database {
     public class ApiTester {
@@ -48,17 +46,22 @@ namespace Draughts.IntegrationTest.EndToEnd.Database {
             PlayerRepository = new DbPlayerRepository(UnitOfWork);
         }
 
-        public void LoginAsTestPlayerBlack() => LoginAs("TestPlayerBlack");
-        public void LoginAsTestPlayerWhite() => LoginAs("TestPlayerWhite");
-        public void LoginAs(string username) {
+        public string LoginAsTestPlayerBlack() => LoginAs("TestPlayerBlack");
+        public string LoginAsTestPlayerWhite() => LoginAs("TestPlayerWhite");
+        public string LoginAs(string username) {
             var authUser = UnitOfWork.WithAuthUserTransaction(tran => {
                 var authUser = AuthUserRepository.Find(new UsernameSpecification(username));
                 return tran.CommitWith(authUser);
             });
-            LoginAs(authUser);
+            return LoginAs(authUser);
         }
-        public void LoginAs(AuthUser authUser) {
-            _cookie = "Bearer%20" + JsonWebToken.Generate(authUser, Clock).ToJwtString();
+        public string LoginAs(AuthUser authUser) {
+            return _cookie = "Bearer%20" + JsonWebToken.Generate(authUser, Clock).ToJwtString();
+        }
+
+        public ApiTester As(string cookie) {
+            _cookie = cookie;
+            return this;
         }
 
         public void Logout() => _cookie = null;

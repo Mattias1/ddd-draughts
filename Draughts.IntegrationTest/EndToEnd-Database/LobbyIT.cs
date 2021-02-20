@@ -16,6 +16,7 @@ namespace Draughts.IntegrationTest.EndToEnd.Database {
         [Fact]
         public async Task CreateAndJoinGame() {
             await VisitLobbyPageAsGuest();
+            await VisitSpectatorPageAsGuest();
 
             _apiTest.LoginAsTestPlayerBlack();
             await VisitLobbyPage();
@@ -30,6 +31,12 @@ namespace Draughts.IntegrationTest.EndToEnd.Database {
             string page = await _apiTest.GetString("/lobby");
             page.Should().Contain("<h1>Game lobby</h1>", "This is what guest sees in the the lobby.");
             page.Should().Contain("The list of open games.");
+        }
+
+        private async Task VisitSpectatorPageAsGuest() {
+            string page = await _apiTest.GetString("/lobby/spectate");
+            page.Should().Contain("<h1>Spectator lounge</h1>", "This is what guest sees in the the spectator lounge.");
+            page.Should().Contain("Watch one of the games currently being played.");
         }
 
         private async Task VisitLobbyPage() {

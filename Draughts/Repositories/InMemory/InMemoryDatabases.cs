@@ -3,10 +3,10 @@ using Draughts.Common.Utilities;
 using Draughts.Domain.AuthUserAggregate.Models;
 using Draughts.Domain.GameAggregate.Models;
 using Draughts.Domain.UserAggregate.Models;
+using Draughts.Repositories.Database;
 using NodaTime;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using static Draughts.Domain.AuthUserAggregate.Models.Permission;
 using static Draughts.Domain.UserAggregate.Models.Rank;
 
@@ -24,8 +24,8 @@ namespace Draughts.Repositories.InMemory {
 
         public const long START_FOR_NEXT_IDS = 20;
 
-        public static List<InMemoryUser> TempUsersTable { get; } = new List<InMemoryUser>();
-        public static List<InMemoryUser> UsersTable { get; } = new List<InMemoryUser> {
+        public static List<DbUser> TempUsersTable { get; } = new List<DbUser>();
+        public static List<DbUser> UsersTable { get; } = new List<DbUser> {
             CreateUser(AdminId, "Admin", 1000, Ranks.Private, 0),
             CreateUser(UserId, "User", 1700, Ranks.WarrantOfficer, 7),
             CreateUser(TheColonelId, "TheColonel", 3456, Ranks.Colonel, 37),
@@ -37,13 +37,13 @@ namespace Draughts.Repositories.InMemory {
             CreateUser(TestPlayerWhite, "TestPlayerWhite", 1000, Ranks.Private, 0),
         };
 
-        private static InMemoryUser CreateUser(long id, string name, int rating, Rank rank, int gamesPlayed) {
+        private static DbUser CreateUser(long id, string name, int rating, Rank rank, int gamesPlayed) {
             if (id >= START_FOR_NEXT_IDS) {
                 throw new InvalidOperationException("START_FOR_NEXT_IDS too low!");
             }
             var now = SystemClock.Instance.UtcNow();
-            return new InMemoryUser {
-                Id = id, AuthUserId = id, Username = name, Rating = rating, Rank = rank.Name,
+            return new DbUser {
+                Id = id, AuthuserId = id, Username = name, Rating = rating, Rank = rank.Name,
                 GamesPlayed = gamesPlayed, CreatedAt = now
             };
         }
@@ -53,106 +53,144 @@ namespace Draughts.Repositories.InMemory {
     }
 
     public static class AuthUserDatabase {
-        private static readonly InMemoryRole admin = new InMemoryRole {
-            Id = 1, Rolename = Role.ADMIN_ROLENAME, Permissions = new[] {
-                Permissions.ViewModPanel.Value, Permissions.EditRoles.Value, Permissions.PlayGame.Value
+        public static List<DbPermissionRole> TempPermissionRolesTable { get; } = new List<DbPermissionRole>();
+        public static List<DbPermissionRole> PermissionRolesTable { get; } = new List<DbPermissionRole>();
+
+        public static List<DbRole> TempRolesTable { get; } = new List<DbRole>();
+        public static List<DbRole> RolesTable { get; } = new List<DbRole>();
+
+        public static List<DbAuthUserRole> TempAuthUserRolesTable { get; } = new List<DbAuthUserRole>();
+        public static List<DbAuthUserRole> AuthUserRolesTable { get; } = new List<DbAuthUserRole>();
+
+        public static List<DbAuthUser> TempAuthUsersTable { get; } = new List<DbAuthUser>();
+        public static List<DbAuthUser> AuthUsersTable { get; } = new List<DbAuthUser> {
+        };
+
+        public static List<DomainEvent> TempDomainEventsTable { get; } = new List<DomainEvent>();
+        public static List<DomainEvent> DomainEventsTable { get; } = new List<DomainEvent>();
+
+        static AuthUserDatabase() {
+            long admin = 1;
+            long pendingRegistration = 2;
+            long registeredUser = 3;
+            AddRole(admin, Role.ADMIN_ROLENAME, new[] { Permissions.ViewModPanel.Value,
+                Permissions.EditRoles.Value, Permissions.PlayGame.Value });
+            AddRole(pendingRegistration, Role.PENDING_REGISTRATION_ROLENAME, new[] { Permissions.PendingRegistration.Value });
+            AddRole(registeredUser, Role.REGISTERED_USER_ROLENAME, new[] { Permissions.PlayGame.Value });
+
+            CreateAuthUser(UserDatabase.AdminId, "Admin", admin, registeredUser);
+            CreateAuthUser(UserDatabase.UserId, "User", registeredUser);
+            CreateAuthUser(UserDatabase.TheColonelId, "TheColonel", registeredUser);
+            CreateAuthUser(UserDatabase.MattyId, "Matty", admin, registeredUser);
+            CreateAuthUser(UserDatabase.MathyId, "Mathy", registeredUser);
+            CreateAuthUser(UserDatabase.JackDeHaasId, "JackDeHaas", registeredUser);
+            CreateAuthUser(UserDatabase.BobbyId, "<script>alert('Hi, my name is Bobby');</script>", pendingRegistration);
+            CreateAuthUser(UserDatabase.TestPlayerBlack, "TestPlayerBlack", registeredUser);
+            CreateAuthUser(UserDatabase.TestPlayerWhite, "TestPlayerWhite", registeredUser);
+        }
+
+        private static void AddRole(long id, string name, string[] permissions) {
+            if (id >= UserDatabase.START_FOR_NEXT_IDS) {
+                throw new InvalidOperationException("START_FOR_NEXT_IDS too low!");
             }
-        };
-        private static readonly InMemoryRole pendingRegistration = new InMemoryRole {
-            Id = 2, Rolename = Role.PENDING_REGISTRATION_ROLENAME, Permissions = new[] { Permissions.PendingRegistration.Value }
-        };
-        private static readonly InMemoryRole registeredUser = new InMemoryRole {
-            Id = 3, Rolename = Role.REGISTERED_USER_ROLENAME, Permissions = new[] { Permissions.PlayGame.Value }
-        };
+            var now = SystemClock.Instance.UtcNow();
+            RolesTable.Add(new DbRole {
+                Id = id,
+                Rolename = name,
+                CreatedAt = now
+            });
+            foreach (string permission in permissions) {
+                PermissionRolesTable.Add(new DbPermissionRole {
+                    RoleId = id,
+                    Permission = permission
+                });
+            }
+        }
 
-        public static List<InMemoryRole> TempRolesTable { get; } = new List<InMemoryRole>();
-        public static List<InMemoryRole> RolesTable { get; } = new List<InMemoryRole> { admin, pendingRegistration, registeredUser };
-
-        public static List<InMemoryAuthUser> TempAuthUsersTable { get; } = new List<InMemoryAuthUser>();
-        public static List<InMemoryAuthUser> AuthUsersTable { get; } = new List<InMemoryAuthUser> {
-            CreateAuthUser(UserDatabase.AdminId, "Admin", admin, registeredUser),
-            CreateAuthUser(UserDatabase.UserId, "User", registeredUser),
-            CreateAuthUser(UserDatabase.TheColonelId, "TheColonel", registeredUser),
-            CreateAuthUser(UserDatabase.MattyId, "Matty", admin, registeredUser),
-            CreateAuthUser(UserDatabase.MathyId, "Mathy", registeredUser),
-            CreateAuthUser(UserDatabase.JackDeHaasId, "JackDeHaas", registeredUser),
-            CreateAuthUser(UserDatabase.BobbyId, "<script>alert('Hi, my name is Bobby');</script>", pendingRegistration),
-            CreateAuthUser(UserDatabase.TestPlayerBlack, "TestPlayerBlack", registeredUser),
-            CreateAuthUser(UserDatabase.TestPlayerWhite, "TestPlayerWhite", registeredUser),
-        };
-
-        private static InMemoryAuthUser CreateAuthUser(long id, string name, params InMemoryRole[] roles) {
+        private static void CreateAuthUser(long id, string name, params long[] roleIds) {
             if (id >= UserDatabase.START_FOR_NEXT_IDS) {
                 throw new InvalidOperationException("START_FOR_NEXT_IDS too low!");
             }
             var hash = PasswordHash.Generate("admin", new AuthUserId(id), new Username(name)).ToStorage();
             var now = SystemClock.Instance.UtcNow();
-            return new InMemoryAuthUser {
-                Id = id, UserId = id, Username = name, PasswordHash = hash, Email = $"{name}@example.com",
-                RoleIds = roles.Select(r => r.Id).ToArray(), CreatedAt = now
-            };
+            AuthUsersTable.Add(new DbAuthUser {
+                Id = id,
+                UserId = id,
+                Username = name,
+                PasswordHash = hash,
+                Email = $"{name}@example.com",
+                CreatedAt = now
+            });
+            foreach (long roleId in roleIds) {
+                AuthUserRolesTable.Add(new DbAuthUserRole {
+                    AuthuserId = id,
+                    RoleId = roleId
+                });
+            }
         }
-
-        public static List<DomainEvent> TempDomainEventsTable { get; } = new List<DomainEvent>();
-        public static List<DomainEvent> DomainEventsTable { get; } = new List<DomainEvent>();
     }
 
     public static class GameDatabase {
-        public static List<InMemoryGame> TempGamesTable { get; } = new List<InMemoryGame>();
-        public static List<InMemoryGame> GamesTable { get; } = new List<InMemoryGame> {
-            CreatePendingGame(10, GameSettings.International, 14),
-            CreatePendingGame(11, GameSettings.International, 15),
-            CreatePendingGame(12, GameSettings.EnglishAmerican, 16),
-            CreatePendingGame(13, GameSettings.Mini, 17)
+        public static List<DbGame> TempGamesTable { get; } = new List<DbGame>();
+        public static List<DbGame> GamesTable { get; } = new List<DbGame> {
+            CreatePendingGame(10, GameSettings.International),
+            CreatePendingGame(11, GameSettings.International),
+            CreatePendingGame(12, GameSettings.EnglishAmerican),
+            CreatePendingGame(13, GameSettings.Mini)
         };
 
-        public static List<InMemoryPlayer> TempPlayersTable { get; } = new List<InMemoryPlayer>();
-        public static List<InMemoryPlayer> PlayersTable { get; } = new List<InMemoryPlayer> {
-            CreatePlayer(14, UserDatabase.UserId, "User", Color.White, Ranks.WarrantOfficer),
-            CreatePlayer(15, UserDatabase.MathyId, "Mathy", Color.Black, Ranks.LanceCorporal),
-            CreatePlayer(16, UserDatabase.UserId, "User", Color.Black, Ranks.WarrantOfficer),
-            CreatePlayer(17, UserDatabase.MathyId, "Mathy", Color.Black, Ranks.LanceCorporal)
+        public static List<DbPlayer> TempPlayersTable { get; } = new List<DbPlayer>();
+        public static List<DbPlayer> PlayersTable { get; } = new List<DbPlayer> {
+            CreatePlayer(10, 14, UserDatabase.UserId, "User", Color.White, Ranks.WarrantOfficer),
+            CreatePlayer(11, 15, UserDatabase.MathyId, "Mathy", Color.Black, Ranks.LanceCorporal),
+            CreatePlayer(12, 16, UserDatabase.UserId, "User", Color.Black, Ranks.WarrantOfficer),
+            CreatePlayer(13, 17, UserDatabase.MathyId, "Mathy", Color.Black, Ranks.LanceCorporal)
         };
 
         public static List<DomainEvent> TempDomainEventsTable { get; } = new List<DomainEvent>();
         public static List<DomainEvent> DomainEventsTable { get; } = new List<DomainEvent>();
 
-        private static InMemoryGame CreatePendingGame(long id, GameSettings settings, long playerId) {
+        private static DbGame CreatePendingGame(long id, GameSettings settings) {
             if (id >= UserDatabase.START_FOR_NEXT_IDS) {
                 throw new InvalidOperationException("START_FOR_NEXT_IDS too low!");
             }
             var now = SystemClock.Instance.UtcNow();
-            return new InMemoryGame {
+            string capConstraints = settings.CaptureConstraints switch
+            {
+                GameSettings.DraughtsCaptureConstraints.AnyFinishedSequence => "seq",
+                GameSettings.DraughtsCaptureConstraints.MaximumPieces => "max",
+                _ => throw new InvalidOperationException("Unknown capture constraint")
+            };
+            return new DbGame {
                 Id = id,
                 BoardSize = settings.BoardSize,
                 FirstMoveColorIsWhite = settings.FirstMove == Color.White,
                 FlyingKings = settings.FlyingKings,
                 MenCaptureBackwards = settings.MenCaptureBackwards,
-                CaptureConstraints = settings.CaptureConstraints,
+                CaptureConstraints = capConstraints,
                 Victor = null,
                 CurrentGameState = GameState.InitialState(new GameId(id), settings.BoardSize).StorageString(),
                 CaptureSequenceFrom = null,
                 CreatedAt = now, StartedAt = null, FinishedAt = null,
-                TurnPlayerId = null, TurnCreatedAt = null, TurnExpiresAt = null,
-                PlayerIds = new long[] { playerId }
+                TurnPlayerId = null, TurnCreatedAt = null, TurnExpiresAt = null
             };
         }
 
-        private static InMemoryPlayer CreatePlayer(long id, long userId, string name, Color color, Rank rank) {
+        private static DbPlayer CreatePlayer(long gameId, long id, long userId, string name, Color color, Rank rank) {
             if (id >= UserDatabase.START_FOR_NEXT_IDS) {
                 throw new InvalidOperationException("START_FOR_NEXT_IDS too low!");
             }
             var now = SystemClock.Instance.UtcNow();
-            return new InMemoryPlayer {
-                Id = id, UserId = userId, Username = name,
-                ColorIsWhite = color == Color.White, Rank = rank.Name, CreatedAt = now
+            return new DbPlayer {
+                Id = id, UserId = userId, Username = name, GameId = gameId,
+                Color = color == Color.White, Rank = rank.Name, CreatedAt = now
             };
         }
     }
 
     public static class MiscDatabase {
-        public static List<InMemoryAvailableId> IdGenerationTable { get; } = new List<InMemoryAvailableId>(1) {
-            new InMemoryAvailableId { Id = UserDatabase.START_FOR_NEXT_IDS }
+        public static List<DbIdGeneration> IdGenerationTable { get; } = new List<DbIdGeneration>(1) {
+            new DbIdGeneration { AvailableId = UserDatabase.START_FOR_NEXT_IDS }
         };
     }
 }

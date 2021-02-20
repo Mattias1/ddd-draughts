@@ -8,7 +8,7 @@ namespace Draughts.Test.Repositories.InMemory {
 
         public InMemoryHiLoGeneratorTest() {
             _idGenerator = new InMemoryHiLoGenerator(3);
-            MiscDatabase.IdGenerationTable[0].Id = 1;
+            MiscDatabase.IdGenerationTable[0].AvailableId = 1;
         }
 
         [Fact]

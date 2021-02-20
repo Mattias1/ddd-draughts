@@ -9,15 +9,15 @@ namespace Draughts.Repositories.InMemory {
     public class InMemoryRoleRepository : InMemoryRepository<Role>, IRoleRepository {
         private readonly IUnitOfWork _unitOfWork;
 
-        public InMemoryRoleRepository(IUnitOfWork unitOfWork) => _unitOfWork = unitOfWork;
+        public InMemoryRoleRepository(IUnitOfWork unitOfWork) {
+            _unitOfWork = unitOfWork;
+        }
 
         protected override IList<Role> GetBaseQuery() {
-            return AuthUserDatabase.RolesTable.Select(r => new Role(
-                new RoleId(r.Id),
-                r.Rolename,
-                r.CreatedAt,
-                r.Permissions.Select(p => new Permission(p)).ToArray()
-            )).ToList();
+            var permissionRoles = AuthUserDatabase.PermissionRolesTable.ToLookup(pr => pr.RoleId, pr => pr.Permission);
+            return AuthUserDatabase.RolesTable
+                .Select(r => r.ToDomainModel(permissionRoles[r.Id].Select(p => new Permission(p)).ToArray()))
+                .ToList();
         }
 
         public IReadOnlyList<Permission> PermissionsForRole(RoleId id) {
@@ -26,14 +26,16 @@ namespace Draughts.Repositories.InMemory {
         }
 
         public override void Save(Role entity) {
-            var role = new InMemoryRole {
-                Id = entity.Id,
-                Rolename = entity.Rolename,
-                CreatedAt = entity.CreatedAt,
-                Permissions = entity.Permissions.Select(p => p.Value).ToArray()
-            };
+            var dbRole = DbRole.FromDomainModel(entity);
+            _unitOfWork.Store(dbRole, AuthUserDatabase.TempRolesTable);
 
-            _unitOfWork.Store(role, AuthUserDatabase.TempRolesTable);
+            foreach (var permission in entity.Permissions.Select(p => p.Value)) {
+                var dbPermission = new DbPermissionRole {
+                    Permission = permission,
+                    RoleId = dbRole.Id
+                };
+                _unitOfWork.Store(dbPermission, AuthUserDatabase.TempPermissionRolesTable);
+            }
         }
     }
 }
