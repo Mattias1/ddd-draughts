@@ -11,7 +11,7 @@ namespace Draughts.Test.TestHelpers {
 
         public static UserBuilder User(string name = "user") {
             return new UserBuilder()
-                .WithId(IdTestHelper.Next())
+                .WithId(IdTestHelper.NextUser())
                 .WithAuthUserId(IdTestHelper.Next())
                 .WithUsername(name)
                 .WithRating(Rating.StartRating)

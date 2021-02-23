@@ -4,23 +4,25 @@ using System.Linq;
 
 namespace Draughts.Repositories {
     /// <summary>
-    /// A thread safe id generator that doesn't need database connection most of the time.
+    /// A thread safe id generator that doesn't need a database connection most of the time.
     /// Should be injected as singleton.
     /// </summary>
-    public abstract class BaseHiLoGenerator : IIdGenerator {
+    public abstract class BaseHiLoGenerator {
         private readonly object _lock = new object();
 
         public int IntervalSize { get; }
+        public string Subject { get; }
         private readonly List<HiLoInterval> _intervals;
 
         public int Count => _intervals.Sum(i => i.Count);
 
-        public BaseHiLoGenerator(int intervalSize) {
+        public BaseHiLoGenerator(int intervalSize, string subject) {
             IntervalSize = intervalSize;
+            Subject = subject;
             _intervals = new List<HiLoInterval>();
         }
 
-        private long Next() {
+        public long Next() {
             lock (_lock) {
                 var interval = FirstNonEmptyInterval();
                 return interval.Next();
@@ -39,8 +41,7 @@ namespace Draughts.Repositories {
             return interval;
         }
 
-        public IIdPool ReservePool() => ReservePool(20);
-        public IIdPool ReservePool(int minimumSize) {
+        public void ReservePool(int minimumSize) {
             lock (_lock) {
                 if (minimumSize > IntervalSize) {
                     throw new ArgumentException($"The requested (minimum) number of ids ({minimumSize}) "
@@ -50,8 +51,6 @@ namespace Draughts.Repositories {
                     var newInterval = ReserveNewInterval();
                     _intervals.Add(newInterval);
                 }
-
-                return new HiLoPool(this);
             }
         }
 
@@ -73,18 +72,6 @@ namespace Draughts.Repositories {
 
                 Lo = lo;
                 Hi = hi;
-            }
-        }
-
-        public struct HiLoPool : IIdPool {
-            private readonly BaseHiLoGenerator _hiLoGenerator;
-
-            public int Count => _hiLoGenerator.Count;
-
-            public long Next() => _hiLoGenerator.Next();
-
-            internal HiLoPool(BaseHiLoGenerator hiLoGenerator) {
-                _hiLoGenerator = hiLoGenerator;
             }
         }
     }

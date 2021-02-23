@@ -1,25 +1,28 @@
+using Draughts.Application.Auth;
+using Draughts.Application.Auth.Services;
+using Draughts.Application.Lobby.Services;
+using Draughts.Application.PlayGame.Services;
+using Draughts.Application.Shared.Middleware;
+using Draughts.Application.Shared.Services;
 using Draughts.Repositories;
 using Draughts.Repositories.Database;
+using Draughts.Repositories.Transaction;
+using Draughts.Repositories.InMemory;
 using Microsoft.Extensions.DependencyInjection;
 using NodaTime;
 using System;
-using Draughts.Repositories.Transaction;
-using Draughts.Application.Shared.Middleware;
-using Draughts.Application.Auth.Services;
-using Draughts.Application.Lobby.Services;
-using Draughts.Application.Shared.Services;
-using Draughts.Application.Auth;
-using Draughts.Application.PlayGame.Services;
-using Draughts.Repositories.InMemory;
 
 namespace Draughts.Common {
     public static class DraughtsServiceProvider {
-        private static int HI_LO_INTERVAL_SIZE = 100;
+        private static int HI_LO_INTERVAL_SIZE_LARGE = 100;
+        private static int HI_LO_INTERVAL_SIZE_SMALL = 10;
+
         public static void ConfigureServices(IServiceCollection services, bool useInMemoryDatabase) {
             services.AddSingleton<IClock>(SystemClock.Instance);
 
             if (useInMemoryDatabase) {
-                services.AddSingleton<IIdGenerator>(new InMemoryHiLoGenerator(HI_LO_INTERVAL_SIZE));
+                services.AddSingleton<IIdGenerator>(HiLoIdGenerator.InMemoryHiloGIdGenerator(
+                    HI_LO_INTERVAL_SIZE_LARGE, HI_LO_INTERVAL_SIZE_SMALL, HI_LO_INTERVAL_SIZE_SMALL));
                 services.AddSingleton<IUnitOfWork, InMemoryUnitOfWork>();
 
                 services.AddSingleton<IAuthUserRepository, InMemoryAuthUserRepository>();
@@ -29,7 +32,8 @@ namespace Draughts.Common {
                 services.AddSingleton<IGameRepository, InMemoryGameRepository>();
             }
             else {
-                services.AddSingleton<IIdGenerator>(new DbHiLoGenerator(HI_LO_INTERVAL_SIZE));
+                services.AddSingleton<IIdGenerator>(HiLoIdGenerator.DbHiloGIdGenerator(
+                    HI_LO_INTERVAL_SIZE_LARGE, HI_LO_INTERVAL_SIZE_SMALL, HI_LO_INTERVAL_SIZE_SMALL));
                 services.AddSingleton<IUnitOfWork, DbUnitOfWork>();
 
                 services.AddSingleton<IAuthUserRepository, DbAuthUserRepository>();

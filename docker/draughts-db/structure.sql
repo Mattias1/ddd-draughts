@@ -137,5 +137,6 @@ CREATE DATABASE `draughts_misc`;
 USE `draughts_misc`;
 
 CREATE TABLE `id_generation` (
+    `subject` CHAR(4) NOT NULL,
     `available_id` BIGINT NOT NULL
 );

@@ -5,6 +5,7 @@ using Draughts.Repositories;
 using Draughts.Repositories.Database;
 using Draughts.Repositories.Transaction;
 using Draughts.Test.TestHelpers;
+using SqlQueryBuilder.Options;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -33,26 +34,32 @@ namespace Draughts.Command.Seeders {
         public void SeedData() {
             EnsureDatabasesContainOnlyEssentialData();
 
-            long availableId = GetAvailableId();
-            IdTestHelper.Seed(availableId);
+            SeedAvailableIds();
 
             var users = SeedUserDomain();
             SeedAuthUserDomain(users);
             SeedGameDomain(users);
 
-            UpdateAvailableId();
+            UpdateAvailableIds();
         }
 
-        private long GetAvailableId() {
+        private void SeedAvailableIds() {
             using (var tranFlavor = DbContext.Get.MiscTransaction()) {
-                var idGenerationRows = DbContext.Get.Query(tranFlavor).SelectAllFrom("id_generation").List<DbIdGeneration>();
+                var availableIds = DbContext.Get.Query(tranFlavor)
+                    .SelectAllFrom("id_generation")
+                    .List<DbIdGeneration>()
+                    .ToDictionary(i => i.Subject, i => i.AvailableId);
                 tranFlavor.Commit();
 
-                if (idGenerationRows.Count != 1) {
-                    throw new InvalidOperationException("Id generation table should contain exactly one available id.");
+                if (availableIds.Count != 3) {
+                    throw new InvalidOperationException("The id generation table should contain exactly three available ids.");
                 }
 
-                return idGenerationRows.Single().AvailableId;
+                long miscId = availableIds[DbIdGeneration.SUBJECT_MISC];
+                long gameId = availableIds[DbIdGeneration.SUBJECT_GAME];
+                long userId = availableIds[DbIdGeneration.SUBJECT_USER];
+                IdTestHelper.Seed(miscId, gameId, userId);
+
             }
         }
 
@@ -170,12 +177,19 @@ namespace Draughts.Command.Seeders {
             });
         }
 
-        private void UpdateAvailableId() {
+        private void UpdateAvailableIds() {
             using (var tranFlavor = DbContext.Get.MiscTransaction()) {
-                var idGeneration = new DbIdGeneration { AvailableId = IdTestHelper.Next() };
-                DbContext.Get.Query(tranFlavor).Update("id_generation").SetFrom(idGeneration).Execute();
+                UpdateAvailableId(tranFlavor, DbIdGeneration.SUBJECT_MISC, IdTestHelper.Next());
+                UpdateAvailableId(tranFlavor, DbIdGeneration.SUBJECT_GAME, IdTestHelper.NextGame());
+                UpdateAvailableId(tranFlavor, DbIdGeneration.SUBJECT_USER, IdTestHelper.NextUser());
+
                 tranFlavor.Commit();
             }
+        }
+
+        private void UpdateAvailableId(ISqlTransactionFlavor tranFlavor, string subject, long id) {
+            var row = new DbIdGeneration(subject, id);
+            DbContext.Get.Query(tranFlavor).Update("id_generation").SetFrom(row).Where("subject").Is(subject).Execute();
         }
     }
 }

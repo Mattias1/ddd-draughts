@@ -24,12 +24,13 @@ namespace Draughts.Command.Seeders {
         public void SeedData() {
             EnsureDatabasesAreEmpty();
 
-            IdTestHelper.Seed(1);
+            // TODO: Get rid of the whole AuthUserId? Why would I need this?
+            IdTestHelper.Seed(1, 1, 1);
 
             SeedUserDomain(out var admin);
             SeedAuthUserDomain(admin);
 
-            UpdateAvailableId();
+            UpdateAvailableIds();
         }
 
         private void EnsureDatabasesAreEmpty() {
@@ -80,14 +81,19 @@ namespace Draughts.Command.Seeders {
             });
         }
 
-        private void UpdateAvailableId() {
+        private void UpdateAvailableIds() {
             using (var tranFlavor = DbContext.Get.MiscTransaction()) {
                 if (DbContext.Get.Query(tranFlavor).Select().CountAll().From("id_generation").SingleLong() != 0) {
                     throw new InvalidOperationException("Id generation table is not empty.");
                 }
 
-                var idGeneration = new DbIdGeneration { AvailableId = IdTestHelper.Next() };
-                DbContext.Get.Query(tranFlavor).InsertInto("id_generation").InsertFrom(idGeneration).Execute();
+                DbContext.Get.Query(tranFlavor)
+                    .InsertInto("id_generation")
+                    .Columns("subject", "available_id")
+                    .Values(DbIdGeneration.SUBJECT_MISC, IdTestHelper.Next())
+                    .Values(DbIdGeneration.SUBJECT_GAME, IdTestHelper.NextGame())
+                    .Values(DbIdGeneration.SUBJECT_USER, IdTestHelper.NextUser())
+                    .Execute();
 
                 tranFlavor.Commit();
             }

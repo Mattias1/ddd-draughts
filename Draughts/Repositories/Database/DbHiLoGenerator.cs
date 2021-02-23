@@ -1,18 +1,25 @@
 namespace Draughts.Repositories.Database {
     /// <summary>
-    /// A thread safe id generator that doesn't need database connection most of the time.
+    /// A thread safe id generator that doesn't need a database connection most of the time.
     /// Should be injected as singleton.
     /// </summary>
-    public class DbHiLoGenerator : BaseHiLoGenerator, IIdGenerator {
-        public DbHiLoGenerator(int intervalSize) : base(intervalSize) { }
+    public class DbHiLoGenerator : BaseHiLoGenerator {
+        public DbHiLoGenerator(int intervalSize, string subject) : base(intervalSize, subject) { }
 
         protected override HiLoInterval ReserveNewInterval() {
             using (var tranFlavor = DbContext.Get.MiscTransaction()) {
-                var idGenerationRow = DbContext.Get.Query(tranFlavor).SelectAllFrom("id_generation").Single<DbIdGeneration>();
+                var idGenerationRow = DbContext.Get.Query(tranFlavor)
+                    .SelectAllFrom("id_generation")
+                    .Where("subject").Is(Subject)
+                    .Single<DbIdGeneration>();
                 var lo = idGenerationRow.AvailableId;
 
                 idGenerationRow.AvailableId += IntervalSize;
-                DbContext.Get.Query(tranFlavor).Update("id_generation").SetFrom(idGenerationRow).Execute();
+                DbContext.Get.Query(tranFlavor)
+                    .Update("id_generation")
+                    .SetFrom(idGenerationRow)
+                    .Where("subject").Is(Subject)
+                    .Execute();
 
                 tranFlavor.Commit();
 

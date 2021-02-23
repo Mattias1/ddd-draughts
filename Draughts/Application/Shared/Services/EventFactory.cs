@@ -29,6 +29,6 @@ namespace Draughts.Application.Shared.Services {
         }
 
         private ZonedDateTime Now() => _clock.GetCurrentInstant().InUtc();
-        private DomainEventId NextId() => new DomainEventId(_idGenerator.ReservePool(1).Next());
+        private DomainEventId NextId() => new DomainEventId(_idGenerator.ReservePool(1, 0, 0).Next());
     }
 }
