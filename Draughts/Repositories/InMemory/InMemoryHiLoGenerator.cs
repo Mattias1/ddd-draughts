@@ -5,14 +5,14 @@ namespace Draughts.Repositories.InMemory {
     /// A thread safe id generator that doesn't need 'database connection' most of the time.
     /// Should be injected as singleton.
     /// </summary>
-    public class InMemoryHiLoGenerator : BaseHiLoGenerator, IIdGenerator {
-        public InMemoryHiLoGenerator(int intervalSize) : base(intervalSize) { }
+    public class InMemoryHiLoGenerator : BaseHiLoGenerator {
+        public InMemoryHiLoGenerator(int intervalSize, string subject) : base(intervalSize, subject) { }
 
         protected override HiLoInterval ReserveNewInterval() {
-            var idGenerationColumn = MiscDatabase.IdGenerationTable.Single();
-            long lo = idGenerationColumn.AvailableId;
+            var idGenerationRow = MiscDatabase.IdGenerationTable.Single(t => t.Subject == Subject);
+            long lo = idGenerationRow.AvailableId;
 
-            idGenerationColumn.AvailableId += IntervalSize;
+            idGenerationRow.AvailableId += IntervalSize;
 
             return new HiLoInterval(lo, lo + IntervalSize);
         }

@@ -232,9 +232,20 @@ namespace Draughts.Repositories.Database {
     }
 
     public class DbIdGeneration {
+        public const string SUBJECT_MISC = "";
+        public const string SUBJECT_GAME = "game";
+        public const string SUBJECT_USER = "user";
+
+        public string Subject { get; set; }
         public long AvailableId { get; set; }
 
-        public bool Equals(DbIdGeneration? other) => AvailableId.Equals(other?.AvailableId);
+        public DbIdGeneration() {}
+        public DbIdGeneration(string subject, long id) {
+            Subject = subject;
+            AvailableId = id;
+        }
+
+        public bool Equals(DbIdGeneration? other) => AvailableId.Equals(other?.Subject);
     }
 #pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
 }

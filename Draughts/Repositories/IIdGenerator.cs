@@ -1,6 +1,6 @@
 namespace Draughts.Repositories {
     public interface IIdGenerator {
         IIdPool ReservePool();
-        IIdPool ReservePool(int minimumSize);
+        IIdPool ReservePool(int minimumSizeMisc, int minimumSizeGame, int minimumSizeUser);
     }
 }

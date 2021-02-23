@@ -26,7 +26,13 @@
             @foreach (var game in Model.Games) {
                 <tr>
                     <td><a href="/game/@game.Id">Game @game.Id</a></td>
-                    <td>@Utils.UserLink(@game.Players[0])</td>
+                    <td>
+                        @if (game.Players.Any()) {
+                            @Utils.UserLink(@game.Players[0])
+                        } else {
+                            <span>none</span>
+                        }
+                    </td>
                     <td>@game.Settings.Description</td>
                     <td>
                         @if (game.Players.Any(p => p.UserId == ViewBag.UserId)) {

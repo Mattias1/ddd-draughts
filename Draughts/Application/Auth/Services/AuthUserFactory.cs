@@ -23,7 +23,7 @@ namespace Draughts.Application.Auth.Services {
 
         public AuthUser CreateAuthUser(IIdPool idPool, string? name, string? email, string? plaintextPassword) {
             var nextId = new AuthUserId(idPool.Next());
-            var nextUserId = new UserId(idPool.Next());
+            var nextUserId = new UserId(idPool.NextUser());
             var username = new Username(name);
             var passwordHash = PasswordHash.Generate(plaintextPassword, nextId, username);
 

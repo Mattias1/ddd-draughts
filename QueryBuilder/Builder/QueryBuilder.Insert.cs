@@ -12,8 +12,8 @@ namespace SqlQueryBuilder.Builder {
             return this;
         }
 
-        public IQueryBuilderBase Values(params object?[] parameters) => Values(parameters.AsEnumerable());
-        public IQueryBuilderBase Values<T>(IEnumerable<T> parameters) {
+        public IInsertQueryBuilder Values(params object?[] parameters) => Values(parameters.AsEnumerable());
+        public IInsertQueryBuilder Values<T>(IEnumerable<T> parameters) {
             foreach (var p in parameters) {
                 _query.InsertValues.Add(new InsertValue(p));
             }
@@ -30,8 +30,15 @@ namespace SqlQueryBuilder.Builder {
             return this;
         }
 
-        public IQueryBuilderBase InsertFrom<T>(T model) where T : notnull {
-            return InsertFromDictionary(ComponentModelHelper.ToDictionary(model, _options.ColumnFormat));
+        public IQueryBuilderBase InsertFrom<T>(params T[] models) where T : notnull => InsertFrom(models.AsEnumerable());
+        public IQueryBuilderBase InsertFrom<T>(IEnumerable<T> models) where T : notnull {
+            var dictionaries = models.Select(m => ComponentModelHelper.ToDictionary(m, _options.ColumnFormat)).ToArray();
+            if (dictionaries.Length > 0) {
+                InsertFromDictionary(dictionaries.First());
+            }
+            var values = dictionaries.Skip(1).SelectMany(d => d.Values).Select(v => (IInsertValue)new InsertValue(v));
+            _query.InsertValues.AddRange(values);
+            return this;
         }
 
         public IQueryBuilderBase InsertFromDictionary(IReadOnlyDictionary<string, object?> dictionary) {

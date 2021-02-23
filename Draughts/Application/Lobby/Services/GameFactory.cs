@@ -10,16 +10,15 @@ namespace Draughts.Application.Lobby.Services {
         private readonly IGameRepository _gameRepository;
         private readonly IPlayerRepository _playerRepository;
 
-        public GameFactory(IClock clock, IGameRepository gameRepository,
-                IPlayerRepository playerRepository) {
+        public GameFactory(IClock clock, IGameRepository gameRepository, IPlayerRepository playerRepository) {
             _clock = clock;
             _gameRepository = gameRepository;
             _playerRepository = playerRepository;
         }
 
         public Game CreateGame(IIdPool idPool, GameSettings settings, User creator, Color creatorColor) {
-            var nextId = new GameId(idPool.Next());
-            var game = new Game(nextId, settings, _clock.UtcNow());
+            var nextGameId = new GameId(idPool.NextGame());
+            var game = new Game(nextGameId, settings, _clock.UtcNow());
 
             var player = BuildPlayer(idPool, creator, creatorColor);
             game.JoinGame(player, _clock.UtcNow());

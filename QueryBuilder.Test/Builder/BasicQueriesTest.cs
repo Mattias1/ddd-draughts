@@ -77,7 +77,8 @@ namespace SqlQueryBuilder.Test.Builder {
             string sql = Query()
                 .InsertInto("user")
                 .Columns("id", "authuser_id", "username", "rank")
-                .Values(1, 2, "admin", null, 3, 4, "user", null)
+                .Values(1, 2, "admin", null)
+                .Values(3, 4, "user", null)
                 .ToUnsafeSql();
             sql.Should().Be("insert into user (id, authuser_id, username, rank) values (1, 2, 'admin', null), (3, 4, 'user', null)");
         }
@@ -100,6 +101,20 @@ namespace SqlQueryBuilder.Test.Builder {
             };
             string sql = Query().InsertInto("user").InsertFrom(model).ToParameterizedSql();
             sql.Should().Be("insert into user (username, rating) values (@0, @1)");
+        }
+
+        [Fact]
+        public void TestInsertFromMultipleModels() {
+            var model1 = new TestUserTable {
+                Username = "testname",
+                Rating = 1337
+            };
+            var model2 = new TestUserTable {
+                Username = "othername",
+                Rating = 42
+            };
+            string sql = Query().InsertInto("user").InsertFrom(model1, model2).ToParameterizedSql();
+            sql.Should().Be("insert into user (username, rating) values (@0, @1), (@2, @3)");
         }
 
         [Fact]
@@ -133,8 +148,8 @@ namespace SqlQueryBuilder.Test.Builder {
                 { "username", "testname" },
                 { "rating", 1337 }
             };
-            string sql = Query().Update("user").SetFromDictionary(dict).ToParameterizedSql();
-            sql.Should().Be("update user set username = @0, rating = @1");
+            string sql = Query().Update("user").SetFromDictionary(dict).Where("id").Is(42).ToParameterizedSql();
+            sql.Should().Be("update user set username = @0, rating = @1 where id = @2");
         }
 
         [Fact]
@@ -143,8 +158,8 @@ namespace SqlQueryBuilder.Test.Builder {
                 Username = "testname",
                 Rating = 1337
             };
-            string sql = Query().Update("user").SetFrom(model).ToParameterizedSql();
-            sql.Should().Be("update user set username = @0, rating = @1");
+            string sql = Query().Update("user").SetFrom(model).Where("id").Is(42).ToParameterizedSql();
+            sql.Should().Be("update user set username = @0, rating = @1 where id = @2");
         }
 
         [Fact]
