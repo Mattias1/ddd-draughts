@@ -21,7 +21,6 @@ namespace Draughts.Common {
         private string? _cachedJwtString;
         private readonly JwtData Data;
 
-        public AuthUserId AuthUserId => new AuthUserId(Data.Auu);
         public UserId UserId => new UserId(Data.Usr);
         public Username Username => new Username(Data.Una);
         public IReadOnlyList<RoleId> RoleIds => Data.Rol.Select(r => new RoleId(r)).ToList().AsReadOnly();
@@ -58,10 +57,7 @@ namespace Draughts.Common {
             long unixNow = clock.GetCurrentInstant().ToUnixTimeSeconds();
             string expectedSignature = ComputeSignature(parts[0], parts[1]);
             // Note: This is not secure - it's home made crypto, what did you expect?
-            if (data.Aud != "Draughts" || data.Exp < unixNow
-                || data.Auu == default || data.Usr == default
-                || parts[2] != expectedSignature
-            ) {
+            if (data.Aud != "Draughts" || data.Exp < unixNow || data.Usr == default || parts[2] != expectedSignature) {
                 jwt = null;
                 return false;
             }
@@ -107,7 +103,6 @@ namespace Draughts.Common {
         private class JwtData {
             public string Aud { get; set; }
             public long Exp { get; set; }
-            public long Auu { get; set; }
             public long Usr { get; set; }
             public string Una { get; set; }
             public long[] Rol { get; set; }
@@ -121,8 +116,7 @@ namespace Draughts.Common {
             public JwtData(AuthUser authUser, Instant expires) {
                 Aud = "Draughts";
                 Exp = expires.ToUnixTimeSeconds();
-                Auu = authUser.Id;
-                Usr = authUser.UserId;
+                Usr = authUser.Id;
                 Una = authUser.Username;
                 Rol = authUser.Roles.Select(r => r.Id.Id).ToArray();
             }

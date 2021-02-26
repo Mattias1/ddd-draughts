@@ -1,5 +1,6 @@
 using Draughts.Common;
 using Draughts.Domain.AuthUserAggregate.Models;
+using Draughts.Domain.UserAggregate.Models;
 using Draughts.Test.TestHelpers;
 using FluentAssertions;
 using NodaTime;
@@ -8,15 +9,14 @@ using Xunit;
 
 namespace Draughts.Test.Common {
     public class JsonWebTokenTest {
-        public static readonly AuthUserId AuthUserId = new AuthUserId(1);
+        public static readonly UserId UserId = new UserId(1);
         public static readonly string JWT_STRING = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJEcmF1Z2h0cyIsImV" +
-            "4cCI6MTU3OTI2MjQwMCwiYXV1IjoxLCJ1c3IiOjEsInVuYSI6IlVzZXIiLCJyb2wiOlsyXX0.ApProjWhz0l1FSbqyYvLxBoQjPGV_O" +
-            "lbJfu_TSGZQoU";
+            "4cCI6MTU3OTI2MjQwMCwidXNyIjoxLCJ1bmEiOiJVc2VyIiwicm9sIjpbMl19.EifVPA51buvZt8mveaQ9lTWAPawk0qdGz6LIM1nolhM";
 
         [Fact]
         public void TestGenerateJwtString() {
             var registeredUser = RoleTestHelper.RegisteredUser().WithId(2).Build();
-            var authUser = BuildAuthUser(AuthUserId, "User", registeredUser);
+            var authUser = BuildAuthUser(UserId, "User", registeredUser);
 
             var clock = new FakeClock(new LocalDateTime(2020, 01, 16, 12, 0).InUtc().ToInstant());
 
@@ -34,7 +34,7 @@ namespace Draughts.Test.Common {
 
             success.Should().BeTrue();
             jwt.Should().NotBeNull();
-            jwt!.AuthUserId.Should().Be(AuthUserId);
+            jwt!.UserId.Should().Be(UserId);
         }
 
         [Fact]
@@ -59,7 +59,7 @@ namespace Draughts.Test.Common {
         }
 
         private static AuthUser BuildAuthUser(long id, string name, params Role[] roles) {
-            return AuthUserTestHelper.User(name).WithId(id).WithUserId(id).WithRoles(roles).Build();
+            return AuthUserTestHelper.User(name).WithId(id).WithRoles(roles).Build();
         }
     }
 }

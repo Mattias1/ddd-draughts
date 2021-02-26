@@ -12,7 +12,6 @@ namespace Draughts.Test.TestHelpers {
         public static UserBuilder User(string name = "user") {
             return new UserBuilder()
                 .WithId(IdTestHelper.NextUser())
-                .WithAuthUserId(IdTestHelper.Next())
                 .WithUsername(name)
                 .WithRating(Rating.StartRating)
                 .WithRank(Rank.Ranks.Private)
@@ -23,7 +22,6 @@ namespace Draughts.Test.TestHelpers {
 
         public class UserBuilder {
             private UserId? _id;
-            private AuthUserId? _authUserId;
             private Username? _username;
             private Rating? _rating;
             private Rank? _rank;
@@ -33,12 +31,6 @@ namespace Draughts.Test.TestHelpers {
             public UserBuilder WithId(long id) => WithId(new UserId(id));
             public UserBuilder WithId(UserId id) {
                 _id = id;
-                return this;
-            }
-
-            public UserBuilder WithAuthUserId(long authUserId) => WithAuthUserId(new AuthUserId(authUserId));
-            public UserBuilder WithAuthUserId(AuthUserId authUserId) {
-                _authUserId = authUserId;
                 return this;
             }
 
@@ -73,9 +65,6 @@ namespace Draughts.Test.TestHelpers {
                 if (_id is null) {
                     throw new InvalidOperationException("Id is not nullable");
                 }
-                if (_authUserId is null) {
-                    throw new InvalidOperationException("AuthUserId is not nullable");
-                }
                 if (_username is null) {
                     throw new InvalidOperationException("Username is not nullable");
                 }
@@ -89,7 +78,7 @@ namespace Draughts.Test.TestHelpers {
                     throw new InvalidOperationException("CreatedAt is not nullable");
                 }
 
-                return new User(_id, _authUserId, _username, _rating, _rank, _gamesPlayed, _createdAt.Value);
+                return new User(_id, _username, _rating, _rank, _gamesPlayed, _createdAt.Value);
             }
         }
     }

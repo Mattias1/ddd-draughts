@@ -18,8 +18,7 @@ namespace Draughts.Test.TestHelpers {
 
         public static AuthUserBuilder FromUserAndRoles(User user, params Role[] roles) {
             return new AuthUserBuilder()
-                .WithId(user.AuthUserId)
-                .WithUserId(user.Id)
+                .WithId(user.Id)
                 .WithUsername(user.Username)
                 .WithEmail($"{user.Username}@example.com")
                 .WithPasswordHash(user.Username)
@@ -28,14 +27,11 @@ namespace Draughts.Test.TestHelpers {
         }
 
         public static AuthUserBuilder User(string name = "user") {
-            var authUserId = new AuthUserId(IdTestHelper.Next());
-            var username = new Username(name);
             var registeredUserRole = RoleTestHelper.RegisteredUser().Build();
 
             return new AuthUserBuilder()
-                .WithId(authUserId)
-                .WithUserId(IdTestHelper.Next())
-                .WithUsername(username)
+                .WithId(IdTestHelper.NextUser())
+                .WithUsername(new Username(name))
                 .WithEmail($"{name}@example.com")
                 .WithPasswordHash(name)
                 .WithCreatedAt(Feb29)
@@ -44,23 +40,16 @@ namespace Draughts.Test.TestHelpers {
 
 
         public class AuthUserBuilder {
-            private AuthUserId? _id;
-            private UserId? _userId;
+            private UserId? _id;
             private Username? _username;
             private PasswordHash? _passwordHash;
             private Email? _email;
             private ZonedDateTime? _createdAt;
             private List<Role> _roles = new List<Role>();
 
-            public AuthUserBuilder WithId(long id) => WithId(new AuthUserId(id));
-            public AuthUserBuilder WithId(AuthUserId id) {
+            public AuthUserBuilder WithId(long id) => WithId(new UserId(id));
+            public AuthUserBuilder WithId(UserId id) {
                 _id = id;
-                return this;
-            }
-
-            public AuthUserBuilder WithUserId(long userId) => WithUserId(new UserId(userId));
-            public AuthUserBuilder WithUserId(UserId userId) {
-                _userId = userId;
                 return this;
             }
 
@@ -102,9 +91,6 @@ namespace Draughts.Test.TestHelpers {
                 if (_id is null) {
                     throw new InvalidOperationException("Id is not nullable");
                 }
-                if (_userId is null) {
-                    throw new InvalidOperationException("UserId is not nullable");
-                }
                 if (_username is null) {
                     throw new InvalidOperationException("Username is not nullable");
                 }
@@ -118,7 +104,7 @@ namespace Draughts.Test.TestHelpers {
                     throw new InvalidOperationException("CreatedAt is not nullable");
                 }
 
-                return new AuthUser(_id, _userId, _username, _passwordHash, _email, _createdAt.Value, _roles);
+                return new AuthUser(_id, _username, _passwordHash, _email, _createdAt.Value, _roles);
             }
         }
     }

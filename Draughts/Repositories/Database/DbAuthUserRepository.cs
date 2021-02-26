@@ -2,6 +2,7 @@ using Draughts.Common.OoConcepts;
 using Draughts.Common.Utilities;
 using Draughts.Domain.AuthUserAggregate.Models;
 using Draughts.Domain.AuthUserAggregate.Specifications;
+using Draughts.Domain.UserAggregate.Models;
 using Draughts.Repositories.Transaction;
 using SqlQueryBuilder.Builder;
 using System.Collections.Generic;
@@ -18,8 +19,8 @@ namespace Draughts.Repositories.Database {
             _unitOfWork = unitOfWork;
         }
 
-        public AuthUser FindById(AuthUserId id) => Find(new AuthUserIdSpecification(id));
-        public AuthUser? FindByIdOrNull(AuthUserId id) => FindOrNull(new AuthUserIdSpecification(id));
+        public AuthUser FindById(UserId id) => Find(new AuthUserIdSpecification(id));
+        public AuthUser? FindByIdOrNull(UserId id) => FindOrNull(new AuthUserIdSpecification(id));
 
         protected override string TableName => "authuser";
         protected override IInitialQueryBuilder GetBaseQuery() => _unitOfWork.Query(TransactionDomain.AuthUser);
@@ -28,7 +29,7 @@ namespace Draughts.Repositories.Database {
         protected override IQueryBuilder ApplySpec(Specification<AuthUser> spec, IQueryBuilder builder) {
             var joins = spec.RequiredJoins().ToArray();
             if (joins.Contains(PossibleJoins.AuthUserRole)) {
-                builder.Join("authuser_role", "authuser.id", "authuser.authuser_id");
+                builder.Join("authuser_role", "authuser.id", "authuser.user_id");
             }
             return base.ApplySpec(spec, builder);
         }
@@ -38,8 +39,8 @@ namespace Draughts.Repositories.Database {
                 return new List<AuthUser>().AsReadOnly();
             }
 
-            var userRoles = GetAuthuserRoleQuery().Where("authuser_id").In(qs.Select(q => q.Id)).List<DbAuthUserRole>();
-            var roleIds = userRoles.ToLookup(ur => ur.AuthuserId, ur => ur.RoleId);
+            var userRoles = GetAuthuserRoleQuery().Where("user_id").In(qs.Select(q => q.Id)).List<DbAuthUserRole>();
+            var roleIds = userRoles.ToLookup(ur => ur.UserId, ur => ur.RoleId);
             var roles = _roleRepository.List(new RoleIdsSpecification(userRoles.Select(ur => ur.RoleId)));
             return qs
                 .Select(q => q.ToDomainModel(roles.IntersectBy(roleIds[q.Id], r => r.Id).ToArray()))
@@ -48,7 +49,7 @@ namespace Draughts.Repositories.Database {
         }
 
         protected override AuthUser Parse(DbAuthUser q) {
-            var userRoles = GetAuthuserRoleQuery().Where("authuser_id").Is(q.Id).List<DbAuthUserRole>();
+            var userRoles = GetAuthuserRoleQuery().Where("user_id").Is(q.Id).List<DbAuthUserRole>();
             var roles = _roleRepository.List(new RoleIdsSpecification(userRoles.Select(ur => ur.RoleId)));
             return q.ToDomainModel(roles);
         }
@@ -60,7 +61,7 @@ namespace Draughts.Repositories.Database {
                 InsertRoles(entity.Id, entity.Roles.Select(r => r.Id.Id));
             }
             else {
-                var oldRoleIds = GetAuthuserRoleQuery().Where("authuser_id").Is(entity.Id).List<DbAuthUserRole>()
+                var oldRoleIds = GetAuthuserRoleQuery().Where("user_id").Is(entity.Id).List<DbAuthUserRole>()
                     .Select(pr => pr.RoleId).ToArray();
                 var newRoleIds = entity.Roles.Select(p => p.Id.Id).ToArray();
                 var toDelete = oldRoleIds.Except(newRoleIds).ToArray();
@@ -69,7 +70,7 @@ namespace Draughts.Repositories.Database {
                 GetBaseQuery().Update("authuser").SetWithoutIdFrom(obj).Where("id").Is(entity.Id).Execute();
                 if (toDelete.Any()) {
                     GetBaseQuery().DeleteFrom("authuser_role")
-                        .Where("authuser_id").Is(entity.Id)
+                        .Where("user_id").Is(entity.Id)
                         .And("role_id").In(toDelete)
                         .Execute();
                 }
@@ -77,19 +78,19 @@ namespace Draughts.Repositories.Database {
             }
         }
 
-        private void InsertRoles(long authUserId, IEnumerable<long> roleIds) {
+        private void InsertRoles(long userId, IEnumerable<long> roleIds) {
             if (!roleIds.Any()) {
                 return;
             }
-            var values = BuildInsertValues(authUserId, roleIds);
+            var values = BuildInsertValues(userId, roleIds);
             GetBaseQuery().InsertInto("authuser_role")
-                .Columns("authuser_id", "role_id").Values(values)
+                .Columns("user_id", "role_id").Values(values)
                 .Execute();
         }
 
-        private IEnumerable<long> BuildInsertValues(long authUserId, IEnumerable<long> roleIds) {
+        private IEnumerable<long> BuildInsertValues(long userId, IEnumerable<long> roleIds) {
             foreach (var roleId in roleIds) {
-                yield return authUserId;
+                yield return userId;
                 yield return roleId;
             }
         }

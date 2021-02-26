@@ -4,7 +4,6 @@ USE `draughts_user`;
 
 CREATE TABLE `user` (
     `id` BIGINT NOT NULL,
-    `authuser_id` BIGINT NOT NULL,
     `username` VARCHAR(50) NOT NULL,
     `rating` INT NOT NULL,
     `rank` VARCHAR(50) NOT NULL,
@@ -31,7 +30,6 @@ USE `draughts_authuser`;
 
 CREATE TABLE `authuser` (
     `id` BIGINT NOT NULL,
-    `user_id` BIGINT NOT NULL,
     `username` VARCHAR(50) NOT NULL,
     `password_hash` VARCHAR(200) NOT NULL,
     `email` VARCHAR(200) NOT NULL,
@@ -49,11 +47,11 @@ CREATE TABLE `role` (
 );
 
 CREATE TABLE `authuser_role` (
-    `authuser_id` BIGINT NOT NULL,
+    `user_id` BIGINT NOT NULL,
     `role_id` BIGINT NOT NULL,
 
-    PRIMARY KEY (`authuser_id`, `role_id`),
-    CONSTRAINT fk_aur_au FOREIGN KEY (`authuser_id`)
+    PRIMARY KEY (`user_id`, `role_id`),
+    CONSTRAINT fk_aur_au FOREIGN KEY (`user_id`)
         REFERENCES `authuser` (`id`)
         ON UPDATE RESTRICT ON DELETE CASCADE,
     CONSTRAINT fk_aur_role FOREIGN KEY (`role_id`)

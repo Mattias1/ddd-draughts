@@ -56,31 +56,31 @@ namespace SqlQueryBuilder.Test.Builder {
         public void TestInsertWithColumnNames() {
             string sql = Query()
                 .InsertInto("user")
-                .Columns("id", "authuser_id", "username", "rank")
-                .Values(1, 2, "admin", "Private")
+                .Columns("id", "username", "rank")
+                .Values(1, "admin", "Private")
                 .ToParameterizedSql();
-            sql.Should().Be("insert into user (id, authuser_id, username, rank) values (@0, @1, @2, @3)");
+            sql.Should().Be("insert into user (id, username, rank) values (@0, @1, @2)");
         }
 
         [Fact]
         public void TestInsertParameters() {
             string sql = Query()
                 .InsertInto("user")
-                .Columns("id", "authuser_id", "username", "rank")
-                .Values(1, 2, "admin", null)
+                .Columns("id", "username", "rank")
+                .Values(1, "admin", null)
                 .ToUnsafeSql();
-            sql.Should().Be("insert into user (id, authuser_id, username, rank) values (1, 2, 'admin', null)");
+            sql.Should().Be("insert into user (id, username, rank) values (1, 'admin', null)");
         }
 
         [Fact]
         public void TestInsertMultipleChunks() {
             string sql = Query()
                 .InsertInto("user")
-                .Columns("id", "authuser_id", "username", "rank")
-                .Values(1, 2, "admin", null)
-                .Values(3, 4, "user", null)
+                .Columns("id", "username", "rank")
+                .Values(1, "admin", null)
+                .Values(2, "user", null)
                 .ToUnsafeSql();
-            sql.Should().Be("insert into user (id, authuser_id, username, rank) values (1, 2, 'admin', null), (3, 4, 'user', null)");
+            sql.Should().Be("insert into user (id, username, rank) values (1, 'admin', null), (2, 'user', null)");
         }
 
         [Fact]

@@ -22,14 +22,13 @@ namespace Draughts.Application.Auth.Services {
         }
 
         public AuthUser CreateAuthUser(IIdPool idPool, string? name, string? email, string? plaintextPassword) {
-            var nextId = new AuthUserId(idPool.Next());
             var nextUserId = new UserId(idPool.NextUser());
             var username = new Username(name);
-            var passwordHash = PasswordHash.Generate(plaintextPassword, nextId, username);
+            var passwordHash = PasswordHash.Generate(plaintextPassword, nextUserId, username);
 
             var pendingRestrationRole = _roleRepository.Find(new RolenameSpecification(Role.PENDING_REGISTRATION_ROLENAME));
 
-            var authUser = new AuthUser(nextId, nextUserId, username, passwordHash, new Email(email), _clock.UtcNow(),
+            var authUser = new AuthUser(nextUserId, username, passwordHash, new Email(email), _clock.UtcNow(),
                 new[] { pendingRestrationRole });
 
             _authUserRepository.Save(authUser);
@@ -39,7 +38,7 @@ namespace Draughts.Application.Auth.Services {
             return authUser;
         }
 
-        public AuthUser FinishRegistration(AuthUserId id) {
+        public AuthUser FinishRegistration(UserId id) {
             var registeredUserRole = _roleRepository.Find(new RolenameSpecification(Role.REGISTERED_USER_ROLENAME));
             var authUser = _authUserRepository.FindById(id);
 

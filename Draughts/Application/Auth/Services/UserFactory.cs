@@ -17,8 +17,8 @@ namespace Draughts.Application.Auth.Services {
             _userRepository = userRepository;
         }
 
-        public User CreateUser(AuthUserId authUserId, UserId userId, Username username) {
-            var user = new User(userId, authUserId, username, Rating.StartRating, Rank.Ranks.Private, 0, _clock.UtcNow());
+        public User CreateUser(UserId userId, Username username) {
+            var user = new User(userId, username, Rating.StartRating, Rank.Ranks.Private, 0, _clock.UtcNow());
             _userRepository.Save(user);
 
             _eventFactory.RaiseUserCreated(user);

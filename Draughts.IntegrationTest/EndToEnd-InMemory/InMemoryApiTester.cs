@@ -36,10 +36,10 @@ namespace Draughts.IntegrationTest.EndToEnd.InMemory {
         public string LoginAsTestPlayerBlack() {
             var registeredUserRole = new Role(new RoleId(3), Role.REGISTERED_USER_ROLENAME, Clock.UtcNow(), Permissions.PlayGame);
 
-            var authUserId = new AuthUserId(UserDatabase.TestPlayerBlack);
+            var userId = new UserId(UserDatabase.TestPlayerBlack);
             var name = new Username("TestPlayerBlack");
-            var hash = PasswordHash.Generate("admin", authUserId, name);
-            var authUser = new AuthUser(authUserId, new UserId(authUserId), name, hash,
+            var hash = PasswordHash.Generate("admin", userId, name);
+            var authUser = new AuthUser(userId, name, hash,
                 new Email($"{name}@example.com"), Clock.UtcNow(), new[] { registeredUserRole });
 
             return LoginAs(authUser);
@@ -47,10 +47,10 @@ namespace Draughts.IntegrationTest.EndToEnd.InMemory {
         public string LoginAsTestPlayerWhite() {
             var registeredUserRole = new Role(new RoleId(3), Role.REGISTERED_USER_ROLENAME, Clock.UtcNow(), Permissions.PlayGame);
 
-            var authUserId = new AuthUserId(UserDatabase.TestPlayerWhite);
+            var userId = new UserId(UserDatabase.TestPlayerWhite);
             var name = new Username("TestPlayerWhite");
-            var hash = PasswordHash.Generate("admin", authUserId, name);
-            var authUser = new AuthUser(authUserId, new UserId(authUserId), name, hash,
+            var hash = PasswordHash.Generate("admin", userId, name);
+            var authUser = new AuthUser(userId, name, hash,
                 new Email($"{name}@example.com"), Clock.UtcNow(), new[] { registeredUserRole });
 
             return LoginAs(authUser);

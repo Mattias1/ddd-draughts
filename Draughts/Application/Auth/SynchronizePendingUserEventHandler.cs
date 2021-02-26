@@ -15,7 +15,7 @@ namespace Draughts.Application.Auth {
 
         public override void Handle(AuthUserCreated evt) {
             _unitOfWork.WithTransaction(TransactionDomain.User, tran => {
-                _userFactory.CreateUser(evt.AuthUserId, evt.UserId, evt.Username);
+                _userFactory.CreateUser(evt.UserId, evt.Username);
 
                 tran.Commit();
             });
