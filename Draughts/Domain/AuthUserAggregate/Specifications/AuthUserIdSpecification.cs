@@ -1,14 +1,15 @@
 using Draughts.Common.OoConcepts;
 using Draughts.Domain.AuthUserAggregate.Models;
+using Draughts.Domain.UserAggregate.Models;
 using SqlQueryBuilder.Builder;
 using System;
 using System.Linq.Expressions;
 
 namespace Draughts.Domain.AuthUserAggregate.Specifications {
     public class AuthUserIdSpecification : Specification<AuthUser> {
-        private readonly AuthUserId _id;
+        private readonly UserId _id;
 
-        public AuthUserIdSpecification(AuthUserId id) => _id = id;
+        public AuthUserIdSpecification(UserId id) => _id = id;
 
         public override Expression<Func<AuthUser, bool>> ToExpression() => u => u.Id == _id;
 

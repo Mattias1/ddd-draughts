@@ -70,7 +70,6 @@ namespace Draughts.Application.Shared {
 
         public void UpdateViewBag() {
             ViewBag.IsLoggedIn = IsLoggedIn;
-            ViewBag.AuthUserId = AuthContextOrNull?.AuthUserId;
             ViewBag.UserId = AuthContextOrNull?.UserId;
             ViewBag.Username = AuthContextOrNull?.Username;
             ViewBag.Permissions = AuthContextOrNull?.Permissions ?? new List<Permission>(0).AsReadOnly();

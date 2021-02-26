@@ -24,7 +24,6 @@ namespace Draughts.Command.Seeders {
         public void SeedData() {
             EnsureDatabasesAreEmpty();
 
-            // TODO: Get rid of the whole AuthUserId? Why would I need this?
             IdTestHelper.Seed(1, 1, 1);
 
             SeedUserDomain(out var admin);

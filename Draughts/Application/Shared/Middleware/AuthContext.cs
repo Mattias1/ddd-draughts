@@ -13,13 +13,11 @@ namespace Draughts.Application.Shared.Middleware {
         private const string AUTH_CONTEXT = "authContext";
         private const string ERROR_NO_AUTH = "Trying to get the auth context when not logged in.";
 
-        public AuthUserId AuthUserId { get; }
         public UserId UserId { get; }
         public Username Username { get; }
         public IReadOnlyList<Permission> Permissions { get; }
 
         private AuthContext(JsonWebToken jwt, IReadOnlyList<Permission> permissions) {
-            AuthUserId = jwt.AuthUserId;
             UserId = jwt.UserId;
             Username = jwt.Username;
             Permissions = permissions;

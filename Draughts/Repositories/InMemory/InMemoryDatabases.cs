@@ -45,7 +45,7 @@ namespace Draughts.Repositories.InMemory {
             }
             var now = SystemClock.Instance.UtcNow();
             return new DbUser {
-                Id = id, AuthuserId = id, Username = name, Rating = rating, Rank = rank.Name,
+                Id = id, Username = name, Rating = rating, Rank = rank.Name,
                 GamesPlayed = gamesPlayed, CreatedAt = now
             };
         }
@@ -113,11 +113,10 @@ namespace Draughts.Repositories.InMemory {
             if (id >= UserDatabase.START_FOR_NEXT_IDS) {
                 throw new InvalidOperationException("START_FOR_NEXT_IDS too low!");
             }
-            var hash = PasswordHash.Generate("admin", new AuthUserId(id), new Username(name)).ToStorage();
+            var hash = PasswordHash.Generate("admin", new UserId(id), new Username(name)).ToStorage();
             var now = SystemClock.Instance.UtcNow();
             AuthUsersTable.Add(new DbAuthUser {
                 Id = id,
-                UserId = id,
                 Username = name,
                 PasswordHash = hash,
                 Email = $"{name}@example.com",
@@ -125,7 +124,7 @@ namespace Draughts.Repositories.InMemory {
             });
             foreach (long roleId in roleIds) {
                 AuthUserRolesTable.Add(new DbAuthUserRole {
-                    AuthuserId = id,
+                    UserId = id,
                     RoleId = roleId
                 });
             }
@@ -146,7 +145,7 @@ namespace Draughts.Repositories.InMemory {
             CreatePlayer(4, 1, UserDatabase.UserId, "User", Color.White, Ranks.WarrantOfficer),
             CreatePlayer(5, 2, UserDatabase.MathyId, "Mathy", Color.Black, Ranks.LanceCorporal),
             CreatePlayer(6, 3, UserDatabase.UserId, "User", Color.Black, Ranks.WarrantOfficer),
-            // CreatePlayer(7, 4, UserDatabase.MathyId, "Mathy", Color.Black, Ranks.LanceCorporal)
+            CreatePlayer(7, 4, UserDatabase.MathyId, "Mathy", Color.Black, Ranks.LanceCorporal)
         };
 
         public static List<DomainEvent> TempDomainEventsTable { get; } = new List<DomainEvent>();

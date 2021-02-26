@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using Draughts.Common;
 using Draughts.Common.OoConcepts;
+using Draughts.Domain.UserAggregate.Models;
 using Konscious.Security.Cryptography;
 
 namespace Draughts.Domain.AuthUserAggregate.Models {
@@ -18,7 +19,7 @@ namespace Draughts.Domain.AuthUserAggregate.Models {
 
         private PasswordHash(byte[] hash) => Hash = hash;
 
-        public bool CanLogin(string? plaintextPassword, AuthUserId userId, Username username) {
+        public bool CanLogin(string? plaintextPassword, UserId userId, Username username) {
             if (plaintextPassword is null) {
                 return false;
             }
@@ -33,7 +34,7 @@ namespace Draughts.Domain.AuthUserAggregate.Models {
             return result;
         }
 
-        public static PasswordHash Generate(string? plaintextPassword, AuthUserId userId, Username username) {
+        public static PasswordHash Generate(string? plaintextPassword, UserId userId, Username username) {
             ValidatePassword(plaintextPassword);
 
             byte[] passwordBytes = Encoding.UTF8.GetBytes(plaintextPassword!);

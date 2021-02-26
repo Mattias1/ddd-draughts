@@ -3,6 +3,6 @@ using Draughts.Domain.UserAggregate.Models;
 
 namespace Draughts.Application.Auth.Services {
     public interface IUserFactory {
-        User CreateUser(AuthUserId authUserId, UserId userId, Username username);
+        User CreateUser(UserId userId, Username username);
     }
 }

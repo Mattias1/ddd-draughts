@@ -158,11 +158,11 @@ namespace SqlQueryBuilder.Test.Builder {
         [Fact]
         public void TestMultipleJoins() {
             string sql = Query().Select("a.*").FromAs("authuser", "a")
-                .JoinAs("authuser_role", "ar", "a.id", "ar.authuser_id")
+                .JoinAs("authuser_role", "ar", "a.id", "ar.user_id")
                 .JoinAs("role", "r", "ar.role_id", "r.id")
                 .ToParameterizedSql();
             sql.Should().Be("select a.* from authuser as a " +
-                "join authuser_role as ar on a.id = ar.authuser_id " +
+                "join authuser_role as ar on a.id = ar.user_id " +
                 "join role as r on ar.role_id = r.id");
         }
 

@@ -11,7 +11,6 @@ namespace Draughts.Repositories.Database {
 #pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
     public class DbUser : IDbObject<DbUser, User> {
         public long Id { get; set; }
-        public long AuthuserId { get; set; }
         public string Username { get; set; }
         public int Rating { get; set; }
         public string Rank { get; set; }
@@ -23,7 +22,6 @@ namespace Draughts.Repositories.Database {
         public User ToDomainModel() {
             return new User(
                 new UserId(Id),
-                new AuthUserId(AuthuserId),
                 new Username(Username),
                 new Rating(Rating),
                 Ranks.All.Single(r => r.Name == Rank),
@@ -35,7 +33,6 @@ namespace Draughts.Repositories.Database {
         public static DbUser FromDomainModel(User entity) {
             return new DbUser {
                 Id = entity.Id,
-                AuthuserId = entity.AuthUserId,
                 Username = entity.Username,
                 Rating = entity.Rating,
                 Rank = entity.Rank.Name,
@@ -47,7 +44,6 @@ namespace Draughts.Repositories.Database {
 
     public class DbAuthUser : IDbObject<DbAuthUser, AuthUser> {
         public long Id { get; set; }
-        public long UserId { get; set; }
         public string Username { get; set; }
         public string PasswordHash { get; set; }
         public string Email { get; set; }
@@ -57,8 +53,7 @@ namespace Draughts.Repositories.Database {
 
         public AuthUser ToDomainModel(IReadOnlyList<Role> roles) {
             return new AuthUser(
-                new AuthUserId(Id),
-                new UserId(UserId),
+                new UserId(Id),
                 new Username(Username),
                 Domain.AuthUserAggregate.Models.PasswordHash.FromStorage(PasswordHash),
                 new Email(Email),
@@ -70,7 +65,6 @@ namespace Draughts.Repositories.Database {
         public static DbAuthUser FromDomainModel(AuthUser entity) {
             return new DbAuthUser {
                 Id = entity.Id,
-                UserId = entity.UserId,
                 Username = entity.Username,
                 PasswordHash = entity.PasswordHash.ToStorage(),
                 Email = entity.Email,
@@ -80,11 +74,11 @@ namespace Draughts.Repositories.Database {
     }
 
     public class DbAuthUserRole : IEquatable<DbAuthUserRole> {
-        public long AuthuserId { get; set; }
+        public long UserId { get; set; }
         public long RoleId { get; set; }
 
         public bool Equals(DbAuthUserRole? other) {
-            return other is not null && other.AuthuserId == AuthuserId && other.RoleId == RoleId;
+            return other is not null && other.UserId == UserId && other.RoleId == RoleId;
         }
     }
 
