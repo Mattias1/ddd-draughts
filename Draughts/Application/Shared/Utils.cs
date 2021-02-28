@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text.Encodings.Web;
 using Draughts.Application.Shared.ViewModels;
 using Draughts.Domain.AuthUserAggregate.Models;
-using Draughts.Domain.GameAggregate.Models;
 using Draughts.Domain.UserAggregate.Models;
 using Microsoft.AspNetCore.Html;
 using NodaTime;

@@ -69,6 +69,21 @@ CREATE TABLE `permission_role` (
         ON UPDATE RESTRICT ON DELETE CASCADE
 );
 
+CREATE TABLE `adminlog` (
+    `id` BIGINT NOT NULL,
+    `type` VARCHAR(50) NOT NULL,
+    `parameters` VARCHAR(50) NULL,
+    `user_id` BIGINT NOT NULL,
+    `username` VARCHAR(50) NOT NULL,
+    `permission` VARCHAR(50) NOT NULL,
+    `created_at` DATETIME NOT NULL,
+
+    PRIMARY KEY (`id`),
+    CONSTRAINT fk_al_au FOREIGN KEY (`user_id`)
+        REFERENCES `authuser` (`id`)
+        ON UPDATE RESTRICT ON DELETE CASCADE
+);
+
 CREATE TABLE `event` (
     `id` BIGINT NOT NULL,
     `type` VARCHAR(50) NOT NULL,

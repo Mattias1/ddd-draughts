@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 
 namespace Draughts.Repositories.InMemory {
-    public class InMemoryPlayerRepository : InMemoryRepository<Player>, IPlayerRepository {
+    public class InMemoryPlayerRepository : InMemoryRepository<Player, PlayerId>, IPlayerRepository {
         private readonly IUnitOfWork _unitOfWork;
 
         public InMemoryPlayerRepository(IUnitOfWork unitOfWork) => _unitOfWork = unitOfWork;

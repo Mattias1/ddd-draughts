@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 
 namespace Draughts.Repositories.InMemory {
-    public class InMemoryRoleRepository : InMemoryRepository<Role>, IRoleRepository {
+    public class InMemoryRoleRepository : InMemoryRepository<Role, RoleId>, IRoleRepository {
         private readonly IUnitOfWork _unitOfWork;
 
         public InMemoryRoleRepository(IUnitOfWork unitOfWork) {
@@ -21,7 +21,7 @@ namespace Draughts.Repositories.InMemory {
         }
 
         public IReadOnlyList<Permission> PermissionsForRole(RoleId id) {
-            var role = FindOrNull(new RoleIdSpecification(id));
+            var role = FindByIdOrNull(id);
             return role?.Permissions ?? new List<Permission>().AsReadOnly();
         }
 

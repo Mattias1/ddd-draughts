@@ -1,6 +1,5 @@
 using Draughts.Common.OoConcepts;
 using Draughts.Domain.GameAggregate.Models;
-using Draughts.Domain.GameAggregate.Specifications;
 using Draughts.Repositories.Transaction;
 using SqlQueryBuilder.Builder;
 using System;
@@ -9,15 +8,12 @@ using System.Linq;
 using static Draughts.Repositories.Database.JoinEnum;
 
 namespace Draughts.Repositories.Database {
-    public class DbGameRepository : DbRepository<Game, DbGame>, IGameRepository {
+    public class DbGameRepository : DbRepository<Game, GameId, DbGame>, IGameRepository {
         private readonly IUnitOfWork _unitOfWork;
 
         public DbGameRepository(IUnitOfWork unitOfWork) {
             _unitOfWork = unitOfWork;
         }
-
-        public Game FindById(GameId id) => Find(new GameIdSpecification(id));
-        public Game? FindByIdOrNull(GameId id) => FindOrNull(new GameIdSpecification(id));
 
         protected override string TableName => "game";
         protected override IInitialQueryBuilder GetBaseQuery() => _unitOfWork.Query(TransactionDomain.Game);
@@ -57,10 +53,10 @@ namespace Draughts.Repositories.Database {
         public override void Save(Game entity) {
             var obj = DbGame.FromDomainModel(entity);
             if (FindByIdOrNull(entity.Id) is null) {
-                GetBaseQuery().InsertInto("game").InsertFrom(obj).Execute();
+                GetBaseQuery().InsertInto(TableName).InsertFrom(obj).Execute();
             }
             else {
-                GetBaseQuery().Update("game").SetWithoutIdFrom(obj).Where("id").Is(entity.Id).Execute();
+                GetBaseQuery().Update(TableName).SetWithoutIdFrom(obj).Where("id").Is(entity.Id).Execute();
             }
         }
     }

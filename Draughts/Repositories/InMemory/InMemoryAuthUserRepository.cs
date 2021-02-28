@@ -1,5 +1,4 @@
 using Draughts.Domain.AuthUserAggregate.Models;
-using Draughts.Domain.AuthUserAggregate.Specifications;
 using Draughts.Domain.UserAggregate.Models;
 using Draughts.Repositories.Database;
 using Draughts.Repositories.Transaction;
@@ -7,7 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 
 namespace Draughts.Repositories.InMemory {
-    public class InMemoryAuthUserRepository : InMemoryRepository<AuthUser>, IAuthUserRepository {
+    public class InMemoryAuthUserRepository : InMemoryRepository<AuthUser, UserId>, IAuthUserRepository {
         private readonly IRoleRepository _roleRepository;
         private readonly IUnitOfWork _unitOfWork;
 
@@ -23,9 +22,6 @@ namespace Draughts.Repositories.InMemory {
                 .Select(u => u.ToDomainModel(authuserRoles[u.Id].ToList().AsReadOnly()))
                 .ToList();
         }
-
-        public AuthUser FindById(UserId id) => Find(new AuthUserIdSpecification(id));
-        public AuthUser? FindByIdOrNull(UserId id) => FindOrNull(new AuthUserIdSpecification(id));
 
         public override void Save(AuthUser entity) {
             var dbAuthUser = DbAuthUser.FromDomainModel(entity);

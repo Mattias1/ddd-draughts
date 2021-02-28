@@ -65,8 +65,10 @@ namespace Draughts.Repositories.InMemory {
         public static List<DbAuthUserRole> AuthUserRolesTable { get; } = new List<DbAuthUserRole>();
 
         public static List<DbAuthUser> TempAuthUsersTable { get; } = new List<DbAuthUser>();
-        public static List<DbAuthUser> AuthUsersTable { get; } = new List<DbAuthUser> {
-        };
+        public static List<DbAuthUser> AuthUsersTable { get; } = new List<DbAuthUser>();
+
+        public static List<DbAdminLog> TempAdminLogsTable { get; } = new List<DbAdminLog>();
+        public static List<DbAdminLog> AdminLogsTable { get; } = new List<DbAdminLog>();
 
         public static List<DomainEvent> TempDomainEventsTable { get; } = new List<DomainEvent>();
         public static List<DomainEvent> DomainEventsTable { get; } = new List<DomainEvent>();

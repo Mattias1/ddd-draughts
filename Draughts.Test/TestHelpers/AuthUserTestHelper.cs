@@ -86,6 +86,10 @@ namespace Draughts.Test.TestHelpers {
                 _roles = roles;
                 return this;
             }
+            public AuthUserBuilder AddRole(Role role) {
+                _roles.Add(role);
+                return this;
+            }
 
             public AuthUser Build() {
                 if (_id is null) {

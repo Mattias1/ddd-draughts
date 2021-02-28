@@ -1,20 +1,16 @@
 using Draughts.Domain.AuthUserAggregate.Models;
-using Draughts.Domain.AuthUserAggregate.Specifications;
 using Draughts.Repositories.Transaction;
 using SqlQueryBuilder.Builder;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace Draughts.Repositories.Database {
-    public class DbRoleRepository : DbRepository<Role, DbRole>, IRoleRepository {
+    public class DbRoleRepository : DbRepository<Role, RoleId, DbRole>, IRoleRepository {
         private readonly IUnitOfWork _unitOfWork;
 
         public DbRoleRepository(IUnitOfWork unitOfWork) {
             _unitOfWork = unitOfWork;
         }
-
-        public Role FindById(RoleId id) => Find(new RoleIdSpecification(id));
-        public Role? FindByIdOrNull(RoleId id) => FindOrNull(new RoleIdSpecification(id));
 
         public IReadOnlyList<Permission> PermissionsForRole(RoleId id) {
             var role = FindByIdOrNull(id);
@@ -47,7 +43,7 @@ namespace Draughts.Repositories.Database {
         public override void Save(Role entity) {
             var obj = DbRole.FromDomainModel(entity);
             if (FindByIdOrNull(entity.Id) is null) {
-                GetBaseQuery().InsertInto("role").InsertFrom(obj).Execute();
+                GetBaseQuery().InsertInto(TableName).InsertFrom(obj).Execute();
                 InsertPermissions(entity.Id, entity.Permissions.Select(p => p.Value));
             }
             else {
@@ -57,7 +53,7 @@ namespace Draughts.Repositories.Database {
                 var toDelete = oldPermissions.Except(newPermissions);
                 var toAdd = newPermissions.Except(oldPermissions);
 
-                GetBaseQuery().Update("role").SetWithoutIdFrom(obj).Where("id").Is(entity.Id).Execute();
+                GetBaseQuery().Update(TableName).SetWithoutIdFrom(obj).Where("id").Is(entity.Id).Execute();
                 if (toDelete.Any()) {
                     GetBaseQuery().DeleteFrom("permission_role")
                         .Where("role_id").Is(entity.Id)

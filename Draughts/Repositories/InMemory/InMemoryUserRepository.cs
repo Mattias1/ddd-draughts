@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 
 namespace Draughts.Repositories.InMemory {
-    public class InMemoryUserRepository : InMemoryRepository<User>, IUserRepository {
+    public class InMemoryUserRepository : InMemoryRepository<User, UserId>, IUserRepository {
         private readonly IUnitOfWork _unitOfWork;
 
         public InMemoryUserRepository(IUnitOfWork unitOfWork) {
@@ -14,9 +14,6 @@ namespace Draughts.Repositories.InMemory {
         }
 
         protected override IList<User> GetBaseQuery() => UserDatabase.UsersTable.Select(u => u.ToDomainModel()).ToList();
-
-        public User FindById(UserId id) => Find(new UserIdSpecification(id));
-        public User? FindByIdOrNull(UserId id) => FindOrNull(new UserIdSpecification(id));
 
         public override void Save(User entity) {
             var user = DbUser.FromDomainModel(entity);

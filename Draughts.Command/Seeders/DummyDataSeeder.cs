@@ -136,12 +136,16 @@ namespace Draughts.Command.Seeders {
                 var roles = _roleRepository.List();
                 var pendingRegistrationRole = roles.Single(r => r.Rolename == Role.PENDING_REGISTRATION_ROLENAME);
                 var registeredUserRole = roles.Single(r => r.Rolename == Role.REGISTERED_USER_ROLENAME);
+                var adminRole = roles.Single(r => r.Rolename == Role.ADMIN_ROLENAME);
 
                 foreach (var u in users) {
                     var role = u.Username.Value.Contains("Bobby") ? pendingRegistrationRole : registeredUserRole;
-                    var authUser = AuthUserTestHelper.FromUserAndRoles(u, role).WithPasswordHash("admin").Build();
+                    var authUserBuilder = AuthUserTestHelper.FromUserAndRoles(u, role).WithPasswordHash("admin");
+                    if (u.Username == "Matty") {
+                        authUserBuilder.AddRole(adminRole);
+                    }
 
-                    _authUserRepository.Save(authUser);
+                    _authUserRepository.Save(authUserBuilder.Build());
                 }
 
                 tran.Commit();
