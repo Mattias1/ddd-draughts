@@ -10,7 +10,7 @@ using System.Linq;
 using static Draughts.Repositories.Database.JoinEnum;
 
 namespace Draughts.Repositories.Database {
-    public class DbAuthUserRepository : DbRepository<AuthUser, DbAuthUser>, IAuthUserRepository {
+    public class DbAuthUserRepository : DbRepository<AuthUser, UserId, DbAuthUser>, IAuthUserRepository {
         private readonly IRoleRepository _roleRepository;
         private readonly IUnitOfWork _unitOfWork;
 
@@ -18,9 +18,6 @@ namespace Draughts.Repositories.Database {
             _roleRepository = roleRepository;
             _unitOfWork = unitOfWork;
         }
-
-        public AuthUser FindById(UserId id) => Find(new AuthUserIdSpecification(id));
-        public AuthUser? FindByIdOrNull(UserId id) => FindOrNull(new AuthUserIdSpecification(id));
 
         protected override string TableName => "authuser";
         protected override IInitialQueryBuilder GetBaseQuery() => _unitOfWork.Query(TransactionDomain.AuthUser);
@@ -57,7 +54,7 @@ namespace Draughts.Repositories.Database {
         public override void Save(AuthUser entity) {
             var obj = DbAuthUser.FromDomainModel(entity);
             if (FindByIdOrNull(entity.Id) is null) {
-                GetBaseQuery().InsertInto("authuser").InsertFrom(obj).Execute();
+                GetBaseQuery().InsertInto(TableName).InsertFrom(obj).Execute();
                 InsertRoles(entity.Id, entity.Roles.Select(r => r.Id.Id));
             }
             else {
@@ -67,7 +64,7 @@ namespace Draughts.Repositories.Database {
                 var toDelete = oldRoleIds.Except(newRoleIds).ToArray();
                 var toAdd = newRoleIds.Except(oldRoleIds);
 
-                GetBaseQuery().Update("authuser").SetWithoutIdFrom(obj).Where("id").Is(entity.Id).Execute();
+                GetBaseQuery().Update(TableName).SetWithoutIdFrom(obj).Where("id").Is(entity.Id).Execute();
                 if (toDelete.Any()) {
                     GetBaseQuery().DeleteFrom("authuser_role")
                         .Where("user_id").Is(entity.Id)

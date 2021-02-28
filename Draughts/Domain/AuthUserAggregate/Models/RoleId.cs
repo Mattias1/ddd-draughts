@@ -7,7 +7,7 @@ namespace Draughts.Domain.AuthUserAggregate.Models {
 
         public RoleId(long id) {
             if (id <= 0) {
-                throw new ManualValidationException("Invalid user id.");
+                throw new ManualValidationException("Invalid role id.");
             }
             Id = id;
         }

@@ -5,6 +5,7 @@ using NodaTime;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using static Draughts.Domain.AuthUserAggregate.Models.Permission;
 using static Draughts.Domain.UserAggregate.Models.Rank;
 
 namespace Draughts.Repositories.Database {
@@ -108,6 +109,42 @@ namespace Draughts.Repositories.Database {
 
         public bool Equals(DbPermissionRole? other) {
             return other is not null && other.RoleId == RoleId && other.Permission == Permission;
+        }
+    }
+
+    public class DbAdminLog : IDbObject<DbAdminLog, AdminLog> {
+        public long Id { get; set; }
+        public string Type { get; set; }
+        public string Parameters { get; set; }
+        public long UserId { get; set; }
+        public string Username { get; set; }
+        public string Permission { get; set; }
+        public ZonedDateTime CreatedAt { get; set; }
+
+        public bool Equals(DbAdminLog? other) => Id.Equals(other?.Id);
+
+        public AdminLog ToDomainModel() {
+            return new AdminLog(
+                new AdminLogId(Id),
+                Type,
+                Parameters.Split(','),
+                new UserId(UserId),
+                new Username(Username),
+                new Permission(Permission),
+                CreatedAt
+            );
+        }
+
+        public static DbAdminLog FromDomainModel(AdminLog entity) {
+            return new DbAdminLog {
+                Id = entity.Id,
+                Type = entity.Type,
+                Parameters = string.Join(',', entity.Parameters),
+                UserId = entity.UserId,
+                Username = entity.Username,
+                Permission = entity.Permission.Value,
+                CreatedAt = entity.CreatedAt
+            };
         }
     }
 

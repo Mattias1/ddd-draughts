@@ -59,6 +59,7 @@ namespace Draughts.Repositories.Transaction {
                 func.Apply(AuthUserDatabase.TempPermissionRolesTable, AuthUserDatabase.PermissionRolesTable);
                 func.Apply(AuthUserDatabase.TempAuthUsersTable, AuthUserDatabase.AuthUsersTable);
                 func.Apply(AuthUserDatabase.TempAuthUserRolesTable, AuthUserDatabase.AuthUserRolesTable);
+                func.Apply(AuthUserDatabase.TempAdminLogsTable, AuthUserDatabase.AdminLogsTable);
                 func.Apply(AuthUserDatabase.TempDomainEventsTable, AuthUserDatabase.DomainEventsTable);
             }
 

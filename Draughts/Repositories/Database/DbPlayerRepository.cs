@@ -5,15 +5,12 @@ using SqlQueryBuilder.Builder;
 using System;
 
 namespace Draughts.Repositories.Database {
-    public class DbPlayerRepository : DbRepository<Player, DbPlayer>, IPlayerRepository {
+    public class DbPlayerRepository : DbRepository<Player, PlayerId, DbPlayer>, IPlayerRepository {
         private readonly IUnitOfWork _unitOfWork;
 
         public DbPlayerRepository(IUnitOfWork unitOfWork) {
             _unitOfWork = unitOfWork;
         }
-
-        public Player FindById(PlayerId id) => Find(new PlayerIdSpecification(id));
-        public Player? FindByIdOrNull(PlayerId id) => FindOrNull(new PlayerIdSpecification(id));
 
         protected override string TableName => "player";
         protected override IInitialQueryBuilder GetBaseQuery() => _unitOfWork.Query(TransactionDomain.Game);
