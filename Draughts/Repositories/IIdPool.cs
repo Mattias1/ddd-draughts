@@ -1,11 +1,11 @@
 namespace Draughts.Repositories {
     public interface IIdPool {
         int Count();
-        int CountGame();
-        int CountUser();
+        int CountForGame();
+        int CountForUser();
 
         long Next();
-        long NextGame();
-        long NextUser();
+        long NextForGame();
+        long NextForUser();
     }
 }

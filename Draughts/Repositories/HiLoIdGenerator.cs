@@ -52,12 +52,12 @@ namespace Draughts.Repositories {
             private readonly HiLoIdGenerator _generators;
 
             public int Count() => _generators.Count(DbIdGeneration.SUBJECT_MISC);
-            public int CountGame() => _generators.Count(DbIdGeneration.SUBJECT_GAME);
-            public int CountUser() => _generators.Count(DbIdGeneration.SUBJECT_USER);
+            public int CountForGame() => _generators.Count(DbIdGeneration.SUBJECT_GAME);
+            public int CountForUser() => _generators.Count(DbIdGeneration.SUBJECT_USER);
 
             public long Next() => _generators.Next(DbIdGeneration.SUBJECT_MISC);
-            public long NextGame() => _generators.Next(DbIdGeneration.SUBJECT_GAME);
-            public long NextUser() => _generators.Next(DbIdGeneration.SUBJECT_USER);
+            public long NextForGame() => _generators.Next(DbIdGeneration.SUBJECT_GAME);
+            public long NextForUser() => _generators.Next(DbIdGeneration.SUBJECT_USER);
 
             internal HiLoPool(HiLoIdGenerator generators) {
                 _generators = generators;

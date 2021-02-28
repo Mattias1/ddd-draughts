@@ -49,7 +49,7 @@ namespace Draughts.Test.TestHelpers {
 
         public static GameBuilder PendingGame(GameSettings settings, Player creator) => PendingGame(settings).WithPlayers(creator);
         public static GameBuilder PendingGame(GameSettings settings) {
-            var gameId = new GameId(IdTestHelper.NextGame());
+            var gameId = new GameId(IdTestHelper.NextForGame());
             return new GameBuilder()
                 .WithId(gameId)
                 .WithSettings(settings)

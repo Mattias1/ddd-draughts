@@ -90,8 +90,8 @@ namespace Draughts.Command.Seeders {
                     .InsertInto("id_generation")
                     .Columns("subject", "available_id")
                     .Values(DbIdGeneration.SUBJECT_MISC, IdTestHelper.Next())
-                    .Values(DbIdGeneration.SUBJECT_GAME, IdTestHelper.NextGame())
-                    .Values(DbIdGeneration.SUBJECT_USER, IdTestHelper.NextUser())
+                    .Values(DbIdGeneration.SUBJECT_GAME, IdTestHelper.NextForGame())
+                    .Values(DbIdGeneration.SUBJECT_USER, IdTestHelper.NextForUser())
                     .Execute();
 
                 tranFlavor.Commit();

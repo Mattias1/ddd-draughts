@@ -180,8 +180,8 @@ namespace Draughts.Command.Seeders {
         private void UpdateAvailableIds() {
             using (var tranFlavor = DbContext.Get.MiscTransaction()) {
                 UpdateAvailableId(tranFlavor, DbIdGeneration.SUBJECT_MISC, IdTestHelper.Next());
-                UpdateAvailableId(tranFlavor, DbIdGeneration.SUBJECT_GAME, IdTestHelper.NextGame());
-                UpdateAvailableId(tranFlavor, DbIdGeneration.SUBJECT_USER, IdTestHelper.NextUser());
+                UpdateAvailableId(tranFlavor, DbIdGeneration.SUBJECT_GAME, IdTestHelper.NextForGame());
+                UpdateAvailableId(tranFlavor, DbIdGeneration.SUBJECT_USER, IdTestHelper.NextForUser());
 
                 tranFlavor.Commit();
             }

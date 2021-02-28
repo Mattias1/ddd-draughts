@@ -8,8 +8,8 @@ namespace Draughts.Test.TestHelpers {
         };
 
         public static long Next() => Next(DbIdGeneration.SUBJECT_MISC);
-        public static long NextGame() => Next(DbIdGeneration.SUBJECT_GAME);
-        public static long NextUser() => Next(DbIdGeneration.SUBJECT_USER);
+        public static long NextForGame() => Next(DbIdGeneration.SUBJECT_GAME);
+        public static long NextForUser() => Next(DbIdGeneration.SUBJECT_USER);
         public static long Next(string subject) => _availableIds[subject]++;
 
         public static void Seed(long id) => Seed(DbIdGeneration.SUBJECT_MISC, id);

@@ -30,7 +30,7 @@ namespace Draughts.Test.TestHelpers {
             var registeredUserRole = RoleTestHelper.RegisteredUser().Build();
 
             return new AuthUserBuilder()
-                .WithId(IdTestHelper.NextUser())
+                .WithId(IdTestHelper.NextForUser())
                 .WithUsername(new Username(name))
                 .WithEmail($"{name}@example.com")
                 .WithPasswordHash(name)
