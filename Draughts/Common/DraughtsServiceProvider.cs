@@ -10,6 +10,7 @@ using Draughts.Repositories.InMemory;
 using Microsoft.Extensions.DependencyInjection;
 using NodaTime;
 using System;
+using Draughts.Application.ModPanel.Services;
 
 namespace Draughts.Common {
     public static class DraughtsServiceProvider {
@@ -46,8 +47,10 @@ namespace Draughts.Common {
 
             services.AddSingleton<SynchronizePendingUserEventHandler>();
             services.AddSingleton<FinishUserRegistrationEventHandler>();
+            services.AddSingleton<RoleCreatedOrEditedEventHandler>();
 
             services.AddSingleton<IAuthService, AuthService>();
+            services.AddSingleton<IModpanelRoleService, ModpanelRoleService>();
             services.AddSingleton<IGameService, GameService>();
             services.AddSingleton<IPlayGameService, PlayGameService>();
 
@@ -64,6 +67,7 @@ namespace Draughts.Common {
 
             unitOfWork.Register(serviceProvider.GetRequiredService<SynchronizePendingUserEventHandler>());
             unitOfWork.Register(serviceProvider.GetRequiredService<FinishUserRegistrationEventHandler>());
+            unitOfWork.Register(serviceProvider.GetRequiredService<RoleCreatedOrEditedEventHandler>());
         }
     }
 }

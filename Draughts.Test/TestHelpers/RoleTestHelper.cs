@@ -32,7 +32,9 @@ namespace Draughts.Test.TestHelpers {
                 .WithId(IdTestHelper.Next())
                 .WithRolename(Role.ADMIN_ROLENAME)
                 .WithCreatedAt(Feb29)
-                .WithPermissions(Permissions.ViewModPanel, Permissions.EditRoles, Permissions.PlayGame);
+                .WithPermissions(Permissions.PlayGame,
+                    Permissions.ViewModPanel, Permissions.EditGames,
+                    Permissions.EditRoles, Permissions.ViewAdminLogs);
         }
 
 
