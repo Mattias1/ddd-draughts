@@ -1,4 +1,5 @@
 using Draughts.Common.Events;
+using Draughts.Common.Utilities;
 using NodaTime;
 using SqlQueryBuilder.Builder;
 using System;
@@ -7,6 +8,9 @@ using System.Threading;
 
 namespace Draughts.Repositories.Transaction {
     public class InMemoryUnitOfWork : IUnitOfWork {
+        private readonly IClock _clock;
+        private readonly IIdGenerator _idGenerator;
+
         private readonly AsyncLocal<TransactionDomain?> _currentTransactionDomain;
         private readonly List<IDomainEventHandler> _eventHandlers;
         private readonly EventQueue _eventQueue;
@@ -18,7 +22,10 @@ namespace Draughts.Repositories.Transaction {
             get => _currentTransactionDomain.Value ?? throw new InvalidOperationException("There is no open transaction.");
         }
 
-        public InMemoryUnitOfWork(IClock clock) {
+        public InMemoryUnitOfWork(IClock clock, IIdGenerator idGenerator) {
+            _clock = clock;
+            _idGenerator = idGenerator;
+
             _currentTransactionDomain = new AsyncLocal<TransactionDomain?>();
             _eventHandlers = new List<IDomainEventHandler>();
             _eventQueue = new EventQueue(clock, _eventHandlers);
@@ -83,6 +90,10 @@ namespace Draughts.Repositories.Transaction {
 
         public void Register(IDomainEventHandler eventHandler) => _eventHandlers.Add(eventHandler);
 
+        public void Raise(Func<DomainEventId, ZonedDateTime, DomainEvent> evtFunc) {
+            var nextId = new DomainEventId(_idGenerator.ReservePool(1, 0, 0).Next());
+            Raise(evtFunc(nextId, _clock.UtcNow()));
+        }
         public void Raise(DomainEvent evt) {
             var domain = CurrentTransactionDomain;
             domain.InMemoryStore(evt, domain.TempDomainEventsTable);

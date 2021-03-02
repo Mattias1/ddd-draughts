@@ -1,4 +1,5 @@
 using Draughts.Common.Events;
+using Draughts.Common.Utilities;
 using Draughts.Repositories.Database;
 using NodaTime;
 using SqlQueryBuilder.Builder;
@@ -9,13 +10,19 @@ using System.Threading;
 
 namespace Draughts.Repositories.Transaction {
     public class DbUnitOfWork : IUnitOfWork {
+        private readonly IClock _clock;
+        private readonly IIdGenerator _idGenerator;
+
         private readonly AsyncLocal<Transaction?> _currentTransaction;
         private readonly List<IDomainEventHandler> _eventHandlers;
         private readonly EventQueue _eventQueue;
 
         private readonly object _lock = new object();
 
-        public DbUnitOfWork(IClock clock) {
+        public DbUnitOfWork(IClock clock, IIdGenerator idGenerator) {
+            _clock = clock;
+            _idGenerator = idGenerator;
+
             _currentTransaction = new AsyncLocal<Transaction?>();
             _eventHandlers = new List<IDomainEventHandler>();
             _eventQueue = new EventQueue(clock, _eventHandlers);
@@ -69,6 +76,10 @@ namespace Draughts.Repositories.Transaction {
 
         public void Register(IDomainEventHandler eventHandler) => _eventHandlers.Add(eventHandler);
 
+        public void Raise(Func<DomainEventId, ZonedDateTime, DomainEvent> evtFunc) {
+            var nextId = new DomainEventId(_idGenerator.ReservePool(1, 0, 0).Next());
+            Raise(evtFunc(nextId, _clock.UtcNow()));
+        }
         public void Raise(DomainEvent evt) {
             if (_currentTransaction.Value is null) {
                 throw new InvalidOperationException("You can only raise events from within a transaction context.");

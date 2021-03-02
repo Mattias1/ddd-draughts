@@ -1,24 +1,25 @@
-using Draughts.Application.Shared.Services;
 using Draughts.Common.Utilities;
+using Draughts.Domain.AuthUserAggregate.Events;
 using Draughts.Domain.AuthUserAggregate.Models;
 using Draughts.Domain.AuthUserAggregate.Specifications;
 using Draughts.Domain.UserAggregate.Models;
 using Draughts.Repositories;
+using Draughts.Repositories.Transaction;
 using NodaTime;
 
 namespace Draughts.Application.Auth.Services {
     public class AuthUserFactory : IAuthUserFactory {
         private readonly IAuthUserRepository _authUserRepository;
         private readonly IClock _clock;
-        private readonly IEventFactory _eventFactory;
         private readonly IRoleRepository _roleRepository;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public AuthUserFactory(IAuthUserRepository authUserRepository, IClock clock, IEventFactory eventFactory,
-                IRoleRepository roleRepository) {
+        public AuthUserFactory(IAuthUserRepository authUserRepository, IClock clock, IRoleRepository roleRepository,
+                IUnitOfWork unitOfWork) {
             _authUserRepository = authUserRepository;
             _clock = clock;
-            _eventFactory = eventFactory;
             _roleRepository = roleRepository;
+            _unitOfWork = unitOfWork;
         }
 
         public AuthUser CreateAuthUser(IIdPool idPool, string? name, string? email, string? plaintextPassword) {
@@ -33,7 +34,7 @@ namespace Draughts.Application.Auth.Services {
 
             _authUserRepository.Save(authUser);
 
-            _eventFactory.RaiseAuthUserCreated(authUser);
+            _unitOfWork.Raise(AuthUserCreated.Factory(authUser));
 
             return authUser;
         }

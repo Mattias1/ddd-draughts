@@ -25,6 +25,7 @@ namespace Draughts.IntegrationTest.EndToEnd.Database {
         private string? _cookie;
 
         public IClock Clock { get; }
+        public IIdGenerator IdGenerator { get; }
         public IUnitOfWork UnitOfWork { get; }
         public IRoleRepository RoleRepository { get; }
         public IAuthUserRepository AuthUserRepository { get; }
@@ -38,7 +39,8 @@ namespace Draughts.IntegrationTest.EndToEnd.Database {
             Client = new FlurlClient(Server.CreateClient()).EnableCookies();
 
             Clock = SystemClock.Instance;
-            UnitOfWork = new DbUnitOfWork(Clock);
+            IdGenerator = HiLoIdGenerator.DbHiloGIdGenerator(1, 1, 1);
+            UnitOfWork = new DbUnitOfWork(Clock, IdGenerator);
             RoleRepository = new DbRoleRepository(UnitOfWork);
             AuthUserRepository = new DbAuthUserRepository(RoleRepository, UnitOfWork);
             UserRepository = new DbUserRepository(UnitOfWork);
