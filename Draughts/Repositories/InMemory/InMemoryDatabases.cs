@@ -77,8 +77,8 @@ namespace Draughts.Repositories.InMemory {
             long adminRoleId = 1;
             long pendingRegistrationRoleId = 2;
             long registeredUserRoleId = 3;
-            AddRole(adminRoleId, Role.ADMIN_ROLENAME, new[] { Permissions.ViewModPanel.Value,
-                Permissions.EditRoles.Value, Permissions.PlayGame.Value });
+            AddRole(adminRoleId, Role.ADMIN_ROLENAME, new[] { Permissions.ViewModPanel.Value, Permissions.PlayGame.Value,
+                Permissions.EditGames.Value, Permissions.EditRoles.Value, Permissions.ViewAdminLogs.Value });
             AddRole(pendingRegistrationRoleId, Role.PENDING_REGISTRATION_ROLENAME, new[] { Permissions.PendingRegistration.Value });
             AddRole(registeredUserRoleId, Role.REGISTERED_USER_ROLENAME, new[] { Permissions.PlayGame.Value });
 

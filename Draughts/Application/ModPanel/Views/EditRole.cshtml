@@ -1,0 +1,33 @@
+@using Draughts.Application.ModPanel.ViewModels;
+@model RoleViewModel
+@{
+    ViewBag.Title = "Mod panel - Edit role";
+}
+
+<div class="text-container">
+    <h1>@ViewBag.Title</h1>
+
+    <div>
+        <form class="form-horizontal" action="/modpanel/role/@Model.Id/edit" method="post">
+            <h3>Role properties</h3>
+            <label>
+                <span>Rolename:</span>
+                <input type="text" name="rolename" value="@Model.Rolename" placeholder="Rolename" />
+            </label>
+
+            <h3>Permissions</h3>
+            @foreach (var p in Model.PermissionList) {
+                <label>
+                    <input type="checkbox" name="permissions" value="@p.Permission" checked="@p.IsGranted" />
+                    @p.Permission
+                </label>
+            }
+
+            <div class="form-group">
+                <span></span>
+                <input type="submit" value="Save role" />
+                <span><a href="/modpanel/roles">Cancel</a></span>
+            </div>
+        </form>
+    </div>
+</div>

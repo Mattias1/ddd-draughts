@@ -135,11 +135,11 @@ button:hover:not(.link), input[type=submit]:hover:not(.link) {
     background-color: #bbb;
 }
 
-.form-horizontal label, .form-horizontal div.radio-label {
+.form-horizontal label, .form-horizontal div.radio-label, .form-horizontal .form-group {
     display: block;
     padding: 3px 6px;
 }
-.form-horizontal label span, .form-horizontal div.radio-label span {
+.form-horizontal label span, .form-horizontal div.radio-label span, .form-horizontal .form-group span {
     display: inline-block;
     min-width: 200px;
 }

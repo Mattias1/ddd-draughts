@@ -8,7 +8,31 @@
     @Utils.SideMenu(Model.Menu)
 </nav>
 
-<div class="text-container">
+<div class="text-side-menu-container">
     <h1>@ViewBag.Title</h1>
-    <p>TODO</p>
+    <p>An overview of all the roles.</p>
+    <table class="page-table">
+        <thead>
+            <tr>
+                <th class="left">Role</th>
+                <th class="center small"># users</th>
+                <th class="center small"># grants</th>
+                <th class="center small"></th>
+                <th class="center small"></th>
+                <th class="center small"></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var role in Model.Roles) {
+                <tr>
+                    <td>@role.Rolename</td>
+                    <td class="center">?</td>
+                    <td class="center">@role.NrOfGrantedPermissions</td>
+                    <td class="center"><a href="/modpanel/role/@role.Id/edit">edit</a></td>
+                    <td class="center"><a href="/modpanel/role/@role.Id/users">users</a></td>
+                    <td class="center">@Utils.PostLink("delete", $"/modpanel/role/{role.Id}/delete")</td>
+                </tr>
+            }
+        </tbody>
+    </table>
 </div>
