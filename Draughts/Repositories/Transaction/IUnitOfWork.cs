@@ -1,4 +1,5 @@
 using Draughts.Common.Events;
+using NodaTime;
 using SqlQueryBuilder.Builder;
 using System;
 using System.Collections.Generic;
@@ -16,6 +17,7 @@ namespace Draughts.Repositories.Transaction {
         T WithTransaction<T>(TransactionDomain domain, Func<ITransaction, T> function);
         ITransaction BeginTransaction(TransactionDomain domain);
         void Register(IDomainEventHandler eventHandler);
+        void Raise(Func<DomainEventId, ZonedDateTime, DomainEvent> evtFunc);
         void Raise(DomainEvent evt);
         void FireAll();
         void Store<T>(T obj, List<T> table) where T : IEquatable<T>;

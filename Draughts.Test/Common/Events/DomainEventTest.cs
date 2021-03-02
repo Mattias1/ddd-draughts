@@ -6,6 +6,7 @@ using FluentAssertions;
 using Xunit;
 using NodaTime;
 using NodaTime.Testing;
+using Draughts.Domain.UserAggregate.Models;
 
 namespace Draughts.Test.Common.Events {
     public class DomainEventTest {
@@ -18,10 +19,10 @@ namespace Draughts.Test.Common.Events {
         [Fact]
         public void EqualWhenIdsAreEqual() {
             var pendingRole = RoleTestHelper.PendingRegistration().WithId(11).Build();
-            var left = new RoleCreated(pendingRole, new DomainEventId(1), _clock.UtcNow());
+            var left = new RoleCreated(pendingRole, new UserId(1), new DomainEventId(1), _clock.UtcNow());
 
             var registeredRole = RoleTestHelper.RegisteredUser().WithId(12).Build();
-            var right = new RoleCreated(registeredRole, new DomainEventId(1), _clock.UtcNow());
+            var right = new RoleCreated(registeredRole, new UserId(2), new DomainEventId(1), _clock.UtcNow());
 
             left.Equals((object)right).Should().BeTrue();
             left.Equals(right).Should().BeTrue();
@@ -33,8 +34,8 @@ namespace Draughts.Test.Common.Events {
         [Fact]
         public void NotEqualWhenIdsAreDifferent() {
             var role = RoleTestHelper.PendingRegistration().WithId(11).Build();
-            var left = new RoleCreated(role, new DomainEventId(1), _clock.UtcNow());
-            var right = new RoleCreated(role, new DomainEventId(2), _clock.UtcNow());
+            var left = new RoleCreated(role, new UserId(3), new DomainEventId(1), _clock.UtcNow());
+            var right = new RoleCreated(role, new UserId(3), new DomainEventId(2), _clock.UtcNow());
 
             left.Equals((object)right).Should().BeFalse();
             left.Equals(right).Should().BeFalse();
@@ -45,7 +46,7 @@ namespace Draughts.Test.Common.Events {
         [Fact]
         public void NotEqualWhenTheOtherIsNull() {
             var role = RoleTestHelper.PendingRegistration().WithId(11).Build();
-            var left = new RoleCreated(role, new DomainEventId(1), _clock.UtcNow());
+            var left = new RoleCreated(role, new UserId(4), new DomainEventId(1), _clock.UtcNow());
             RoleCreated? right = null;
 
             left.Equals(right as object).Should().BeFalse();
@@ -69,7 +70,8 @@ namespace Draughts.Test.Common.Events {
         [Fact]
         public void RegisterFailedAttemptShouldUpdateDateAndNrOfAttempts() {
             var role = RoleTestHelper.PendingRegistration().Build();
-            var evt = new RoleCreated(role, new DomainEventId(IdTestHelper.Next()), _clock.UtcNow().PlusHours(-1));
+            var evt = new RoleCreated(role, new UserId(5),
+                new DomainEventId(IdTestHelper.Next()), _clock.UtcNow().PlusHours(-1));
 
             evt.RegisterFailedAttempt(_clock.UtcNow());
 

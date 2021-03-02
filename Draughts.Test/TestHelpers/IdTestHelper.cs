@@ -1,3 +1,4 @@
+using Draughts.Repositories;
 using Draughts.Repositories.Database;
 using System.Collections.Generic;
 
@@ -18,6 +19,22 @@ namespace Draughts.Test.TestHelpers {
             Seed(DbIdGeneration.SUBJECT_MISC, id);
             Seed(DbIdGeneration.SUBJECT_GAME, gameId);
             Seed(DbIdGeneration.SUBJECT_USER, userId);
+        }
+
+        public static FakeIdGenerator Fake() => new FakeIdGenerator();
+
+        public class FakeIdGenerator : IIdGenerator {
+            public IIdPool ReservePool() => new FakePool();
+            public IIdPool ReservePool(int minimumSizeMisc, int minimumSizeGame, int minimumSizeUser) => ReservePool();
+        }
+
+        public class FakePool : IIdPool {
+            public int Count() => 1;
+            public int CountForGame() => 1;
+            public int CountForUser() => 1;
+            public long Next() => IdTestHelper.Next();
+            public long NextForGame() => IdTestHelper.NextForGame();
+            public long NextForUser() => IdTestHelper.NextForUser();
         }
     }
 }

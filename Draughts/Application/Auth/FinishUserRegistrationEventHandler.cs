@@ -8,7 +8,7 @@ namespace Draughts.Application.Auth {
         private readonly IAuthUserFactory _authUserFactory;
         private readonly IUnitOfWork _unitOfWork;
 
-        public FinishUserRegistrationEventHandler(IAuthUserFactory authUserFactory, IUnitOfWork unitOfWork) : base(UserCreated.TYPE) {
+        public FinishUserRegistrationEventHandler(IAuthUserFactory authUserFactory, IUnitOfWork unitOfWork) {
             _authUserFactory = authUserFactory;
             _unitOfWork = unitOfWork;
         }

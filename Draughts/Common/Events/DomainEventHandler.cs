@@ -6,7 +6,7 @@ namespace Draughts.Common.Events {
     public abstract class DomainEventHandler : IDomainEventHandler {
         protected IReadOnlyList<string> RecognizedTypes { get; }
 
-        public DomainEventHandler(params string[] recognizedTypes) {
+        protected DomainEventHandler(params string[] recognizedTypes) {
             if (recognizedTypes.Length == 0) {
                 throw new ArgumentException("No DomainEvent types provided this handler can handle.", nameof(recognizedTypes));
             }
@@ -18,10 +18,10 @@ namespace Draughts.Common.Events {
         public abstract void Handle(DomainEvent evt);
     }
 
-    public abstract class DomainEventHandler<T> : DomainEventHandler where T : DomainEvent {
-        public DomainEventHandler(string type) : base(type) { }
+    public abstract class DomainEventHandler<T> : IDomainEventHandler where T : DomainEvent {
+        public bool CanHandle(DomainEvent evt) => evt is T;
 
-        public override void Handle(DomainEvent evt) {
+        public void Handle(DomainEvent evt) {
             if (!(evt is T typedEvent)) {
                 throw new ArgumentException("Whut? Cannot handle this event.", nameof(evt));
             }

@@ -8,7 +8,7 @@ namespace Draughts.Application.Auth {
         private readonly IUserFactory _userFactory;
         private readonly IUnitOfWork _unitOfWork;
 
-        public SynchronizePendingUserEventHandler(IUserFactory userFactory, IUnitOfWork unitOfWork) : base(AuthUserCreated.TYPE) {
+        public SynchronizePendingUserEventHandler(IUserFactory userFactory, IUnitOfWork unitOfWork) {
             _userFactory = userFactory;
             _unitOfWork = unitOfWork;
         }

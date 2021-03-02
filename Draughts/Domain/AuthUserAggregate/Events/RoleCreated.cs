@@ -1,6 +1,8 @@
 using Draughts.Common.Events;
 using Draughts.Domain.AuthUserAggregate.Models;
+using Draughts.Domain.UserAggregate.Models;
 using NodaTime;
+using System;
 
 namespace Draughts.Domain.AuthUserAggregate.Events {
     public class RoleCreated : DomainEvent {
@@ -8,10 +10,16 @@ namespace Draughts.Domain.AuthUserAggregate.Events {
 
         public RoleId RoleId { get; }
         public string Rolename { get; }
+        public UserId CreatedBy { get; }
 
-        public RoleCreated(Role role, DomainEventId id, ZonedDateTime created) : base(id, TYPE, created) {
+        public RoleCreated(Role role, UserId createdBy, DomainEventId id, ZonedDateTime created) : base(id, TYPE, created) {
             RoleId = role.Id;
             Rolename = role.Rolename;
+            CreatedBy = createdBy;
+        }
+
+        public static Func<DomainEventId, ZonedDateTime, RoleCreated> Factory(Role role, UserId createdBy) {
+            return (id, now) => new RoleCreated(role, createdBy, id, now);
         }
     }
 }

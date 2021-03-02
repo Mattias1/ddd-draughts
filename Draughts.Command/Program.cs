@@ -8,7 +8,8 @@ namespace Draughts.Command {
     class Program {
         static void Main(string[] args) {
             var clock = SystemClock.Instance;
-            var unitOfWork = new DbUnitOfWork(clock);
+            // TODO: I can't inject the DbHiloGenerator here, as the seeders do the id part manually.
+            var unitOfWork = new DbUnitOfWork(clock, null);
             var roleRepository = new DbRoleRepository(unitOfWork);
             var authUserRepository = new DbAuthUserRepository(roleRepository, unitOfWork);
             var gameRepository = new DbGameRepository(unitOfWork);
@@ -20,7 +21,8 @@ namespace Draughts.Command {
                     switch (arg) {
                         case "data:essential":
                             Console.WriteLine("Start seeding essential data...");
-                            var essentialSeeder = new EssentialDataSeeder(authUserRepository, roleRepository, unitOfWork, userRepository);
+                            var essentialSeeder = new EssentialDataSeeder(authUserRepository, roleRepository,
+                                unitOfWork, userRepository);
                             essentialSeeder.SeedData();
                             Console.WriteLine("Successfully seeded the database with essential data.");
                             break;

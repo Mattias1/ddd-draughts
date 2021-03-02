@@ -1,6 +1,7 @@
 using Draughts.Common.Events;
 using Draughts.Common.Utilities;
 using Draughts.Domain.AuthUserAggregate.Events;
+using Draughts.Domain.UserAggregate.Models;
 using Draughts.Repositories.Database;
 using Draughts.Repositories.InMemory;
 using Draughts.Repositories.Transaction;
@@ -20,7 +21,7 @@ namespace Draughts.Test.Repositories.InMemory {
         public InMemoryUnitOfWorkTest() {
             _clock = FakeClock.FromUtc(2020, 02, 29);
             _fakeDomainEventHandler = new FakeDomainEventHandler();
-            _unitOfWork = new InMemoryUnitOfWork(_clock);
+            _unitOfWork = new InMemoryUnitOfWork(_clock, IdTestHelper.Fake());
 
             AuthUserDatabase.AuthUsersTable.Clear();
             AuthUserDatabase.RolesTable.Clear();
@@ -144,7 +145,7 @@ namespace Draughts.Test.Repositories.InMemory {
 
         private void RaiseEvent(long id) {
             var role = RoleTestHelper.PendingRegistration().Build();
-            var evt = new RoleCreated(role, new DomainEventId(id), _clock.UtcNow());
+            var evt = new RoleCreated(role, new UserId(1), new DomainEventId(id), _clock.UtcNow());
             _unitOfWork.Raise(evt);
         }
 

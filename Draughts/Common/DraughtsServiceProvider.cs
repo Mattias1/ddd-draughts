@@ -3,7 +3,6 @@ using Draughts.Application.Auth.Services;
 using Draughts.Application.Lobby.Services;
 using Draughts.Application.PlayGame.Services;
 using Draughts.Application.Shared.Middleware;
-using Draughts.Application.Shared.Services;
 using Draughts.Repositories;
 using Draughts.Repositories.Database;
 using Draughts.Repositories.Transaction;
@@ -53,7 +52,6 @@ namespace Draughts.Common {
             services.AddSingleton<IPlayGameService, PlayGameService>();
 
             services.AddSingleton<IAuthUserFactory, AuthUserFactory>();
-            services.AddSingleton<IEventFactory, EventFactory>();
             services.AddSingleton<IUserFactory, UserFactory>();
             services.AddSingleton<IGameFactory, GameFactory>();
 
@@ -62,10 +60,10 @@ namespace Draughts.Common {
         }
 
         public static void RegisterEventHandlers(IServiceProvider serviceProvider) {
-            var unitOfWork = serviceProvider.GetService<IUnitOfWork>()!;
+            var unitOfWork = serviceProvider.GetRequiredService<IUnitOfWork>();
 
-            unitOfWork.Register(serviceProvider.GetService<SynchronizePendingUserEventHandler>()!);
-            unitOfWork.Register(serviceProvider.GetService<FinishUserRegistrationEventHandler>()!);
+            unitOfWork.Register(serviceProvider.GetRequiredService<SynchronizePendingUserEventHandler>());
+            unitOfWork.Register(serviceProvider.GetRequiredService<FinishUserRegistrationEventHandler>());
         }
     }
 }
