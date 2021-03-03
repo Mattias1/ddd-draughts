@@ -4,10 +4,10 @@ using System.Collections.Generic;
 using System.Linq;
 
 namespace Draughts.Application.ModPanel.ViewModels {
-    public class ModpanelRolesViewModel : ModpanelViewModel {
+    public class ModPanelRolesViewModel : ModPanelViewModel {
         public IReadOnlyList<RoleViewModel> Roles { get; }
 
-        public ModpanelRolesViewModel(IReadOnlyList<Role> roles, MenuViewModel menuViewModel)
+        public ModPanelRolesViewModel(IReadOnlyList<Role> roles, MenuViewModel menuViewModel)
                 : base (menuViewModel) {
             Roles = roles.Select(r => new RoleViewModel(r)).ToList().AsReadOnly();
         }

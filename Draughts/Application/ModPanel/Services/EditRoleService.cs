@@ -1,8 +1,8 @@
 using Draughts.Common;
-using Draughts.Common.Events;
 using Draughts.Common.Utilities;
 using Draughts.Domain.AuthUserAggregate.Events;
 using Draughts.Domain.AuthUserAggregate.Models;
+using Draughts.Domain.AuthUserAggregate.Specifications;
 using Draughts.Domain.UserAggregate.Models;
 using Draughts.Repositories;
 using Draughts.Repositories.Transaction;
@@ -11,14 +11,16 @@ using System.Collections.Generic;
 using System.Linq;
 
 namespace Draughts.Application.ModPanel.Services {
-    public class ModpanelRoleService : IModpanelRoleService {
+    public class EditRoleService : IEditRoleService {
+        private readonly IAuthUserRepository _authUserRepository;
         private readonly IClock _clock;
         private readonly IIdGenerator _idGenerator;
         private readonly IRoleRepository _roleRepository;
         private readonly IUnitOfWork _unitOfWork;
 
-        public ModpanelRoleService(IClock clock, IIdGenerator idGenerator, IRoleRepository roleRepository,
-                IUnitOfWork unitOfWork) {
+        public EditRoleService(IAuthUserRepository authUserRepository, IClock clock, IIdGenerator idGenerator,
+                IRoleRepository roleRepository, IUnitOfWork unitOfWork) {
+            _authUserRepository = authUserRepository;
             _clock = clock;
             _idGenerator = idGenerator;
             _roleRepository = roleRepository;
@@ -39,6 +41,20 @@ namespace Draughts.Application.ModPanel.Services {
             });
         }
 
+        public Role CreateRole(UserId responsibleUserId, string rolename) {
+            return _unitOfWork.WithAuthUserTransaction(tran => {
+                var nextId = _idGenerator.ReservePool().Next();
+                var createdAt = _clock.UtcNow();
+                var role = new Role(new RoleId(nextId), rolename, createdAt);
+
+                _roleRepository.Save(role);
+
+                _unitOfWork.Raise(RoleCreated.Factory(role, responsibleUserId));
+
+                return tran.CommitWith(role);
+            });
+        }
+
         public void EditRole(UserId responsibleUserId, RoleId roleId, string rolename, string[] grantedPermissions) {
             _unitOfWork.WithAuthUserTransaction(tran => {
                 var role = FindRole(roleId);
@@ -47,6 +63,22 @@ namespace Draughts.Application.ModPanel.Services {
                 _roleRepository.Save(role);
 
                 _unitOfWork.Raise(RoleEdited.Factory(role, responsibleUserId));
+
+                tran.Commit();
+            });
+        }
+
+        public void DeleteRole(UserId responsibleUserId, RoleId roleId) {
+            _unitOfWork.WithAuthUserTransaction(tran => {
+                var role = FindRole(roleId);
+                long nrOfUsersWithRole = _authUserRepository.Count(new UsersWithRoleSpecification(roleId));
+                if (nrOfUsersWithRole > 0) {
+                    throw new ManualValidationException("You cannot delete roles with users assigned.");
+                }
+
+                _roleRepository.Delete(roleId);
+
+                _unitOfWork.Raise(RoleDeleted.Factory(role, responsibleUserId));
 
                 tran.Commit();
             });

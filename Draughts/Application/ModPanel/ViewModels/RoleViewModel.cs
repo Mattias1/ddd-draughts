@@ -1,6 +1,8 @@
+using Draughts.Application.Shared.ViewModels;
 using Draughts.Domain.AuthUserAggregate.Models;
 using NodaTime;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Draughts.Application.ModPanel.ViewModels {
     public class RoleViewModel {
@@ -16,6 +18,14 @@ namespace Draughts.Application.ModPanel.ViewModels {
             NrOfGrantedPermissions = role.Permissions.Count;
             PermissionList = role.BuildPermissionsList();
             CreatedAt = role.CreatedAt;
+        }
+    }
+
+    public class RoleWithUsersViewModel : RoleViewModel {
+        public IReadOnlyList<BasicUserViewModel> AuthUsers { get; }
+
+        public RoleWithUsersViewModel(Role role, IReadOnlyList<AuthUser> authUsers) : base(role) {
+            AuthUsers = authUsers.Select(a => new BasicUserViewModel(a.Id, a.Username)).ToList().AsReadOnly();
         }
     }
 }

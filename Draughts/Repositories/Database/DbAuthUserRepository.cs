@@ -26,7 +26,7 @@ namespace Draughts.Repositories.Database {
         protected override IQueryBuilder ApplySpec(Specification<AuthUser> spec, IQueryBuilder builder) {
             var joins = spec.RequiredJoins().ToArray();
             if (joins.Contains(PossibleJoins.AuthUserRole)) {
-                builder.Join("authuser_role", "authuser.id", "authuser.user_id");
+                builder.Join("authuser_role", "authuser.id", "authuser_role.user_id");
             }
             return base.ApplySpec(spec, builder);
         }
