@@ -1,10 +1,10 @@
 using Draughts.Application.Shared.ViewModels;
 
 namespace Draughts.Application.ModPanel.ViewModels {
-    public class ModpanelViewModel {
+    public class ModPanelViewModel {
         public MenuViewModel Menu { get; }
 
-        public ModpanelViewModel(MenuViewModel menuViewModel) {
+        public ModPanelViewModel(MenuViewModel menuViewModel) {
             Menu = menuViewModel;
         }
     }

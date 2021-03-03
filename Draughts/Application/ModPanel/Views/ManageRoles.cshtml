@@ -1,5 +1,5 @@
 @using Draughts.Application.ModPanel.ViewModels;
-@model ModpanelRolesViewModel
+@model ModPanelRolesViewModel
 @{
     ViewBag.Title = "Mod panel - Manage roles";
 }
@@ -35,4 +35,14 @@
             }
         </tbody>
     </table>
+
+    <div>
+        <form class="form-horizontal" action="/modpanel/role/create" method="post">
+            <div class="form-group">
+                <span>Create a new role:</span>
+                <input type="text" name="rolename" placeholder="Rolename" />
+                <input type="submit" value="Create" />
+            </div>
+        </form>
+    </div>
 </div>

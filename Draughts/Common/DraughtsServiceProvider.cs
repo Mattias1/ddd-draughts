@@ -47,10 +47,11 @@ namespace Draughts.Common {
 
             services.AddSingleton<SynchronizePendingUserEventHandler>();
             services.AddSingleton<FinishUserRegistrationEventHandler>();
-            services.AddSingleton<RoleCreatedOrEditedEventHandler>();
+            services.AddSingleton<ModPanelRoleEventHandler>();
 
             services.AddSingleton<IAuthService, AuthService>();
-            services.AddSingleton<IModpanelRoleService, ModpanelRoleService>();
+            services.AddSingleton<IEditRoleService, EditRoleService>();
+            services.AddSingleton<IRoleUsersService, RoleUsersService>();
             services.AddSingleton<IGameService, GameService>();
             services.AddSingleton<IPlayGameService, PlayGameService>();
 
@@ -67,7 +68,7 @@ namespace Draughts.Common {
 
             unitOfWork.Register(serviceProvider.GetRequiredService<SynchronizePendingUserEventHandler>());
             unitOfWork.Register(serviceProvider.GetRequiredService<FinishUserRegistrationEventHandler>());
-            unitOfWork.Register(serviceProvider.GetRequiredService<RoleCreatedOrEditedEventHandler>());
+            unitOfWork.Register(serviceProvider.GetRequiredService<ModPanelRoleEventHandler>());
         }
     }
 }

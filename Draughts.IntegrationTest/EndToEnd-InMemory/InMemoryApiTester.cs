@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.TestHost;
 using NodaTime;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using System.Net.Http;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -55,6 +56,18 @@ namespace Draughts.IntegrationTest.EndToEnd.InMemory {
 
             return LoginAs(authUser);
         }
+        public string LoginAsAdmin() {
+            var registeredUserRole = new Role(new RoleId(3), Role.REGISTERED_USER_ROLENAME, Clock.UtcNow(), Permissions.PlayGame);
+            var adminRole = new Role(new RoleId(1), Role.ADMIN_ROLENAME, Clock.UtcNow(), Permissions.All.ToArray());
+
+            var userId = new UserId(UserDatabase.AdminId);
+            var name = new Username("Admin");
+            var hash = PasswordHash.Generate("admin", userId, name);
+            var authUser = new AuthUser(userId, name, hash,
+                new Email($"{name}@example.com"), Clock.UtcNow(), new[] { adminRole, registeredUserRole });
+
+            return LoginAs(authUser);
+        }
         public string LoginAs(AuthUser authUser) {
             return _cookie = "Bearer%20" + JsonWebToken.Generate(authUser, Clock).ToJwtString();
         }
@@ -68,6 +81,7 @@ namespace Draughts.IntegrationTest.EndToEnd.InMemory {
 
         public async Task<string> GetString(Url url) => await RequestBuilder(url).GetStringAsync();
 
+        public async Task<HttpResponseMessage> Post(Url url) => await RequestBuilder(url).PostAsync(null);
         public async Task<HttpResponseMessage> PostJson<T>(Url url, T body) => await RequestBuilder(url).PostJsonAsync(body);
         public async Task<HttpResponseMessage> PostForm<T>(Url url, T body) => await RequestBuilder(url).PostUrlEncodedAsync(body);
 

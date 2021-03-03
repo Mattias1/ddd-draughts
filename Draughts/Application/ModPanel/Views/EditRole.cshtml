@@ -6,6 +6,11 @@
 
 <div class="text-container">
     <h1>@ViewBag.Title</h1>
+    <p>
+        Edit the '@Model.Rolename' role and its permissions.
+        You can also edit this role's <a href="/modpanel/role/@Model.Id/users">users</a>
+        or <a href="/modpanel/roles">go back</a>.
+    </p>
 
     <div>
         <form class="form-horizontal" action="/modpanel/role/@Model.Id/edit" method="post">

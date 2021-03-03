@@ -2,6 +2,7 @@ using Draughts.Domain.AuthUserAggregate.Models;
 using Draughts.Domain.AuthUserAggregate.Specifications;
 using Draughts.Repositories.Database;
 using Draughts.Repositories.Transaction;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -36,6 +37,10 @@ namespace Draughts.Repositories.InMemory {
                 };
                 _unitOfWork.Store(dbPermission, AuthUserDatabase.TempPermissionRolesTable);
             }
+        }
+
+        public void Delete(RoleId roleId) {
+            throw new NotImplementedException("Deleting data is not supported for the in memory database.");
         }
     }
 }

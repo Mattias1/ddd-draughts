@@ -18,8 +18,9 @@ namespace Draughts.Repositories.Database {
         }
 
         protected override string TableName => "role";
+        private const string PermissionRoleTableName = "permission_role";
         protected override IInitialQueryBuilder GetBaseQuery() => _unitOfWork.Query(TransactionDomain.AuthUser);
-        private IQueryBuilder GetPermissionRoleQuery() => GetBaseQuery().SelectAllFrom("permission_role");
+        private IQueryBuilder GetPermissionRoleQuery() => GetBaseQuery().SelectAllFrom(PermissionRoleTableName);
 
         protected override IReadOnlyList<Role> Parse(IReadOnlyList<DbRole> qs) {
             if (qs.Count == 0) {
@@ -55,7 +56,7 @@ namespace Draughts.Repositories.Database {
 
                 GetBaseQuery().Update(TableName).SetWithoutIdFrom(obj).Where("id").Is(entity.Id).Execute();
                 if (toDelete.Any()) {
-                    GetBaseQuery().DeleteFrom("permission_role")
+                    GetBaseQuery().DeleteFrom(PermissionRoleTableName)
                         .Where("role_id").Is(entity.Id)
                         .And("permission").In(toDelete)
                         .Execute();
@@ -69,7 +70,7 @@ namespace Draughts.Repositories.Database {
                 return;
             }
             var values = BuildInsertValues(roleId.ToString(), permissions);
-            GetBaseQuery().InsertInto("permission_role")
+            GetBaseQuery().InsertInto(PermissionRoleTableName)
                 .Columns("role_id", "permission").Values(values)
                 .Execute();
         }
@@ -79,6 +80,11 @@ namespace Draughts.Repositories.Database {
                 yield return roleId;
                 yield return permission;
             }
+        }
+
+        public void Delete(RoleId roleId) {
+            GetBaseQuery().DeleteFrom(PermissionRoleTableName).Where("role_id").Is(roleId).Execute();
+            GetBaseQuery().DeleteFrom(TableName).Where("id").Is(roleId).Execute();
         }
     }
 }

@@ -1,0 +1,45 @@
+@using Draughts.Application.ModPanel.ViewModels;
+@model RoleWithUsersViewModel
+@{
+    ViewBag.Title = "Mod panel - Role users";
+}
+
+<div class="text-container">
+    <h1>@ViewBag.Title</h1>
+    <p>
+        Edit the users for the '@Model.Rolename' role.
+        You can also <a href="/modpanel/role/@Model.Id/edit">edit</a> this role and it's permissions
+        or <a href="/modpanel/roles">go back</a>.
+    </p>
+    </p>
+    <table class="page-table">
+        <thead>
+            <tr>
+                <th class="left">User</th>
+                <th class="center small"></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var u in Model.AuthUsers) {
+                <tr>
+                    <td>@Utils.UserLink(u.Id, u.Username)</td>
+                    <td class="center">@Utils.PostLink("remove", $"/modpanel/role/{Model.Id}/user/{u.Id}/remove")</td>
+                </tr>
+            }
+            @if (Model.AuthUsers.Count == 0) {
+                <tr><td colspan="2">No users assigned to this role.</td></tr>
+            }
+        </tbody>
+    </table>
+
+    <h3>Add user</h3>
+    <div>
+        <form class="form-horizontal" action="/modpanel/role/@Model.Id/user" method="post">
+            <div class="form-group">
+                <span>Assign role to user:</span>
+                <input type="text" name="username" placeholder="Username" />
+                <input type="submit" value="Assign" />
+            </div>
+        </form>
+    </div>
+</div>

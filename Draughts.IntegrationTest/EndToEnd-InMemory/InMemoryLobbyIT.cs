@@ -51,14 +51,8 @@ namespace Draughts.IntegrationTest.EndToEnd.InMemory {
         }
 
         private async Task PostCreateGame() {
-            var result = await _apiTest.PostForm("/lobby/create", new GameCreationRequest {
-                BoardSize = 6,
-                WhiteHasFirstMove = true,
-                FlyingKings = true,
-                MenCaptureBackwards = true,
-                CaptureConstraints = "max",
-                JoinAs = "black",
-            });
+            var result = await _apiTest.PostForm("/lobby/create", new GameCreationRequest(
+                6, true, true, true, "max", "black"));
             result.StatusCode.Should().Be(302);
             if (!_apiTest.TryRegex(result.Headers.Location?.ToString(), @"/game/(\d+)", out string? value)) {
                 result.Headers.Location.Should().Be("/game/<some-value>");

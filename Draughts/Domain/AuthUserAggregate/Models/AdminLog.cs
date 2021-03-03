@@ -3,6 +3,7 @@ using Draughts.Common.Utilities;
 using Draughts.Domain.UserAggregate.Models;
 using Draughts.Repositories;
 using NodaTime;
+using SqlQueryBuilder.Common;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -30,41 +31,60 @@ namespace Draughts.Domain.AuthUserAggregate.Models {
         }
 
         public string Description() {
+            string userId, username = "";
             switch (Type) {
                 case "role.create":
-                    var (roleId, roleName) = UnpackTwoParameters();
-                    return $"Created a new role '{roleId} - {roleName}'";
+                    var (roleId, rolename) = Parameters.UnpackDuo();
+                    return $"Created a new role '{roleId} - {rolename}'";
                 case "role.edit":
-                    (roleId, roleName) = UnpackTwoParameters();
-                    return $"Edited the role '{roleId} - {roleName}'";
+                    (roleId, rolename) = Parameters.UnpackDuo();
+                    return $"Edited the role '{roleId} - {rolename}'";
+                case "role.gained":
+                    (roleId, rolename, userId, username) = Parameters.UnpackQuad();
+                    return $"Assigned the role '{roleId} - {rolename}' to '{userId} - {username}'";
+                case "role.lost":
+                    (roleId, rolename, userId, username) = Parameters.UnpackQuad();
+                    return $"Removed the role '{roleId} - {rolename}' from '{userId} - {username}'";
                 default:
                     throw new InvalidOperationException("Unknown admin log type.");
             }
         }
 
-        private (string, string) UnpackTwoParameters() {
-            if (Parameters.Count != 2) {
-                throw new InvalidOperationException("Invalid parameter unpacking.");
-            }
-            return (Parameters[0], Parameters[1]);
-        }
-
-        public static AdminLog CreateRoleLog(IIdPool idPool, IClock clock, AuthUser user, RoleId roleId, string rolename) {
+        public static AdminLog CreateRoleLog(IIdPool idPool, IClock clock, AuthUser actor, RoleId roleId, string rolename) {
             return new AdminLog(
-                new AdminLogId(idPool.Next()), "role.create", Params(roleId, rolename),
-                user.Id, user.Username,
+                Next(idPool), "role.create", Params(roleId, rolename),
+                actor.Id, actor.Username,
                 Permissions.EditRoles, clock.UtcNow()
             );
         }
 
-        public static AdminLog EditRoleLog(IIdPool idPool, IClock clock, AuthUser user, RoleId roleId, string rolename) {
+        public static AdminLog EditRoleLog(IIdPool idPool, IClock clock, AuthUser actor, RoleId roleId, string rolename) {
             return new AdminLog(
-                new AdminLogId(idPool.Next()), "role.edit", Params(roleId, rolename),
-                user.Id, user.Username,
+                Next(idPool), "role.edit", Params(roleId, rolename),
+                actor.Id, actor.Username,
                 Permissions.EditRoles, clock.UtcNow()
             );
         }
 
+        public static AdminLog RoleGainedLog(IIdPool idPool, IClock clock, AuthUser actor,
+                RoleId roleId, string rolename, UserId userId, Username username) {
+            return new AdminLog(
+                Next(idPool), "role.gained", Params(roleId, rolename, userId, username),
+                actor.Id, actor.Username,
+                Permissions.EditRoles, clock.UtcNow()
+            );
+        }
+
+        public static AdminLog RoleLostLog(IIdPool idPool, IClock clock, AuthUser actor,
+                RoleId roleId, string rolename, UserId userId, Username username) {
+            return new AdminLog(
+                Next(idPool), "role.lost", Params(roleId, rolename, userId, username),
+                actor.Id, actor.Username,
+                Permissions.EditRoles, clock.UtcNow()
+            );
+        }
+
+        private static AdminLogId Next(IIdPool idPool) => new AdminLogId(idPool.Next());
         private static IReadOnlyList<string> Params(params string[] parameters) => parameters.ToList().AsReadOnly();
     }
 }

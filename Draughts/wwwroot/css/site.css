@@ -179,7 +179,11 @@ button.link, input[type=submit].link {
 .page-table .center { text-align: center; }
 .page-table .right { text-align: right; }
 
-.page-table td, .page-table th {
+.page-table th {
+    margin: 0;
+    padding: 3px 5px;
+}
+.page-table td {
     margin: 0;
     padding: 3px 5px;
     border-top: 1px solid #444;

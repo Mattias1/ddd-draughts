@@ -84,14 +84,8 @@ namespace Draughts.Application.Lobby {
             _ => throw new ManualValidationException("Unknown color choice.")
         };
 
-        public class GameCreationRequest {
-            public int? BoardSize { get; set; }
-            public bool? WhiteHasFirstMove { get; set; }
-            public bool? FlyingKings { get; set; }
-            public bool? MenCaptureBackwards { get; set; }
-            public string? CaptureConstraints { get; set; }
-            public string? JoinAs { get; set; }
-
+        public record GameCreationRequest(int? BoardSize, bool? WhiteHasFirstMove,
+                bool? FlyingKings, bool? MenCaptureBackwards, string? CaptureConstraints, string? JoinAs) {
             public GameSettings BuildGameSettings() {
                 var firstMove = WhiteHasFirstMove!.Value ? Color.White : Color.Black;
                 var capConstraints = CaptureConstraints switch

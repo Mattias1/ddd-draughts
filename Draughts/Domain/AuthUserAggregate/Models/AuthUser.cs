@@ -8,7 +8,7 @@ using System.Linq;
 
 namespace Draughts.Domain.AuthUserAggregate.Models {
     public class AuthUser : Entity<AuthUser, UserId> {
-        private readonly List<Role> _roles;
+        private readonly List<Role> _roles; // TODO: These should be RoleIds, not Roles.
 
         public override UserId Id { get; }
         public Username Username { get; private set; }
@@ -39,7 +39,21 @@ namespace Draughts.Domain.AuthUserAggregate.Models {
             }
 
             _roles.Clear();
-            _roles.Add(registeredUserRole);
+            AssignRole(registeredUserRole);
+        }
+
+        public void AssignRole(Role role) {
+            if (_roles.Contains(role)) {
+                throw new ManualValidationException("This user already has that role.");
+            }
+            _roles.Add(role);
+        }
+
+        public void RemoveRole(Role role) {
+            if (!_roles.Contains(role)) {
+                throw new ManualValidationException("This user doesn't have that role.");
+            }
+            _roles.Remove(role);
         }
     }
 }

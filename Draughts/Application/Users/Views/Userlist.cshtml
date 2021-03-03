@@ -11,12 +11,12 @@
             <tr>
                 <th class="left small">Rank</th>
                 <th class="left">Name</th>
-                <th class="left normal">Total games</th>
+                <th class="center normal">Total games</th>
             </tr>
         </thead>
         <tfoot>
-            <tr class="center">
-                <td colspan="3">Some footer text.</td>
+            <tr>
+                <td colspan="3" class="center">Some footer text.</td>
             </tr>
         </tfoot>
         <tbody>
@@ -24,7 +24,7 @@
                 <tr>
                     <td>Icon #@user.Rank.Icon</td>
                     <td>@Utils.UserLinkWithRank(user)</td>
-                    <td>@user.GamesPlayed</td>
+                    <td class="center">@user.GamesPlayed</td>
                 </tr>
             }
         </tbody>
