@@ -2,22 +2,23 @@ using Draughts.Application.Shared.Middleware;
 using Draughts.Common;
 using Draughts.Common.Utilities;
 using Draughts.Domain.AuthUserAggregate.Models;
-using Draughts.Domain.AuthUserAggregate.Specifications;
-using Draughts.Repositories;
-using Draughts.Repositories.Database;
-using Draughts.Repositories.Transaction;
+using Draughts.Domain.UserAggregate.Models;
+using Draughts.IntegrationTest.EndToEnd.Base;
+using Draughts.Repositories.InMemory;
 using Flurl;
 using Flurl.Http;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.TestHost;
 using NodaTime;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using System.Net.Http;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using static Draughts.Domain.AuthUserAggregate.Models.Permission;
 
-namespace Draughts.IntegrationTest.EndToEnd.Database {
-    public class ApiTester {
+namespace Draughts.IntegrationTest.EndToEnd.InMemory {
+    public class InMemoryApiTester : IApiTester {
         public static Url BASE_URL = "http://localhost:8080";
 
         public TestServer Server { get; }
@@ -25,51 +26,53 @@ namespace Draughts.IntegrationTest.EndToEnd.Database {
         private string? _cookie;
 
         public IClock Clock { get; }
-        public IIdGenerator IdGenerator { get; }
-        public IUnitOfWork UnitOfWork { get; }
-        public IRoleRepository RoleRepository { get; }
-        public IAuthUserRepository AuthUserRepository { get; }
-        public IUserRepository UserRepository { get; }
-        public IGameRepository GameRepository { get; }
-        public IPlayerRepository PlayerRepository { get; }
 
-        public ApiTester() {
-            var webHostBuilder = new WebHostBuilder().UseStartup<Startup>();
+        public InMemoryApiTester() {
+            var webHostBuilder = new WebHostBuilder().UseStartup<InMemoryStartup>();
             Server = new TestServer(webHostBuilder);
             Client = new FlurlClient(Server.CreateClient()).EnableCookies();
 
             Clock = SystemClock.Instance;
-            IdGenerator = HiLoIdGenerator.DbHiloGIdGenerator(1, 1, 1);
-            UnitOfWork = new DbUnitOfWork(Clock, IdGenerator);
-            RoleRepository = new DbRoleRepository(UnitOfWork);
-            AuthUserRepository = new DbAuthUserRepository(RoleRepository, UnitOfWork);
-            UserRepository = new DbUserRepository(UnitOfWork);
-            GameRepository = new DbGameRepository(UnitOfWork);
-            PlayerRepository = new DbPlayerRepository(UnitOfWork);
         }
 
-        public string LoginAsTestPlayerBlack() => LoginAs("TestPlayerBlack");
-        public string LoginAsTestPlayerWhite() => LoginAs("TestPlayerWhite");
-        public string LoginAs(string username) {
-            var authUser = UnitOfWork.WithAuthUserTransaction(tran => {
-                var authUser = AuthUserRepository.Find(new UsernameSpecification(username));
-                return tran.CommitWith(authUser);
-            });
+        public string LoginAsAdmin() {
+            var adminRole = new Role(new RoleId(1), Role.ADMIN_ROLENAME, Clock.UtcNow(), Permissions.All.ToArray());
+            var registeredUserRole = new Role(new RoleId(3), Role.REGISTERED_USER_ROLENAME, Clock.UtcNow(), Permissions.PlayGame);
+            var authUser = BuildTestAuthUser(UserDatabase.AdminId, "Admin", adminRole, registeredUserRole);
+            return LoginAs(authUser);
+        }
+        public string LoginAsTestPlayerBlack() {
+            var registeredUserRole = new Role(new RoleId(3), Role.REGISTERED_USER_ROLENAME, Clock.UtcNow(), Permissions.PlayGame);
+            var authUser = BuildTestAuthUser(UserDatabase.TestPlayerBlack, "TestPlayerBlack", registeredUserRole);
+            return LoginAs(authUser);
+        }
+        public string LoginAsTestPlayerWhite() {
+            var registeredUserRole = new Role(new RoleId(3), Role.REGISTERED_USER_ROLENAME, Clock.UtcNow(), Permissions.PlayGame);
+            var authUser = BuildTestAuthUser(UserDatabase.TestPlayerWhite, "TestPlayerWhite", registeredUserRole);
             return LoginAs(authUser);
         }
         public string LoginAs(AuthUser authUser) {
             return _cookie = "Bearer%20" + JsonWebToken.Generate(authUser, Clock).ToJwtString();
         }
 
-        public ApiTester As(string cookie) {
+        public IApiTester As(string cookie) {
             _cookie = cookie;
             return this;
+        }
+
+        private AuthUser BuildTestAuthUser(long id, string name, params Role[] roles) {
+            var userId = new UserId(id);
+            var username = new Username(name);
+            var hash = PasswordHash.Generate("admin", userId, username);
+            var email = new Email($"{username}@example.com");
+            return new AuthUser(userId, username, hash, email, Clock.UtcNow(), roles);
         }
 
         public void Logout() => _cookie = null;
 
         public async Task<string> GetString(Url url) => await RequestBuilder(url).GetStringAsync();
 
+        public async Task<HttpResponseMessage> Post(Url url) => await RequestBuilder(url).PostAsync(null);
         public async Task<HttpResponseMessage> PostJson<T>(Url url, T body) => await RequestBuilder(url).PostJsonAsync(body);
         public async Task<HttpResponseMessage> PostForm<T>(Url url, T body) => await RequestBuilder(url).PostUrlEncodedAsync(body);
 

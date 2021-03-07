@@ -9,7 +9,7 @@ namespace Draughts.Repositories.Database {
         protected DbRepository() { }
 
         public long Count() => GetBaseQuery().Select().CountAll().From(TableName).SingleLong() ?? 0;
-        public long Count(Specification<T> spec) => spec.ApplyQueryBuilder(
+        public long Count(Specification<T> spec) => ApplySpec(spec,
             GetBaseQuery().Select().CountAll().From(TableName)).SingleLong() ?? 0;
 
         public T Find(Specification<T> spec) => Parse(ApplySpec(spec, GetBaseSelectQuery()).Single<TDb>());

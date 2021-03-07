@@ -1,14 +1,17 @@
+using Draughts.IntegrationTest.EndToEnd.Base;
 using FluentAssertions;
 using System.Threading.Tasks;
 using Xunit;
 using static Draughts.Application.Auth.AuthController;
 
-namespace Draughts.IntegrationTest.EndToEnd.InMemory {
-    public class InMemoryAuthenticationIT {
-        private readonly InMemoryApiTester _apiTest;
+namespace Draughts.IntegrationTest.EndToEnd.Database {
+    public class AuthenticationIT {
+        private readonly DbApiTester _apiTest;
+        private readonly AuthenticationApiTester<DbApiTester> _authenticationApi;
 
-        public InMemoryAuthenticationIT() {
-            _apiTest = new InMemoryApiTester();
+        public AuthenticationIT() {
+            _apiTest = new DbApiTester();
+            _authenticationApi = new AuthenticationApiTester<DbApiTester>(_apiTest);
         }
 
         [Fact]
