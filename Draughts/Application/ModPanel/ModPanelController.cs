@@ -106,7 +106,7 @@ namespace Draughts.Application.ModPanel {
         public IActionResult RoleUsers(long roleId) {
             try {
                 var (role, authUsers) = _roleUserService.GetRoleWithUsers(new RoleId(roleId));
-                return View(new RoleWithUsersViewModel(role, authUsers));
+                return View(new RoleWithUsersViewModel(role, authUsers)); // TODO: Success message
             }
             catch (ManualValidationException e) {
                 return ErrorRedirect("/modpanel/roles", e.Message);
