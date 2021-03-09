@@ -9,7 +9,6 @@ using System.Collections.Generic;
 using System.Linq;
 
 namespace Draughts.Application.Shared {
-    [ServiceFilter(typeof(JwtActionFilter))]
     [ServiceFilter(typeof(AuthContextActionFilter))]
     public class BaseController : Controller {
         private AuthContext? _authContext;

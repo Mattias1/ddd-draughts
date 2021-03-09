@@ -1,4 +1,5 @@
 using Draughts.Common;
+using Draughts.Application.Shared.Middleware;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -12,7 +13,7 @@ namespace Draughts {
     public class Startup {
         public IConfiguration Configuration { get; }
 
-        protected virtual bool useInMemoryDatabase => false;
+        protected virtual bool UseInMemoryDatabase => false;
 
         public Startup(IConfiguration configuration) {
             Configuration = configuration;
@@ -20,9 +21,12 @@ namespace Draughts {
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services) {
-            services.AddControllersWithViews();
+            services.AddControllersWithViews(options => {
+                options.Filters.Add(typeof(JwtActionFilter));
+                options.Filters.Add(typeof(ExceptionLoggerActionFilter));
+            });
 
-            DraughtsServiceProvider.ConfigureServices(services, useInMemoryDatabase);
+            DraughtsServiceProvider.ConfigureServices(services, UseInMemoryDatabase);
 
             ConfigureRazorViewLocations(services);
         }
@@ -65,8 +69,14 @@ namespace Draughts {
         }
     }
 
+    public class DbStartup : Startup {
+        protected override bool UseInMemoryDatabase => false;
+
+        public DbStartup(IConfiguration configuration) : base(configuration) { }
+    }
+
     public class InMemoryStartup : Startup {
-        protected override bool useInMemoryDatabase => true;
+        protected override bool UseInMemoryDatabase => true;
 
         public InMemoryStartup(IConfiguration configuration) : base(configuration) { }
     }

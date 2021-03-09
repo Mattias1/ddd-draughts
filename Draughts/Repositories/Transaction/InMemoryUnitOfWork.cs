@@ -5,6 +5,8 @@ using SqlQueryBuilder.Builder;
 using System;
 using System.Collections.Generic;
 using System.Threading;
+using static Draughts.Repositories.Transaction.PairTableFunctions;
+using static Draughts.Repositories.Transaction.TransactionDomain;
 
 namespace Draughts.Repositories.Transaction {
     public class InMemoryUnitOfWork : IUnitOfWork {
@@ -16,7 +18,7 @@ namespace Draughts.Repositories.Transaction {
         private readonly EventQueue _eventQueue;
         private readonly Dictionary<string, Transaction> _openTransactions;
 
-        private readonly object _lock = new object();
+        private static readonly object _lock = new object();
 
         private TransactionDomain CurrentTransactionDomain {
             get => _currentTransactionDomain.Value ?? throw new InvalidOperationException("There is no open transaction.");
@@ -90,19 +92,19 @@ namespace Draughts.Repositories.Transaction {
 
         public void Register(IDomainEventHandler eventHandler) => _eventHandlers.Add(eventHandler);
 
-        public void Raise(Func<DomainEventId, ZonedDateTime, DomainEvent> evtFunc) {
+        public void Raise(Func<DomainEventId, ZonedDateTime, DomainEvent> evtFactoryFunc) {
             var nextId = new DomainEventId(_idGenerator.ReservePool(1, 0, 0).Next());
-            Raise(evtFunc(nextId, _clock.UtcNow()));
+            Raise(evtFactoryFunc(nextId, _clock.UtcNow()));
         }
         public void Raise(DomainEvent evt) {
-            var domain = CurrentTransactionDomain;
-            domain.InMemoryStore(evt, domain.TempDomainEventsTable);
+            Store(evt, tran => CurrentTransactionDomain.TempDomainEventsTable(tran));
         }
 
         public void FireAll() => _eventQueue.FireAll();
 
-        public void Store<T>(T obj, List<T> table) where T : IEquatable<T> {
-            CurrentTransactionDomain.InMemoryStore(obj, table);
+        public void Store<T>(T obj, Func<ITransaction, List<T>> tableFunc) where T : IEquatable<T> {
+            var tran = _openTransactions[CurrentTransactionDomain.Key];
+            InMemoryDatabaseUtils.StoreInto(obj, tableFunc(tran));
         }
 
         public IInitialQueryBuilder Query(TransactionDomain domain) {
@@ -137,6 +139,8 @@ namespace Draughts.Repositories.Transaction {
                     throw new InvalidOperationException("Cannot start a transaction twice.");
                 }
 
+                _transactionDomain.CreateTempDatabase(this);
+
                 IsOpen = true;
                 Succeeded = false;
                 OnOpened?.Invoke(this, new TransactionEventArgs(_transactionDomain));
@@ -151,8 +155,9 @@ namespace Draughts.Repositories.Transaction {
                     throw new InvalidOperationException("Cannot commit the transaction because it isn't open.");
                 }
 
-                _committedEvents.AddRange(_transactionDomain.TempDomainEventsTable);
-                _transactionDomain.InMemoryFlush();
+                _committedEvents.AddRange(_transactionDomain.TempDomainEventsTable(this));
+                _transactionDomain.ApplyForAllTablePairs(this, new StoreIntoFunction());
+                _transactionDomain.ApplyForAllTablePairs(this, new ClearTempFunction());
 
                 IsOpen = false;
                 Succeeded = true;
@@ -163,7 +168,8 @@ namespace Draughts.Repositories.Transaction {
                     throw new InvalidOperationException("Cannot rollback the transaction because it isn't open.");
                 }
 
-                _transactionDomain.InMemoryRollback();
+                _transactionDomain.ApplyForAllTablePairs(this, new ClearTempFunction());
+                _transactionDomain.RemoveTempDatabase(this);
 
                 IsOpen = false;
             }

@@ -23,9 +23,9 @@ namespace Draughts.Test.Repositories.InMemory {
             _fakeDomainEventHandler = new FakeDomainEventHandler();
             _unitOfWork = new InMemoryUnitOfWork(_clock, IdTestHelper.Fake());
 
-            AuthUserDatabase.AuthUsersTable.Clear();
-            AuthUserDatabase.RolesTable.Clear();
-            AuthUserDatabase.DomainEventsTable.Clear();
+            AuthUserDatabase.Get.AuthUsersTable.Clear();
+            AuthUserDatabase.Get.RolesTable.Clear();
+            AuthUserDatabase.Get.DomainEventsTable.Clear();
         }
 
         [Fact]
@@ -36,8 +36,7 @@ namespace Draughts.Test.Repositories.InMemory {
                 // No commit
             }
 
-            AuthUserDatabase.RolesTable.Should().BeEmpty();
-            AuthUserDatabase.TempRolesTable.Should().BeEmpty();
+            AuthUserDatabase.Get.RolesTable.Should().BeEmpty();
         }
 
         [Fact]
@@ -57,9 +56,8 @@ namespace Draughts.Test.Repositories.InMemory {
                 });
             }
 
-            AuthUserDatabase.RolesTable.Should().Contain(r => r.Id == 2);
-            AuthUserDatabase.RolesTable.Should().HaveCount(1);
-            AuthUserDatabase.TempRolesTable.Should().BeEmpty();
+            AuthUserDatabase.Get.RolesTable.Should().Contain(r => r.Id == 2);
+            AuthUserDatabase.Get.RolesTable.Should().HaveCount(1);
         }
 
         [Fact]
@@ -71,10 +69,9 @@ namespace Draughts.Test.Repositories.InMemory {
                 tran.Commit();
             }
 
-            AuthUserDatabase.RolesTable.Should().Contain(r => r.Id == 1);
-            AuthUserDatabase.RolesTable.Should().Contain(r => r.Id == 2);
-            AuthUserDatabase.RolesTable.Should().HaveCount(2);
-            AuthUserDatabase.TempRolesTable.Should().BeEmpty();
+            AuthUserDatabase.Get.RolesTable.Should().Contain(r => r.Id == 1);
+            AuthUserDatabase.Get.RolesTable.Should().Contain(r => r.Id == 2);
+            AuthUserDatabase.Get.RolesTable.Should().HaveCount(2);
         }
 
         [Fact]
@@ -151,7 +148,7 @@ namespace Draughts.Test.Repositories.InMemory {
 
         private void StoreTestRole(long id) {
             var role = BuildTestRole(id);
-            _unitOfWork.Store(role, AuthUserDatabase.TempRolesTable);
+            _unitOfWork.Store(role, tran => AuthUserDatabase.Temp(tran).RolesTable);
         }
 
         private DbRole BuildTestRole(long id) {

@@ -4,6 +4,7 @@ using Draughts.Domain.AuthUserAggregate.Models;
 using Draughts.Domain.GameAggregate.Models;
 using Draughts.Domain.UserAggregate.Models;
 using Draughts.Repositories.Database;
+using Draughts.Repositories.Transaction;
 using NodaTime;
 using System;
 using System.Collections.Generic;
@@ -11,7 +12,9 @@ using static Draughts.Domain.AuthUserAggregate.Models.Permission;
 using static Draughts.Domain.UserAggregate.Models.Rank;
 
 namespace Draughts.Repositories.InMemory {
-    public static class UserDatabase {
+    public interface IInMemoryDatabase { }
+
+    public class UserDatabase : IInMemoryDatabase {
         public const long AdminId = 1;
         public const long UserId = 2;
         public const long TheColonelId = 3;
@@ -26,74 +29,105 @@ namespace Draughts.Repositories.InMemory {
         public const long START_FOR_NEXT_GAME_IDS = 5;
         public const long START_FOR_NEXT_USER_IDS = 10;
 
-        public static List<DbUser> TempUsersTable { get; } = new List<DbUser>();
-        public static List<DbUser> UsersTable { get; } = new List<DbUser> {
-            CreateUser(AdminId, "Admin", 1000, Ranks.Private, 0),
-            CreateUser(UserId, "User", 1700, Ranks.WarrantOfficer, 7),
-            CreateUser(TheColonelId, "TheColonel", 3456, Ranks.Colonel, 37),
-            CreateUser(MattyId, "Matty", 2345, Ranks.Lieutenant, 42),
-            CreateUser(MathyId, "Mathy", 800, Ranks.LanceCorporal, 12),
-            CreateUser(JackDeHaasId, "JackDeHaas", 9001, Ranks.FieldMarshal, 1337),
-            CreateUser(BobbyId, "<script>alert('Hi, my name is Bobby');</script>", 1000, Ranks.Private, 0),
-            CreateUser(TestPlayerBlack, "TestPlayerBlack", 1000, Ranks.Private, 0),
-            CreateUser(TestPlayerWhite, "TestPlayerWhite", 1000, Ranks.Private, 0),
-        };
+        private static UserDatabase? _instance;
+        public static UserDatabase Get => _instance ??= Initialize();
 
-        private static DbUser CreateUser(long id, string name, int rating, Rank rank, int gamesPlayed) {
+        public List<DbUser> UsersTable { get; }
+        public List<DomainEvent> DomainEventsTable { get; }
+
+        private static UserDatabase Initialize() {
+            var database = new UserDatabase();
+
+            database.AddUser(AdminId, "Admin", 1000, Ranks.Private, 0);
+            database.AddUser(UserId, "User", 1700, Ranks.WarrantOfficer, 7);
+            database.AddUser(TheColonelId, "TheColonel", 3456, Ranks.Colonel, 37);
+            database.AddUser(MattyId, "Matty", 2345, Ranks.Lieutenant, 42);
+            database.AddUser(MathyId, "Mathy", 800, Ranks.LanceCorporal, 12);
+            database.AddUser(JackDeHaasId, "JackDeHaas", 9001, Ranks.FieldMarshal, 1337);
+            database.AddUser(BobbyId, "<script>alert('Hi, my name is Bobby');</script>", 1000, Ranks.Private, 0);
+            database.AddUser(TestPlayerBlack, "TestPlayerBlack", 1000, Ranks.Private, 0);
+            database.AddUser(TestPlayerWhite, "TestPlayerWhite", 1000, Ranks.Private, 0);
+
+            return database;
+        }
+
+        private UserDatabase() {
+            UsersTable = new List<DbUser>();
+            DomainEventsTable = new List<DomainEvent>();
+        }
+
+        private void AddUser(long id, string name, int rating, Rank rank, int gamesPlayed) {
             if (id >= START_FOR_NEXT_USER_IDS) {
                 throw new InvalidOperationException("START_FOR_NEXT_IDS too low!");
             }
             var now = SystemClock.Instance.UtcNow();
-            return new DbUser {
+            UsersTable.Add(new DbUser {
                 Id = id, Username = name, Rating = rating, Rank = rank.Name,
                 GamesPlayed = gamesPlayed, CreatedAt = now
-            };
+            });
         }
 
-        public static List<DomainEvent> TempDomainEventsTable { get; } = new List<DomainEvent>();
-        public static List<DomainEvent> DomainEventsTable { get; } = new List<DomainEvent>();
+        private static Dictionary<ITransaction, UserDatabase> _tempDatabases = new Dictionary<ITransaction, UserDatabase>();
+        public static void CreateTempDatabase(ITransaction transaction) => _tempDatabases[transaction] = new UserDatabase();
+        public static void RemoveTempDatabase(ITransaction transaction) => _tempDatabases.Remove(transaction);
+        public static UserDatabase Temp(ITransaction transaction) {
+            if (_tempDatabases.TryGetValue(transaction, out UserDatabase? database)) {
+                return database;
+            }
+            throw new InvalidOperationException("Transaction is not open - no temp database is created.");
+        }
     }
 
-    public static class AuthUserDatabase {
-        public static List<DbPermissionRole> TempPermissionRolesTable { get; } = new List<DbPermissionRole>();
-        public static List<DbPermissionRole> PermissionRolesTable { get; } = new List<DbPermissionRole>();
+    public class AuthUserDatabase : IInMemoryDatabase {
+        private static AuthUserDatabase? _instance;
+        public static AuthUserDatabase Get => _instance ??= Initialize();
 
-        public static List<DbRole> TempRolesTable { get; } = new List<DbRole>();
-        public static List<DbRole> RolesTable { get; } = new List<DbRole>();
+        public List<DbPermissionRole> PermissionRolesTable { get; }
+        public List<DbRole> RolesTable { get; }
+        public List<DbAuthUserRole> AuthUserRolesTable { get; }
+        public List<DbAuthUser> AuthUsersTable { get; }
+        public List<DbAdminLog> AdminLogsTable { get; }
+        public List<DomainEvent> DomainEventsTable { get; }
 
-        public static List<DbAuthUserRole> TempAuthUserRolesTable { get; } = new List<DbAuthUserRole>();
-        public static List<DbAuthUserRole> AuthUserRolesTable { get; } = new List<DbAuthUserRole>();
+        private static AuthUserDatabase Initialize() {
+            var database = new AuthUserDatabase();
 
-        public static List<DbAuthUser> TempAuthUsersTable { get; } = new List<DbAuthUser>();
-        public static List<DbAuthUser> AuthUsersTable { get; } = new List<DbAuthUser>();
-
-        public static List<DbAdminLog> TempAdminLogsTable { get; } = new List<DbAdminLog>();
-        public static List<DbAdminLog> AdminLogsTable { get; } = new List<DbAdminLog>();
-
-        public static List<DomainEvent> TempDomainEventsTable { get; } = new List<DomainEvent>();
-        public static List<DomainEvent> DomainEventsTable { get; } = new List<DomainEvent>();
-
-        static AuthUserDatabase() {
             long adminRoleId = 1;
             long pendingRegistrationRoleId = 2;
             long registeredUserRoleId = 3;
-            AddRole(adminRoleId, Role.ADMIN_ROLENAME, new[] { Permissions.ViewModPanel.Value, Permissions.PlayGame.Value,
-                Permissions.EditGames.Value, Permissions.EditRoles.Value, Permissions.ViewAdminLogs.Value });
-            AddRole(pendingRegistrationRoleId, Role.PENDING_REGISTRATION_ROLENAME, new[] { Permissions.PendingRegistration.Value });
-            AddRole(registeredUserRoleId, Role.REGISTERED_USER_ROLENAME, new[] { Permissions.PlayGame.Value });
 
-            CreateAuthUser(UserDatabase.AdminId, "Admin", adminRoleId, registeredUserRoleId);
-            CreateAuthUser(UserDatabase.UserId, "User", registeredUserRoleId);
-            CreateAuthUser(UserDatabase.TheColonelId, "TheColonel", registeredUserRoleId);
-            CreateAuthUser(UserDatabase.MattyId, "Matty", adminRoleId, registeredUserRoleId);
-            CreateAuthUser(UserDatabase.MathyId, "Mathy", registeredUserRoleId);
-            CreateAuthUser(UserDatabase.JackDeHaasId, "JackDeHaas", registeredUserRoleId);
-            CreateAuthUser(UserDatabase.BobbyId, "<script>alert('Hi, my name is Bobby');</script>", pendingRegistrationRoleId);
-            CreateAuthUser(UserDatabase.TestPlayerBlack, "TestPlayerBlack", registeredUserRoleId);
-            CreateAuthUser(UserDatabase.TestPlayerWhite, "TestPlayerWhite", registeredUserRoleId);
+            database.AddRole(adminRoleId, Role.ADMIN_ROLENAME, new[] {
+                Permissions.ViewModPanel.Value, Permissions.PlayGame.Value,
+                Permissions.EditGames.Value, Permissions.EditRoles.Value, Permissions.ViewAdminLogs.Value
+            });
+            database.AddRole(pendingRegistrationRoleId, Role.PENDING_REGISTRATION_ROLENAME,
+                new[] { Permissions.PendingRegistration.Value });
+            database.AddRole(registeredUserRoleId, Role.REGISTERED_USER_ROLENAME,
+                new[] { Permissions.PlayGame.Value });
+
+            database.AddAuthUser(UserDatabase.AdminId, "Admin", adminRoleId, registeredUserRoleId);
+            database.AddAuthUser(UserDatabase.UserId, "User", registeredUserRoleId);
+            database.AddAuthUser(UserDatabase.TheColonelId, "TheColonel", registeredUserRoleId);
+            database.AddAuthUser(UserDatabase.MattyId, "Matty", adminRoleId, registeredUserRoleId);
+            database.AddAuthUser(UserDatabase.MathyId, "Mathy", registeredUserRoleId);
+            database.AddAuthUser(UserDatabase.JackDeHaasId, "JackDeHaas", registeredUserRoleId);
+            database.AddAuthUser(UserDatabase.BobbyId, "<script>alert('Hi, my name is Bobby');</script>", pendingRegistrationRoleId);
+            database.AddAuthUser(UserDatabase.TestPlayerBlack, "TestPlayerBlack", registeredUserRoleId);
+            database.AddAuthUser(UserDatabase.TestPlayerWhite, "TestPlayerWhite", registeredUserRoleId);
+
+            return database;
         }
 
-        private static void AddRole(long id, string name, string[] permissions) {
+        private AuthUserDatabase() {
+            PermissionRolesTable = new List<DbPermissionRole>();
+            RolesTable = new List<DbRole>();
+            AuthUserRolesTable = new List<DbAuthUserRole>();
+            AuthUsersTable = new List<DbAuthUser>();
+            AdminLogsTable = new List<DbAdminLog>();
+            DomainEventsTable = new List<DomainEvent>();
+        }
+
+        private void AddRole(long id, string name, string[] permissions) {
             if (id >= UserDatabase.START_FOR_NEXT_IDS) {
                 throw new InvalidOperationException("START_FOR_NEXT_IDS too low!");
             }
@@ -111,7 +145,7 @@ namespace Draughts.Repositories.InMemory {
             }
         }
 
-        private static void CreateAuthUser(long id, string name, params long[] roleIds) {
+        private void AddAuthUser(long id, string name, params long[] roleIds) {
             if (id >= UserDatabase.START_FOR_NEXT_IDS) {
                 throw new InvalidOperationException("START_FOR_NEXT_IDS too low!");
             }
@@ -131,29 +165,49 @@ namespace Draughts.Repositories.InMemory {
                 });
             }
         }
+
+        private static Dictionary<ITransaction, AuthUserDatabase> _tempDatabases = new Dictionary<ITransaction, AuthUserDatabase>();
+        public static void CreateTempDatabase(ITransaction transaction) => _tempDatabases[transaction] = new AuthUserDatabase();
+        public static void RemoveTempDatabase(ITransaction transaction) => _tempDatabases.Remove(transaction);
+        public static AuthUserDatabase Temp(ITransaction transaction) {
+            if (_tempDatabases.TryGetValue(transaction, out AuthUserDatabase? database)) {
+                return database;
+            }
+            throw new InvalidOperationException("Transaction is not open - no temp database is created.");
+        }
     }
 
-    public static class GameDatabase {
-        public static List<DbGame> TempGamesTable { get; } = new List<DbGame>();
-        public static List<DbGame> GamesTable { get; } = new List<DbGame> {
-            CreatePendingGame(1, GameSettings.International),
-            CreatePendingGame(2, GameSettings.International),
-            CreatePendingGame(3, GameSettings.EnglishAmerican),
-            CreatePendingGame(4, GameSettings.Mini)
-        };
+    public class GameDatabase : IInMemoryDatabase {
+        private static GameDatabase? _instance;
+        public static GameDatabase Get => _instance ??= Initialize();
 
-        public static List<DbPlayer> TempPlayersTable { get; } = new List<DbPlayer>();
-        public static List<DbPlayer> PlayersTable { get; } = new List<DbPlayer> {
-            CreatePlayer(4, 1, UserDatabase.UserId, "User", Color.White, Ranks.WarrantOfficer),
-            CreatePlayer(5, 2, UserDatabase.MathyId, "Mathy", Color.Black, Ranks.LanceCorporal),
-            CreatePlayer(6, 3, UserDatabase.UserId, "User", Color.Black, Ranks.WarrantOfficer),
-            CreatePlayer(7, 4, UserDatabase.MathyId, "Mathy", Color.Black, Ranks.LanceCorporal)
-        };
+        public List<DbGame> GamesTable { get; }
+        public List<DbPlayer> PlayersTable { get; }
+        public List<DomainEvent> DomainEventsTable { get; }
 
-        public static List<DomainEvent> TempDomainEventsTable { get; } = new List<DomainEvent>();
-        public static List<DomainEvent> DomainEventsTable { get; } = new List<DomainEvent>();
+        public static GameDatabase Initialize() {
+            var database = new GameDatabase();
 
-        private static DbGame CreatePendingGame(long id, GameSettings settings) {
+            database.AddPendingGame(1, GameSettings.International);
+            database.AddPendingGame(2, GameSettings.International);
+            database.AddPendingGame(3, GameSettings.EnglishAmerican);
+            database.AddPendingGame(4, GameSettings.Mini);
+
+            database.AddPlayer(4, 1, UserDatabase.UserId, "User", Color.White, Ranks.WarrantOfficer);
+            database.AddPlayer(5, 2, UserDatabase.MathyId, "Mathy", Color.Black, Ranks.LanceCorporal);
+            database.AddPlayer(6, 3, UserDatabase.UserId, "User", Color.Black, Ranks.WarrantOfficer);
+            database.AddPlayer(7, 4, UserDatabase.MathyId, "Mathy", Color.Black, Ranks.LanceCorporal);
+
+            return database;
+        }
+
+        private GameDatabase() {
+            GamesTable = new List<DbGame>();
+            PlayersTable = new List<DbPlayer>();
+            DomainEventsTable = new List<DomainEvent>();
+        }
+
+        private void AddPendingGame(long id, GameSettings settings) {
             if (id >= UserDatabase.START_FOR_NEXT_GAME_IDS) {
                 throw new InvalidOperationException("START_FOR_NEXT_GAME_IDS too low!");
             }
@@ -164,7 +218,7 @@ namespace Draughts.Repositories.InMemory {
                 GameSettings.DraughtsCaptureConstraints.MaximumPieces => "max",
                 _ => throw new InvalidOperationException("Unknown capture constraint")
             };
-            return new DbGame {
+            GamesTable.Add(new DbGame {
                 Id = id,
                 BoardSize = settings.BoardSize,
                 FirstMoveColorIsWhite = settings.FirstMove == Color.White,
@@ -176,26 +230,54 @@ namespace Draughts.Repositories.InMemory {
                 CaptureSequenceFrom = null,
                 CreatedAt = now, StartedAt = null, FinishedAt = null,
                 TurnPlayerId = null, TurnCreatedAt = null, TurnExpiresAt = null
-            };
+            });
         }
 
-        private static DbPlayer CreatePlayer(long id, long gameId, long userId, string name, Color color, Rank rank) {
+        private void AddPlayer(long id, long gameId, long userId, string name, Color color, Rank rank) {
             if (id >= UserDatabase.START_FOR_NEXT_IDS) {
                 throw new InvalidOperationException("START_FOR_NEXT_IDS too low!");
             }
             var now = SystemClock.Instance.UtcNow();
-            return new DbPlayer {
-                Id = id, UserId = userId, Username = name, GameId = gameId,
-                Color = color == Color.White, Rank = rank.Name, CreatedAt = now
-            };
+            PlayersTable.Add(new DbPlayer {
+                Id = id,
+                UserId = userId,
+                Username = name,
+                GameId = gameId,
+                Color = color == Color.White,
+                Rank = rank.Name,
+                CreatedAt = now
+            });
+        }
+
+        private static Dictionary<ITransaction, GameDatabase> _tempDatabases = new Dictionary<ITransaction, GameDatabase>();
+        public static void CreateTempDatabase(ITransaction transaction) => _tempDatabases[transaction] = new GameDatabase();
+        public static void RemoveTempDatabase(ITransaction transaction) => _tempDatabases.Remove(transaction);
+        public static GameDatabase Temp(ITransaction transaction) {
+            if (_tempDatabases.TryGetValue(transaction, out GameDatabase? database)) {
+                return database;
+            }
+            throw new InvalidOperationException("Transaction is not open - no temp database is created.");
         }
     }
 
-    public static class MiscDatabase {
-        public static List<DbIdGeneration> IdGenerationTable { get; } = new List<DbIdGeneration>(3) {
-            new DbIdGeneration("", UserDatabase.START_FOR_NEXT_IDS),
-            new DbIdGeneration("game", UserDatabase.START_FOR_NEXT_GAME_IDS),
-            new DbIdGeneration("user", UserDatabase.START_FOR_NEXT_USER_IDS),
-        };
+    public class MiscDatabase : IInMemoryDatabase {
+        private static MiscDatabase? _instance;
+        public static MiscDatabase Get => _instance ??= Initialize();
+
+        public List<DbIdGeneration> IdGenerationTable { get; }
+
+        private static MiscDatabase Initialize() {
+            var database = new MiscDatabase();
+
+            database.IdGenerationTable.Add(new DbIdGeneration("", UserDatabase.START_FOR_NEXT_IDS));
+            database.IdGenerationTable.Add(new DbIdGeneration("game", UserDatabase.START_FOR_NEXT_GAME_IDS));
+            database.IdGenerationTable.Add(new DbIdGeneration("user", UserDatabase.START_FOR_NEXT_USER_IDS));
+
+            return database;
+        }
+
+        private MiscDatabase() {
+            IdGenerationTable = new List<DbIdGeneration>();
+        }
     }
 }

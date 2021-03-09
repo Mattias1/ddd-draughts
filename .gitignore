@@ -29,3 +29,6 @@ UpgradeLog*.htm
 # Others
 *.lnk
 *.swp
+
+# Application specific files
+logs/*
