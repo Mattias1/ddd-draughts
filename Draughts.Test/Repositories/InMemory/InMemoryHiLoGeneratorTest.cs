@@ -8,7 +8,7 @@ namespace Draughts.Test.Repositories.InMemory {
         [Fact]
         public void IdGeneratorTest() {
             var idGenerator = HiLoIdGenerator.InMemoryHiloGIdGenerator(3, 3, 3);
-            MiscDatabase.IdGenerationTable[0].AvailableId = 1;
+            MiscDatabase.Get.IdGenerationTable[0].AvailableId = 1;
 
             var idPool = idGenerator.ReservePool(1, 1, 1);
             idPool.Count().Should().Be(3);

@@ -13,11 +13,13 @@ namespace Draughts.Repositories.InMemory {
             _unitOfWork = unitOfWork;
         }
 
-        protected override IList<User> GetBaseQuery() => UserDatabase.UsersTable.Select(u => u.ToDomainModel()).ToList();
+        protected override IList<User> GetBaseQuery() {
+            return UserDatabase.Get.UsersTable.Select(u => u.ToDomainModel()).ToList();
+        }
 
         public override void Save(User entity) {
             var user = DbUser.FromDomainModel(entity);
-            _unitOfWork.Store(user, UserDatabase.TempUsersTable);
+            _unitOfWork.Store(user, tran => UserDatabase.Temp(tran).UsersTable);
         }
     }
 }

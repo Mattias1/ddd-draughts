@@ -17,7 +17,7 @@ namespace Draughts.Repositories.Transaction {
         private readonly List<IDomainEventHandler> _eventHandlers;
         private readonly EventQueue _eventQueue;
 
-        private readonly object _lock = new object();
+        private static readonly object _lock = new object();
 
         public DbUnitOfWork(IClock clock, IIdGenerator idGenerator) {
             _clock = clock;
@@ -85,12 +85,12 @@ namespace Draughts.Repositories.Transaction {
                 throw new InvalidOperationException("You can only raise events from within a transaction context.");
             }
 
-            _currentTransaction.Value.RaiseEvent(evt);
+            _currentTransaction.Value.RaiseEvent(evt); // :( - what do we do in DB though?
         }
 
         public void FireAll() => _eventQueue.FireAll();
 
-        public void Store<T>(T obj, List<T> table) where T : IEquatable<T> {
+        public void Store<T>(T obj, Func<ITransaction, List<T>> tableFunc) where T : IEquatable<T> {
             throw new InvalidOperationException("Store through the repositories, not through the unit of work.");
         }
 

@@ -9,7 +9,7 @@ namespace Draughts.Repositories.InMemory {
         public InMemoryHiLoGenerator(int intervalSize, string subject) : base(intervalSize, subject) { }
 
         protected override HiLoInterval ReserveNewInterval() {
-            var idGenerationRow = MiscDatabase.IdGenerationTable.Single(t => t.Subject == Subject);
+            var idGenerationRow = MiscDatabase.Get.IdGenerationTable.Single(t => t.Subject == Subject);
             long lo = idGenerationRow.AvailableId;
 
             idGenerationRow.AvailableId += IntervalSize;

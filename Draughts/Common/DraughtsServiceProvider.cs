@@ -61,6 +61,7 @@ namespace Draughts.Common {
 
             services.AddScoped<JwtActionFilter>();
             services.AddScoped<AuthContextActionFilter>();
+            services.AddScoped<ExceptionLoggerActionFilter>();
         }
 
         public static void RegisterEventHandlers(IServiceProvider serviceProvider) {

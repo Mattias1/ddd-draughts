@@ -11,7 +11,9 @@ namespace Draughts.Repositories.InMemory {
 
         public InMemoryPlayerRepository(IUnitOfWork unitOfWork) => _unitOfWork = unitOfWork;
 
-        protected override IList<Player> GetBaseQuery() => GameDatabase.PlayersTable.Select(p => p.ToDomainModel()).ToList();
+        protected override IList<Player> GetBaseQuery()  {
+            return GameDatabase.Get.PlayersTable.Select(p => p.ToDomainModel()).ToList();
+        }
 
         public override void Save(Player entity) {
             //  Note: the real fix is to remove this repository, as it should be part of the game aggregate's save operation
@@ -20,7 +22,7 @@ namespace Draughts.Repositories.InMemory {
 
         public void Save(Player entity, GameId gameId) {
             var player = DbPlayer.FromDomainModel(entity, gameId);
-            _unitOfWork.Store(player, GameDatabase.TempPlayersTable);
+            _unitOfWork.Store(player, tran => GameDatabase.Temp(tran).PlayersTable);
         }
     }
 }

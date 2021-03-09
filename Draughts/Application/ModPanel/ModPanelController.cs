@@ -9,6 +9,7 @@ using Draughts.Domain.UserAggregate.Models;
 using Draughts.Repositories;
 using Draughts.Repositories.Transaction;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
 using static Draughts.Domain.AuthUserAggregate.Models.Permission;
 
@@ -26,8 +27,6 @@ namespace Draughts.Application.ModPanel {
             _roleUserService = roleUsersService;
             _unitOfWork = unitOfWork;
         }
-
-        // TODO: Separate modpanel role controller?
 
         // --- Overview ---
         [HttpGet("/modpanel"), Requires(Permissions.VIEW_MOD_PANEL)]
@@ -51,7 +50,7 @@ namespace Draughts.Application.ModPanel {
 
         // --- Edit role ---
         [HttpGet("/modpanel/role/{roleId:long}/edit"), Requires(Permissions.EDIT_ROLES)]
-        public IActionResult EditRole(long roleId) { // TODO: Is this parameter nullable?
+        public IActionResult EditRole(long roleId) {
             try {
                 var role = _editRoleService.GetRole(new RoleId(roleId));
                 return View(new RoleViewModel(role));

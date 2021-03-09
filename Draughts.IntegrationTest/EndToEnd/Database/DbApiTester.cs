@@ -35,7 +35,9 @@ namespace Draughts.IntegrationTest.EndToEnd.Database {
         public IPlayerRepository PlayerRepository { get; }
 
         public DbApiTester() {
-            var webHostBuilder = new WebHostBuilder().UseStartup<Startup>();
+            var webHostBuilder = new WebHostBuilder()
+                .ConfigureLogging(logBuilder => Program.ConfigureSerilog(logBuilder, "draughts-db-it"))
+                .UseStartup<DbStartup>();
             Server = new TestServer(webHostBuilder);
             Client = new FlurlClient(Server.CreateClient()).EnableCookies();
 

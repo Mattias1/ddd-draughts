@@ -28,7 +28,9 @@ namespace Draughts.IntegrationTest.EndToEnd.InMemory {
         public IClock Clock { get; }
 
         public InMemoryApiTester() {
-            var webHostBuilder = new WebHostBuilder().UseStartup<InMemoryStartup>();
+            var webHostBuilder = new WebHostBuilder()
+                .ConfigureLogging(logBuilder => Program.ConfigureSerilog(logBuilder, "draughts-inmemory-it"))
+                .UseStartup<InMemoryStartup>();
             Server = new TestServer(webHostBuilder);
             Client = new FlurlClient(Server.CreateClient()).EnableCookies();
 

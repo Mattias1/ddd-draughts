@@ -15,8 +15,8 @@ namespace Draughts.Repositories.InMemory {
         }
 
         protected override IList<Role> GetBaseQuery() {
-            var permissionRoles = AuthUserDatabase.PermissionRolesTable.ToLookup(pr => pr.RoleId, pr => pr.Permission);
-            return AuthUserDatabase.RolesTable
+            var permissionRoles = AuthUserDatabase.Get.PermissionRolesTable.ToLookup(pr => pr.RoleId, pr => pr.Permission);
+            return AuthUserDatabase.Get.RolesTable
                 .Select(r => r.ToDomainModel(permissionRoles[r.Id].Select(p => new Permission(p)).ToArray()))
                 .ToList();
         }
@@ -28,14 +28,14 @@ namespace Draughts.Repositories.InMemory {
 
         public override void Save(Role entity) {
             var dbRole = DbRole.FromDomainModel(entity);
-            _unitOfWork.Store(dbRole, AuthUserDatabase.TempRolesTable);
+            _unitOfWork.Store(dbRole, tran => AuthUserDatabase.Temp(tran).RolesTable);
 
             foreach (var permission in entity.Permissions.Select(p => p.Value)) {
                 var dbPermission = new DbPermissionRole {
                     Permission = permission,
                     RoleId = dbRole.Id
                 };
-                _unitOfWork.Store(dbPermission, AuthUserDatabase.TempPermissionRolesTable);
+                _unitOfWork.Store(dbPermission, tran => AuthUserDatabase.Temp(tran).PermissionRolesTable);
             }
         }
 

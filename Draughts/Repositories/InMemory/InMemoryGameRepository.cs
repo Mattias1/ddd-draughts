@@ -13,15 +13,15 @@ namespace Draughts.Repositories.InMemory {
         }
 
         protected override IList<Game> GetBaseQuery() {
-            var players = GameDatabase.PlayersTable.ToLookup(p => p.GameId, p => p.ToDomainModel());
-            return GameDatabase.GamesTable
+            var players = GameDatabase.Get.PlayersTable.ToLookup(p => p.GameId, p => p.ToDomainModel());
+            return GameDatabase.Get.GamesTable
                 .Select(g => g.ToDomainModel(players[g.Id].ToList()))
                 .ToList();
         }
 
         public override void Save(Game entity) {
             var game = DbGame.FromDomainModel(entity);
-            _unitOfWork.Store(game, GameDatabase.TempGamesTable);
+            _unitOfWork.Store(game, tran => GameDatabase.Temp(tran).GamesTable);
         }
     }
 }

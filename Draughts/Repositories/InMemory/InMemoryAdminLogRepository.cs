@@ -13,14 +13,12 @@ namespace Draughts.Repositories.InMemory {
         }
 
         protected override IList<AdminLog> GetBaseQuery() {
-            return AuthUserDatabase.AdminLogsTable
-                .Select(u => u.ToDomainModel())
-                .ToList();
+            return AuthUserDatabase.Get.AdminLogsTable.Select(u => u.ToDomainModel()).ToList();
         }
 
         public override void Save(AdminLog entity) {
             var dbAdminLog = DbAdminLog.FromDomainModel(entity);
-            _unitOfWork.Store(dbAdminLog, AuthUserDatabase.TempAdminLogsTable);
+            _unitOfWork.Store(dbAdminLog, tran => AuthUserDatabase.Temp(tran).AdminLogsTable);
         }
     }
 }

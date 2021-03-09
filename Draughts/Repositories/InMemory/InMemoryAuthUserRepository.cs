@@ -17,22 +17,22 @@ namespace Draughts.Repositories.InMemory {
 
         protected override IList<AuthUser> GetBaseQuery() {
             var roles = _roleRepository.List().ToDictionary(r => r.Id.Id);
-            var authuserRoles = AuthUserDatabase.AuthUserRolesTable.ToLookup(ar => ar.UserId, ar => roles[ar.RoleId]);
-            return AuthUserDatabase.AuthUsersTable
+            var authuserRoles = AuthUserDatabase.Get.AuthUserRolesTable.ToLookup(ar => ar.UserId, ar => roles[ar.RoleId]);
+            return AuthUserDatabase.Get.AuthUsersTable
                 .Select(u => u.ToDomainModel(authuserRoles[u.Id].ToList().AsReadOnly()))
                 .ToList();
         }
 
         public override void Save(AuthUser entity) {
             var dbAuthUser = DbAuthUser.FromDomainModel(entity);
-            _unitOfWork.Store(dbAuthUser, AuthUserDatabase.TempAuthUsersTable);
+            _unitOfWork.Store(dbAuthUser, tran => AuthUserDatabase.Temp(tran).AuthUsersTable);
 
             foreach (var roleId in entity.Roles.Select(r => r.Id)) {
                 var dbAuthUserRole = new DbAuthUserRole {
                     UserId = dbAuthUser.Id,
                     RoleId = roleId
                 };
-                _unitOfWork.Store(dbAuthUserRole, AuthUserDatabase.TempAuthUserRolesTable);
+                _unitOfWork.Store(dbAuthUserRole, tran => AuthUserDatabase.Temp(tran).AuthUserRolesTable);
             }
         }
     }

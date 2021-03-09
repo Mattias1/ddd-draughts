@@ -8,7 +8,7 @@ namespace Draughts.Repositories {
     /// Should be injected as singleton.
     /// </summary>
     public abstract class BaseHiLoGenerator {
-        private readonly object _lock = new object();
+        private static readonly object _lock = new object();
 
         public int IntervalSize { get; }
         public string Subject { get; }
