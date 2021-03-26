@@ -21,7 +21,7 @@ namespace Draughts.IntegrationTest.EndToEnd.Base {
                 USERNAME, $"{USERNAME}@example.com", "Test password; not secure", "Test password; not secure"
             ));
             result.StatusCode.Should().Be(302);
-            result.Headers.Location.Should().Be("/");
+            result.RedirectLocation().Should().Match("/?success=*");
         }
 
         public async Task VisitLoginPage() {
@@ -32,7 +32,7 @@ namespace Draughts.IntegrationTest.EndToEnd.Base {
         public async Task PostLogin() {
             var result = await ApiTester.PostForm("/auth/login", new LoginRequest("TestPlayerBlack", "admin"));
             result.StatusCode.Should().Be(302);
-            result.Headers.Location.Should().Be("/");
+            result.RedirectLocation().Should().Be("/");
         }
     }
 }

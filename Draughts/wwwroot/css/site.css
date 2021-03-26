@@ -233,35 +233,52 @@ main {
     flex: 1;
 }
 
-.page-errors {
+.page-messages {
     margin: 8px 80px 0 80px;
     padding: 0;
-    color: #c00;
-    border: 1px solid #c00;
     border-radius: 4px;
-    background-color: #feed;
     position: absolute;
 }
-.page-errors ul {
+.page-messages span {
+    padding: 6px 10px;
+    margin-right: 30px;
+    display: inline-block;
+}
+.page-messages ul {
     margin: 0;
     padding: 0;
 }
-.page-errors ul li {
+.page-messages ul li {
     padding: 6px 10px;
     list-style: none;
 }
-.page-errors ul li:first-child {
+.page-messages ul li:first-child {
     margin-right: 30px;
 }
-.page-errors-x {
+.page-messages-x {
     font-weight: bold;
     position: absolute;
     right: 0;
 }
-.page-errors-x a {
+.page-messages-x a {
     display: block;
     padding: 7px 11px;
+}
+.page-errors {
     color: #c00;
+    border: 1px solid #c00;
+    background-color: #feed;
+}
+.page-errors .page-messages-x a {
+    color: #c00;
+}
+.page-success {
+    color: #0c0;
+    border: 1px solid #0c0;
+    background-color: #efed;
+}
+.page-success .page-messages-x a {
+    color: #0c0;
 }
 
 /* ------- Footer ------- */

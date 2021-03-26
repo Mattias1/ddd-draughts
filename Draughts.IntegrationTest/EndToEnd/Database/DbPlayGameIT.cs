@@ -1,4 +1,3 @@
-using Draughts.Domain.GameAggregate.Models;
 using Draughts.IntegrationTest.EndToEnd.Base;
 using System.Threading.Tasks;
 using Xunit;

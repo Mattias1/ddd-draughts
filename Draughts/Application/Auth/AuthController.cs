@@ -91,7 +91,7 @@ namespace Draughts.Application.Auth {
 
                     tran.Commit();
                 });
-                return Redirect("/");
+                return SuccessRedirect("/", $"User '{request.Name}' is registered.");
             }
             catch (ManualValidationException e) {
                 return ErrorRedirect("/auth/register", e.Message);

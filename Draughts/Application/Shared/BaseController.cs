@@ -13,6 +13,7 @@ namespace Draughts.Application.Shared {
     public class BaseController : Controller {
         private AuthContext? _authContext;
         private readonly List<(string field, string error)> _errors;
+        private string? _successMessage;
 
         public BaseController() {
             _errors = new List<(string field, string error)>();
@@ -38,6 +39,12 @@ namespace Draughts.Application.Shared {
         public void AddErrors(IEnumerable<string> errors) => AddErrors(errors.Select(e => ("", e)));
         public void AddErrors(IEnumerable<(string field, string error)> errors) {
             _errors.AddRange(errors);
+            HttpContext.Response.StatusCode = StatusCodes.Status400BadRequest;
+            UpdateViewBag();
+        }
+
+        public void AddSuccessMessage(string successMessage) {
+            _successMessage = successMessage;
             UpdateViewBag();
         }
 
@@ -55,6 +62,11 @@ namespace Draughts.Application.Shared {
             return View();
         }
 
+        public ViewResult SuccessView(string successMessage) {
+            AddSuccessMessage(successMessage);
+            return View();
+        }
+
         public IActionResult ErrorRedirect(Url url, IEnumerable<string> errors) {
             var errorMessages = string.Join(AuthContextActionFilter.ERROR_SEPARATOR, errors);
             return ErrorRedirect(url, errorMessages);
@@ -67,6 +79,14 @@ namespace Draughts.Application.Shared {
             return Redirect(url);
         }
 
+        public IActionResult SuccessRedirect(Url url, string successMessage) {
+            if (url.QueryParams.ContainsKey(AuthContextActionFilter.SUCCESS_PARAM)) {
+                throw new InvalidOperationException($"You shouldn't set the {AuthContextActionFilter.SUCCESS_PARAM} param manually.");
+            }
+            url.SetQueryParam(AuthContextActionFilter.SUCCESS_PARAM, successMessage);
+            return Redirect(url);
+        }
+
         public void UpdateViewBag() {
             ViewBag.IsLoggedIn = IsLoggedIn;
             ViewBag.UserId = AuthContextOrNull?.UserId;
@@ -74,6 +94,7 @@ namespace Draughts.Application.Shared {
             ViewBag.Permissions = AuthContextOrNull?.Permissions ?? new List<Permission>(0).AsReadOnly();
 
             ViewBag.Errors = Errors;
+            ViewBag.SuccessMessage = _successMessage;
         }
     }
 }

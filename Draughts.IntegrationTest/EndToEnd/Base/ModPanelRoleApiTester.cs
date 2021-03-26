@@ -26,12 +26,12 @@ namespace Draughts.IntegrationTest.EndToEnd.Base {
         public async Task PostCreateRole() {
             var result = await ApiTester.PostForm("/modpanel/role/create", new CreateRoleRequest("New IT test role"));
             result.StatusCode.Should().Be(302);
-            if (!ApiTester.TryRegex(result.Headers.Location?.ToString(), @"/modpanel/role/(\d+)/edit", out string? value)) {
-                result.Headers.Location.Should().Be("/modpanel/role/<some-value>/edit");
+            if (!ApiTester.TryRegex(result.RedirectLocation(), @"/modpanel/role/(\d+)/edit", out string? value)) {
+                result.RedirectLocation().Should().Match("/modpanel/role/<some-value>/edit?success=*");
                 return;
             }
             RoleId = new RoleId(long.Parse(value));
-            result.Headers.Location.Should().Be($"/modpanel/role/{RoleId}/edit");
+            result.RedirectLocation().Should().Match($"/modpanel/role/{RoleId}/edit?success=*");
         }
 
         public async Task ViewEditRolePage() {
@@ -43,7 +43,7 @@ namespace Draughts.IntegrationTest.EndToEnd.Base {
             var result = await ApiTester.PostForm($"/modpanel/role/{RoleId}/edit",
                 new EditRoleRequest("IT test role", new string[] { Permission.Permissions.PLAY_GAME }));
             result.StatusCode.Should().Be(302);
-            result.Headers.Location.Should().Be("/modpanel/roles");
+            result.RedirectLocation().Should().Match("/modpanel/roles?success=*");
         }
 
         public async Task ViewRoleUsersPage() {
@@ -55,20 +55,20 @@ namespace Draughts.IntegrationTest.EndToEnd.Base {
             var result = await ApiTester.PostForm($"/modpanel/role/{RoleId}/user",
                 new AssignUserToRoleRequest("TestPlayerBlack"));
             result.StatusCode.Should().Be(302);
-            result.Headers.Location.Should().Be($"/modpanel/role/{RoleId}/users");
+            result.RedirectLocation().Should().Match($"/modpanel/role/{RoleId}/users?success=*");
         }
 
         public async Task PostRemoveUserFromRole() {
             long userId = UserDatabase.TestPlayerBlack;
             var result = await ApiTester.Post($"/modpanel/role/{RoleId}/user/{userId}/remove");
             result.StatusCode.Should().Be(302);
-            result.Headers.Location.Should().Be($"/modpanel/role/{RoleId}/users");
+            result.RedirectLocation().Should().Match($"/modpanel/role/{RoleId}/users?success=*");
         }
 
         public async Task PostDeleteRole() {
             var result = await ApiTester.Post($"/modpanel/role/{RoleId}/delete");
             result.StatusCode.Should().Be(302);
-            result.Headers.Location.Should().Be("/modpanel/roles");
+            result.RedirectLocation().Should().Match("/modpanel/roles?success=*");
         }
     }
 }

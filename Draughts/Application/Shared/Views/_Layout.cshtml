@@ -39,9 +39,17 @@
 
     <main>
         <div class="container">
+            @if (ViewBag.SuccessMessage is not null) {
+                <div id="page-success" class="page-messages page-success">
+                    <div class="page-messages-x">
+                        <a href="#" class="show-hide-link" data-id="page-success">&times;</a>
+                    </div>
+                    <span>@ViewBag.SuccessMessage</span>
+                </div>
+            }
             @if (ViewBag.Errors.Count > 0) {
-                <div id="page-errors" class="page-errors">
-                    <div class="page-errors-x">
+                <div id="page-errors" class="page-messages page-errors">
+                    <div class="page-messages-x">
                         <a href="#" class="show-hide-link" data-id="page-errors">&times;</a>
                     </div>
                     <ul>

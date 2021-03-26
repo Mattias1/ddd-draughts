@@ -39,18 +39,18 @@ namespace Draughts.IntegrationTest.EndToEnd.Base {
             var result = await ApiTester.PostForm("/lobby/create",
                 new GameCreationRequest(6, true, true, true, "max", "black"));
             result.StatusCode.Should().Be(302);
-            if (!ApiTester.TryRegex(result.Headers.Location?.ToString(), @"/game/(\d+)", out string? value)) {
-                result.Headers.Location.Should().Be("/game/<some-value>");
+            if (!ApiTester.TryRegex(result.RedirectLocation(), @"/game/(\d+)", out string? value)) {
+                result.RedirectLocation().Should().Match("/game/<some-value>?success=*");
                 return;
             }
             GameId = new GameId(long.Parse(value));
-            result.Headers.Location.Should().Be($"/game/{GameId}");
+            result.RedirectLocation().Should().Match($"/game/{GameId}?success=*");
         }
 
         public async Task PostJoinGame() {
             var result = await ApiTester.PostForm("/lobby/join", new GameJoinRequest(GameId!, null));
             result.StatusCode.Should().Be(302);
-            result.Headers.Location.Should().Be($"/game/{GameId}");
+            result.RedirectLocation().Should().Match($"/game/{GameId}?success=*");
         }
     }
 }
