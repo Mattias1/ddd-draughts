@@ -25,4 +25,8 @@ namespace Draughts.IntegrationTest.EndToEnd.Base {
         Task<HttpResponseMessage> PostJson<T>(Url url, T body);
         bool TryRegex(string? haystack, string pattern, [NotNullWhen(true)] out string? value, int groupNr = 1);
     }
+
+    public static class HttpResponseMessageExtensions {
+        public static string? RedirectLocation(this HttpResponseMessage result) => result.Headers.Location?.ToString();
+    }
 }

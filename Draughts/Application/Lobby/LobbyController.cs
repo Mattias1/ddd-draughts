@@ -54,7 +54,7 @@ namespace Draughts.Application.Lobby {
                 var joinColor = ColorFromRequest(request!.JoinAs);
                 var game = _gameService.CreateGame(AuthContext.UserId, request!.BuildGameSettings(), joinColor);
 
-                return Redirect($"/game/{game.Id}");
+                return SuccessRedirect($"/game/{game.Id}", $"Game {game.Id} is created.");
             }
             catch (ManualValidationException e) {
                 return ErrorRedirect("/lobby/create", e.Message);
@@ -69,7 +69,7 @@ namespace Draughts.Application.Lobby {
                 var joinColor = request!.Color is null ? null : ColorFromRequest(request.Color);
                 _gameService.JoinGame(AuthContext.UserId, new GameId(request.GameId), joinColor);
 
-                return Redirect("/game/" + request.GameId);
+                return SuccessRedirect("/game/" + request.GameId, $"You've joined game {request.GameId}.");
             }
             catch (ManualValidationException e) {
                 return ErrorRedirect("/lobby", e.Message);

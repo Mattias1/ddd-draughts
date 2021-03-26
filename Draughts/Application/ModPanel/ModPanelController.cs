@@ -67,7 +67,7 @@ namespace Draughts.Application.ModPanel {
 
                 var role = _editRoleService.CreateRole(AuthContext.UserId, request!.Rolename!);
 
-                return Redirect($"/modpanel/role/{role.Id}/edit"); // TODO: Success message
+                return SuccessRedirect($"/modpanel/role/{role.Id}/edit", $"Role '{role.Rolename}' is added.");
             }
             catch (ManualValidationException e) {
                 return ErrorRedirect($"/modpanel/roles", e.Message);
@@ -82,7 +82,7 @@ namespace Draughts.Application.ModPanel {
                 _editRoleService.EditRole(AuthContext.UserId, new RoleId(roleId),
                     request!.Rolename!, request.Permissions!);
 
-                return Redirect("/modpanel/roles"); // TODO: Success message
+                return SuccessRedirect("/modpanel/roles", $"Role '{request.Rolename}' is edited.");
             }
             catch (ManualValidationException e) {
                 return ErrorRedirect($"/modpanel/role/{roleId}/edit", e.Message);
@@ -93,7 +93,7 @@ namespace Draughts.Application.ModPanel {
         public IActionResult DeleteRole(long roleId) {
             try {
                 _editRoleService.DeleteRole(AuthContext.UserId, new RoleId(roleId));
-                return Redirect("/modpanel/roles"); // TODO: Success message
+                return SuccessRedirect("/modpanel/roles", "The role is deleted.");
             }
             catch (ManualValidationException e) {
                 return ErrorRedirect("/modpanel/roles", e.Message);
@@ -105,7 +105,7 @@ namespace Draughts.Application.ModPanel {
         public IActionResult RoleUsers(long roleId) {
             try {
                 var (role, authUsers) = _roleUserService.GetRoleWithUsers(new RoleId(roleId));
-                return View(new RoleWithUsersViewModel(role, authUsers)); // TODO: Success message
+                return View(new RoleWithUsersViewModel(role, authUsers));
             }
             catch (ManualValidationException e) {
                 return ErrorRedirect("/modpanel/roles", e.Message);
@@ -118,7 +118,7 @@ namespace Draughts.Application.ModPanel {
                 ValidateNotNull(request?.Username);
 
                 _roleUserService.AssignRole(AuthContext.UserId, new RoleId(roleId), new Username(request!.Username));
-                return Redirect($"/modpanel/role/{roleId}/users"); // TODO: Success message
+                return SuccessRedirect($"/modpanel/role/{roleId}/users", "Users are assigned to the role.");
             }
             catch (ManualValidationException e) {
                 return ErrorRedirect($"/modpanel/role/{roleId}/users", e.Message);
@@ -129,7 +129,7 @@ namespace Draughts.Application.ModPanel {
         public IActionResult RemoveRoleFromUser(long roleId, long userId) {
             try {
                 _roleUserService.RemoveRole(AuthContext.UserId, new RoleId(roleId), new UserId(userId));
-                return Redirect($"/modpanel/role/{roleId}/users"); // TODO: Success message
+                return SuccessRedirect($"/modpanel/role/{roleId}/users", "The user is removed from this role.");
             }
             catch (ManualValidationException e) {
                 return ErrorRedirect($"/modpanel/role/{roleId}/users", e.Message);
