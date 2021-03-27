@@ -3,6 +3,8 @@ using Draughts.Common.OoConcepts;
 
 namespace Draughts.Domain.AuthUserAggregate.Models {
     public class Username : StringValueObject<Username> {
+        public const string ADMIN = "admin";
+        public const string MATTY = "Matty";
         public const int MAX_LENGTH = 50;
 
         public override string Value { get; }

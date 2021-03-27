@@ -8,6 +8,8 @@ using System.Linq;
 
 namespace Draughts.Domain.AuthUserAggregate.Models {
     public class AuthUser : Entity<AuthUser, UserId> {
+        private static IReadOnlyList<string> PROTECTED_USERS => new [] { Username.ADMIN, Username.MATTY };
+
         private readonly List<Role> _roles; // TODO: These should be RoleIds, not Roles.
 
         public override UserId Id { get; }
@@ -52,6 +54,9 @@ namespace Draughts.Domain.AuthUserAggregate.Models {
         public void RemoveRole(Role role) {
             if (!_roles.Contains(role)) {
                 throw new ManualValidationException("This user doesn't have that role.");
+            }
+            if (role.Rolename == Role.ADMIN_ROLENAME && PROTECTED_USERS.Contains(Username)) {
+                throw new ManualValidationException("You can't remove the admin role from protected users.");
             }
             _roles.Remove(role);
         }
