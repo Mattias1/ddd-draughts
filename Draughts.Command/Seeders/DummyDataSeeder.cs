@@ -44,7 +44,7 @@ namespace Draughts.Command.Seeders {
         }
 
         private void SeedAvailableIds() {
-            using (var tranFlavor = DbContext.Get.MiscTransaction()) {
+            using (var tranFlavor = DbContext.Get.BeginMiscTransaction()) {
                 var availableIds = DbContext.Get.Query(tranFlavor)
                     .SelectAllFrom("id_generation")
                     .List<DbIdGeneration>()
@@ -182,7 +182,7 @@ namespace Draughts.Command.Seeders {
         }
 
         private void UpdateAvailableIds() {
-            using (var tranFlavor = DbContext.Get.MiscTransaction()) {
+            using (var tranFlavor = DbContext.Get.BeginMiscTransaction()) {
                 UpdateAvailableId(tranFlavor, DbIdGeneration.SUBJECT_MISC, IdTestHelper.Next());
                 UpdateAvailableId(tranFlavor, DbIdGeneration.SUBJECT_GAME, IdTestHelper.NextForGame());
                 UpdateAvailableId(tranFlavor, DbIdGeneration.SUBJECT_USER, IdTestHelper.NextForUser());

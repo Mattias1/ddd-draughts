@@ -1,4 +1,5 @@
 using MySql.Data.MySqlClient;
+using SqlQueryBuilder.Exceptions;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -75,14 +76,24 @@ namespace SqlQueryBuilder.Options {
         }
 
         public static async Task<MySqlTransactionFlavor> BeginTransactionAsync(MySqlConnection connection) {
-            await connection.OpenAsync();
-            var transaction = await connection.BeginTransactionAsync();
-            return new MySqlTransactionFlavor(connection, transaction);
+            try {
+                await connection.OpenAsync();
+                var transaction = await connection.BeginTransactionAsync();
+                return new MySqlTransactionFlavor(connection, transaction);
+            }
+            catch (Exception e) {
+                throw new SqlQueryBuilderException(e.Message, e);
+            }
         }
         public static MySqlTransactionFlavor BeginTransaction(MySqlConnection connection) {
-            connection.Open();
-            var transaction = connection.BeginTransaction();
-            return new MySqlTransactionFlavor(connection, transaction);
+            try {
+                connection.Open();
+                var transaction = connection.BeginTransaction();
+                return new MySqlTransactionFlavor(connection, transaction);
+            }
+            catch (Exception e) {
+                throw new SqlQueryBuilderException(e.Message, e);
+            }
         }
     }
 }

@@ -7,7 +7,7 @@ namespace Draughts.Repositories.Database {
         public DbHiLoGenerator(int intervalSize, string subject) : base(intervalSize, subject) { }
 
         protected override HiLoInterval ReserveNewInterval() {
-            using (var tranFlavor = DbContext.Get.MiscTransaction()) {
+            using (var tranFlavor = DbContext.Get.BeginMiscTransaction()) {
                 var idGenerationRow = DbContext.Get.Query(tranFlavor)
                     .SelectAllFrom("id_generation")
                     .Where("subject").Is(Subject)
