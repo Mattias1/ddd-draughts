@@ -25,6 +25,10 @@ namespace Draughts.Domain.AuthUserAggregate.Models {
             public static IReadOnlyList<Permission> All => new List<Permission>() {
                 PendingRegistration, PlayGame, ViewModPanel, ViewAdminLogs, EditGames, EditRoles
             }.AsReadOnly();
+
+            public static IReadOnlyList<Permission> IgnoredByAdmins => new List<Permission>() {
+                PendingRegistration
+            }.AsReadOnly();
         }
     }
 }

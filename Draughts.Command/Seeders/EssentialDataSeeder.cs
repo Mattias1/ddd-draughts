@@ -1,3 +1,4 @@
+using Draughts.Domain.AuthUserAggregate.Models;
 using Draughts.Domain.UserAggregate.Models;
 using Draughts.Repositories;
 using Draughts.Repositories.Database;
@@ -51,7 +52,7 @@ namespace Draughts.Command.Seeders {
         }
 
         private void SeedUserDomain(out User admin) {
-            var adminUser = UserTestHelper.User("admin").Build();
+            var adminUser = UserTestHelper.User(Username.ADMIN).Build();
 
             _unitOfWork.WithUserTransaction(tran => {
                 _userRepository.Save(adminUser);

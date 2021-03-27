@@ -8,6 +8,7 @@ using Draughts.Repositories.Transaction;
 using NodaTime;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using static Draughts.Domain.AuthUserAggregate.Models.Permission;
 using static Draughts.Domain.UserAggregate.Models.Rank;
 
@@ -38,10 +39,10 @@ namespace Draughts.Repositories.InMemory {
         private static UserDatabase Initialize() {
             var database = new UserDatabase();
 
-            database.AddUser(AdminId, "Admin", 1000, Ranks.Private, 0);
+            database.AddUser(AdminId, Username.ADMIN, 1000, Ranks.Private, 0);
             database.AddUser(UserId, "User", 1700, Ranks.WarrantOfficer, 7);
             database.AddUser(TheColonelId, "TheColonel", 3456, Ranks.Colonel, 37);
-            database.AddUser(MattyId, "Matty", 2345, Ranks.Lieutenant, 42);
+            database.AddUser(MattyId, Username.MATTY, 2345, Ranks.Lieutenant, 42);
             database.AddUser(MathyId, "Mathy", 800, Ranks.LanceCorporal, 12);
             database.AddUser(JackDeHaasId, "JackDeHaas", 9001, Ranks.FieldMarshal, 1337);
             database.AddUser(BobbyId, "<script>alert('Hi, my name is Bobby');</script>", 1000, Ranks.Private, 0);
@@ -96,19 +97,17 @@ namespace Draughts.Repositories.InMemory {
             long pendingRegistrationRoleId = 2;
             long registeredUserRoleId = 3;
 
-            database.AddRole(adminRoleId, Role.ADMIN_ROLENAME, new[] {
-                Permissions.ViewModPanel.Value, Permissions.PlayGame.Value,
-                Permissions.EditGames.Value, Permissions.EditRoles.Value, Permissions.ViewAdminLogs.Value
-            });
+            database.AddRole(adminRoleId, Role.ADMIN_ROLENAME,
+                Permissions.All.Except(Permissions.IgnoredByAdmins).Select(p => p.Value).ToArray());
             database.AddRole(pendingRegistrationRoleId, Role.PENDING_REGISTRATION_ROLENAME,
                 new[] { Permissions.PendingRegistration.Value });
             database.AddRole(registeredUserRoleId, Role.REGISTERED_USER_ROLENAME,
                 new[] { Permissions.PlayGame.Value });
 
-            database.AddAuthUser(UserDatabase.AdminId, "Admin", adminRoleId, registeredUserRoleId);
+            database.AddAuthUser(UserDatabase.AdminId, Username.ADMIN, adminRoleId, registeredUserRoleId);
             database.AddAuthUser(UserDatabase.UserId, "User", registeredUserRoleId);
             database.AddAuthUser(UserDatabase.TheColonelId, "TheColonel", registeredUserRoleId);
-            database.AddAuthUser(UserDatabase.MattyId, "Matty", adminRoleId, registeredUserRoleId);
+            database.AddAuthUser(UserDatabase.MattyId, Username.MATTY, adminRoleId, registeredUserRoleId);
             database.AddAuthUser(UserDatabase.MathyId, "Mathy", registeredUserRoleId);
             database.AddAuthUser(UserDatabase.JackDeHaasId, "JackDeHaas", registeredUserRoleId);
             database.AddAuthUser(UserDatabase.BobbyId, "<script>alert('Hi, my name is Bobby');</script>", pendingRegistrationRoleId);

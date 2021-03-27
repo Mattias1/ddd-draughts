@@ -49,5 +49,14 @@ namespace Draughts.Test.Domain.AuthUserAggregate {
 
             roles.Should().BeEquivalentTo(RegisteredRole);
         }
+
+        [Fact]
+        public void ThrowWhenRemovingAdminRoleFromAdmin() {
+            var admin = AuthUserTestHelper.User(Username.ADMIN).WithRoles(RegisteredRole, AdminRole).Build();
+
+            Action registration = () => admin.RemoveRole(AdminRole);
+
+            registration.Should().Throw<ManualValidationException>();
+        }
     }
 }

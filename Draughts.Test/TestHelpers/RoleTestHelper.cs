@@ -32,9 +32,7 @@ namespace Draughts.Test.TestHelpers {
                 .WithId(IdTestHelper.Next())
                 .WithRolename(Role.ADMIN_ROLENAME)
                 .WithCreatedAt(Feb29)
-                .WithPermissions(Permissions.PlayGame,
-                    Permissions.ViewModPanel, Permissions.EditGames,
-                    Permissions.EditRoles, Permissions.ViewAdminLogs);
+                .WithPermissions(Permissions.All.Except(Permissions.IgnoredByAdmins));
         }
 
 
@@ -61,8 +59,13 @@ namespace Draughts.Test.TestHelpers {
             }
 
             public RoleBuilder WithPermissions(params Permission[] permissions) => WithPermissions(permissions.ToList());
-            public RoleBuilder WithPermissions(List<Permission> permissions) {
-                _permissions = permissions;
+            public RoleBuilder WithPermissions(IEnumerable<Permission> permissions) {
+                _permissions = permissions.ToList();
+                return this;
+            }
+
+            public RoleBuilder AddPermission(Permission permission) {
+                _permissions.Add(permission);
                 return this;
             }
 

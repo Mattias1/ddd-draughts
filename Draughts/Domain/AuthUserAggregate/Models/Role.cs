@@ -34,6 +34,7 @@ namespace Draughts.Domain.AuthUserAggregate.Models {
 
         public void Edit(string rolename, IEnumerable<Permission> grantedPermissions) {
             ValidateRolename(rolename);
+            DontLockYourselfOut(rolename, grantedPermissions);
 
             Rolename = rolename;
             Permissions = grantedPermissions.ToList().AsReadOnly();
@@ -42,6 +43,19 @@ namespace Draughts.Domain.AuthUserAggregate.Models {
         private void ValidateRolename(string rolename) {
             if (rolename.Length < 3) {
                 throw new ManualValidationException("Invalid rolename.");
+            }
+        }
+
+        private void DontLockYourselfOut(string newName, IEnumerable<Permission> newPermissions) {
+            if (Rolename != Role.ADMIN_ROLENAME) {
+                return;
+            }
+
+            if (newName != Role.ADMIN_ROLENAME) {
+                throw new ManualValidationException("You are not allowed to change the admin role's name.");
+            }
+            if (Permissions.Except(Permission.Permissions.IgnoredByAdmins).Except(newPermissions).Any()) {
+                throw new ManualValidationException("You are not allowed to remove permissions from the admin role.");
             }
         }
 
