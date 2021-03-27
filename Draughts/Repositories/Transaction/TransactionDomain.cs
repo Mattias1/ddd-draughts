@@ -53,7 +53,7 @@ namespace Draughts.Repositories.Transaction {
             public override void CreateTempDatabase(ITransaction tran) => AuthUserDatabase.CreateTempDatabase(tran);
             public override void RemoveTempDatabase(ITransaction tran) => AuthUserDatabase.RemoveTempDatabase(tran);
 
-            public override ISqlTransactionFlavor BeginTransaction() => DbContext.Get.AuthUserTransaction();
+            public override ISqlTransactionFlavor BeginTransaction() => DbContext.Get.BeginAuthUserTransaction();
         }
 
         public class UserTransactionDomain : TransactionDomain {
@@ -72,7 +72,7 @@ namespace Draughts.Repositories.Transaction {
             public override void CreateTempDatabase(ITransaction tran) => UserDatabase.CreateTempDatabase(tran);
             public override void RemoveTempDatabase(ITransaction tran) => UserDatabase.RemoveTempDatabase(tran);
 
-            public override ISqlTransactionFlavor BeginTransaction() => DbContext.Get.UserTransaction();
+            public override ISqlTransactionFlavor BeginTransaction() => DbContext.Get.BeginUserTransaction();
         }
 
         public class GameTransactionDomain : TransactionDomain {
@@ -92,7 +92,7 @@ namespace Draughts.Repositories.Transaction {
             public override void CreateTempDatabase(ITransaction tran) => GameDatabase.CreateTempDatabase(tran);
             public override void RemoveTempDatabase(ITransaction tran) => GameDatabase.RemoveTempDatabase(tran);
 
-            public override ISqlTransactionFlavor BeginTransaction() => DbContext.Get.GameTransaction();
+            public override ISqlTransactionFlavor BeginTransaction() => DbContext.Get.BeginGameTransaction();
         }
 
         public static class InMemoryDatabaseUtils {

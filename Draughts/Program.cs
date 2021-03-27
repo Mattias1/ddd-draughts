@@ -9,7 +9,8 @@ using System.Reflection;
 
 namespace Draughts {
     public class Program {
-        private static bool logIsConfigured = false;
+        private static readonly object _lock = new object();
+        private volatile static bool _logIsConfigured = false;
 
         public static void Main(string[] args) => CreateHostBuilder(args).Build().Run();
 
@@ -24,14 +25,18 @@ namespace Draughts {
         public static void ConfigureSerilog(ILoggingBuilder logBuilder, string logName) {
             string pathFormat = PathFromProjectRoot($"logs/{logName}-log-{{Date}}.log");
 
-            if (!logIsConfigured) {
-                logIsConfigured = true;
-                Log.Logger = new LoggerConfiguration()
-                    .MinimumLevel.Information()
-                    .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
-                    .MinimumLevel.Override("System", LogEventLevel.Warning)
-                    .WriteTo.RollingFile(pathFormat: pathFormat)
-                    .CreateLogger();
+            if (!_logIsConfigured) {
+                lock(_lock) {
+                    if (!_logIsConfigured) {
+                        Log.Logger = new LoggerConfiguration()
+                            .MinimumLevel.Information()
+                            .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
+                            .MinimumLevel.Override("System", LogEventLevel.Warning)
+                            .WriteTo.RollingFile(pathFormat: pathFormat)
+                            .CreateLogger();
+                        _logIsConfigured = true;
+                    }
+                }
             }
 
             logBuilder.ClearProviders();
