@@ -3,10 +3,10 @@ using System.Threading.Tasks;
 using static Draughts.Application.Auth.AuthController;
 
 namespace Draughts.IntegrationTest.EndToEnd.Base {
-    public class AuthenticationApiTester<T> where T : IApiTester {
+    public class AuthenticationTesterApi<T> where T : BaseApiTester {
         public T ApiTester { get; private set; }
 
-        public AuthenticationApiTester(T apiTester) {
+        public AuthenticationTesterApi(T apiTester) {
             ApiTester = apiTester;
         }
 

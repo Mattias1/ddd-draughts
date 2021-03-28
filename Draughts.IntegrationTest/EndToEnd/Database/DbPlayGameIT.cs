@@ -5,11 +5,11 @@ using Xunit;
 namespace Draughts.IntegrationTest.EndToEnd.Database {
     public class DbPlayGameIT {
         private readonly DbApiTester _apiTester;
-        private readonly PlayGameApiTester<DbApiTester> _gameApi;
+        private readonly PlayGameTesterApi<DbApiTester> _gameApi;
 
         public DbPlayGameIT() {
             _apiTester = new DbApiTester();
-            _gameApi = new PlayGameApiTester<DbApiTester>(_apiTester);
+            _gameApi = new PlayGameTesterApi<DbApiTester>(_apiTester);
         }
 
         [Fact]

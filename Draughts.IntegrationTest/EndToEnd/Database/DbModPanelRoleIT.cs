@@ -5,11 +5,11 @@ using Xunit;
 namespace Draughts.IntegrationTest.EndToEnd.Database {
     public class DbModPanelRoleIT {
         private readonly DbApiTester _apiTester;
-        private readonly ModPanelRoleApiTester<DbApiTester> _modPanelApi;
+        private readonly ModPanelRoleTesterApi<DbApiTester> _modPanelApi;
 
         public DbModPanelRoleIT() {
             _apiTester = new DbApiTester();
-            _modPanelApi = new ModPanelRoleApiTester<DbApiTester>(_apiTester);
+            _modPanelApi = new ModPanelRoleTesterApi<DbApiTester>(_apiTester);
         }
 
         [Fact]

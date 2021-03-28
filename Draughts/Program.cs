@@ -1,11 +1,13 @@
+using Draughts.Application.Shared;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Serilog;
+using Serilog.Configuration;
 using Serilog.Events;
 using System;
 using System.IO;
-using System.Reflection;
 
 namespace Draughts {
     public class Program {
@@ -16,24 +18,32 @@ namespace Draughts {
 
         public static IHostBuilder CreateHostBuilder(string[] args) {
             return Host.CreateDefaultBuilder(args)
-                .ConfigureLogging(logBuilder => ConfigureSerilog(logBuilder, "draughts-app"))
+                .ConfigureAppConfiguration(configuration => ConfigureAppsettings(configuration))
+                .ConfigureLogging((ctx, log) => ConfigureSerilog(ctx.Configuration, log, "draughts-app"))
                 .ConfigureWebHostDefaults(webBuilder => {
                     webBuilder.UseStartup<Startup>();
                 });
         }
 
-        public static void ConfigureSerilog(ILoggingBuilder logBuilder, string logName) {
-            string pathFormat = PathFromProjectRoot($"logs/{logName}-log-{{Date}}.log");
+        public static void ConfigureAppsettings(IConfigurationBuilder configuration) {
+            configuration.AddJsonFile("appsettings.json");
+            configuration.AddJsonFile("appsettings.env.json", optional: true);
+        }
+
+        public static void ConfigureSerilog(IConfiguration configuration, ILoggingBuilder logBuilder, string logName) {
+            var settings = configuration.Get<AppSettings?>();
+
+            string pathFormat = GetLogPathFormat(settings?.LogDir, $"{logName}-log-{{Date}}.log");
 
             if (!_logIsConfigured) {
                 lock(_lock) {
                     if (!_logIsConfigured) {
-                        Log.Logger = new LoggerConfiguration()
-                            .MinimumLevel.Information()
+                        var configurationBuilder = new LoggerConfiguration()
+                            .MinimumLevel.FromString(settings?.LogLevel)
                             .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
                             .MinimumLevel.Override("System", LogEventLevel.Warning)
-                            .WriteTo.RollingFile(pathFormat: pathFormat)
-                            .CreateLogger();
+                            .WriteTo.RollingFile(pathFormat: pathFormat);
+                        Log.Logger = configurationBuilder.CreateLogger();
                         _logIsConfigured = true;
                     }
                 }
@@ -45,14 +55,33 @@ namespace Draughts {
             Log.Information($"Starting Draughts application...");
         }
 
-        private static string PathFromProjectRoot(string fileName) {
-            string? exePath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-            if (exePath is null) {
-                throw new InvalidOperationException("Path for the logfile could not be found.");
+        private static string GetLogPathFormat(string? rootDir, string fileName) {
+            string logRootPath = ExpandHome(rootDir) ?? "logs";
+            return Path.Join(logRootPath, fileName);
+        }
+
+        private static string? ExpandHome(string? dir) {
+            if (dir is not null && dir.StartsWith('~')) {
+                string homeDir = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+                return Path.Join(homeDir, dir.Substring(1));
             }
-            // This works, but based on a few assumptions that are probably not true for a prod release :S
-            // I might need an actual config file here :(
-            return Path.GetFullPath(Path.Combine(exePath, "../../../../", fileName));
+            return dir;
+        }
+    }
+
+    public static class LoggerMinimumLevelConfigurationExtensions {
+        public static LoggerConfiguration FromString(this LoggerMinimumLevelConfiguration minimumLevel, string? logLevel) {
+            return logLevel?.ToLower() switch
+            {
+                "fatal" => minimumLevel.Fatal(),
+                "error" => minimumLevel.Error(),
+                "warning" => minimumLevel.Warning(),
+                "information" => minimumLevel.Information(),
+                "debug" => minimumLevel.Debug(),
+                "verbose" => minimumLevel.Verbose(),
+                null => minimumLevel.Information(),
+                _ => throw new ArgumentException("Unknown log level", nameof(logLevel))
+            };
         }
     }
 }

@@ -4,11 +4,11 @@ using System.Threading.Tasks;
 using static Draughts.Application.Lobby.LobbyController;
 
 namespace Draughts.IntegrationTest.EndToEnd.Base {
-    public class LobbyApiTester<T> where T : IApiTester {
+    public class LobbyTesterApi<T> where T : BaseApiTester {
         public T ApiTester { get; }
         public GameId? GameId { get; private set; }
 
-        public LobbyApiTester(T apiTester) {
+        public LobbyTesterApi(T apiTester) {
             ApiTester = apiTester;
         }
 

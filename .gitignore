@@ -32,3 +32,4 @@ UpgradeLog*.htm
 
 # Application specific files
 logs/*
+appsettings.env.json

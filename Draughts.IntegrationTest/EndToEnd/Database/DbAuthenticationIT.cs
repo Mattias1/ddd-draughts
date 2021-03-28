@@ -5,11 +5,11 @@ using Xunit;
 namespace Draughts.IntegrationTest.EndToEnd.Database {
     public class DbAuthenticationIT {
         private readonly DbApiTester _apiTest;
-        private readonly AuthenticationApiTester<DbApiTester> _authenticationApi;
+        private readonly AuthenticationTesterApi<DbApiTester> _authenticationApi;
 
         public DbAuthenticationIT() {
             _apiTest = new DbApiTester();
-            _authenticationApi = new AuthenticationApiTester<DbApiTester>(_apiTest);
+            _authenticationApi = new AuthenticationTesterApi<DbApiTester>(_apiTest);
         }
 
         [Fact]

@@ -6,12 +6,11 @@ using Xunit;
 namespace Draughts.IntegrationTest.EndToEnd.Database {
     public class DbLobbyIT {
         private readonly DbApiTester _apiTester;
-        private readonly LobbyApiTester<DbApiTester> _lobbyApi;
-        private GameId? _gameId;
+        private readonly LobbyTesterApi<DbApiTester> _lobbyApi;
 
         public DbLobbyIT() {
             _apiTester = new DbApiTester();
-            _lobbyApi = new LobbyApiTester<DbApiTester>(_apiTester);
+            _lobbyApi = new LobbyTesterApi<DbApiTester>(_apiTester);
         }
 
         [Fact]

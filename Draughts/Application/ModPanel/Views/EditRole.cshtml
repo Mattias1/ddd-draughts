@@ -8,8 +8,8 @@
     <h1>@ViewBag.Title</h1>
     <p>
         Edit the '@Model.Rolename' role and its permissions.
-        You can also edit this role's <a href="/modpanel/role/@Model.Id/users">users</a>
-        or <a href="/modpanel/roles">go back</a>.
+        You can also edit this role's <a @Utils.Href("/modpanel/role/@Model.Id/users")>users</a>
+        or <a @Utils.Href("/modpanel/roles")>go back</a>.
     </p>
 
     <div>
@@ -31,7 +31,7 @@
             <div class="form-group">
                 <span></span>
                 <input type="submit" value="Save role" />
-                <span><a href="/modpanel/roles">Cancel</a></span>
+                <span><a @Utils.Href("/modpanel/roles")>Cancel</a></span>
             </div>
         </form>
     </div>
