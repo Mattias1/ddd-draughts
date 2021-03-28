@@ -12,7 +12,7 @@
         <h1>Hey there</h1>
         <p>
             This is a site I made to play around with Domain-driven design (DDD).
-            You can read about the design choices in the <a href="/documentation">documentation</a>.
+            You can read about the design choices in the <a @Utils.Href("/documentation")>documentation</a>.
         </p>
 
         <div>
@@ -35,7 +35,7 @@
                     <input type="submit" value="Login" />
                 </label>
             </form>
-            <p>Or <a href="/auth/register">register</a> a new account.</p>
+            <p>Or <a @Utils.Href("/auth/register")>register</a> a new account.</p>
             <div class="p-like">
                 Debug shortcut:
                 @Utils.PostLink("Login as Matty", "/auth/login", ("name", "Matty"), ("password", "admin"))

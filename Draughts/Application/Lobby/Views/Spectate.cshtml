@@ -19,7 +19,7 @@
         <tbody>
             @foreach (var game in Model.Games) {
                 <tr>
-                    <td><a href="/game/@game.Id">Game @game.Id</a></td>
+                    <td>@Utils.GameLinkU(game)</td>
                     <td>@Utils.UserLink(@game.Players[0]) vs @Utils.UserLink(@game.Players[1])</td>
                     <td>@game.Settings.Description</td>
                     <td>@Utils.DateTime(@game.CreatedAt)</td>
@@ -31,5 +31,5 @@
         </tbody>
     </table>
 
-    <p>Go back to the <a href="/lobby">game lobby</a>.</p>
+    <p>Go back to the <a @Utils.Href("/lobby")>game lobby</a>.</p>
 </div>

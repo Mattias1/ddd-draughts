@@ -5,11 +5,11 @@ using Xunit;
 namespace Draughts.IntegrationTest.EndToEnd.InMemory {
     public class InMemoryPlayGameIT {
         private readonly InMemoryApiTester _apiTester;
-        private readonly PlayGameApiTester<InMemoryApiTester> _gameApi;
+        private readonly PlayGameTesterApi<InMemoryApiTester> _gameApi;
 
         public InMemoryPlayGameIT() {
             _apiTester = new InMemoryApiTester();
-            _gameApi = new PlayGameApiTester<InMemoryApiTester>(_apiTester);
+            _gameApi = new PlayGameTesterApi<InMemoryApiTester>(_apiTester);
         }
 
         [Fact]

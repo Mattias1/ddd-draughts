@@ -6,10 +6,10 @@
 <div class="text-container">
     <h1>@ViewBag.Title</h1>
     @if (Utils.Can(ViewBag.Permissions, Permissions.PlayGame)) {
-        <p>Join one of the open games, or <a href="/lobby/create">create a new game</a>.</p>
+        <p>Join one of the open games, or <a @Utils.Href("/lobby/create")>create a new game</a>.</p>
     }
     else {
-        <p>The list of open games. You need to <a href="/auth/login">login</a> to join one.</p>
+        <p>The list of open games. You need to <a @Utils.Href("/auth/login")>login</a> to join one.</p>
     }
 
     <table class="page-table">
@@ -25,7 +25,7 @@
         <tbody>
             @foreach (var game in Model.Games) {
                 <tr>
-                    <td><a href="/game/@game.Id">Game @game.Id</a></td>
+                    <td>@Utils.GameLinkU(game)</td>
                     <td>
                         @if (game.Players.Any()) {
                             @Utils.UserLink(@game.Players[0])
@@ -50,5 +50,5 @@
         </tbody>
     </table>
 
-    <p>Go to the <a href="/lobby/spectate">spectator lounge</a>.</p>
+    <p>Go to the <a @Utils.Href("/lobby/spectate")>spectator lounge</a>.</p>
 </div>

@@ -5,11 +5,11 @@ using Xunit;
 namespace Draughts.IntegrationTest.EndToEnd.InMemory {
     public class InMemoryAuthenticationIT {
         private readonly InMemoryApiTester _apiTester;
-        private readonly AuthenticationApiTester<InMemoryApiTester> _authenticationApi;
+        private readonly AuthenticationTesterApi<InMemoryApiTester> _authenticationApi;
 
         public InMemoryAuthenticationIT() {
             _apiTester = new InMemoryApiTester();
-            _authenticationApi = new AuthenticationApiTester<InMemoryApiTester>(_apiTester);
+            _authenticationApi = new AuthenticationTesterApi<InMemoryApiTester>(_apiTester);
         }
 
         [Fact]

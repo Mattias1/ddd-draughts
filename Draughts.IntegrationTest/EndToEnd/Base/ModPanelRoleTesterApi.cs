@@ -5,11 +5,11 @@ using System.Threading.Tasks;
 using static Draughts.Application.ModPanel.ModPanelController;
 
 namespace Draughts.IntegrationTest.EndToEnd.Base {
-    public class ModPanelRoleApiTester<T> where T : IApiTester {
+    public class ModPanelRoleTesterApi<T> where T : BaseApiTester {
         public T ApiTester { get; }
         public RoleId? RoleId { get; private set; }
 
-        public ModPanelRoleApiTester(T apiTester) {
+        public ModPanelRoleTesterApi(T apiTester) {
             ApiTester = apiTester;
         }
 

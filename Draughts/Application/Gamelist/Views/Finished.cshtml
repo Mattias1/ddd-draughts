@@ -24,7 +24,7 @@
         <tbody>
             @foreach (var game in Model.Games) {
                 <tr>
-                    <td><a href="/game/@game.Id">Game @game.Id</a></td>
+                    <td>@Utils.GameLinkU(game.Id)</td>
                     <td>@Utils.UserLink(@game.Players[0]) vs @Utils.UserLink(@game.Players[1])</td>
                     <td>@game.Settings.Description</td>
                     <td>@Utils.DateTime(@game.CreatedAt)</td>

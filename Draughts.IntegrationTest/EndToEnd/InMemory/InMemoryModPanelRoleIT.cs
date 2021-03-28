@@ -5,11 +5,11 @@ using Xunit;
 namespace Draughts.IntegrationTest.EndToEnd.InMemory {
     public class InMemoryModPanelRoleIT {
         private readonly InMemoryApiTester _apiTester;
-        private readonly ModPanelRoleApiTester<InMemoryApiTester> _modPanelApi;
+        private readonly ModPanelRoleTesterApi<InMemoryApiTester> _modPanelApi;
 
         public InMemoryModPanelRoleIT() {
             _apiTester = new InMemoryApiTester();
-            _modPanelApi = new ModPanelRoleApiTester<InMemoryApiTester>(_apiTester);
+            _modPanelApi = new ModPanelRoleTesterApi<InMemoryApiTester>(_apiTester);
         }
 
         [Fact]

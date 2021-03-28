@@ -11,8 +11,8 @@
 <div class="text-side-menu-container">
     <h1>@ViewBag.Title</h1>
     <p>
-        Manage all admin tasks from here. For example, use the <a href="modpanel/game-tools">game tools</a>
-        or <a href="/modpanel/roles">manage roles</a>.
+        Manage all admin tasks from here. For example, use the <a @Utils.Href("/modpanel/game-tools")>game tools</a>
+        or <a @Utils.Href("/modpanel/roles")>manage roles</a>.
     </p>
 
     <h3>Admin logs</h3>
@@ -38,6 +38,6 @@
         </tbody>
     </table>
     <p>
-        View all <a href="/modpanel/admin-logs">log entries</a>.
+        View all <a @Utils.Href("/modpanel/admin-logs")>log entries</a>.
     </p>
 </div>

@@ -8,16 +8,13 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System.Threading.Tasks;
+using Draughts.Repositories.Database;
+using Draughts.Application.Shared;
+using System;
 
 namespace Draughts {
     public class Startup {
-        public IConfiguration Configuration { get; }
-
         protected virtual bool UseInMemoryDatabase => false;
-
-        public Startup(IConfiguration configuration) {
-            Configuration = configuration;
-        }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services) {
@@ -41,7 +38,9 @@ namespace Draughts {
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env) {
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IConfiguration configuration) {
+            ConfigureAppSettings(configuration);
+
             // Use a custom error page
             app.UseStatusCodePagesWithReExecute("/error", "?status={0}");
 
@@ -67,17 +66,23 @@ namespace Draughts {
                     pattern: "{controller=StaticPages}/{action=Home}/{id?}");
             });
         }
+
+        private static void ConfigureAppSettings(IConfiguration configuration) {
+            var settings = configuration.Get<AppSettings?>();
+            if (settings?.DbPassword is null || settings.BaseUrl is null) {
+                throw new InvalidOperationException("Invalid appsettings.json file");
+            }
+
+            DbContext.Init(settings.DbPassword);
+            Utils.BaseUrl = settings.BaseUrl;
+        }
     }
 
     public class DbStartup : Startup {
         protected override bool UseInMemoryDatabase => false;
-
-        public DbStartup(IConfiguration configuration) : base(configuration) { }
     }
 
     public class InMemoryStartup : Startup {
         protected override bool UseInMemoryDatabase => true;
-
-        public InMemoryStartup(IConfiguration configuration) : base(configuration) { }
     }
 }

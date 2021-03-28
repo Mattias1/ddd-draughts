@@ -5,11 +5,11 @@ using static Draughts.Application.Lobby.LobbyController;
 using static Draughts.Application.PlayGame.PlayGameController;
 
 namespace Draughts.IntegrationTest.EndToEnd.Base {
-    public class PlayGameApiTester<T> where T : IApiTester {
+    public class PlayGameTesterApi<T> where T : BaseApiTester {
         public T ApiTester { get; }
         public GameId? GameId { get; private set; }
 
-        public PlayGameApiTester(T apiTester) {
+        public PlayGameTesterApi(T apiTester) {
             ApiTester = apiTester;
         }
 
