@@ -14,15 +14,17 @@ using Draughts.Application.ModPanel.Services;
 
 namespace Draughts.Common {
     public static class DraughtsServiceProvider {
-        private static int HI_LO_INTERVAL_SIZE_LARGE = 100;
-        private static int HI_LO_INTERVAL_SIZE_SMALL = 10;
+        private const int HI_LO_INTERVAL_SIZE_LARGE = 100;
+        private const int HI_LO_INTERVAL_SIZE_SMALL = 10;
 
-        public static void ConfigureServices(IServiceCollection services, bool useInMemoryDatabase) {
+        public static void ConfigureServices(IServiceCollection services, bool useInMemoryDatabase,
+                int hiloLargeIntervalSize = HI_LO_INTERVAL_SIZE_LARGE,
+                int hiloSmallIntervalSize = HI_LO_INTERVAL_SIZE_SMALL) {
             services.AddSingleton<IClock>(SystemClock.Instance);
 
             if (useInMemoryDatabase) {
                 services.AddSingleton<IIdGenerator>(HiLoIdGenerator.InMemoryHiloGIdGenerator(
-                    HI_LO_INTERVAL_SIZE_LARGE, HI_LO_INTERVAL_SIZE_SMALL, HI_LO_INTERVAL_SIZE_SMALL));
+                    hiloLargeIntervalSize, hiloSmallIntervalSize, hiloSmallIntervalSize));
                 services.AddSingleton<IUnitOfWork, InMemoryUnitOfWork>();
 
                 services.AddSingleton<IAuthUserRepository, InMemoryAuthUserRepository>();
@@ -34,7 +36,7 @@ namespace Draughts.Common {
             }
             else {
                 services.AddSingleton<IIdGenerator>(HiLoIdGenerator.DbHiloGIdGenerator(
-                    HI_LO_INTERVAL_SIZE_LARGE, HI_LO_INTERVAL_SIZE_SMALL, HI_LO_INTERVAL_SIZE_SMALL));
+                    hiloLargeIntervalSize, hiloSmallIntervalSize, hiloSmallIntervalSize));
                 services.AddSingleton<IUnitOfWork, DbUnitOfWork>();
 
                 services.AddSingleton<IAuthUserRepository, DbAuthUserRepository>();

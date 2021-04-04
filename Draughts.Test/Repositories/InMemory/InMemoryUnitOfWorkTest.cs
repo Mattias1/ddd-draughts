@@ -21,7 +21,7 @@ namespace Draughts.Test.Repositories.InMemory {
         public InMemoryUnitOfWorkTest() {
             _clock = FakeClock.FromUtc(2020, 02, 29);
             _fakeDomainEventHandler = new FakeDomainEventHandler();
-            _unitOfWork = new InMemoryUnitOfWork(_clock, IdTestHelper.Fake());
+            _unitOfWork = new InMemoryUnitOfWork(_clock, IdTestHelper.BuildFakeGenerator());
 
             AuthUserDatabase.Get.AuthUsersTable.Clear();
             AuthUserDatabase.Get.RolesTable.Clear();

@@ -26,8 +26,8 @@ Setup
 To run the application without IDE, you need some patience `;)` __WIP__.
 
 ### Setup development environment
-Optional: Create an _appsettings.env.json_ file to override settings from _appsettings.json_ in the
-main project (Draughts) and the integration tests project (Draughts.IntegrationTest).
+Optional: Create _appsettings.env.json_ files to override existing settings.
+The json files exist in the _Draughts_, _Draughts.IntegrationTest_ and _Draughts.Command_ projects.
 
 Start the develop dependencies with `sudo ./run-dev.sh start`.
 To initialise the database, run `dotnet build Draughts.Command/Draughts.Command.csproj`

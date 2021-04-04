@@ -2,16 +2,14 @@ using Draughts.Domain.AuthUserAggregate.Models;
 using Draughts.Domain.GameAggregate.Models;
 using Draughts.Domain.UserAggregate.Models;
 using Draughts.Repositories;
-using Draughts.Repositories.Database;
 using Draughts.Repositories.Transaction;
 using Draughts.Test.TestHelpers;
-using SqlQueryBuilder.Options;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace Draughts.Command.Seeders {
-    class DummyDataSeeder {
+    public class DummyDataSeeder {
         private readonly IAuthUserRepository _authUserRepository;
         private readonly IGameRepository _gameRepository;
         private readonly IPlayerRepository _playerRepository;
@@ -34,33 +32,9 @@ namespace Draughts.Command.Seeders {
         public void SeedData() {
             EnsureDatabasesContainOnlyEssentialData();
 
-            SeedAvailableIds();
-
             var users = SeedUserDomain();
             SeedAuthUserDomain(users);
             SeedGameDomain(users);
-
-            UpdateAvailableIds();
-        }
-
-        private void SeedAvailableIds() {
-            using (var tranFlavor = DbContext.Get.BeginMiscTransaction()) {
-                var availableIds = DbContext.Get.Query(tranFlavor)
-                    .SelectAllFrom("id_generation")
-                    .List<DbIdGeneration>()
-                    .ToDictionary(i => i.Subject, i => i.AvailableId);
-                tranFlavor.Commit();
-
-                if (availableIds.Count != 3) {
-                    throw new InvalidOperationException("The id generation table should contain exactly three available ids.");
-                }
-
-                long miscId = availableIds[DbIdGeneration.SUBJECT_MISC];
-                long gameId = availableIds[DbIdGeneration.SUBJECT_GAME];
-                long userId = availableIds[DbIdGeneration.SUBJECT_USER];
-                IdTestHelper.Seed(miscId, gameId, userId);
-
-            }
         }
 
         private void EnsureDatabasesContainOnlyEssentialData() {
@@ -179,21 +153,6 @@ namespace Draughts.Command.Seeders {
 
                 tran.Commit();
             });
-        }
-
-        private void UpdateAvailableIds() {
-            using (var tranFlavor = DbContext.Get.BeginMiscTransaction()) {
-                UpdateAvailableId(tranFlavor, DbIdGeneration.SUBJECT_MISC, IdTestHelper.Next());
-                UpdateAvailableId(tranFlavor, DbIdGeneration.SUBJECT_GAME, IdTestHelper.NextForGame());
-                UpdateAvailableId(tranFlavor, DbIdGeneration.SUBJECT_USER, IdTestHelper.NextForUser());
-
-                tranFlavor.Commit();
-            }
-        }
-
-        private void UpdateAvailableId(ISqlTransactionFlavor tranFlavor, string subject, long id) {
-            var row = new DbIdGeneration(subject, id);
-            DbContext.Get.Query(tranFlavor).Update("id_generation").SetFrom(row).Where("subject").Is(subject).Execute();
         }
     }
 }
