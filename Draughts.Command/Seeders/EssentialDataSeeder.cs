@@ -7,7 +7,7 @@ using Draughts.Test.TestHelpers;
 using System;
 
 namespace Draughts.Command.Seeders {
-    class EssentialDataSeeder {
+    public class EssentialDataSeeder {
         private readonly IAuthUserRepository _authUserRepository;
         private readonly IRoleRepository _roleRepository;
         private readonly IUnitOfWork _unitOfWork;
@@ -25,12 +25,9 @@ namespace Draughts.Command.Seeders {
         public void SeedData() {
             EnsureDatabasesAreEmpty();
 
-            IdTestHelper.Seed(1, 1, 1);
-
-            SeedUserDomain(out var admin);
+            SeedAvailableIds();
+            var admin = SeedUserDomain();
             SeedAuthUserDomain(admin);
-
-            UpdateAvailableIds();
         }
 
         private void EnsureDatabasesAreEmpty() {
@@ -49,9 +46,29 @@ namespace Draughts.Command.Seeders {
                 }
                 tran.Commit();
             });
+            using (var tranFlavor = DbContext.Get.BeginMiscTransaction()) {
+                if (DbContext.Get.Query(tranFlavor).Select().CountAll().From("id_generation").SingleLong() != 0) {
+                    throw new InvalidOperationException("Id generation table is not empty.");
+                }
+                tranFlavor.Commit();
+            }
         }
 
-        private void SeedUserDomain(out User admin) {
+        private void SeedAvailableIds() {
+            using (var tranFlavor = DbContext.Get.BeginMiscTransaction()) {
+                DbContext.Get.Query(tranFlavor)
+                    .InsertInto("id_generation")
+                    .Columns("subject", "available_id")
+                    .Values(DbIdGeneration.SUBJECT_MISC, 1)
+                    .Values(DbIdGeneration.SUBJECT_GAME, 1)
+                    .Values(DbIdGeneration.SUBJECT_USER, 1)
+                    .Execute();
+
+                tranFlavor.Commit();
+            }
+        }
+
+        private User SeedUserDomain() {
             var adminUser = UserTestHelper.User(Username.ADMIN).Build();
 
             _unitOfWork.WithUserTransaction(tran => {
@@ -60,7 +77,7 @@ namespace Draughts.Command.Seeders {
                 tran.Commit();
             });
 
-            admin = adminUser;
+            return adminUser;
         }
 
         private void SeedAuthUserDomain(User admin) {
@@ -79,24 +96,6 @@ namespace Draughts.Command.Seeders {
 
                 tran.Commit();
             });
-        }
-
-        private void UpdateAvailableIds() {
-            using (var tranFlavor = DbContext.Get.BeginMiscTransaction()) {
-                if (DbContext.Get.Query(tranFlavor).Select().CountAll().From("id_generation").SingleLong() != 0) {
-                    throw new InvalidOperationException("Id generation table is not empty.");
-                }
-
-                DbContext.Get.Query(tranFlavor)
-                    .InsertInto("id_generation")
-                    .Columns("subject", "available_id")
-                    .Values(DbIdGeneration.SUBJECT_MISC, IdTestHelper.Next())
-                    .Values(DbIdGeneration.SUBJECT_GAME, IdTestHelper.NextForGame())
-                    .Values(DbIdGeneration.SUBJECT_USER, IdTestHelper.NextForUser())
-                    .Execute();
-
-                tranFlavor.Commit();
-            }
         }
     }
 }
