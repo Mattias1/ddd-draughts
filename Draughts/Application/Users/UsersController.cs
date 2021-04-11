@@ -9,6 +9,8 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Draughts.Application.Users {
     public class UsersController : BaseController {
+        private const int PAGE_SIZE = 20;
+
         private readonly IUnitOfWork _unitOfWork;
         private readonly IUserRepository _userRepository;
 
@@ -32,9 +34,9 @@ namespace Draughts.Application.Users {
         }
 
         [HttpGet("/user/list"), GuestRoute]
-        public IActionResult Userlist() {
+        public IActionResult Userlist(int page = 1) {
             var users = _unitOfWork.WithUserTransaction(tran => {
-                var users = _userRepository.List(new RankSort());
+                var users = _userRepository.Paginate(page, PAGE_SIZE, new RankSort());
                 return tran.CommitWith(users);
             });
 

@@ -1,14 +1,15 @@
 using Draughts.Domain.GameAggregate.Models;
+using Draughts.Repositories;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Draughts.Application.Shared.ViewModels {
-    public class GamelistAndMenuViewModel {
-        public IReadOnlyList<GameViewModel> Games { get; set; }
-        public MenuViewModel Menu { get; set; }
+    public class GamelistAndMenuViewModel : IPaginationViewModel<GameViewModel> {
+        public Pagination<GameViewModel> Pagination { get; }
+        public IReadOnlyList<GameViewModel> Games => Pagination.Results;
+        public MenuViewModel Menu { get; }
 
-        public GamelistAndMenuViewModel(IReadOnlyList<Game> games, MenuViewModel menuViewModel) {
-            Games = games.Select(u => new GameViewModel(u)).ToList().AsReadOnly();
+        public GamelistAndMenuViewModel(Pagination<Game> games, MenuViewModel menuViewModel) {
+            Pagination = games.Map(u => new GameViewModel(u));
             Menu = menuViewModel;
         }
     }

@@ -7,9 +7,11 @@ namespace SqlQueryBuilder.Builder {
         IInitialQueryBuilder, IInsertQueryBuilder, IUpdateQueryBuilder, ISelectQueryBuilder { }
 
     public interface IQueryBuilder : IFromQueryBuilder, IJoinQueryBuilder, IWhereQueryBuilder,
-        IGroupByQueryBuilder, IHavingQueryBuilder, IOrderQueryBuilder, IQueryBuilderBase { }
+        IGroupByQueryBuilder, IHavingQueryBuilder, IOrderQueryBuilder, ILimitQueryBuilder, IQueryBuilderBase { }
 
     public interface IQueryBuilderBase {
+        ICompleteQueryBuilder Cast();
+
         T First<T>() where T : new();
         T? FirstOrDefault<T>() where T : new();
         T Single<T>() where T : new();
@@ -70,11 +72,17 @@ namespace SqlQueryBuilder.Builder {
         Task<SqlBuilderResultRow?> SingleOrDefaultResultAsync();
         Task<IReadOnlyList<SqlBuilderResultRow>> ResultsAsync();
 
+        Pagination<T> Paginate<T>(long page, int pageSize) where T : new();
+        Task<Pagination<T>> PaginateAsync<T>(long page, int pageSize) where T : new();
+
         bool Execute();
         Task<bool> ExecuteAsync();
 
         string ToString();
         string ToUnsafeSql();
         string ToParameterizedSql();
+
+        ICompleteQueryBuilder Clone();
+        ICompleteQueryBuilder CloneWithoutSelect();
     }
 }

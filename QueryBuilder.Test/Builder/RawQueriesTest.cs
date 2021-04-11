@@ -106,6 +106,14 @@ namespace SqlQueryBuilder.Test.Builder {
         }
 
         [Fact]
+        public void TestRawLimit() {
+            string sql = Query().SelectAllFrom("user")
+                .RawLimit(" limit ?, ?", 6, 3)
+                .ToParameterizedSql();
+            sql.Should().Be("select user.* from user limit @0, @1");
+        }
+
+        [Fact]
         public void NoSemicolonAllowedOutsideParameterizedString() {
             Action func = () => Query().Raw("select * from user;").ToParameterizedSql();
             func.Should().Throw<PotentialSqlInjectionException>();

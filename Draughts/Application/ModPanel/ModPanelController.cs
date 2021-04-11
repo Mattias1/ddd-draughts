@@ -5,12 +5,11 @@ using Draughts.Application.Shared.Attributes;
 using Draughts.Application.Shared.ViewModels;
 using Draughts.Common;
 using Draughts.Domain.AuthUserAggregate.Models;
+using Draughts.Domain.AuthUserAggregate.Specifications;
 using Draughts.Domain.UserAggregate.Models;
 using Draughts.Repositories;
 using Draughts.Repositories.Transaction;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
-using System.Collections.Generic;
 using static Draughts.Domain.AuthUserAggregate.Models.Permission;
 
 namespace Draughts.Application.ModPanel {
@@ -31,7 +30,7 @@ namespace Draughts.Application.ModPanel {
         // --- Overview ---
         [HttpGet("/modpanel"), Requires(Permissions.VIEW_MOD_PANEL)]
         public IActionResult ModPanel() {
-            var adminLogs = GetAdminLogs();
+            var adminLogs = GetAdminLogs(1, 10);
             return View(new ModPanelOverviewViewModel(adminLogs, BuildMenu()));
         }
 
@@ -138,14 +137,14 @@ namespace Draughts.Application.ModPanel {
 
         // --- Admin logs ---
         [HttpGet("/modpanel/admin-logs"), Requires(Permissions.VIEW_ADMIN_LOGS)]
-        public IActionResult AdminLogs() {
-            var adminLogs = GetAdminLogs();
+        public IActionResult AdminLogs(int page = 1) {
+            var adminLogs = GetAdminLogs(page, 20);
             return View(new ModPanelOverviewViewModel(adminLogs, BuildMenu()));
         }
 
-        private IReadOnlyList<AdminLog> GetAdminLogs() {
+        private Pagination<AdminLog> GetAdminLogs(int page, int pageSize) {
             var adminLogs = _unitOfWork.WithAuthUserTransaction(tran => {
-                var adminLogs = _adminLogRepository.List(); // TODO: Only the last 10 logrows or something.
+                var adminLogs = _adminLogRepository.Paginate(page, pageSize, new AdminLogIdSort());
                 return tran.CommitWith(adminLogs);
             });
             return adminLogs;

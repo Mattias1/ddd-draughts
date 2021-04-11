@@ -77,5 +77,15 @@ namespace SqlQueryBuilder.Options {
             return await MySqlTransactionFlavor.BeginTransactionAsync(_connection);
         }
         public ISqlTransactionFlavor BeginTransaction() => MySqlTransactionFlavor.BeginTransaction(_connection);
+
+        public (string queryPart, object?[] parameters) Skip(long skipOffset) => SkipStatic(skipOffset);
+        public (string queryPart, object?[] parameters) Take(int takeLimit) => TakeStatic(takeLimit);
+
+        public static (string queryPart, object?[] parameters) SkipStatic(long skipOffset) {
+            return ("offset ?", new object?[] { skipOffset });
+        }
+        public static (string queryPart, object?[] parameters) TakeStatic(int takeLimit) {
+            return ("limit ?", new object?[] { takeLimit });
+        }
     }
 }

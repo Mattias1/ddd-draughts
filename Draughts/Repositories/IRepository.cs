@@ -13,6 +13,8 @@ namespace Draughts.Repositories {
         IReadOnlyList<T> List(Specification<T> spec);
         IReadOnlyList<T> List<TKey>(Sort<T, TKey> sort);
         IReadOnlyList<T> List<TKey>(Specification<T> spec, Sort<T, TKey> sort);
+        Pagination<T> Paginate<TKey>(long page, int pageSize, Sort<T, TKey> sort);
+        Pagination<T> Paginate<TKey>(long page, int pageSize, Specification<T> spec, Sort<T, TKey> sort);
         void Save(T entity);
     }
 }

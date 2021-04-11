@@ -7,12 +7,13 @@ using Draughts.Domain.GameAggregate.Specifications;
 using Draughts.Repositories;
 using Draughts.Repositories.Transaction;
 using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
 using static Draughts.Domain.AuthUserAggregate.Models.Permission;
 
 namespace Draughts.Application {
     [Requires(Permissions.PLAY_GAME)]
     public class GamelistController : BaseController {
+        private const int PAGE_SIZE = 20;
+
         private readonly IGameRepository _gameRepository;
         private readonly IUnitOfWork _unitOfWork;
 
@@ -22,34 +23,38 @@ namespace Draughts.Application {
         }
 
         [HttpGet]
-        public IActionResult Pending() {
+        public IActionResult Pending(int page = 1) {
             var games = _unitOfWork.WithGameTransaction(tran => {
-                var games = MyGameList(new PendingGameSpecification());
+                var games = MyGameList(page, new PendingGameSpecification());
                 return tran.CommitWith(games);
             });
             return View(new GamelistAndMenuViewModel(games, BuildMenu()));
         }
 
         [HttpGet]
-        public IActionResult Active() {
+        public IActionResult Active(int page = 1) {
             var games = _unitOfWork.WithGameTransaction(tran => {
-                var games = MyGameList(new ActiveGameSpecification());
+                var games = MyGameList(page, new ActiveGameSpecification());
                 return tran.CommitWith(games);
             });
             return View(new GamelistAndMenuViewModel(games, BuildMenu()));
         }
 
         [HttpGet]
-        public IActionResult Finished() {
+        public IActionResult Finished(int page = 1) {
             var games = _unitOfWork.WithGameTransaction(tran => {
-                var games = MyGameList(new FinishedGameSpecification());
+                var games = MyGameList(page, new FinishedGameSpecification());
                 return tran.CommitWith(games);
             });
             return View(new GamelistAndMenuViewModel(games, BuildMenu()));
         }
 
-        private IReadOnlyList<Game> MyGameList(Specification<Game> statusSpec) {
-            return _gameRepository.List(statusSpec.And(new ContainsPlayerSpecification(AuthContext.UserId)));
+        private Pagination<Game> MyGameList(int page, Specification<Game> statusSpec) {
+            return _gameRepository.Paginate(
+                page, PAGE_SIZE,
+                statusSpec.And(new ContainsPlayerSpecification(AuthContext.UserId)),
+                new GameIdSort()
+            );
         }
 
         private MenuViewModel BuildMenu() {

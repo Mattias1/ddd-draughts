@@ -28,8 +28,8 @@
                     <td>@role.Rolename</td>
                     <td class="center">?</td>
                     <td class="center">@role.NrOfGrantedPermissions</td>
-                    <td class="center"><a @Utils.Href("/modpanel/role/@role.Id/edit")>edit</a></td>
-                    <td class="center"><a @Utils.Href("/modpanel/role/@role.Id/users")>users</a></td>
+                    <td class="center"><a @Utils.Href($"/modpanel/role/{role.Id}/edit")>edit</a></td>
+                    <td class="center"><a @Utils.Href($"/modpanel/role/{role.Id}/users")>users</a></td>
                     <td class="center">@Utils.PostLink("delete", $"/modpanel/role/{role.Id}/delete")</td>
                 </tr>
             }

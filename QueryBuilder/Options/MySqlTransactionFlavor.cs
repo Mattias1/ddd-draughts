@@ -95,5 +95,8 @@ namespace SqlQueryBuilder.Options {
                 throw new SqlQueryBuilderException(e.Message, e);
             }
         }
+
+        public (string queryPart, object?[] parameters) Skip(long skipOffset) => MySqlFlavor.SkipStatic(skipOffset);
+        public (string queryPart, object?[] parameters) Take(int takeLimit) => MySqlFlavor.TakeStatic(takeLimit);
     }
 }

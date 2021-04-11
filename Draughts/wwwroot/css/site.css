@@ -1,8 +1,16 @@
-/* ------- Global ------- */
+/* ------- Normalize ------- */
+*, *:before, *:after {
+    box-sizing: border-box;
+}
+
 html {
     width: 100%;
     height: 100%;
+    margin: 0;
+    padding: 0;
 }
+
+/* ------- Global ------- */
 body {
     color: #eee;
     background-color: #333;
@@ -188,6 +196,31 @@ button.link, input[type=submit].link {
     padding: 3px 5px;
     border-top: 1px solid #444;
     border-bottom: 1px solid #2a2a2a;
+}
+.paginate ul {
+    text-align: center;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    font-size: 14px;
+}
+.paginate ul li {
+    text-align: center;
+    display: inline-block;
+    margin: 0;
+    padding: 0;
+}
+.paginate ul li:hover {
+    background-color: #444;
+}
+.paginate ul li.active {
+    font-weight: bold;
+}
+.paginate ul li a, .paginate ul li span {
+    display: block;
+    width: 100%;
+    margin: 0;
+    padding: 3px 10px;
 }
 
 /* ------- Header ------- */

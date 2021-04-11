@@ -14,7 +14,13 @@ namespace Draughts.Application.Shared {
     public static class Utils {
         public static string BaseUrl { get; set; } = "http://localhost:52588";
 
-        public static HtmlString Href(string url) => new HtmlString($"href=\"{UrlE(url)}\"");
+        public static HtmlString Href(string url, params (string key, object? value)[] queryParams) {
+            Url fullUrl = Url(url);
+            foreach ((string key, object? value) in queryParams) {
+                fullUrl.QueryParams.Add(E(key), E(value?.ToString() ?? ""));
+            }
+            return new HtmlString($"href=\"{E(fullUrl)}\"");
+        }
         public static string UrlE(string url) => E(Url(url));
         public static Url Url(string url) => url.StartsWith('/') ? Flurl.Url.Combine(BaseUrl, url) : url;
         public static string E(string text) => HtmlEncoder.Default.Encode(text);
@@ -64,5 +70,81 @@ namespace Draughts.Application.Shared {
         }
 
         public static string YesNo(bool b) => b ? "Yes" : "No";
+
+        public static HtmlString PaginationRangeOfTotal<T>(IPaginationViewModel<T> model) {
+            return new HtmlString(PaginationRange(model).Value + " of " + model.Pagination.Count);
+        }
+        public static HtmlString PaginationRange<T>(IPaginationViewModel<T> model) {
+            return new HtmlString($"{model.Pagination.BeginInclusive}-{model.Pagination.EndInclusive}");
+        }
+
+        public static HtmlString PaginationNav<T>(IPaginationViewModel<T> model, string url,
+                int maxInitial = 2, int minAround = 3, int maxClosing = 2) {
+            if (model.Pagination.PageCount <= 1) {
+                return new HtmlString("");
+            }
+
+            long page = model.Pagination.Page;
+            long pageCount = model.Pagination.PageCount;
+
+            string s = "<nav class=\"pagination-nav\"><ul>";
+            if (page == 1) {
+                s += EmptyPaginationListItem("<");
+            }
+            else {
+                s += PaginationListItem(url, page - 1, "<");
+            }
+
+            if (pageCount <= maxInitial + minAround * 2 + maxClosing + 3) {
+                s += PaginationListItems(url, page, 1, pageCount);
+            }
+            else if (page <= maxInitial + minAround + 2) {
+                s += PaginationListItems(url, page, 1, maxInitial + minAround * 2 + 2);
+                s += EmptyPaginationListItem("...");
+                s += PaginationListItems(url, page, pageCount - maxClosing + 1, pageCount);
+            }
+            else if (page > pageCount - maxClosing - minAround - 2) {
+                s += PaginationListItems(url, page, 1, maxInitial);
+                s += EmptyPaginationListItem("...");
+                s += PaginationListItems(url, page, pageCount - maxClosing - minAround * 2 - 1, pageCount);
+            }
+            else {
+                s += PaginationListItems(url, page, 1, maxInitial);
+                s += EmptyPaginationListItem("...");
+                s += PaginationListItems(url, page, page - minAround, page + minAround);
+                s += EmptyPaginationListItem("...");
+                s += PaginationListItems(url, page, pageCount - maxClosing + 1, pageCount);
+            }
+
+            if (page == pageCount) {
+                s += EmptyPaginationListItem(">");
+            }
+            else {
+                s += PaginationListItem(url, page + 1, ">");
+            }
+            s += "</ul></nav>";
+            return new HtmlString(s);
+        }
+
+        private static string PaginationListItems(string url, long page, long startInclusive, long endInclusive) {
+            string s = "";
+            for (long i = startInclusive; i <= endInclusive; i++) {
+                if (i == page) {
+                    s += EmptyPaginationListItem(i.ToString(), "active");
+                }
+                else {
+                    s += PaginationListItem(url, i, i.ToString());
+                }
+            }
+            return s;
+        }
+
+        private static string PaginationListItem(string url, long page, string display) {
+            return $"<li><a {Href(url, ("page", page))}>{E(display)}</a></li>";
+        }
+
+        private static string EmptyPaginationListItem(string display, string cssClass = "disabled") {
+            return $"<li class=\"{cssClass}\"><span>{E(display)}</span></li>";
+        }
     }
 }

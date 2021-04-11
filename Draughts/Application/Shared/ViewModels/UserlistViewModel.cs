@@ -1,13 +1,14 @@
 using Draughts.Domain.UserAggregate.Models;
+using Draughts.Repositories;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Draughts.Application.Shared.ViewModels {
-    public class UserlistViewModel {
-        public IReadOnlyList<UserViewModel> Users { get; set; }
+    public class UserlistViewModel : IPaginationViewModel<UserViewModel> {
+        public IReadOnlyList<UserViewModel> Users => Pagination.Results;
+        public Pagination<UserViewModel> Pagination { get; }
 
-        public UserlistViewModel(IReadOnlyList<User> users) {
-            Users = users.Select(u => new UserViewModel(u)).ToList().AsReadOnly();
+        public UserlistViewModel(Pagination<User> pagination) {
+            Pagination = pagination.Map(u => new UserViewModel(u));
         }
     }
 }

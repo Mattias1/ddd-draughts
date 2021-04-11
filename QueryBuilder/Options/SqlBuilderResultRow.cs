@@ -46,7 +46,7 @@ namespace SqlQueryBuilder.Options {
             return result;
         }
 
-        // --- IReadOnlyDictionary implementation
+        // --- IReadOnlyDictionary implementation ---
         public object? this[string key] => Single()[key];
 
         public IEnumerable<string> Keys => Single().Keys;

@@ -181,6 +181,15 @@ namespace SqlQueryBuilder.Test.Builder {
         }
 
         [Fact]
+        public void TestPagination() {
+            var query = Query().SelectAllFrom("user").Where("id").Gt(42);
+            string sqlCount = query.CloneWithoutSelect().CountAll().ToUnsafeSql();
+            string sqlList = query.Skip(3).Take(6).ToUnsafeSql();
+            sqlCount.Should().Be("select count(*) from user where id > 42");
+            sqlList.Should().Be("select user.* from user where id > 42 take 6 skip 3");
+        }
+
+        [Fact]
         public void NoSemicolonAllowedOutsideParameterizedString() {
             Action func = () => Query().SelectAllFrom("user;").ToParameterizedSql();
             func.Should().Throw<PotentialSqlInjectionException>();

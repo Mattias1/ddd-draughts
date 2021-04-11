@@ -30,6 +30,8 @@ namespace SqlQueryBuilder.Model {
         public List<IWhere> HavingForest { get; } = new List<IWhere>();
         public List<IOrderBy> OrderByList { get; } = new List<IOrderBy>();
 
+        public List<ILimit> Limits { get; set; } = new List<ILimit>();
+
         public Dictionary<string, object?> Parameters { get; private set; }
         public StringBuilder Builder { get; private set; }
 
@@ -116,6 +118,10 @@ namespace SqlQueryBuilder.Model {
                 AppendQueryParts(OrderByList);
             }
 
+            if (Limits.Count > 0) {
+                AppendQueryParts(Limits);
+            }
+
             return Builder.ToString();
         }
 
@@ -152,6 +158,33 @@ namespace SqlQueryBuilder.Model {
             if (parameterize) {
                 Parameters.Add(key, parameter);
             }
+        }
+
+        public Query Clone() {
+            var query = new Query(
+                Options.Clone(),
+                new Dictionary<string, object?>(Parameters),
+                new StringBuilder(Builder.ToString())
+            );
+
+            query.RawQueryParts.AddRange(RawQueryParts);
+            query.InsertTable = InsertTable;
+            query.InsertColumns.AddRange(InsertColumns);
+            query.InsertValues.AddRange(InsertValues);
+            query.UpdateTable = UpdateTable;
+            query.UpdateValues.AddRange(UpdateValues);
+            query.DeleteTable = DeleteTable;
+            query.SelectColumns.AddRange(SelectColumns);
+            query.Distinct = Distinct;
+            query.SelectFrom.AddRange(SelectFrom);
+            query.Joins.AddRange(Joins);
+            query.WhereForest.AddRange(WhereForest);
+            query.GroupByColumns.AddRange(GroupByColumns);
+            query.HavingForest.AddRange(HavingForest);
+            query.OrderByList.AddRange(OrderByList);
+            query.Limits.AddRange(Limits);
+
+            return query;
         }
     }
 }
