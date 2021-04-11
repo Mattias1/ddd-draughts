@@ -17,10 +17,14 @@ namespace SqlQueryBuilder.Builder {
             => Init(new QueryBuilderOptions(sqlFlavor, columnFormat));
         public static IInitialQueryBuilder Init(QueryBuilderOptions options) => new QueryBuilder(options);
 
-        internal QueryBuilder(QueryBuilderOptions options) {
-            _query = new Query(options);
+        internal QueryBuilder(QueryBuilderOptions options) : this(options, new Query(options)) { }
+
+        private QueryBuilder(QueryBuilderOptions options, Query query) {
             _options = options;
+            _query = query;
         }
+
+        public ICompleteQueryBuilder Cast() => this;
 
         private string ExtractAliasOrColumn(string column) {
             int index = column.LastIndexOf(" ");
@@ -141,6 +145,13 @@ namespace SqlQueryBuilder.Builder {
             }
         }
 
+        public Pagination<T> Paginate<T>(long page, int pageSize) where T : new() {
+            return Pagination<T>.Paginate(this, page, pageSize);
+        }
+        public async Task<Pagination<T>> PaginateAsync<T>(long page, int pageSize) where T : new() {
+            return await Pagination<T>.PaginateAsync(this, page, pageSize);
+        }
+
         public bool Execute() {
             string parameterizedSql = ToParameterizedSql();
             try {
@@ -182,6 +193,13 @@ namespace SqlQueryBuilder.Builder {
                 throw PotentialSqlInjectionException.ForDangerousCharacters();
             }
             return query;
+        }
+
+        public ICompleteQueryBuilder Clone() => new QueryBuilder(_options.Clone(), _query.Clone());
+        public ICompleteQueryBuilder CloneWithoutSelect() {
+            var query = _query.Clone();
+            query.SelectColumns.Clear();
+            return new QueryBuilder(_options.Clone(), query);
         }
     }
 

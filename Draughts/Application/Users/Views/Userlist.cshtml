@@ -6,7 +6,7 @@
 <div class="text-container">
     <h1>@ViewBag.Title</h1>
     <table class="page-table">
-        <caption>The list of users of this site.</caption>
+        <caption>Displaying @Utils.PaginationRangeOfTotal(Model) users of this site.</caption>
         <thead>
             <tr>
                 <th class="left small">Rank</th>
@@ -14,11 +14,6 @@
                 <th class="center normal">Total games</th>
             </tr>
         </thead>
-        <tfoot>
-            <tr>
-                <td colspan="3" class="center">Some footer text.</td>
-            </tr>
-        </tfoot>
         <tbody>
             @foreach(var user in Model.Users) {
                 <tr>
@@ -29,4 +24,7 @@
             }
         </tbody>
     </table>
+    <div class="paginate">
+        @Utils.PaginationNav(Model, "/user/list")
+    </div>
 </div>

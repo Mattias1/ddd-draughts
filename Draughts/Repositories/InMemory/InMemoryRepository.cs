@@ -1,4 +1,5 @@
 using Draughts.Common.OoConcepts;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -20,6 +21,21 @@ namespace Draughts.Repositories.InMemory {
         public IReadOnlyList<T> List(Specification<T> spec) => GetBaseQuery().Where(spec.IsSatisfiedBy).ToList().AsReadOnly();
         public IReadOnlyList<T> List<TKey>(Specification<T> spec, Sort<T, TKey> sort)
             => GetBaseQuery().Where(spec.IsSatisfiedBy).Sort(sort).ToList().AsReadOnly();
+
+        public Pagination<T> Paginate<TKey>(long page, int pageSize, Sort<T, TKey> sort) {
+            int pageIndex = GetPageIndex(page);
+            var allResults = List(sort);
+            var results = allResults.Skip(pageIndex * pageSize).Take(pageSize).ToList().AsReadOnly();
+            return new Pagination<T>(results, allResults.Count, pageIndex, pageSize);
+        }
+        public Pagination<T> Paginate<TKey>(long page, int pageSize, Specification<T> spec, Sort<T, TKey> sort) {
+            int pageIndex = GetPageIndex(page);
+            var allResults = List(spec, sort);
+            var results = allResults.Skip(pageIndex * pageSize).Take(pageSize).ToList().AsReadOnly();
+            return new Pagination<T>(results, allResults.Count, pageIndex, pageSize);
+        }
+
+        private int GetPageIndex(long page) => Math.Max((int)page - 1, 0);
 
         public abstract void Save(T entity);
     }

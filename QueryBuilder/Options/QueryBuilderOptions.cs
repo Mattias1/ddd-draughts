@@ -36,5 +36,12 @@ namespace SqlQueryBuilder.Options {
         public static IColumnFormat Default => CamelToSnakeCase;
         public static IColumnFormat None => new IdentityColumnFormat();
         public static IColumnFormat CamelToSnakeCase => new CamelToSnakeColumnFormat();
+
+        public QueryBuilderOptions Clone() {
+            return new QueryBuilderOptions(
+                SqlFlavor, ColumnFormat,
+                SmartDate, OverprotectiveSqlInjection, AddParameterizedSqlToException, DontParameterizeNumbers
+            );
+        }
     }
 }

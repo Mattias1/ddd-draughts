@@ -10,5 +10,8 @@ namespace SqlQueryBuilder.Options {
 
         Task<ISqlTransactionFlavor> BeginTransactionAsync();
         ISqlTransactionFlavor BeginTransaction();
+
+        (string queryPart, object?[] parameters) Skip(long skipOffset);
+        (string queryPart, object?[] parameters) Take(int takeLimit);
     }
 }

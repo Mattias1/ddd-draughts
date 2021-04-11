@@ -12,6 +12,7 @@
     <h1>@ViewBag.Title</h1>
     <p>The authorisation log of all the administrator actions.</p>
     <table class="page-table">
+        <caption>Displaying @Utils.PaginationRangeOfTotal(Model) log entries.</caption>
         <thead>
             <tr>
                 <th class="left normal">User</th>
@@ -32,4 +33,7 @@
             }
         </tbody>
     </table>
+    <div class="paginate">
+        @Utils.PaginationNav(Model, "/modpanel/admin-logs")
+    </div>
 </div>

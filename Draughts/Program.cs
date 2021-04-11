@@ -71,7 +71,7 @@ namespace Draughts {
 
     public static class LoggerMinimumLevelConfigurationExtensions {
         public static LoggerConfiguration FromString(this LoggerMinimumLevelConfiguration minimumLevel, string? logLevel) {
-            return logLevel?.ToLower() switch
+            return logLevel?.ToLowerInvariant() switch
             {
                 "fatal" => minimumLevel.Fatal(),
                 "error" => minimumLevel.Error(),

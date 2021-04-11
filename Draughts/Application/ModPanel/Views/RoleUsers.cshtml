@@ -8,7 +8,7 @@
     <h1>@ViewBag.Title</h1>
     <p>
         Edit the users for the '@Model.Rolename' role.
-        You can also <a @Utils.Href("/modpanel/role/@Model.Id/edit")>edit</a> this role and it's permissions
+        You can also <a @Utils.Href($"/modpanel/role/{Model.Id}/edit")>edit</a> this role and it's permissions
         or <a @Utils.Href("/modpanel/roles")>go back</a>.
     </p>
     </p>

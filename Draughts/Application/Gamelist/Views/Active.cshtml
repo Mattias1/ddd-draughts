@@ -12,6 +12,7 @@
     <p>Your currently ongoing games.</p>
 
     <table class="page-table">
+        <caption>Displaying @Utils.PaginationRangeOfTotal(Model) games.</caption>
         <thead>
             <tr>
                 <th class="left normal">Game id</th>
@@ -34,4 +35,7 @@
             }
         </tbody>
     </table>
+    <div class="paginate">
+        @Utils.PaginationNav(Model, "/gamelist/active")
+    </div>
 </div>

@@ -2,7 +2,9 @@ using System;
 using System.Linq;
 
 namespace SqlQueryBuilder.Model {
-    internal struct RawQueryPart : IColumn, IInsertValue, ISetColumn, IJoin, IWhere, IOrderBy {
+    internal interface ILimit : IQueryPart { }
+
+    internal struct RawQueryPart : IWhere, IColumn, IJoin, IOrderBy, ILimit, IInsertValue, ISetColumn {
         public string QueryPart { get; }
         public object?[] Values { get; }
 

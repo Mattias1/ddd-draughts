@@ -33,8 +33,14 @@ namespace Draughts.Test.Fakes {
 
         public Task<ISqlTransactionFlavor> BeginTransactionAsync() => Task.FromResult(BeginTransaction());
 
-        public ISqlTransactionFlavor BeginTransaction() {
-            throw new System.NotImplementedException();
+        public ISqlTransactionFlavor BeginTransaction() => throw new System.NotImplementedException();
+
+        public (string queryPart, object?[] parameters) Skip(long skipOffset) {
+            return ("skip ?", new object?[] { skipOffset });
+        }
+
+        public (string queryPart, object?[] parameters) Take(int takeLimit) {
+            return ("take ?", new object?[] { takeLimit });
         }
     }
 }

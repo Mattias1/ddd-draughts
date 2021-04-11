@@ -6,7 +6,9 @@ namespace SqlQueryBuilder.Builder {
         ISelectQueryBuilder Column(string column);
 
         ISelectQueryBuilder CountAllAs(string alias);
+        ISelectQueryBuilder CountAllAs(string table, string alias);
         ISelectQueryBuilder CountAll();
+        ISelectQueryBuilder CountAll(string table);
         ISelectQueryBuilder CountAs(string column, string alias);
         ISelectQueryBuilder Count(string column);
 

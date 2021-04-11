@@ -8,31 +8,63 @@ namespace Draughts.Repositories.Database {
             where T : Entity<T, TId> where TId : IdValueObject<TId> where TDb : new() {
         protected DbRepository() { }
 
-        public long Count() => GetBaseQuery().Select().CountAll().From(TableName).SingleLong() ?? 0;
-        public long Count(Specification<T> spec) => ApplySpec(spec,
-            GetBaseQuery().Select().CountAll().From(TableName)).SingleLong() ?? 0;
+        public long Count() {
+            var query = GetBaseQuery().Select().CountAll().From(TableName);
+            return query.SingleLong() ?? 0;
+        }
+        public long Count(Specification<T> spec) {
+            var query = GetBaseQuery().Select().CountAll().From(TableName);
+            ApplySpec(spec, query);
+            return query.SingleLong() ?? 0;
+        }
 
-        public T Find(Specification<T> spec) => Parse(ApplySpec(spec, GetBaseSelectQuery()).Single<TDb>());
-        public T? FindOrNull(Specification<T> spec) => ParseNullable(ApplySpec(spec, GetBaseSelectQuery()).SingleOrDefault<TDb>());
         public T FindById(TId id) => Find(new EntityIdSpecification<T, TId>(id));
         public T? FindByIdOrNull(TId id) => FindOrNull(new EntityIdSpecification<T, TId>(id));
 
-        public IReadOnlyList<T> List() => Parse(GetBaseSelectQuery().List<TDb>());
-        public IReadOnlyList<T> List<TKey>(Sort<T, TKey> sort) => Parse(sort.ApplyQueryBuilder(GetBaseSelectQuery()).List<TDb>());
-        public IReadOnlyList<T> List(Specification<T> spec) => Parse(ApplySpec(spec, GetBaseSelectQuery()).List<TDb>());
+        public T Find(Specification<T> spec) => Parse(ApplySpec(spec, GetBaseSelectQuery()).Single<TDb>());
+        public T? FindOrNull(Specification<T> spec) => ParseNullable(ApplySpec(spec, GetBaseSelectQuery()).SingleOrDefault<TDb>());
+
+        public IReadOnlyList<T> List() {
+            var query = GetBaseSelectQuery();
+            return Parse(query.List<TDb>());
+        }
+        public IReadOnlyList<T> List<TKey>(Sort<T, TKey> sort) {
+            var query = GetBaseSelectQuery();
+            sort.ApplyQueryBuilder(query);
+            return Parse(query.List<TDb>());
+        }
+        public IReadOnlyList<T> List(Specification<T> spec) {
+            var query = GetBaseSelectQuery();
+            ApplySpec(spec, query);
+            return Parse(query.List<TDb>());
+        }
         public IReadOnlyList<T> List<TKey>(Specification<T> spec, Sort<T, TKey> sort) {
-            var builder = GetBaseSelectQuery();
-            ApplySpec(spec, builder);
-            sort.ApplyQueryBuilder(builder);
-            return Parse(builder.List<TDb>());
+            var query = GetBaseSelectQuery();
+            ApplySpec(spec, query);
+            sort.ApplyQueryBuilder(query);
+            return Parse(query.List<TDb>());
+        }
+
+        public Pagination<T> Paginate<TKey>(long page, int pageSize, Sort<T, TKey> sort) {
+            var query = GetBaseSelectQuery();
+            sort.ApplyQueryBuilder(query);
+            var p = query.Paginate<TDb>(page, pageSize);
+            return new Pagination<T>(Parse(p.Results), p.Count, p.PageIndex, p.PageSize);
+        }
+        public Pagination<T> Paginate<TKey>(long page, int pageSize, Specification<T> spec, Sort<T, TKey> sort) {
+            var query = GetBaseSelectQuery();
+            ApplySpec(spec, query);
+            sort.ApplyQueryBuilder(query);
+            var p = query.Paginate<TDb>(page, pageSize);
+            return new Pagination<T>(Parse(p.Results), p.Count, p.PageIndex, p.PageSize);
         }
 
         protected abstract string TableName { get; }
         protected IQueryBuilder GetBaseSelectQuery() => GetBaseQuery().SelectAllFrom(TableName);
         protected abstract IInitialQueryBuilder GetBaseQuery();
 
-        protected virtual IQueryBuilder ApplySpec(Specification<T> spec, IQueryBuilder builder) {
-            return spec.ApplyQueryBuilder(builder);
+        protected virtual IQueryBuilder ApplySpec(Specification<T> spec, IQueryBuilder query) {
+            return spec.ApplyQueryBuilder(query);
         }
 
         protected virtual IReadOnlyList<T> Parse(IReadOnlyList<TDb> results) => results.Select(Parse).ToList().AsReadOnly();
