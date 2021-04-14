@@ -13,7 +13,6 @@ namespace Draughts.IntegrationTest.EndToEnd.Database {
         public IAuthUserRepository AuthUserRepository { get; }
         public IUserRepository UserRepository { get; }
         public IGameRepository GameRepository { get; }
-        public IPlayerRepository PlayerRepository { get; }
 
         public DbApiTester() {
             IdGenerator = HiLoIdGenerator.DbHiloGIdGenerator(1, 1, 1);
@@ -22,7 +21,6 @@ namespace Draughts.IntegrationTest.EndToEnd.Database {
             AuthUserRepository = new DbAuthUserRepository(RoleRepository, UnitOfWork);
             UserRepository = new DbUserRepository(UnitOfWork);
             GameRepository = new DbGameRepository(UnitOfWork);
-            PlayerRepository = new DbPlayerRepository(UnitOfWork);
         }
 
         protected override IWebHostBuilder WebHostBuilder() {

@@ -12,18 +12,15 @@ namespace Draughts.Command.Seeders {
     public class DummyDataSeeder {
         private readonly IAuthUserRepository _authUserRepository;
         private readonly IGameRepository _gameRepository;
-        private readonly IPlayerRepository _playerRepository;
         private readonly IRoleRepository _roleRepository;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IUserRepository _userRepository;
 
         public DummyDataSeeder(IAuthUserRepository authUserRepository, IGameRepository gameRepository,
-            IPlayerRepository playerRepository, IRoleRepository roleRepository, IUnitOfWork unitOfWork,
-            IUserRepository userRepository
+            IRoleRepository roleRepository, IUnitOfWork unitOfWork, IUserRepository userRepository
         ) {
             _authUserRepository = authUserRepository;
             _gameRepository = gameRepository;
-            _playerRepository = playerRepository;
             _roleRepository = roleRepository;
             _unitOfWork = unitOfWork;
             _userRepository = userRepository;
@@ -60,9 +57,6 @@ namespace Draughts.Command.Seeders {
             _unitOfWork.WithGameTransaction(tran => {
                 if (_gameRepository.Count() > 0) {
                     throw new InvalidOperationException("Game table is not empty.");
-                }
-                if (_playerRepository.Count() > 0) {
-                    throw new InvalidOperationException("Player table is not empty.");
                 }
                 tran.Commit();
             });
@@ -134,22 +128,18 @@ namespace Draughts.Command.Seeders {
                 var player1 = PlayerTestHelper.FromUser(user).WithColor(Color.White).Build();
                 var game1 = GameTestHelper.PendingInternationalGame(player1).Build();
                 _gameRepository.Save(game1);
-                _playerRepository.Save(player1, game1.Id);
 
                 var player2 = PlayerTestHelper.FromUser(mathy).Build();
                 var game2 = GameTestHelper.PendingInternationalGame(player2).Build();
                 _gameRepository.Save(game2);
-                _playerRepository.Save(player2, game2.Id);
 
                 var player3 = PlayerTestHelper.FromUser(user).Build();
                 var game3 = GameTestHelper.PendingGame(GameSettings.EnglishAmerican, player3).Build();
                 _gameRepository.Save(game3);
-                _playerRepository.Save(player3, game3.Id);
 
                 var player4 = PlayerTestHelper.FromUser(mathy).Build();
                 var game4 = GameTestHelper.PendingGame(GameSettings.Mini, player4).Build();
                 _gameRepository.Save(game4);
-                _playerRepository.Save(player4, game4.Id);
 
                 tran.Commit();
             });
