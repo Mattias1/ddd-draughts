@@ -8,6 +8,7 @@ namespace SqlQueryBuilder.Builder {
 
         IUpdateQueryBuilder SetFrom<T>(T model) where T : notnull;
         IUpdateQueryBuilder SetWithoutIdFrom<T>(T model) where T : notnull;
+        IUpdateQueryBuilder SetWithoutColumnsFrom<T>(T model, params string[] columns) where T : notnull;
         IUpdateQueryBuilder SetFromDictionary(IReadOnlyDictionary<string, object?> dictionary, params string[] ignoreKeys);
     }
 }

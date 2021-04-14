@@ -22,6 +22,10 @@ namespace SqlQueryBuilder.Builder {
             return SetFromDictionary(ComponentModelHelper.ToDictionary(model, _options.ColumnFormat), "id");
         }
 
+        public IUpdateQueryBuilder SetWithoutColumnsFrom<T>(T model, params string[] columns) where T : notnull {
+            return SetFromDictionary(ComponentModelHelper.ToDictionary(model, _options.ColumnFormat), columns);
+        }
+
         public IUpdateQueryBuilder SetFromDictionary(
                 IReadOnlyDictionary<string, object?> dictionary, params string[] ignoreKeys) {
             foreach (var (key, value) in dictionary) {

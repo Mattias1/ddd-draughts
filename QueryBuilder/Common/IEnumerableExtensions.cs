@@ -17,5 +17,9 @@ namespace SqlQueryBuilder.Common {
                 yield return currentChunk;
             }
         }
+
+        public static IReadOnlyList<T> MapReadOnly<TSource, T>(this IEnumerable<TSource> source, Func<TSource, T> func) {
+            return source.Select(func).ToList().AsReadOnly();
+        }
     }
 }

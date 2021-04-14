@@ -5,7 +5,6 @@ using NodaTime;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using static Draughts.Domain.AuthUserAggregate.Models.Permission;
 using static Draughts.Domain.UserAggregate.Models.Rank;
 
 namespace Draughts.Repositories.Database {

@@ -31,7 +31,6 @@ namespace Draughts.Common {
                 services.AddSingleton<IRoleRepository, InMemoryRoleRepository>();
                 services.AddSingleton<IAdminLogRepository, InMemoryAdminLogRepository>();
                 services.AddSingleton<IUserRepository, InMemoryUserRepository>();
-                services.AddSingleton<IPlayerRepository, InMemoryPlayerRepository>();
                 services.AddSingleton<IGameRepository, InMemoryGameRepository>();
             }
             else {
@@ -43,7 +42,6 @@ namespace Draughts.Common {
                 services.AddSingleton<IRoleRepository, DbRoleRepository>();
                 services.AddSingleton<IAdminLogRepository, DbAdminLogRepository>();
                 services.AddSingleton<IUserRepository, DbUserRepository>();
-                services.AddSingleton<IPlayerRepository, DbPlayerRepository>();
                 services.AddSingleton<IGameRepository, DbGameRepository>();
             }
 

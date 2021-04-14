@@ -16,13 +16,14 @@ namespace Draughts.Repositories.Database {
         }
 
         protected override string TableName => "game";
+        private const string PlayerTableName = "player";
         protected override IInitialQueryBuilder GetBaseQuery() => _unitOfWork.Query(TransactionDomain.Game);
-        private IQueryBuilder GetPlayerQuery() => GetBaseQuery().SelectAllFrom("player");
+        private IQueryBuilder GetPlayerQuery() => GetBaseQuery().SelectAllFrom(PlayerTableName);
 
         protected override IQueryBuilder ApplySpec(Specification<Game> spec, IQueryBuilder builder) {
             var joins = spec.RequiredJoins().ToArray();
             if (joins.Contains(PossibleJoins.Player)) {
-                builder.Join("player", "game.id", "player.game_id");
+                builder.Join(PlayerTableName, "game.id", PlayerTableName + ".game_id");
             }
             return base.ApplySpec(spec, builder);
         }
@@ -57,6 +58,22 @@ namespace Draughts.Repositories.Database {
             }
             else {
                 GetBaseQuery().Update(TableName).SetWithoutIdFrom(obj).Where("id").Is(entity.Id).Execute();
+            }
+            SavePlayers(entity);
+        }
+
+        private void SavePlayers(Game gameEntity) {
+            var existingPlayerIds = GetBaseQuery()
+                .Select("id").From(PlayerTableName).Where("game_id").Is(gameEntity.Id)
+                .ListLongs();
+            foreach (var playerEntity in gameEntity.Players) {
+                var obj = DbPlayer.FromDomainModel(playerEntity, gameEntity.Id);
+                if (existingPlayerIds.Contains(playerEntity.Id)) {
+                    GetBaseQuery().Update(PlayerTableName).SetWithoutIdFrom(obj).Where("id").Is(playerEntity.Id).Execute();
+                }
+                else {
+                    GetBaseQuery().InsertInto(PlayerTableName).InsertFrom(obj).Execute();
+                }
             }
         }
     }

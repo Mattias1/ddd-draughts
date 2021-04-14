@@ -20,8 +20,11 @@ namespace Draughts.Repositories.InMemory {
         }
 
         public override void Save(Game entity) {
-            var game = DbGame.FromDomainModel(entity);
-            _unitOfWork.Store(game, tran => GameDatabase.Temp(tran).GamesTable);
+            var dbGame = DbGame.FromDomainModel(entity);
+            _unitOfWork.Store(dbGame, tran => GameDatabase.Temp(tran).GamesTable);
+            foreach (var dbPlayer in entity.Players.Select(p => DbPlayer.FromDomainModel(p, entity.Id))) {
+                _unitOfWork.Store(dbPlayer, tran => GameDatabase.Temp(tran).PlayersTable);
+            }
         }
     }
 }

@@ -8,12 +8,10 @@ namespace Draughts.Application.Lobby.Services {
     public class GameFactory : IGameFactory {
         private readonly IClock _clock;
         private readonly IGameRepository _gameRepository;
-        private readonly IPlayerRepository _playerRepository;
 
-        public GameFactory(IClock clock, IGameRepository gameRepository, IPlayerRepository playerRepository) {
+        public GameFactory(IClock clock, IGameRepository gameRepository) {
             _clock = clock;
             _gameRepository = gameRepository;
-            _playerRepository = playerRepository;
         }
 
         public Game CreateGame(IIdPool idPool, GameSettings settings, User creator, Color creatorColor) {
@@ -24,7 +22,6 @@ namespace Draughts.Application.Lobby.Services {
             game.JoinGame(player, _clock.UtcNow());
 
             _gameRepository.Save(game);
-            _playerRepository.Save(player, game.Id);
 
             return game;
         }
@@ -35,7 +32,6 @@ namespace Draughts.Application.Lobby.Services {
             game.JoinGame(player, _clock.UtcNow());
 
             _gameRepository.Save(game);
-            _playerRepository.Save(player, game.Id);
         }
 
         public Player BuildPlayer(IIdPool idPool, User user, Color color) {

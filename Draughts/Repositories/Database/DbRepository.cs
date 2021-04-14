@@ -9,13 +9,12 @@ namespace Draughts.Repositories.Database {
         protected DbRepository() { }
 
         public long Count() {
-            var query = GetBaseQuery().Select().CountAll().From(TableName);
-            return query.SingleLong() ?? 0;
+            return GetBaseQuery().Select().CountAll().From(TableName).SingleLong();
         }
         public long Count(Specification<T> spec) {
             var query = GetBaseQuery().Select().CountAll().From(TableName);
             ApplySpec(spec, query);
-            return query.SingleLong() ?? 0;
+            return query.SingleLong();
         }
 
         public T FindById(TId id) => Find(new EntityIdSpecification<T, TId>(id));

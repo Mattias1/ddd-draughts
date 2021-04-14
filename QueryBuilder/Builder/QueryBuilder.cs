@@ -8,6 +8,7 @@ using System.Linq;
 using System.Threading.Tasks;
 
 namespace SqlQueryBuilder.Builder {
+    // TODO: nullables should use orDefault
     public partial class QueryBuilder : IQueryBuilderBase {
         private readonly QueryBuilderOptions _options;
         private readonly Query _query;
@@ -31,74 +32,124 @@ namespace SqlQueryBuilder.Builder {
             return index >= 0 ? column.Substring(index + 1) : column;
         }
 
-        public int? FirstInt(string column) => FirstValue<int>(column);
-        public int? FirstInt() => FirstValue<int>();
-        public int? SingleInt(string column) => SingleValue<int>();
-        public int? SingleInt() => SingleValue<int>();
-        public async Task<int?> FirstIntAsync(string column) => await FirstValueAsync<int>(column);
-        public async Task<int?> FirstIntAsync() => await FirstValueAsync<int>();
-        public async Task<int?> SingleIntAsync(string column) => await SingleValueAsync<int>(column);
-        public async Task<int?> SingleIntAsync() => await SingleValueAsync<int>();
+        public int FirstInt() => FirstValue<int>();
+        public int FirstInt(string column) => FirstValue<int>(column);
+        public int SingleInt() => SingleValue<int>();
+        public int SingleInt(string column) => SingleValue<int>(column);
+        public IReadOnlyList<int> ListInts() => ListValues<int>();
+        public IReadOnlyList<int> ListInts(string column) => ListValues<int>(column);
+        public async Task<int> FirstIntAsync() => await FirstValueAsync<int>();
+        public async Task<int> FirstIntAsync(string column) => await FirstValueAsync<int>(column);
+        public async Task<int> SingleIntAsync() => await SingleValueAsync<int>();
+        public async Task<int> SingleIntAsync(string column) => await SingleValueAsync<int>(column);
+        public async Task<IReadOnlyList<int>> ListIntsAsync() => await ListValuesAsync<int>();
+        public async Task<IReadOnlyList<int>> ListIntsAsync(string column) => await ListValuesAsync<int>(column);
 
-        public long? FirstLong(string column) => FirstValue<long>(column);
-        public long? FirstLong() => FirstValue<long>();
-        public long? SingleLong(string column) => SingleValue<long>(column);
-        public long? SingleLong() => SingleValue<long>();
-        public async Task<long?> FirstLongAsync(string column) => await FirstValueAsync<long>(column);
-        public async Task<long?> FirstLongAsync() => await FirstValueAsync<long>();
-        public async Task<long?> SingleLongAsync(string column) => await SingleValueAsync<long>(column);
-        public async Task<long?> SingleLongAsync() => await SingleValueAsync<long>();
+        public long FirstLong() => FirstValue<long>();
+        public long FirstLong(string column) => FirstValue<long>(column);
+        public long SingleLong() => SingleValue<long>();
+        public long SingleLong(string column) => SingleValue<long>(column);
+        public IReadOnlyList<long> ListLongs() => ListValues<long>();
+        public IReadOnlyList<long> ListLongs(string column) => ListValues<long>(column);
+        public async Task<long> FirstLongAsync() => await FirstValueAsync<long>();
+        public async Task<long> FirstLongAsync(string column) => await FirstValueAsync<long>(column);
+        public async Task<long> SingleLongAsync() => await SingleValueAsync<long>();
+        public async Task<long> SingleLongAsync(string column) => await SingleValueAsync<long>(column);
+        public async Task<IReadOnlyList<long>> ListLongsAsync() => await ListValuesAsync<long>();
+        public async Task<IReadOnlyList<long>> ListLongsAsync(string column) => await ListValuesAsync<long>(column);
 
-        public T? FirstValue<T>(string column) where T : struct => (T?)FirstResult()[column];
-        public T? FirstValue<T>() where T : struct {
-            var dict = FirstResult();
-            var key = dict.Keys.First();
-            return (T?)dict[key];
-        }
-        public T? SingleValue<T>(string column) where T : struct => (T?)SingleResult()[column];
-        public T? SingleValue<T>() where T : struct {
-            var dict = SingleResult();
-            var key = dict.Keys.Single();
-            return (T?)dict[key];
-        }
-
-        public async Task<T?> FirstValueAsync<T>(string column) where T : struct => (T?)(await FirstResultAsync())[column];
-        public async Task<T?> FirstValueAsync<T>() where T : struct {
-            var dict = await FirstResultAsync();
-            var key = dict.Keys.First();
-            return (T?)dict[key];
-        }
-        public async Task<T?> SingleValueAsync<T>(string column) where T : struct => (T?)(await SingleResultAsync())[column];
-        public async Task<T?> SingleValueAsync<T>() where T : struct {
-            var dict = await SingleResultAsync();
-            var key = dict.Keys.Single();
-            return (T?)dict[key];
+        public string FirstString() => FirstValue<string>();
+        public string FirstString(string column) => FirstValue<string>(column);
+        public string? FirstOrDefaultString() => RowClass<string>(FirstOrDefaultResult());
+        public string? FirstOrDefaultString(string column) => RowClass<string>(FirstOrDefaultResult(), column);
+        public string SingleString() => SingleValue<string>();
+        public string SingleString(string column) => SingleValue<string>(column);
+        public string? SingleOrDefaultString() => RowClass<string>(SingleOrDefaultResult());
+        public string? SingleOrDefaultString(string column) => RowClass<string>(SingleOrDefaultResult(), column);
+        public IReadOnlyList<string> ListStrings() => ListValues<string>();
+        public IReadOnlyList<string> ListStrings(string column) => ListValues<string>(column);
+        public IReadOnlyList<string?> ListNullableStrings() => Results().MapReadOnly(d => RowClass<string>(d));
+        public IReadOnlyList<string?> ListNullableStrings(string column) {
+            return Results().MapReadOnly(d => RowClass<string>(d, column));
         }
 
-        public string? FirstString(string column) => (string?)FirstResult()[column];
-        public string? FirstString()  {
-            var dict = FirstResult();
-            var key = dict.Keys.First();
-            return (string?)dict[key];
+        public async Task<string> FirstStringAsync() => await FirstValueAsync<string>();
+        public async Task<string> FirstStringAsync(string column) => await FirstValueAsync<string>(column);
+        public async Task<string?> FirstOrDefaultStringAsync() => RowClass<string>(await FirstOrDefaultResultAsync());
+        public async Task<string?> FirstOrDefaultStringAsync(string column) {
+            return RowClass<string>(await FirstOrDefaultResultAsync(), column);
         }
-        public string? SingleString(string column) => (string?)SingleResult()[column];
-        public string? SingleString()  {
-            var dict = SingleResult();
-            var key = dict.Keys.Single();
-            return (string?)dict[key];
+        public async Task<string> SingleStringAsync() => await SingleValueAsync<string>();
+        public async Task<string> SingleStringAsync(string column) => await SingleValueAsync<string>(column);
+        public async Task<string?> SingleOrDefaultStringAsync() => RowClass<string>(await SingleResultAsync());
+        public async Task<string?> SingleOrDefaultStringAsync(string column) {
+            return RowClass<string>(await SingleResultAsync(), column);
+        }
+        public async Task<IReadOnlyList<string>> ListStringsAsync() => await ListValuesAsync<string>();
+        public async Task<IReadOnlyList<string>> ListStringsAsync(string column) => await ListValuesAsync<string>(column);
+        public async Task<IReadOnlyList<string?>> ListNullableStringsAsync() {
+            return (await ResultsAsync()).MapReadOnly(d => RowClass<string>(d));
+        }
+        public async Task<IReadOnlyList<string?>> ListNullableStringsAsync(string column) {
+            return (await ResultsAsync()).MapReadOnly(d => RowClass<string>(d, column));
         }
 
-        public async Task<string?> FirstStringAsync(string column) => (string?)(await FirstResultAsync())[column];
-        public async Task<string?> FirstStringAsync() {
-            var dict = await FirstResultAsync();
-            var key = dict.Keys.First();
-            return (string?)dict[key];
+        public T FirstValue<T>() => RowValue<T>(FirstResult());
+        public T FirstValue<T>(string column) => RowValue<T>(FirstResult(), column);
+        public T? FirstOrDefaultValue<T>() where T : struct => RowStruct<T>(FirstOrDefaultResult());
+        public T? FirstOrDefaultValue<T>(string column) where T : struct => RowStruct<T>(FirstOrDefaultResult(), column);
+        public T SingleValue<T>()  => RowValue<T>(SingleResult());
+        public T SingleValue<T>(string column) => RowValue<T>(SingleResult(), column);
+        public T? SingleOrDefaultValue<T>() where T : struct => RowStruct<T>(SingleOrDefaultResult());
+        public T? SingleOrDefaultValue<T>(string column) where T : struct => RowStruct<T>(SingleOrDefaultResult(), column);
+        public IReadOnlyList<T> ListValues<T>() {
+            return Results().MapReadOnly(d => RowValue<T>(d));
         }
-        public async Task<string?> SingleStringAsync(string column) => (string?)(await SingleResultAsync())[column];
-        public async Task<string?> SingleStringAsync() {
-            var dict = await SingleResultAsync();
-            var key = dict.Keys.Single();
-            return (string?)dict[key];
+        public IReadOnlyList<T> ListValues<T>(string column) {
+            return Results().MapReadOnly(d => RowValue<T>(d, column));
+        }
+        public IReadOnlyList<T?> ListNullableValues<T>() where T : struct {
+            return Results().MapReadOnly(d => RowStruct<T>(d));
+        }
+        public IReadOnlyList<T?> ListNullableValues<T>(string column) where T : struct {
+            return Results().MapReadOnly(d => RowStruct<T>(d, column));
+        }
+
+        public async Task<T> FirstValueAsync<T>() {
+            return RowValue<T>(await FirstResultAsync());
+        }
+        public async Task<T> FirstValueAsync<T>(string column) {
+            return RowValue<T>(await FirstResultAsync(), column);
+        }
+        public async Task<T?> FirstOrDefaultValueAsync<T>() where T : struct {
+            return RowStruct<T>(await FirstOrDefaultResultAsync());
+        }
+        public async Task<T?> FirstOrDefaultValueAsync<T>(string column) where T : struct {
+            return RowStruct<T>(await FirstOrDefaultResultAsync(), column);
+        }
+        public async Task<T> SingleValueAsync<T>() {
+            return RowValue<T>(await SingleResultAsync());
+        }
+        public async Task<T> SingleValueAsync<T>(string column) {
+            return RowValue<T>(await SingleResultAsync(), column);
+        }
+        public async Task<T?> SingleOrDefaultValueAsync<T>() where T : struct {
+            return RowStruct<T>(await SingleOrDefaultResultAsync());
+        }
+        public async Task<T?> SingleOrDefaultValueAsync<T>(string column) where T : struct {
+            return RowStruct<T>(await SingleOrDefaultResultAsync(), column);
+        }
+        public async Task<IReadOnlyList<T>> ListValuesAsync<T>() {
+            return (await ResultsAsync()).MapReadOnly(d => RowValue<T>(d));
+        }
+        public async Task<IReadOnlyList<T>> ListValuesAsync<T>(string column) {
+            return (await ResultsAsync()).MapReadOnly(d => RowValue<T>(d, column));
+        }
+        public async Task<IReadOnlyList<T?>> ListNullableValuesAsync<T>() where T : struct {
+            return (await ResultsAsync()).MapReadOnly(d => RowStruct<T>(d));
+        }
+        public async Task<IReadOnlyList<T?>> ListNullableValuesAsync<T>(string column) where T : struct {
+            return (await ResultsAsync()).MapReadOnly(d => RowStruct<T>(d, column));
         }
 
         public T First<T>() where T : new() => List<T>().First();
@@ -106,7 +157,7 @@ namespace SqlQueryBuilder.Builder {
         public T Single<T>() where T : new() => List<T>().Single();
         public T? SingleOrDefault<T>() where T : new() => List<T>().SingleOrDefault();
         public IReadOnlyList<T> List<T>() where T : new() {
-            return Results().Select(d => ComponentModelHelper.ToObject<T>(d, _options.ColumnFormat)).ToList();
+            return Results().MapReadOnly(d => ComponentModelHelper.ToObject<T>(d, _options.ColumnFormat));
         }
 
         public async Task<T> FirstAsync<T>() where T : new() => (await ListAsync<T>()).First();
@@ -114,7 +165,7 @@ namespace SqlQueryBuilder.Builder {
         public async Task<T> SingleAsync<T>() where T : new() => (await ListAsync<T>()).Single();
         public async Task<T?> SingleOrDefaultAsync<T>() where T : new() => (await ListAsync<T>()).SingleOrDefault();
         public async Task<IReadOnlyList<T>> ListAsync<T>() where T : new() {
-            return (await ResultsAsync()).Select(d => ComponentModelHelper.ToObject<T>(d, _options.ColumnFormat)).ToList();
+            return (await ResultsAsync()).MapReadOnly(d => ComponentModelHelper.ToObject<T>(d, _options.ColumnFormat));
         }
 
         public SqlBuilderResultRow FirstResult() => Results().First();
@@ -201,6 +252,15 @@ namespace SqlQueryBuilder.Builder {
             query.SelectColumns.Clear();
             return new QueryBuilder(_options.Clone(), query);
         }
+
+        private T RowValue<T>(SqlBuilderResultRow row) => RowValue<T>(row, row.Keys.First());
+        private T RowValue<T>(SqlBuilderResultRow row, string key) {
+            return (T?)row[key] ?? throw new InvalidCastException($"The value for {key} is null");
+        }
+        private T? RowStruct<T>(SqlBuilderResultRow? row) where T : struct => RowStruct<T>(row, row?.Keys.First() ?? "");
+        private T? RowStruct<T>(SqlBuilderResultRow? row, string key) where T : struct => (T?)row?[key];
+        private T? RowClass<T>(SqlBuilderResultRow? row) where T : class => RowClass<T>(row, row?.Keys.First() ?? "");
+        private T? RowClass<T>(SqlBuilderResultRow? row, string key) where T : class => (T?)row?[key];
     }
 
     public partial class QueryBuilder : ICompleteQueryBuilder { }
