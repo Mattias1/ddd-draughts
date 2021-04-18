@@ -139,7 +139,7 @@ namespace Draughts.Application.ModPanel {
         [HttpGet("/modpanel/admin-logs"), Requires(Permissions.VIEW_ADMIN_LOGS)]
         public IActionResult AdminLogs(int page = 1) {
             var adminLogs = GetAdminLogs(page, 20);
-            return View(new ModPanelOverviewViewModel(adminLogs, BuildMenu()));
+            return View(new AdminLogsViewModel(adminLogs));
         }
 
         private Pagination<AdminLog> GetAdminLogs(int page, int pageSize) {

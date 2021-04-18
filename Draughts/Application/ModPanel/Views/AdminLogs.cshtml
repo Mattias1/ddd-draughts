@@ -1,16 +1,15 @@
 @using Draughts.Application.ModPanel.ViewModels
-@model ModPanelOverviewViewModel
+@model AdminLogsViewModel
 @{
     ViewBag.Title = "Mod panel - Admin logs";
 }
 
-<nav class="side-menu">
-    @Utils.SideMenu(Model.Menu)
-</nav>
-
-<div class="text-side-menu-container">
+<div class="text-container">
     <h1>@ViewBag.Title</h1>
-    <p>The authorisation log of all the administrator actions.</p>
+    <p>
+        The authorisation log of all the administrator actions.
+        <a @Utils.Href("/modpanel")>Go back</a>.
+    </p>
     <table class="page-table">
         <caption>Displaying @Utils.PaginationRangeOfTotal(Model) log entries.</caption>
         <thead>

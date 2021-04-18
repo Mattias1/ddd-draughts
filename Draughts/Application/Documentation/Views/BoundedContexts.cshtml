@@ -63,7 +63,7 @@
         </li>
         <li>
             It is a transactional unit and should be updated as a whole (or not at all). I think it's fine to update
-            multiple aggregates in one transaction (assuming that doesn't harm performance).
+            multiple aggregates in one transaction (assuming that it doesn't harm performance).
         </li>
         <li>
             You want to keep aggregates small.
@@ -72,12 +72,16 @@
 
     <h3>The architecture of Draughts</h3>
     <p>
-        For draughts we have 3 bounded contexts: Game, User and AuthUser. Currently each of them has one aggregate. I
-        might split off the GameState and make it an aggregate on its own in the future.
+        For draughts we have 3 bounded contexts: Game, User and AuthUser. Their aggregates are:
     </p>
+    <ul>
+        <li>Game and GameState</li>
+        <li>User</li>
+        <li>AuthUser, Role and AdminLog</li>
+    </ul>
     <p>
         If you care about the terminology specifics: the Game context is part of what is called the <em>core domain</em>,
-        the User context is part of a <em>supporting subdomain</em> and the AuthUser is part of a
-        <em>generic subdomain</em>.
+        the User context is part of a <em>supporting subdomain</em> and the AuthUser is part of a <em>generic
+        subdomain</em>.
     </p>
 </div>
