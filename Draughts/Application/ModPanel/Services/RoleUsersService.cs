@@ -1,6 +1,7 @@
 using Draughts.Common;
 using Draughts.Domain.AuthUserAggregate.Events;
 using Draughts.Domain.AuthUserAggregate.Models;
+using Draughts.Domain.AuthUserAggregate.Services;
 using Draughts.Domain.AuthUserAggregate.Specifications;
 using Draughts.Domain.UserAggregate.Models;
 using Draughts.Repositories;
@@ -14,14 +15,16 @@ namespace Draughts.Application.ModPanel.Services {
         private readonly IClock _clock;
         private readonly IIdGenerator _idGenerator;
         private readonly IRoleRepository _roleRepository;
+        private readonly IUserRoleDomainService _userRoleDomainService;
         private readonly IUnitOfWork _unitOfWork;
 
         public RoleUsersService(IAuthUserRepository authUserRepository, IClock clock, IIdGenerator idGenerator,
-                IRoleRepository roleRepository, IUnitOfWork unitOfWork) {
+                IRoleRepository roleRepository, IUserRoleDomainService userRoleDomainService, IUnitOfWork unitOfWork) {
             _authUserRepository = authUserRepository;
             _clock = clock;
             _idGenerator = idGenerator;
             _roleRepository = roleRepository;
+            _userRoleDomainService = userRoleDomainService;
             _unitOfWork = unitOfWork;
         }
 
@@ -41,7 +44,7 @@ namespace Draughts.Application.ModPanel.Services {
                     throw new ManualValidationException("User not found");
                 }
 
-                authUser.AssignRole(role);
+                _userRoleDomainService.AssignRole(authUser, role);
                 _authUserRepository.Save(authUser);
 
                 _unitOfWork.Raise(UserGainedRole.Factory(role, authUser, responsibleUserId));
@@ -58,7 +61,7 @@ namespace Draughts.Application.ModPanel.Services {
                     throw new ManualValidationException("User not found");
                 }
 
-                authUser.RemoveRole(role);
+                _userRoleDomainService.RemoveRole(authUser, role);
                 _authUserRepository.Save(authUser);
 
                 _unitOfWork.Raise(UserLostRole.Factory(role, authUser, responsibleUserId));

@@ -51,7 +51,7 @@ namespace Draughts.Repositories.Database {
 
         public bool Equals(DbAuthUser? other) => Id.Equals(other?.Id);
 
-        public AuthUser ToDomainModel(IReadOnlyList<Role> roles) {
+        public AuthUser ToDomainModel(IEnumerable<RoleId> roles) {
             return new AuthUser(
                 new UserId(Id),
                 new Username(Username),

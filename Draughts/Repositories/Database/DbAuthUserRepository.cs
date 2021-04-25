@@ -37,30 +37,27 @@ namespace Draughts.Repositories.Database {
             }
 
             var userRoles = GetAuthuserRoleQuery().Where("user_id").In(qs.Select(q => q.Id)).List<DbAuthUserRole>();
-            var roleIds = userRoles.ToLookup(ur => ur.UserId, ur => ur.RoleId);
-            var roles = _roleRepository.List(new RoleIdsSpecification(userRoles.Select(ur => ur.RoleId)));
+            var roleIds = userRoles.ToLookup(ur => ur.UserId, ur => new RoleId(ur.RoleId));
             return qs
-                .Select(q => q.ToDomainModel(roles.IntersectBy(roleIds[q.Id], r => r.Id).ToArray()))
+                .Select(q => q.ToDomainModel(roleIds[q.Id].ToList()))
                 .ToList()
                 .AsReadOnly();
         }
 
-        protected override AuthUser Parse(DbAuthUser q) {
-            var userRoles = GetAuthuserRoleQuery().Where("user_id").Is(q.Id).List<DbAuthUserRole>();
-            var roles = _roleRepository.List(new RoleIdsSpecification(userRoles.Select(ur => ur.RoleId)));
-            return q.ToDomainModel(roles);
+        protected override AuthUser Parse(DbAuthUser authUser) {
+            var roleIds = QueryRoleIdsForUser(authUser.Id).Select(id => new RoleId(id));
+            return authUser.ToDomainModel(roleIds);
         }
 
         public override void Save(AuthUser entity) {
             var obj = DbAuthUser.FromDomainModel(entity);
             if (FindByIdOrNull(entity.Id) is null) {
                 GetBaseQuery().InsertInto(TableName).InsertFrom(obj).Execute();
-                InsertRoles(entity.Id, entity.Roles.Select(r => r.Id.Id));
+                InsertRoles(entity.Id, entity.RoleIds.Select(r => r.Id));
             }
             else {
-                var oldRoleIds = GetAuthuserRoleQuery().Where("user_id").Is(entity.Id).List<DbAuthUserRole>()
-                    .Select(pr => pr.RoleId).ToArray();
-                var newRoleIds = entity.Roles.Select(p => p.Id.Id).ToArray();
+                var oldRoleIds = QueryRoleIdsForUser(entity.Id).ToArray();
+                var newRoleIds = entity.RoleIds.Select(p => p.Id).ToArray();
                 var toDelete = oldRoleIds.Except(newRoleIds).ToArray();
                 var toAdd = newRoleIds.Except(oldRoleIds);
 
@@ -90,6 +87,14 @@ namespace Draughts.Repositories.Database {
                 yield return userId;
                 yield return roleId;
             }
+        }
+
+        private IReadOnlyList<long> QueryRoleIdsForUser(long authUserId) {
+            return GetBaseQuery()
+                .Select("role_id")
+                .From("authuser_role")
+                .Where("user_id").Is(authUserId)
+                .ListLongs();
         }
     }
 }

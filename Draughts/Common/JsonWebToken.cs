@@ -118,7 +118,7 @@ namespace Draughts.Common {
                 Exp = expires.ToUnixTimeSeconds();
                 Usr = authUser.Id;
                 Una = authUser.Username;
-                Rol = authUser.Roles.Select(r => r.Id.Id).ToArray();
+                Rol = authUser.RoleIds.Select(r => r.Id).ToArray();
             }
         }
     }

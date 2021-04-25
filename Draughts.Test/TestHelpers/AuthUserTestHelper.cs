@@ -45,7 +45,7 @@ namespace Draughts.Test.TestHelpers {
             private PasswordHash? _passwordHash;
             private Email? _email;
             private ZonedDateTime? _createdAt;
-            private List<Role> _roles = new List<Role>();
+            private List<RoleId> _roleIds = new List<RoleId>();
 
             public AuthUserBuilder WithId(long id) => WithId(new UserId(id));
             public AuthUserBuilder WithId(UserId id) {
@@ -81,13 +81,15 @@ namespace Draughts.Test.TestHelpers {
                 return this;
             }
 
-            public AuthUserBuilder WithRoles(params Role[] roles) => WithRoles(roles.ToList());
-            public AuthUserBuilder WithRoles(List<Role> roles) {
-                _roles = roles;
+            public AuthUserBuilder WithRoles(params Role[] roles) => WithRoles(roles.Select(r => r.Id));
+            public AuthUserBuilder WithRoles(List<Role> roles) => WithRoles(roles.Select(r => r.Id));
+            public AuthUserBuilder WithRoles(IEnumerable<RoleId> roleIds) {
+                _roleIds = roleIds.ToList();
                 return this;
             }
-            public AuthUserBuilder AddRole(Role role) {
-                _roles.Add(role);
+            public AuthUserBuilder AddRole(Role role) => AddRole(role.Id);
+            public AuthUserBuilder AddRole(RoleId roleId) {
+                _roleIds.Add(roleId);
                 return this;
             }
 
@@ -108,7 +110,7 @@ namespace Draughts.Test.TestHelpers {
                     throw new InvalidOperationException("CreatedAt is not nullable");
                 }
 
-                return new AuthUser(_id, _username, _passwordHash, _email, _createdAt.Value, _roles);
+                return new AuthUser(_id, _username, _passwordHash, _email, _createdAt.Value, _roleIds);
             }
         }
     }

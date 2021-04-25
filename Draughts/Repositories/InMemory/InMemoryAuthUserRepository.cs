@@ -16,8 +16,7 @@ namespace Draughts.Repositories.InMemory {
         }
 
         protected override IList<AuthUser> GetBaseQuery() {
-            var roles = _roleRepository.List().ToDictionary(r => r.Id.Id);
-            var authuserRoles = AuthUserDatabase.Get.AuthUserRolesTable.ToLookup(ar => ar.UserId, ar => roles[ar.RoleId]);
+            var authuserRoles = AuthUserDatabase.Get.AuthUserRolesTable.ToLookup(ar => ar.UserId, ar => new RoleId(ar.RoleId));
             return AuthUserDatabase.Get.AuthUsersTable
                 .Select(u => u.ToDomainModel(authuserRoles[u.Id].ToList().AsReadOnly()))
                 .ToList();
@@ -27,7 +26,7 @@ namespace Draughts.Repositories.InMemory {
             var dbAuthUser = DbAuthUser.FromDomainModel(entity);
             _unitOfWork.Store(dbAuthUser, tran => AuthUserDatabase.Temp(tran).AuthUsersTable);
 
-            foreach (var roleId in entity.Roles.Select(r => r.Id)) {
+            foreach (var roleId in entity.RoleIds.Select(r => r.Id)) {
                 var dbAuthUserRole = new DbAuthUserRole {
                     UserId = dbAuthUser.Id,
                     RoleId = roleId

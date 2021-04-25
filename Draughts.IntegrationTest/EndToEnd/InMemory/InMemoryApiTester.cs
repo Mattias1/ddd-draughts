@@ -42,7 +42,7 @@ namespace Draughts.IntegrationTest.EndToEnd.InMemory {
             var username = new Username(name);
             var hash = PasswordHash.Generate("admin", userId, username);
             var email = new Email($"{username}@example.com");
-            return new AuthUser(userId, username, hash, email, Clock.UtcNow(), roles);
+            return new AuthUser(userId, username, hash, email, Clock.UtcNow(), roles.Select(r => r.Id));
         }
     }
 }

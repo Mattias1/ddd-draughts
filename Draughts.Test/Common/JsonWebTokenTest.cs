@@ -18,7 +18,7 @@ namespace Draughts.Test.Common {
             var registeredUser = RoleTestHelper.RegisteredUser().WithId(2).Build();
             var authUser = BuildAuthUser(UserId, "User", registeredUser);
 
-            var clock = new FakeClock(new LocalDateTime(2020, 01, 16, 12, 0).InUtc().ToInstant());
+            var clock = FakeClock.FromUtc(2020, 01, 16, 12, 0, 0);
 
             var token = JsonWebToken.Generate(authUser, clock);
             string jwtString = token.ToJwtString();
@@ -28,7 +28,7 @@ namespace Draughts.Test.Common {
 
         [Fact]
         public void ParseValidJwtString() {
-            var clock = new FakeClock(new LocalDateTime(2020, 01, 16, 12, 0).InUtc().ToInstant());
+            var clock = FakeClock.FromUtc(2020, 01, 16, 12, 0, 0);
 
             bool success = JsonWebToken.TryParseFromJwtString(JWT_STRING, clock, out var jwt);
 
@@ -39,7 +39,7 @@ namespace Draughts.Test.Common {
 
         [Fact]
         public void AbortParsingJwtStringWhenExpired() {
-            var clock = new FakeClock(new LocalDateTime(2021, 01, 16, 12, 0).InUtc().ToInstant());
+            var clock = FakeClock.FromUtc(2020, 12, 31);
 
             bool success = JsonWebToken.TryParseFromJwtString(JWT_STRING, clock, out var jwt);
 
@@ -49,7 +49,7 @@ namespace Draughts.Test.Common {
 
         [Fact]
         public void AbortParsingJwtStringWhenInvalidHash() {
-            var clock = new FakeClock(new LocalDateTime(2020, 01, 16, 12, 0).InUtc().ToInstant());
+            var clock = FakeClock.FromUtc(2020, 01, 16, 12, 0, 0);
 
             string invalidJwtString = JWT_STRING.Substring(0, JWT_STRING.Length - 1) + 'A';
             bool success = JsonWebToken.TryParseFromJwtString(invalidJwtString, clock, out var jwt);
