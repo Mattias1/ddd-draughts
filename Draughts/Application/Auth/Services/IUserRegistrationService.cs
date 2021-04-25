@@ -3,8 +3,8 @@ using Draughts.Domain.UserAggregate.Models;
 using Draughts.Repositories;
 
 namespace Draughts.Application.Auth.Services {
-    public interface IAuthUserFactory {
-        AuthUser CreateAuthUser(IIdPool idPool, string? name, string? email, string? plaintextPassword);
+    public interface IUserRegistrationService {
+        AuthUser CreateAuthUser(string? name, string? email, string? plaintextPassword);
         AuthUser FinishRegistration(UserId id);
     }
 }

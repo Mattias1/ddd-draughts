@@ -11,6 +11,7 @@ using Microsoft.Extensions.DependencyInjection;
 using NodaTime;
 using System;
 using Draughts.Application.ModPanel.Services;
+using Draughts.Domain.AuthUserAggregate.Services;
 
 namespace Draughts.Common {
     public static class DraughtsServiceProvider {
@@ -20,8 +21,35 @@ namespace Draughts.Common {
         public static void ConfigureServices(IServiceCollection services, bool useInMemoryDatabase,
                 int hiloLargeIntervalSize = HI_LO_INTERVAL_SIZE_LARGE,
                 int hiloSmallIntervalSize = HI_LO_INTERVAL_SIZE_SMALL) {
+            ConfigureApplicationMiddleware(services);
+            ConfigureEventHandlers(services);
+            ConfigureRepositories(services, useInMemoryDatabase, hiloLargeIntervalSize, hiloSmallIntervalSize);
+
+            ConfigureApplicationServices(services);
+
+            ConfigureDomainServices(services);
+        }
+
+        private static void ConfigureApplicationMiddleware(IServiceCollection services) {
             services.AddSingleton<IClock>(SystemClock.Instance);
 
+            services.AddScoped<JwtActionFilter>();
+            services.AddScoped<AuthContextActionFilter>();
+            services.AddScoped<ExceptionLoggerActionFilter>();
+        }
+
+        private static void ConfigureEventHandlers(IServiceCollection services) {
+            services.AddSingleton<SynchronizePendingUserEventHandler>();
+            services.AddSingleton<FinishUserRegistrationEventHandler>();
+            services.AddSingleton<ModPanelRoleEventHandler>();
+        }
+
+        private static void ConfigureDomainServices(IServiceCollection services) {
+            services.AddSingleton<IUserRegistrationDomainService, UserRegistrationDomainService>();
+            services.AddSingleton<IUserRoleDomainService, UserRoleDomainService>();
+        }
+
+        private static void ConfigureRepositories(IServiceCollection services, bool useInMemoryDatabase, int hiloLargeIntervalSize, int hiloSmallIntervalSize) {
             if (useInMemoryDatabase) {
                 services.AddSingleton<IIdGenerator>(HiLoIdGenerator.InMemoryHiloGIdGenerator(
                     hiloLargeIntervalSize, hiloSmallIntervalSize, hiloSmallIntervalSize));
@@ -44,24 +72,18 @@ namespace Draughts.Common {
                 services.AddSingleton<IUserRepository, DbUserRepository>();
                 services.AddSingleton<IGameRepository, DbGameRepository>();
             }
+        }
 
-            services.AddSingleton<SynchronizePendingUserEventHandler>();
-            services.AddSingleton<FinishUserRegistrationEventHandler>();
-            services.AddSingleton<ModPanelRoleEventHandler>();
-
+        private static void ConfigureApplicationServices(IServiceCollection services) {
             services.AddSingleton<IAuthService, AuthService>();
             services.AddSingleton<IEditRoleService, EditRoleService>();
             services.AddSingleton<IRoleUsersService, RoleUsersService>();
             services.AddSingleton<IGameService, GameService>();
             services.AddSingleton<IPlayGameService, PlayGameService>();
+            services.AddSingleton<IUserRegistrationService, UserRegistrationService>();
 
-            services.AddSingleton<IAuthUserFactory, AuthUserFactory>();
             services.AddSingleton<IUserFactory, UserFactory>();
             services.AddSingleton<IGameFactory, GameFactory>();
-
-            services.AddScoped<JwtActionFilter>();
-            services.AddScoped<AuthContextActionFilter>();
-            services.AddScoped<ExceptionLoggerActionFilter>();
         }
 
         public static void RegisterEventHandlers(IServiceProvider serviceProvider) {

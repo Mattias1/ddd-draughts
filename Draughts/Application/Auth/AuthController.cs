@@ -5,22 +5,19 @@ using Draughts.Application.Shared.Attributes;
 using Draughts.Application.Shared.Middleware;
 using Draughts.Application.Auth.Services;
 using Draughts.Application.Shared;
-using Draughts.Repositories;
 
 namespace Draughts.Application.Auth {
     public class AuthController : BaseController {
         private const string ALREADY_LOGGED_IN_ERROR = "You're already logged in.";
 
         private readonly IAuthService _authService;
-        private readonly IAuthUserFactory _authUserFactory;
-        private readonly IIdGenerator _idGenerator;
+        private readonly IUserRegistrationService _userRegistrationService;
         private readonly IUnitOfWork _unitOfWork;
 
-        public AuthController(IAuthService authService, IAuthUserFactory authUserFactory, IIdGenerator idGenerator,
+        public AuthController(IAuthService authService, IUserRegistrationService userRegistrationService,
                 IUnitOfWork unitOfWork) {
             _authService = authService;
-            _authUserFactory = authUserFactory;
-            _idGenerator = idGenerator;
+            _userRegistrationService = userRegistrationService;
             _unitOfWork = unitOfWork;
         }
 
@@ -83,14 +80,7 @@ namespace Draughts.Application.Auth {
                     throw new ManualValidationException("PasswordConfirm", "The passwords do not match.");
                 }
 
-                // Do I want this transaction in a controller? Probably not right? Because we might need transactions
-                // (or at least read only db connections) for different domains. And they should be accessed from inside
-                // a non-domain service.
-                _unitOfWork.WithAuthUserTransaction(tran => {
-                    _authUserFactory.CreateAuthUser(_idGenerator.ReservePool(), request.Name, request.Email, request.Password);
-
-                    tran.Commit();
-                });
+                _userRegistrationService.CreateAuthUser(request.Name, request.Email, request.Password);
                 return SuccessRedirect("/", $"User '{request.Name}' is registered.");
             }
             catch (ManualValidationException e) {
