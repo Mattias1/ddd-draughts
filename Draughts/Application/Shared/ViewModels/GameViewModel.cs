@@ -10,7 +10,6 @@ namespace Draughts.Application.Shared.ViewModels {
         public Turn? Turn { get; }
         public GameSettings Settings { get; }
         public Player? Victor { get; }
-        public GameState CurrentGameState { get; }
         public ZonedDateTime CreatedAt { get; }
         public ZonedDateTime? StartedAt { get; }
         public ZonedDateTime? FinishedAt { get; }
@@ -21,10 +20,17 @@ namespace Draughts.Application.Shared.ViewModels {
             Turn = game.Turn;
             Settings = game.Settings;
             Victor = game.Victor;
-            CurrentGameState = game.GameState;
             CreatedAt = game.CreatedAt;
             StartedAt = game.StartedAt;
             FinishedAt = game.FinishedAt;
+        }
+    }
+
+    public class PlayGameViewModel : GameViewModel {
+        public GameState CurrentGameState { get; }
+
+        public PlayGameViewModel(Game game, GameState gameState) : base(game) {
+            CurrentGameState = gameState;
         }
     }
 }

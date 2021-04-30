@@ -12,6 +12,7 @@ using NodaTime;
 using System;
 using Draughts.Application.ModPanel.Services;
 using Draughts.Domain.AuthUserAggregate.Services;
+using Draughts.Domain.GameAggregate.Services;
 
 namespace Draughts.Common {
     public static class DraughtsServiceProvider {
@@ -44,11 +45,6 @@ namespace Draughts.Common {
             services.AddSingleton<ModPanelRoleEventHandler>();
         }
 
-        private static void ConfigureDomainServices(IServiceCollection services) {
-            services.AddSingleton<IUserRegistrationDomainService, UserRegistrationDomainService>();
-            services.AddSingleton<IUserRoleDomainService, UserRoleDomainService>();
-        }
-
         private static void ConfigureRepositories(IServiceCollection services, bool useInMemoryDatabase, int hiloLargeIntervalSize, int hiloSmallIntervalSize) {
             if (useInMemoryDatabase) {
                 services.AddSingleton<IIdGenerator>(HiLoIdGenerator.InMemoryHiloGIdGenerator(
@@ -60,6 +56,7 @@ namespace Draughts.Common {
                 services.AddSingleton<IAdminLogRepository, InMemoryAdminLogRepository>();
                 services.AddSingleton<IUserRepository, InMemoryUserRepository>();
                 services.AddSingleton<IGameRepository, InMemoryGameRepository>();
+                services.AddSingleton<IGameStateRepository, InMemoryGameStateRepository>();
             }
             else {
                 services.AddSingleton<IIdGenerator>(HiLoIdGenerator.DbHiloGIdGenerator(
@@ -71,6 +68,7 @@ namespace Draughts.Common {
                 services.AddSingleton<IAdminLogRepository, DbAdminLogRepository>();
                 services.AddSingleton<IUserRepository, DbUserRepository>();
                 services.AddSingleton<IGameRepository, DbGameRepository>();
+                services.AddSingleton<IGameStateRepository, DbGameStateRepository>();
             }
         }
 
@@ -84,6 +82,12 @@ namespace Draughts.Common {
 
             services.AddSingleton<IUserFactory, UserFactory>();
             services.AddSingleton<IGameFactory, GameFactory>();
+        }
+
+        private static void ConfigureDomainServices(IServiceCollection services) {
+            services.AddSingleton<IUserRegistrationDomainService, UserRegistrationDomainService>();
+            services.AddSingleton<IUserRoleDomainService, UserRoleDomainService>();
+            services.AddSingleton<IPlayGameDomainService, PlayGameDomainService>();
         }
 
         public static void RegisterEventHandlers(IServiceProvider serviceProvider) {

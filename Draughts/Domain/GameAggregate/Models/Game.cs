@@ -2,7 +2,6 @@ using Draughts.Common;
 using Draughts.Common.OoConcepts;
 using Draughts.Domain.UserAggregate.Models;
 using NodaTime;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -18,7 +17,6 @@ namespace Draughts.Domain.GameAggregate.Models {
         public Turn? Turn { get; private set; }
         public GameSettings Settings { get; }
         public Player? Victor { get; private set; }
-        public GameState GameState { get; private set; }
         public ZonedDateTime CreatedAt { get; }
         public ZonedDateTime? StartedAt { get; private set; }
         public ZonedDateTime? FinishedAt { get; private set; }
@@ -28,15 +26,14 @@ namespace Draughts.Domain.GameAggregate.Models {
 
         public Game(GameId id, GameSettings settings, ZonedDateTime createdAt)
             : this(id, new List<Player>(2), null, settings, null,
-                GameState.InitialState(id, settings.BoardSize), createdAt, null, null) { }
+                createdAt, null, null) { }
         public Game(GameId id, List<Player> players, Turn? turn, GameSettings settings, Player? victor,
-                GameState gameState, ZonedDateTime createdAt, ZonedDateTime? startedAt, ZonedDateTime? finishedAt) {
+                ZonedDateTime createdAt, ZonedDateTime? startedAt, ZonedDateTime? finishedAt) {
             Id = id;
             _players = players;
             Turn = turn;
             Settings = settings;
             Victor = victor;
-            GameState = gameState;
             CreatedAt = createdAt;
             StartedAt = startedAt;
             FinishedAt = finishedAt;
@@ -73,30 +70,9 @@ namespace Draughts.Domain.GameAggregate.Models {
             SwitchTurn(startedAt);
         }
 
-        private Player GetPlayerForColor(Color color) => _players.Single(p => p.Color == color);
-
-        public GameState.MoveResult DoMove(UserId currentUser, SquareId from, SquareId to, ZonedDateTime movedAt) {
-            if (!HasStarted || IsFinished || Turn is null) {
-                throw new ManualValidationException(ERROR_GAME_NOT_ACTIVE);
-            }
-            if (Turn.Player.UserId != currentUser) {
-                throw new ManualValidationException(ERROR_NOT_YOUR_TURN);
-            }
-
-            var result = GameState.AddMove(from, to, Turn.Player.Color, Settings);
-
-            switch (result) {
-                case GameState.MoveResult.NextTurn:
-                    SwitchTurn(movedAt);
-                    return result;
-                case GameState.MoveResult.MoreCapturesAvailable:
-                    return result; // No need to do anything, the user will do the next move.
-                case GameState.MoveResult.GameOver:
-                    FinishGame(movedAt, Turn.Player);
-                    return result;
-                default:
-                    throw new InvalidOperationException("Unknown MoveResult");
-            }
+        public void NextTurn(UserId currentUser, ZonedDateTime switchedAt) {
+            ValidateCanDoMove(currentUser);
+            SwitchTurn(switchedAt);
         }
 
         private void SwitchTurn(ZonedDateTime switchedAt) {
@@ -104,10 +80,23 @@ namespace Draughts.Domain.GameAggregate.Models {
             Turn = new Turn(player, switchedAt, Settings.MaxTurnLength);
         }
 
-        private void FinishGame(ZonedDateTime finishedAt, Player? victor) {
+        private Player GetPlayerForColor(Color color) => _players.Single(p => p.Color == color);
+
+        public void WinGame(UserId currentUser, ZonedDateTime finishedAt) {
+            ValidateCanDoMove(currentUser);
+
             FinishedAt = finishedAt;
-            Victor = victor;
+            Victor = Turn!.Player;
             Turn = null;
+        }
+
+        public void ValidateCanDoMove(UserId currentUser) {
+            if (!HasStarted || IsFinished || Turn is null) {
+                throw new ManualValidationException(ERROR_GAME_NOT_ACTIVE);
+            }
+            if (Turn.Player.UserId != currentUser) {
+                throw new ManualValidationException(ERROR_NOT_YOUR_TURN);
+            }
         }
     }
 }

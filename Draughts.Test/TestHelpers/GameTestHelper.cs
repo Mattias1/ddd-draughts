@@ -13,7 +13,6 @@ namespace Draughts.Test.TestHelpers {
         public static GameBuilder FinishedMiniGame(Color victor) {
             char c = victor == Color.Black ? '4' : '5';
             return StartedMiniGame()
-                .WithGameState($"000 000 00{c} 000 000 000")
                 .WithFinishedAt(Feb29)
                 .WithTurn((Turn?)null)
                 .WithVictor(victor);
@@ -53,7 +52,6 @@ namespace Draughts.Test.TestHelpers {
             return new GameBuilder()
                 .WithId(gameId)
                 .WithSettings(settings)
-                .WithGameState(GameState.InitialState(gameId, settings.BoardSize))
                 .WithCreatedAt(Feb29);
         }
 
@@ -64,7 +62,6 @@ namespace Draughts.Test.TestHelpers {
             private Turn? _turn;
             private GameSettings? _settings;
             private Player? _victor;
-            private GameState? _gameState;
             private ZonedDateTime? _createdAt;
             private ZonedDateTime? _startedAt;
             private ZonedDateTime? _finishedAt;
@@ -104,17 +101,6 @@ namespace Draughts.Test.TestHelpers {
                 return this;
             }
 
-            public GameBuilder WithGameState(string board, int? captureSequenceFrom = null) {
-                if (_id is null) {
-                    throw new InvalidOperationException("Game id is null");
-                }
-                return WithGameState(GameState.FromStorage(_id, board, captureSequenceFrom));
-            }
-            public GameBuilder WithGameState(GameState gameState) {
-                _gameState = gameState;
-                return this;
-            }
-
             public GameBuilder WithCreatedAt(ZonedDateTime createdAt) {
                 _createdAt = createdAt;
                 return this;
@@ -145,14 +131,11 @@ namespace Draughts.Test.TestHelpers {
                 if (_settings is null) {
                     throw new InvalidOperationException("Settings is not nullable");
                 }
-                if (_gameState is null) {
-                    throw new InvalidOperationException("GameState is not nullable");
-                }
                 if (_createdAt is null) {
                     throw new InvalidOperationException("CreatedAt is not nullable");
                 }
 
-                return new Game(_id, _players, _turn, _settings, _victor, _gameState, _createdAt.Value, _startedAt, _finishedAt);
+                return new Game(_id, _players, _turn, _settings, _victor, _createdAt.Value, _startedAt, _finishedAt);
             }
         }
     }

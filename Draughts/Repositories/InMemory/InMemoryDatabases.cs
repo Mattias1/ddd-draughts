@@ -182,15 +182,16 @@ namespace Draughts.Repositories.InMemory {
 
         public List<DbGame> GamesTable { get; }
         public List<DbPlayer> PlayersTable { get; }
+        public List<DbGameState> GameStatesTable { get; }
         public List<DomainEvent> DomainEventsTable { get; }
 
         public static GameDatabase Initialize() {
             var database = new GameDatabase();
 
-            database.AddPendingGame(1, GameSettings.International);
-            database.AddPendingGame(2, GameSettings.International);
-            database.AddPendingGame(3, GameSettings.EnglishAmerican);
-            database.AddPendingGame(4, GameSettings.Mini);
+            database.AddPendingGameAndState(1, GameSettings.International);
+            database.AddPendingGameAndState(2, GameSettings.International);
+            database.AddPendingGameAndState(3, GameSettings.EnglishAmerican);
+            database.AddPendingGameAndState(4, GameSettings.Mini);
 
             database.AddPlayer(4, 1, UserDatabase.UserId, "User", Color.White, Ranks.WarrantOfficer);
             database.AddPlayer(5, 2, UserDatabase.MathyId, "Mathy", Color.Black, Ranks.LanceCorporal);
@@ -203,10 +204,11 @@ namespace Draughts.Repositories.InMemory {
         private GameDatabase() {
             GamesTable = new List<DbGame>();
             PlayersTable = new List<DbPlayer>();
+            GameStatesTable = new List<DbGameState>();
             DomainEventsTable = new List<DomainEvent>();
         }
 
-        private void AddPendingGame(long id, GameSettings settings) {
+        private void AddPendingGameAndState(long id, GameSettings settings) {
             if (id >= UserDatabase.START_FOR_NEXT_GAME_IDS) {
                 throw new InvalidOperationException("START_FOR_NEXT_GAME_IDS too low!");
             }
@@ -225,10 +227,13 @@ namespace Draughts.Repositories.InMemory {
                 MenCaptureBackwards = settings.MenCaptureBackwards,
                 CaptureConstraints = capConstraints,
                 Victor = null,
-                CurrentGameState = GameState.InitialState(new GameId(id), settings.BoardSize).StorageString(),
-                CaptureSequenceFrom = null,
                 CreatedAt = now, StartedAt = null, FinishedAt = null,
                 TurnPlayerId = null, TurnCreatedAt = null, TurnExpiresAt = null
+            });
+            GameStatesTable.Add(new DbGameState {
+                Id = id,
+                CurrentGameState = GameState.InitialState(new GameId(id), settings.BoardSize).StorageString(),
+                CaptureSequenceFrom = null
             });
         }
 

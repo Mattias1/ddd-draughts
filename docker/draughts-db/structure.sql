@@ -107,8 +107,6 @@ CREATE TABLE `game` (
     `men_capture_backwards` BIT NOT NULL,
     `capture_constraints` VARCHAR(3) NOT NULL,
     `victor` BIGINT NULL,
-    `current_game_state` VARCHAR(72) NOT NULL,
-    `capture_sequence_from` TINYINT UNSIGNED NULL,
     `created_at` DATETIME NOT NULL,
     `started_at` DATETIME NULL,
     `finished_at` DATETIME NULL,
@@ -132,6 +130,14 @@ CREATE TABLE `player` (
     CONSTRAINT fk_p_game FOREIGN KEY (`game_id`)
         REFERENCES `game` (`id`)
         ON UPDATE RESTRICT ON DELETE CASCADE
+);
+
+CREATE TABLE `gamestate` (
+    `id` BIGINT NOT NULL,
+    `current_game_state` VARCHAR(72) NOT NULL,
+    `capture_sequence_from` TINYINT UNSIGNED NULL,
+
+    PRIMARY KEY (`id`)
 );
 
 CREATE TABLE `event` (

@@ -1,32 +1,44 @@
 using Draughts.Common;
-using Draughts.Common.Utilities;
 using Draughts.Domain.GameAggregate.Models;
+using Draughts.Domain.GameAggregate.Services;
 using Draughts.Domain.UserAggregate.Models;
 using Draughts.Repositories;
 using Draughts.Repositories.Transaction;
-using NodaTime;
 
 namespace Draughts.Application.PlayGame.Services {
     public class PlayGameService : IPlayGameService {
-        private readonly IClock _clock;
         private readonly IGameRepository _gameRepository;
+        private readonly IGameStateRepository _gameStateRepository;
+        private readonly IPlayGameDomainService _playGameDomainService;
         private readonly IUnitOfWork _unitOfWork;
 
-        public PlayGameService(IClock clock, IGameRepository gameRepository, IUnitOfWork unitOfWork) {
-            _clock = clock;
+        public PlayGameService(IGameRepository gameRepository, IGameStateRepository gameStateRepository,
+                IPlayGameDomainService playGameDomainService, IUnitOfWork unitOfWork) {
             _gameRepository = gameRepository;
+            _gameStateRepository = gameStateRepository;
+            _playGameDomainService = playGameDomainService;
             _unitOfWork = unitOfWork;
         }
 
-        public void DoMove(UserId currentUser, GameId gameId, SquareId from, SquareId to) {
-            _unitOfWork.WithTransaction(TransactionDomain.Game, tran => {
-                var game = _gameRepository.FindByIdOrNull(gameId) ?? throw new ManualValidationException("Game not found.");
-                game.DoMove(currentUser, from, to, _clock.UtcNow());
+        public void DoMove(UserId currentUserId, GameId gameId, SquareId from, SquareId to) {
+            _unitOfWork.WithGameTransaction(tran => {
+                var (game, gameState) = FindGameAndState(gameId);
+                _playGameDomainService.DoMove(game, gameState, currentUserId, from, to);
 
                 _gameRepository.Save(game);
+                _gameStateRepository.Save(gameState);
 
                 tran.Commit();
             });
+        }
+
+        public (Game game, GameState gameState) FindGameAndState(GameId gameId) {
+            var game = _gameRepository.FindByIdOrNull(gameId);
+            var gameState = _gameStateRepository.FindByIdOrNull(gameId);
+            if (game is null || gameState is null) {
+                throw new ManualValidationException("Game not found.");
+            }
+            return (game, gameState);
         }
     }
 }
