@@ -12,15 +12,18 @@ namespace Draughts.Command.Seeders {
     public class DummyDataSeeder {
         private readonly IAuthUserRepository _authUserRepository;
         private readonly IGameRepository _gameRepository;
+        private readonly IGameStateRepository _gameStateRepository;
         private readonly IRoleRepository _roleRepository;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IUserRepository _userRepository;
 
         public DummyDataSeeder(IAuthUserRepository authUserRepository, IGameRepository gameRepository,
-            IRoleRepository roleRepository, IUnitOfWork unitOfWork, IUserRepository userRepository
+            IGameStateRepository gameStateRepository, IRoleRepository roleRepository,
+            IUnitOfWork unitOfWork, IUserRepository userRepository
         ) {
             _authUserRepository = authUserRepository;
             _gameRepository = gameRepository;
+            _gameStateRepository = gameStateRepository;
             _roleRepository = roleRepository;
             _unitOfWork = unitOfWork;
             _userRepository = userRepository;
@@ -127,22 +130,28 @@ namespace Draughts.Command.Seeders {
             _unitOfWork.WithGameTransaction(tran => {
                 var player1 = PlayerTestHelper.FromUser(user).WithColor(Color.White).Build();
                 var game1 = GameTestHelper.PendingInternationalGame(player1).Build();
-                _gameRepository.Save(game1);
+                SaveWithInitialGameState(game1);
 
                 var player2 = PlayerTestHelper.FromUser(mathy).Build();
                 var game2 = GameTestHelper.PendingInternationalGame(player2).Build();
-                _gameRepository.Save(game2);
+                SaveWithInitialGameState(game2);
 
                 var player3 = PlayerTestHelper.FromUser(user).Build();
                 var game3 = GameTestHelper.PendingGame(GameSettings.EnglishAmerican, player3).Build();
-                _gameRepository.Save(game3);
+                SaveWithInitialGameState(game3);
 
                 var player4 = PlayerTestHelper.FromUser(mathy).Build();
                 var game4 = GameTestHelper.PendingGame(GameSettings.Mini, player4).Build();
-                _gameRepository.Save(game4);
+                SaveWithInitialGameState(game4);
 
                 tran.Commit();
             });
+        }
+
+        private void SaveWithInitialGameState(Game game) {
+            var gameState = GameState.InitialState(game.Id, game.Settings.BoardSize);
+            _gameRepository.Save(game);
+            _gameStateRepository.Save(gameState);
         }
     }
 }

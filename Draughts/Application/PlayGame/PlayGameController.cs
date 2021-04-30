@@ -11,28 +11,27 @@ using static Draughts.Domain.AuthUserAggregate.Models.Permission;
 
 namespace Draughts.Application.PlayGame {
     public class PlayGameController : BaseController {
-        private readonly IGameRepository _gameRepository;
         private readonly IPlayGameService _playGameService;
         private readonly IUnitOfWork _unitOfWork;
 
-        public PlayGameController(IGameRepository gameRepository, IPlayGameService playGameService, IUnitOfWork unitOfWork) {
-            _gameRepository = gameRepository;
+        public PlayGameController(IPlayGameService playGameService, IUnitOfWork unitOfWork) {
             _playGameService = playGameService;
             _unitOfWork = unitOfWork;
         }
 
         [HttpGet("/game/{gameId:long}"), GuestRoute]
         public IActionResult Game(long gameId) {
-            var game = _unitOfWork.WithGameTransaction(tran => {
-                var game = _gameRepository.FindByIdOrNull(new GameId(gameId));
-                return tran.CommitWith(game);
-            });
+            try {
+                var (game, gameState) = _unitOfWork.WithGameTransaction(tran => {
+                    var gameAndStatePair = _playGameService.FindGameAndState(new GameId(gameId));
+                    return tran.CommitWith(gameAndStatePair);
+                });
 
-            if (game is null) {
-                return NotFound();
+                return View(new PlayGameViewModel(game, gameState));
             }
-
-            return View(new GameViewModel(game));
+            catch (ManualValidationException e) {
+                return NotFound(e.Message);
+            }
         }
 
         [HttpPost("/game/{gameId:long}/move"), Requires(Permissions.PLAY_GAME)]

@@ -2,17 +2,16 @@ using Draughts.Common;
 using Draughts.Common.OoConcepts;
 
 namespace Draughts.Domain.GameAggregate.Models {
-    // TODO: Maybe make this it's own aggregate?
     public class GameState : Entity<GameState, GameId> {
         public const string ERROR_INVALID_SQUARES = "Invalid squares.";
         public const string ERROR_CAPTURE_SEQUENCE = "Continue the capture sequence.";
 
         public enum MoveResult { NextTurn, MoreCapturesAvailable, GameOver };
 
+        public override GameId Id { get; }
+
         public BoardPosition Board { get; }
         public SquareId? CaptureSequenceFrom { get; private set; }
-
-        public override GameId Id { get; }
 
         private GameState(GameId gameId, BoardPosition board, SquareId? captureSequenceFrom) {
             Id = gameId;

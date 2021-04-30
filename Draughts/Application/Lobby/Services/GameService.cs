@@ -1,23 +1,28 @@
 using Draughts.Common;
 using Draughts.Domain.GameAggregate.Models;
+using Draughts.Domain.GameAggregate.Services;
 using Draughts.Domain.UserAggregate.Models;
 using Draughts.Repositories;
 using Draughts.Repositories.Transaction;
 using System.Linq;
+using static Draughts.Domain.GameAggregate.Services.GameFactory;
 
 namespace Draughts.Application.Lobby.Services {
     // Note: This name is way to generic. In the future I'll put everything in here. So I'll rename it then :)
     public class GameService : IGameService {
         private readonly IGameFactory _gameFactory;
         private readonly IGameRepository _gameRepository;
+        private readonly IGameStateRepository _gameStateRepository;
         private readonly IIdGenerator _idGenerator;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IUserRepository _userRepository;
 
         public GameService(IGameFactory gameFactory, IGameRepository gameRepository,
-                IIdGenerator idGenerator, IUnitOfWork unitOfWork, IUserRepository userRepository) {
+                IGameStateRepository gameStateRepository, IIdGenerator idGenerator,
+                IUnitOfWork unitOfWork, IUserRepository userRepository) {
             _gameFactory = gameFactory;
             _gameRepository = gameRepository;
+            _gameStateRepository = gameStateRepository;
             _idGenerator = idGenerator;
             _unitOfWork = unitOfWork;
             _userRepository = userRepository;
@@ -30,7 +35,13 @@ namespace Draughts.Application.Lobby.Services {
             });
 
             return _unitOfWork.WithGameTransaction(tran => {
-                var game = _gameFactory.CreateGame(_idGenerator.ReservePool(), gameSettings, user, joinColor);
+                var idPool = _idGenerator.ReservePool();
+                var userInfo = new UserInfo(user.Id, user.Username, user.Rank);
+                var (game, gameState) = _gameFactory.BuildGame(idPool, gameSettings, userInfo, joinColor);
+
+                _gameRepository.Save(game);
+                _gameStateRepository.Save(gameState);
+
                 return tran.CommitWith(game);
             });
         }
@@ -48,7 +59,12 @@ namespace Draughts.Application.Lobby.Services {
                     throw new ManualValidationException("Game not found");
                 }
 
-                _gameFactory.JoinGame(_idGenerator.ReservePool(), game, user, color ?? GetRemainingColor(game));
+                var idPool = _idGenerator.ReservePool();
+                var userInfo = new UserInfo(user.Id, user.Username, user.Rank);
+                var player = _gameFactory.BuildPlayer(idPool, userInfo, color ?? GetRemainingColor(game));
+                game.JoinGame(player, player.CreatedAt);
+
+                _gameRepository.Save(game);
 
                 tran.Commit();
             });

@@ -1,6 +1,6 @@
 using Draughts.Common;
-using Draughts.Common.Utilities;
 using Draughts.Domain.GameAggregate.Models;
+using Draughts.Domain.GameAggregate.Services;
 using Draughts.Test.TestHelpers;
 using FluentAssertions;
 using NodaTime.Testing;
@@ -10,7 +10,12 @@ using Xunit;
 
 namespace Draughts.Test.Domain.GameAggregate {
     public class PlayGameTest {
-        private FakeClock _fakeClock = FakeClock.FromUtc(2020, 02, 29);
+        private readonly IPlayGameDomainService _playGameService;
+
+        public PlayGameTest() {
+            var clock = FakeClock.FromUtc(2020, 02, 29);
+            _playGameService = new PlayGameDomainService(clock);
+        }
 
         [Fact]
         public void DoMoveAndSwitchTurn() {
@@ -21,12 +26,12 @@ namespace Draughts.Test.Domain.GameAggregate {
             // |_|5|_|5|_|5|
             // |5|_|5|_|5|_|
             var game = GameTestHelper.StartedMiniGame().Build();
+            var gameState = GameState.InitialState(game.Id, game.Settings.BoardSize);
 
-            var result = DoMove(game, 13, 11);
+            DoMove(game, gameState, 13, 11);
 
-            result.Should().Be(GameState.MoveResult.NextTurn);
-            game.GameState.Board.ToLongString(" ", "").Should().Be("444 444 000 050 055 555");
-            game.GameState.CaptureSequenceFrom.Should().BeNull();
+            gameState.Board.ToLongString(" ", "").Should().Be("444 444 000 050 055 555");
+            gameState.CaptureSequenceFrom.Should().BeNull();
             game.Turn!.Player.Color.Should().Be(Color.Black);
         }
 
@@ -38,14 +43,13 @@ namespace Draughts.Test.Domain.GameAggregate {
             // |5|_|5|_|5|_|
             // |_|.|_|.|_|5|
             // |.|_|.|_|5|_|
-            var game = GameBuilder("440 440 004 555 005 005", Color.Black).Build();
+            var (game, gameState) = BuildGame("440 440 004 555 005 005", Color.Black);
 
-            var result = DoMove(game, 9, 14);
+            DoMove(game, gameState, 9, 14);
 
-            result.Should().Be(GameState.MoveResult.MoreCapturesAvailable);
-            game.GameState.Board.ToLongString(" ", "").Should().Be("440 440 000 550 045 005");
-            game.GameState.CaptureSequenceFrom.Should().NotBeNull();
-            game.GameState.CaptureSequenceFrom!.Should().Be(new SquareId(14));
+            gameState.Board.ToLongString(" ", "").Should().Be("440 440 000 550 045 005");
+            gameState.CaptureSequenceFrom.Should().NotBeNull();
+            gameState.CaptureSequenceFrom!.Should().Be(new SquareId(14));
             game.Turn!.Player.Color.Should().Be(Color.Black);
         }
 
@@ -57,13 +61,12 @@ namespace Draughts.Test.Domain.GameAggregate {
             // |5|_|5|_|.|_|
             // |_|.|_|4|_|5|
             // |.|_|.|_|5|_|
-            var game = GameBuilder("440 440 000 550 045 005", Color.Black, 14).Build();
+            var (game, gameState) = BuildGame("440 440 000 550 045 005", Color.Black, 14);
 
-            var result = DoMove(game, 14, 7);
+            DoMove(game, gameState, 14, 7);
 
-            result.Should().Be(GameState.MoveResult.NextTurn);
-            game.GameState.Board.ToLongString(" ", "").Should().Be("440 440 400 500 005 005");
-            game.GameState.CaptureSequenceFrom.Should().BeNull();
+            gameState.Board.ToLongString(" ", "").Should().Be("440 440 400 500 005 005");
+            gameState.CaptureSequenceFrom.Should().BeNull();
             game.Turn!.Player.Color.Should().Be(Color.White);
         }
 
@@ -75,13 +78,12 @@ namespace Draughts.Test.Domain.GameAggregate {
             // |5|_|.|_|.|_|
             // |_|4|_|5|_|.|
             // |.|_|.|_|.|_|
-            var game = GameBuilder("440 440 005 500 450 000", Color.Black).Build();
+            var (game, gameState) = BuildGame("440 440 005 500 450 000", Color.Black);
 
-            var result = DoMove(game, 13, 16);
+            DoMove(game, gameState, 13, 16);
 
-            result.Should().Be(GameState.MoveResult.NextTurn);
-            game.GameState.Board.ToLongString(" ", "").Should().Be("440 440 005 500 050 600");
-            game.GameState.CaptureSequenceFrom.Should().BeNull();
+            gameState.Board.ToLongString(" ", "").Should().Be("440 440 005 500 050 600");
+            gameState.CaptureSequenceFrom.Should().BeNull();
             game.Turn!.Player.Color.Should().Be(Color.White);
         }
 
@@ -93,22 +95,23 @@ namespace Draughts.Test.Domain.GameAggregate {
             // |4|_|5|_|.|_|
             // |_|.|_|.|_|.|
             // |6|_|.|_|.|_|
-            var game = GameBuilder("400 400 004 450 000 600", Color.Black).Build();
+            var (game, gameState) = BuildGame("400 400 004 450 000 600", Color.Black);
 
-            var result = DoMove(game, 16, 3);
+            DoMove(game, gameState, 16, 3);
 
-            result.Should().Be(GameState.MoveResult.GameOver);
-            game.GameState.Board.ToLongString(" ", "").Should().Be("406 400 004 400 000 000");
-            game.GameState.CaptureSequenceFrom.Should().BeNull();
+            gameState.Board.ToLongString(" ", "").Should().Be("406 400 004 400 000 000");
+            gameState.CaptureSequenceFrom.Should().BeNull();
             game.Turn.Should().BeNull();
+            game.Victor?.Color.Should().Be(Color.Black);
         }
 
         [Fact]
         public void CantMoveWhenGameHasntStarted() {
             var whitePlayer = PlayerTestHelper.White().Build();
             var game = GameTestHelper.PendingMiniGame(whitePlayer).Build();
+            var gameState = GameState.InitialState(game.Id, game.Settings.BoardSize);
 
-            Action doMove = () => DoMoveAs(game, 13, 11, Color.White);
+            Action doMove = () => DoMoveAs(game, gameState, 13, 11, Color.White);
 
             doMove.Should().Throw<ManualValidationException>().WithMessage(Game.ERROR_GAME_NOT_ACTIVE);
         }
@@ -116,8 +119,9 @@ namespace Draughts.Test.Domain.GameAggregate {
         [Fact]
         public void CantMoveWhenGameIsFinished() {
             var game = GameTestHelper.FinishedMiniGame(Color.White).Build();
+            var gameState = GameState.FromStorage(game.Id, "000 000 005 000 000 000", game.Settings.BoardSize);
 
-            Action doMove = () => DoMoveAs(game, 9, 6, Color.White);
+            Action doMove = () => DoMoveAs(game, gameState, 9, 6, Color.White);
 
             doMove.Should().Throw<ManualValidationException>().WithMessage(Game.ERROR_GAME_NOT_ACTIVE);
         }
@@ -125,8 +129,9 @@ namespace Draughts.Test.Domain.GameAggregate {
         [Fact]
         public void CantMoveWhenNotYourTurn() {
             var game = GameTestHelper.StartedMiniGame().WithTurn(Color.White).Build();
+            var gameState = GameState.InitialState(game.Id, game.Settings.BoardSize);
 
-            Action doMove = () => DoMoveAs(game, 4, 7, Color.Black);
+            Action doMove = () => DoMoveAs(game, gameState, 4, 7, Color.Black);
 
             doMove.Should().Throw<ManualValidationException>().WithMessage(Game.ERROR_NOT_YOUR_TURN);
         }
@@ -134,8 +139,9 @@ namespace Draughts.Test.Domain.GameAggregate {
         [Fact]
         public void CantMoveOpponentsPieces() {
             var game = GameTestHelper.StartedMiniGame().WithTurn(Color.White).Build();
+            var gameState = GameState.InitialState(game.Id, game.Settings.BoardSize);
 
-            Action doMove = () => DoMove(game, 4, 7);
+            Action doMove = () => DoMove(game, gameState, 4, 7);
 
             doMove.Should().Throw<ManualValidationException>($"You can only move {Color.White} pieces.");
         }
@@ -143,9 +149,10 @@ namespace Draughts.Test.Domain.GameAggregate {
         [Fact]
         public void CantMoveOutsideTheBoard() {
             var game = GameTestHelper.StartedMiniGame().Build();
+            var gameState = GameState.InitialState(game.Id, game.Settings.BoardSize);
 
-            Action toOutside = () => DoMove(game, 18, 20);
-            Action fromOutside = () => DoMove(game, 20, 18);
+            Action toOutside = () => DoMove(game, gameState, 18, 20);
+            Action fromOutside = () => DoMove(game, gameState, 20, 18);
 
             toOutside.Should().Throw<ManualValidationException>(GameState.ERROR_INVALID_SQUARES);
             fromOutside.Should().Throw<ManualValidationException>(GameState.ERROR_INVALID_SQUARES);
@@ -159,24 +166,26 @@ namespace Draughts.Test.Domain.GameAggregate {
             // |5|_|5|_|.|_|
             // |_|.|_|4|_|5|
             // |.|_|.|_|5|_|
-            var game = GameBuilder("440 440 000 550 045 005", Color.Black, 14).Build();
+            var (game, gameState) = BuildGame("440 440 000 550 045 005", Color.Black, 14);
 
-            Action doMove = () => DoMove(game, 5, 8);
+            Action doMove = () => DoMove(game, gameState, 5, 8);
 
             doMove.Should().Throw<ManualValidationException>().WithMessage(GameState.ERROR_CAPTURE_SEQUENCE);
         }
 
-        private GameTestHelper.GameBuilder GameBuilder(string boardString, Color turn, int? captureSequenceFrom = null) {
+        private (Game game, GameState gameState) BuildGame(string boardString, Color turn, int? captureSequenceFrom = null) {
             var board = BoardPosition.FromString(boardString);
-            return GameTestHelper.StartedMiniGame()
-                .WithGameState(boardString, captureSequenceFrom)
-                .WithTurn(turn);
+            var game = GameTestHelper.StartedMiniGame().WithTurn(turn).Build();
+            var gameState = GameState.FromStorage(game.Id, boardString, captureSequenceFrom);
+            return (game, gameState);
         }
 
-        private GameState.MoveResult DoMove(Game game, int from, int to) => DoMoveAs(game, from, to, game.Turn!.Player.Color);
-        private GameState.MoveResult DoMoveAs(Game game, int from, int to, Color color) {
+        private void DoMove(Game game, GameState gameState, int from, int to) {
+            DoMoveAs(game, gameState, from, to, game.Turn!.Player.Color);
+        }
+        private void DoMoveAs(Game game, GameState gameState, int from, int to, Color color) {
             var player = game.Players.Single(p => p.Color == color);
-            return game.DoMove(player.UserId, new SquareId(from), new SquareId(to), _fakeClock.UtcNow());
+            _playGameService.DoMove(game, gameState, player.UserId, new SquareId(from), new SquareId(to));
         }
     }
 }

@@ -155,8 +155,6 @@ namespace Draughts.Repositories.Database {
         public bool MenCaptureBackwards { get; set; }
         public string CaptureConstraints { get; set; }
         public long? Victor { get; set; }
-        public string CurrentGameState { get; set; }
-        public byte? CaptureSequenceFrom { get; set; }
         public ZonedDateTime CreatedAt { get; set; }
         public ZonedDateTime? StartedAt { get; set; }
         public ZonedDateTime? FinishedAt { get; set; }
@@ -173,7 +171,6 @@ namespace Draughts.Repositories.Database {
                 GetTurn(players),
                 GetGameSettings(),
                 players.SingleOrDefault(p => p.UserId == Victor),
-                GameState.FromStorage(new GameId(Id), CurrentGameState, CaptureSequenceFrom),
                 CreatedAt,
                 StartedAt,
                 FinishedAt
@@ -214,8 +211,6 @@ namespace Draughts.Repositories.Database {
                 MenCaptureBackwards = entity.Settings.MenCaptureBackwards,
                 CaptureConstraints = captureConstraints,
                 Victor = entity.Victor?.UserId.Id,
-                CurrentGameState = entity.GameState.StorageString(),
-                CaptureSequenceFrom = (byte?)entity.GameState.CaptureSequenceFrom?.Value,
                 CreatedAt = entity.CreatedAt,
                 StartedAt = entity.StartedAt,
                 FinishedAt = entity.FinishedAt,
@@ -257,6 +252,25 @@ namespace Draughts.Repositories.Database {
                 Rank = entity.Rank.Name,
                 Color = entity.Color == Domain.GameAggregate.Models.Color.White,
                 CreatedAt = entity.CreatedAt
+            };
+        }
+    }
+
+    public class DbGameState : IDbObject<DbGameState, GameState> {
+        public long Id { get; set; }
+        public string CurrentGameState { get; set; }
+        public byte? CaptureSequenceFrom { get; set; }
+
+        public bool Equals(DbGameState? other) => Id.Equals(other?.Id);
+
+        public GameState ToDomainModel() {
+            return GameState.FromStorage(new GameId(Id), CurrentGameState, CaptureSequenceFrom);
+        }
+        public static DbGameState FromDomainModel(GameState entity) {
+            return new DbGameState {
+                Id = entity.Id,
+                CurrentGameState = entity.StorageString(),
+                CaptureSequenceFrom = (byte?)entity.CaptureSequenceFrom?.Value
             };
         }
     }
