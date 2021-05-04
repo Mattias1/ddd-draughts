@@ -15,6 +15,6 @@ namespace Draughts.Domain.AuthUserContext.Models {
             Value = emailAddress;
         }
 
-        public static implicit operator string(Email email) => email.Value;
+        public static implicit operator string(Email? email) => email?.Value ?? "";
     }
 }

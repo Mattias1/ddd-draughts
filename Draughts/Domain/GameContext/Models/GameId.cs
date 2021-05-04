@@ -12,7 +12,7 @@ namespace Draughts.Domain.GameContext.Models {
             Id = id.Value;
         }
 
-        public static implicit operator long(GameId gameId) => gameId.Id;
-        public static implicit operator string(GameId gameId) => gameId.ToString();
+        public static implicit operator long(GameId? gameId) => gameId?.Id ?? 0;
+        public static implicit operator string(GameId? gameId) => gameId?.ToString() ?? "";
     }
 }
