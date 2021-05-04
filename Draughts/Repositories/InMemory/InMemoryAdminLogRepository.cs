@@ -1,4 +1,4 @@
-using Draughts.Domain.AuthUserAggregate.Models;
+using Draughts.Domain.AuthUserContext.Models;
 using Draughts.Repositories.Database;
 using Draughts.Repositories.Transaction;
 using System.Collections.Generic;

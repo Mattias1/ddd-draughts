@@ -1,4 +1,4 @@
-using Draughts.Domain.GameAggregate.Models;
+using Draughts.Domain.GameContext.Models;
 using Draughts.Repositories.Database;
 using Draughts.Repositories.Transaction;
 using System.Collections.Generic;

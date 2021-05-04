@@ -1,6 +1,6 @@
-using Draughts.Domain.AuthUserAggregate.Models;
-using Draughts.Domain.GameAggregate.Models;
-using Draughts.Domain.UserAggregate.Models;
+using Draughts.Domain.AuthUserContext.Models;
+using Draughts.Domain.GameContext.Models;
+using Draughts.Domain.UserContext.Models;
 using Draughts.Repositories;
 using Draughts.Repositories.Transaction;
 using Draughts.Test.TestHelpers;

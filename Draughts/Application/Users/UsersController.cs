@@ -1,8 +1,8 @@
 using Draughts.Application.Shared;
 using Draughts.Application.Shared.Attributes;
 using Draughts.Application.Shared.ViewModels;
-using Draughts.Domain.UserAggregate.Models;
-using Draughts.Domain.UserAggregate.Specifications;
+using Draughts.Domain.UserContext.Models;
+using Draughts.Domain.UserContext.Specifications;
 using Draughts.Repositories;
 using Draughts.Repositories.Transaction;
 using Microsoft.AspNetCore.Mvc;

@@ -1,11 +1,11 @@
-using Draughts.Domain.AuthUserAggregate.Models;
-using Draughts.Domain.GameAggregate.Models;
-using Draughts.Domain.UserAggregate.Models;
+using Draughts.Domain.AuthUserContext.Models;
+using Draughts.Domain.GameContext.Models;
+using Draughts.Domain.UserContext.Models;
 using NodaTime;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using static Draughts.Domain.UserAggregate.Models.Rank;
+using static Draughts.Domain.UserContext.Models.Rank;
 
 namespace Draughts.Repositories.Database {
 #pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
@@ -55,7 +55,7 @@ namespace Draughts.Repositories.Database {
             return new AuthUser(
                 new UserId(Id),
                 new Username(Username),
-                Domain.AuthUserAggregate.Models.PasswordHash.FromStorage(PasswordHash),
+                Domain.AuthUserContext.Models.PasswordHash.FromStorage(PasswordHash),
                 new Email(Email),
                 CreatedAt,
                 roles
@@ -238,7 +238,7 @@ namespace Draughts.Repositories.Database {
                 new UserId(UserId),
                 new Username(Username),
                 Ranks.All.Single(r => r.Name == Rank),
-                Color ? Domain.GameAggregate.Models.Color.White : Domain.GameAggregate.Models.Color.Black,
+                Color ? Domain.GameContext.Models.Color.White : Domain.GameContext.Models.Color.Black,
                 CreatedAt
             );
         }
@@ -250,7 +250,7 @@ namespace Draughts.Repositories.Database {
                 GameId = gameId,
                 Username = entity.Username,
                 Rank = entity.Rank.Name,
-                Color = entity.Color == Domain.GameAggregate.Models.Color.White,
+                Color = entity.Color == Domain.GameContext.Models.Color.White,
                 CreatedAt = entity.CreatedAt
             };
         }

@@ -1,7 +1,7 @@
 using Draughts.Common.Events;
 using Draughts.Common.Utilities;
-using Draughts.Domain.AuthUserAggregate.Events;
-using Draughts.Domain.UserAggregate.Models;
+using Draughts.Domain.AuthUserContext.Events;
+using Draughts.Domain.UserContext.Models;
 using Draughts.Repositories.Database;
 using Draughts.Repositories.InMemory;
 using Draughts.Repositories.Transaction;

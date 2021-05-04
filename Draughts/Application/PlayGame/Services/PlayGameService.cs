@@ -1,7 +1,7 @@
 using Draughts.Common;
-using Draughts.Domain.GameAggregate.Models;
-using Draughts.Domain.GameAggregate.Services;
-using Draughts.Domain.UserAggregate.Models;
+using Draughts.Domain.GameContext.Models;
+using Draughts.Domain.GameContext.Services;
+using Draughts.Domain.UserContext.Models;
 using Draughts.Repositories;
 using Draughts.Repositories.Transaction;
 

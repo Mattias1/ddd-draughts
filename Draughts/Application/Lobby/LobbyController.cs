@@ -3,12 +3,12 @@ using Draughts.Application.Shared;
 using Draughts.Application.Shared.Attributes;
 using Draughts.Application.Shared.ViewModels;
 using Draughts.Common;
-using Draughts.Domain.GameAggregate.Models;
-using Draughts.Domain.GameAggregate.Specifications;
+using Draughts.Domain.GameContext.Models;
+using Draughts.Domain.GameContext.Specifications;
 using Draughts.Repositories;
 using Draughts.Repositories.Transaction;
 using Microsoft.AspNetCore.Mvc;
-using static Draughts.Domain.AuthUserAggregate.Models.Permission;
+using static Draughts.Domain.AuthUserContext.Models.Permission;
 
 namespace Draughts.Application.Lobby {
     public class LobbyController : BaseController {

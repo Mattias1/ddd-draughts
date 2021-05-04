@@ -1,4 +1,4 @@
-using Draughts.Domain.GameAggregate.Models;
+using Draughts.Domain.GameContext.Models;
 using NodaTime;
 using System.Collections.Generic;
 using System.Linq;

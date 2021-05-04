@@ -11,8 +11,8 @@ using Microsoft.Extensions.DependencyInjection;
 using NodaTime;
 using System;
 using Draughts.Application.ModPanel.Services;
-using Draughts.Domain.AuthUserAggregate.Services;
-using Draughts.Domain.GameAggregate.Services;
+using Draughts.Domain.AuthUserContext.Services;
+using Draughts.Domain.GameContext.Services;
 
 namespace Draughts.Common {
     public static class DraughtsServiceProvider {
