@@ -6,7 +6,7 @@ using Draughts.Repositories;
 using Draughts.Repositories.Transaction;
 
 namespace Draughts.Application.PlayGame.Services {
-    public class PlayGameService : IPlayGameService {
+    public class PlayGameService {
         private readonly IGameRepository _gameRepository;
         private readonly IGameStateRepository _gameStateRepository;
         private readonly IPlayGameDomainService _playGameDomainService;

@@ -73,21 +73,19 @@ namespace Draughts.Common {
         }
 
         private static void ConfigureApplicationServices(IServiceCollection services) {
-            services.AddSingleton<IAuthService, AuthService>();
-            services.AddSingleton<IEditRoleService, EditRoleService>();
-            services.AddSingleton<IRoleUsersService, RoleUsersService>();
-            services.AddSingleton<IGameService, GameService>();
-            services.AddSingleton<IPlayGameService, PlayGameService>();
-            services.AddSingleton<IUserRegistrationService, UserRegistrationService>();
-
-            services.AddSingleton<IUserFactory, UserFactory>();
-            services.AddSingleton<IGameFactory, GameFactory>();
+            services.AddSingleton<AuthService>();
+            services.AddSingleton<EditRoleService>();
+            services.AddSingleton<RoleUsersService>();
+            services.AddSingleton<GameService>();
+            services.AddSingleton<PlayGameService>();
+            services.AddSingleton<UserRegistrationService>();
         }
 
         private static void ConfigureDomainServices(IServiceCollection services) {
             services.AddSingleton<IUserRegistrationDomainService, UserRegistrationDomainService>();
             services.AddSingleton<IUserRoleDomainService, UserRoleDomainService>();
             services.AddSingleton<IPlayGameDomainService, PlayGameDomainService>();
+            services.AddSingleton<IGameFactory, GameFactory>();
         }
 
         public static void RegisterEventHandlers(IServiceProvider serviceProvider) {

@@ -4,17 +4,16 @@ using Draughts.Application.Shared.Attributes;
 using Draughts.Application.Shared.ViewModels;
 using Draughts.Common;
 using Draughts.Domain.GameContext.Models;
-using Draughts.Repositories;
 using Draughts.Repositories.Transaction;
 using Microsoft.AspNetCore.Mvc;
 using static Draughts.Domain.AuthUserContext.Models.Permission;
 
 namespace Draughts.Application.PlayGame {
     public class PlayGameController : BaseController {
-        private readonly IPlayGameService _playGameService;
+        private readonly PlayGameService _playGameService;
         private readonly IUnitOfWork _unitOfWork;
 
-        public PlayGameController(IPlayGameService playGameService, IUnitOfWork unitOfWork) {
+        public PlayGameController(PlayGameService playGameService, IUnitOfWork unitOfWork) {
             _playGameService = playGameService;
             _unitOfWork = unitOfWork;
         }

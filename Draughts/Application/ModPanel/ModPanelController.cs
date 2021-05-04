@@ -15,12 +15,12 @@ using static Draughts.Domain.AuthUserContext.Models.Permission;
 namespace Draughts.Application.ModPanel {
     public class ModPanelController : BaseController {
         private readonly IAdminLogRepository _adminLogRepository;
-        private readonly IEditRoleService _editRoleService;
-        private readonly IRoleUsersService _roleUserService;
+        private readonly EditRoleService _editRoleService;
+        private readonly RoleUsersService _roleUserService;
         private readonly IUnitOfWork _unitOfWork;
 
-        public ModPanelController(IAdminLogRepository adminLogRepository, IEditRoleService editRoleService,
-                IRoleUsersService roleUsersService, IUnitOfWork unitOfWork) {
+        public ModPanelController(IAdminLogRepository adminLogRepository, EditRoleService editRoleService,
+                RoleUsersService roleUsersService, IUnitOfWork unitOfWork) {
             _adminLogRepository = adminLogRepository;
             _editRoleService = editRoleService;
             _roleUserService = roleUsersService;

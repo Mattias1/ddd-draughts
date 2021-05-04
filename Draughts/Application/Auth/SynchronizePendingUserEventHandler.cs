@@ -1,24 +1,17 @@
 using Draughts.Common.Events;
 using Draughts.Application.Auth.Services;
 using Draughts.Domain.AuthUserContext.Events;
-using Draughts.Repositories.Transaction;
 
 namespace Draughts.Application.Auth {
     public class SynchronizePendingUserEventHandler : DomainEventHandler<AuthUserCreated> {
-        private readonly IUserFactory _userFactory;
-        private readonly IUnitOfWork _unitOfWork;
+        private readonly UserRegistrationService _userRegistrationService;
 
-        public SynchronizePendingUserEventHandler(IUserFactory userFactory, IUnitOfWork unitOfWork) {
-            _userFactory = userFactory;
-            _unitOfWork = unitOfWork;
+        public SynchronizePendingUserEventHandler(UserRegistrationService userRegistrationService) {
+            _userRegistrationService = userRegistrationService;
         }
 
         public override void Handle(AuthUserCreated evt) {
-            _unitOfWork.WithTransaction(TransactionDomain.User, tran => {
-                _userFactory.CreateUser(evt.UserId, evt.Username);
-
-                tran.Commit();
-            });
+            _userRegistrationService.CreateUser(evt.UserId, evt.Username);
         }
     }
 }

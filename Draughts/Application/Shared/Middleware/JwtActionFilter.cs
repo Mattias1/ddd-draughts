@@ -15,10 +15,10 @@ using Draughts.Repositories.Transaction;
 namespace Draughts.Application.Shared.Middleware {
     public class JwtActionFilter : IAuthorizationFilter {
         private readonly IClock _clock;
-        private readonly IAuthService _authService;
+        private readonly AuthService _authService;
         private readonly IUnitOfWork _unitOfWork;
 
-        public JwtActionFilter(IClock clock, IAuthService authService, IUnitOfWork unitOfWork) {
+        public JwtActionFilter(IClock clock, AuthService authService, IUnitOfWork unitOfWork) {
             _clock = clock;
             _authService = authService;
             _unitOfWork = unitOfWork;
