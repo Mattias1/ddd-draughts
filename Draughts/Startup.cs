@@ -57,6 +57,7 @@ namespace Draughts {
 
             DraughtsServiceProvider.RegisterEventHandlers(app.ApplicationServices);
 
+            app.UseMiddleware<SecurityHeadersMiddleware>();
             app.UseStaticFiles();
             app.UseRouting();
 
