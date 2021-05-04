@@ -1,4 +1,4 @@
-using Draughts.Domain.AuthUserAggregate.Models;
+using Draughts.Domain.AuthUserContext.Models;
 using Draughts.Repositories.InMemory;
 using FluentAssertions;
 using System.Threading.Tasks;

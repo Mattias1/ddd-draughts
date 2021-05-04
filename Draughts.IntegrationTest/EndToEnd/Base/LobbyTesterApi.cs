@@ -1,4 +1,4 @@
-using Draughts.Domain.GameAggregate.Models;
+using Draughts.Domain.GameContext.Models;
 using FluentAssertions;
 using System.Threading.Tasks;
 using static Draughts.Application.Lobby.LobbyController;

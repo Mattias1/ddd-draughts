@@ -1,9 +1,9 @@
 using Draughts.Common;
 using Draughts.Common.Utilities;
-using Draughts.Domain.AuthUserAggregate.Events;
-using Draughts.Domain.AuthUserAggregate.Models;
-using Draughts.Domain.AuthUserAggregate.Specifications;
-using Draughts.Domain.UserAggregate.Models;
+using Draughts.Domain.AuthUserContext.Events;
+using Draughts.Domain.AuthUserContext.Models;
+using Draughts.Domain.AuthUserContext.Specifications;
+using Draughts.Domain.UserContext.Models;
 using Draughts.Repositories;
 using Draughts.Repositories.Transaction;
 using NodaTime;

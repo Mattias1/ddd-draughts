@@ -1,6 +1,6 @@
 using Draughts.Common;
-using Draughts.Domain.AuthUserAggregate.Models;
-using Draughts.Domain.AuthUserAggregate.Specifications;
+using Draughts.Domain.AuthUserContext.Models;
+using Draughts.Domain.AuthUserContext.Specifications;
 using Draughts.Repositories;
 using NodaTime;
 using System.Collections.Generic;

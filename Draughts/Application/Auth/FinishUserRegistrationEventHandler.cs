@@ -1,6 +1,6 @@
 using Draughts.Common.Events;
 using Draughts.Application.Auth.Services;
-using Draughts.Domain.AuthUserAggregate.Events;
+using Draughts.Domain.AuthUserContext.Events;
 
 namespace Draughts.Application.Auth {
     public class FinishUserRegistrationEventHandler : DomainEventHandler<UserCreated> {

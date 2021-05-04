@@ -1,8 +1,8 @@
 using Draughts.Common.OoConcepts;
 using Draughts.Common.Utilities;
-using Draughts.Domain.AuthUserAggregate.Models;
-using Draughts.Domain.AuthUserAggregate.Specifications;
-using Draughts.Domain.UserAggregate.Models;
+using Draughts.Domain.AuthUserContext.Models;
+using Draughts.Domain.AuthUserContext.Specifications;
+using Draughts.Domain.UserContext.Models;
 using Draughts.Repositories.Transaction;
 using SqlQueryBuilder.Builder;
 using System.Collections.Generic;

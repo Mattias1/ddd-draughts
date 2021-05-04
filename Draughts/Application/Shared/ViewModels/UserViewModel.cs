@@ -1,5 +1,5 @@
-using Draughts.Domain.AuthUserAggregate.Models;
-using Draughts.Domain.UserAggregate.Models;
+using Draughts.Domain.AuthUserContext.Models;
+using Draughts.Domain.UserContext.Models;
 
 namespace Draughts.Application.Shared.ViewModels {
     public class BasicUserViewModel {

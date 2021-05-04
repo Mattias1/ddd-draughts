@@ -1,16 +1,16 @@
 using Draughts.Common.Events;
 using Draughts.Common.Utilities;
-using Draughts.Domain.AuthUserAggregate.Models;
-using Draughts.Domain.GameAggregate.Models;
-using Draughts.Domain.UserAggregate.Models;
+using Draughts.Domain.AuthUserContext.Models;
+using Draughts.Domain.GameContext.Models;
+using Draughts.Domain.UserContext.Models;
 using Draughts.Repositories.Database;
 using Draughts.Repositories.Transaction;
 using NodaTime;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using static Draughts.Domain.AuthUserAggregate.Models.Permission;
-using static Draughts.Domain.UserAggregate.Models.Rank;
+using static Draughts.Domain.AuthUserContext.Models.Permission;
+using static Draughts.Domain.UserContext.Models.Rank;
 
 namespace Draughts.Repositories.InMemory {
     public interface IInMemoryDatabase { }

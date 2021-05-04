@@ -1,5 +1,5 @@
 using Draughts.Common.OoConcepts;
-using Draughts.Domain.GameAggregate.Models;
+using Draughts.Domain.GameContext.Models;
 using Draughts.Repositories.Transaction;
 using SqlQueryBuilder.Builder;
 using System;

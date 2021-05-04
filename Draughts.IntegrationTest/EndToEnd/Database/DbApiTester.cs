@@ -1,4 +1,4 @@
-using Draughts.Domain.AuthUserAggregate.Specifications;
+using Draughts.Domain.AuthUserContext.Specifications;
 using Draughts.IntegrationTest.EndToEnd.Base;
 using Draughts.Repositories;
 using Draughts.Repositories.Database;

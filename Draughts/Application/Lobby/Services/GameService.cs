@@ -1,11 +1,11 @@
 using Draughts.Common;
-using Draughts.Domain.GameAggregate.Models;
-using Draughts.Domain.GameAggregate.Services;
-using Draughts.Domain.UserAggregate.Models;
+using Draughts.Domain.GameContext.Models;
+using Draughts.Domain.GameContext.Services;
+using Draughts.Domain.UserContext.Models;
 using Draughts.Repositories;
 using Draughts.Repositories.Transaction;
 using System.Linq;
-using static Draughts.Domain.GameAggregate.Services.GameFactory;
+using static Draughts.Domain.GameContext.Services.GameFactory;
 
 namespace Draughts.Application.Lobby.Services {
     // Note: This name is way to generic. In the future I'll put everything in here. So I'll rename it then :)

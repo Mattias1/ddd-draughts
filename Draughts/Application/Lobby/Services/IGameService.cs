@@ -1,5 +1,5 @@
-using Draughts.Domain.GameAggregate.Models;
-using Draughts.Domain.UserAggregate.Models;
+using Draughts.Domain.GameContext.Models;
+using Draughts.Domain.UserContext.Models;
 
 namespace Draughts.Application.Lobby.Services {
     public interface IGameService {

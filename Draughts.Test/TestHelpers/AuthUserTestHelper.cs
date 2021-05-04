@@ -1,6 +1,6 @@
 using Draughts.Common.Utilities;
-using Draughts.Domain.AuthUserAggregate.Models;
-using Draughts.Domain.UserAggregate.Models;
+using Draughts.Domain.AuthUserContext.Models;
+using Draughts.Domain.UserContext.Models;
 using NodaTime;
 using NodaTime.Testing;
 using System;

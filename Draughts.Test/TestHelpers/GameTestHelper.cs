@@ -1,5 +1,5 @@
 using Draughts.Common.Utilities;
-using Draughts.Domain.GameAggregate.Models;
+using Draughts.Domain.GameContext.Models;
 using NodaTime;
 using NodaTime.Testing;
 using System;

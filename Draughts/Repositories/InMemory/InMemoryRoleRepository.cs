@@ -1,5 +1,5 @@
-using Draughts.Domain.AuthUserAggregate.Models;
-using Draughts.Domain.AuthUserAggregate.Specifications;
+using Draughts.Domain.AuthUserContext.Models;
+using Draughts.Domain.AuthUserContext.Specifications;
 using Draughts.Repositories.Database;
 using Draughts.Repositories.Transaction;
 using System;

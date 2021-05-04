@@ -1,4 +1,4 @@
-using Draughts.Domain.UserAggregate.Models;
+using Draughts.Domain.UserContext.Models;
 using Draughts.Repositories.Transaction;
 using SqlQueryBuilder.Builder;
 

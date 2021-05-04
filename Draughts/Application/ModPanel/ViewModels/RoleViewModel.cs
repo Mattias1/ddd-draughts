@@ -1,5 +1,5 @@
 using Draughts.Application.Shared.ViewModels;
-using Draughts.Domain.AuthUserAggregate.Models;
+using Draughts.Domain.AuthUserContext.Models;
 using NodaTime;
 using System.Collections.Generic;
 using System.Linq;
