@@ -1,4 +1,4 @@
-$(document).ready(function () {
+$(function () {
     initializeShowHideLinks();
 });
 
@@ -7,9 +7,9 @@ function initializeShowHideLinks(parentIdentifier) {
         parentIdentifier = '';
     }
 
-    $(parentIdentifier + " .show-hide-link").unbind('click');
+    $(parentIdentifier + " .show-hide-link").off('click');
 
-    $(parentIdentifier + " .show-hide-link").click(function () {
+    $(parentIdentifier + " .show-hide-link").on('click', function () {
         let slide = $(this).hasClass('slide');
         let id = $(this).data('id');
         let cls = $(this).data('class');

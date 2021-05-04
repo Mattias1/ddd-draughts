@@ -83,16 +83,8 @@
     </div>
 </div>
 
+<div id="captureSequenceFrom" class="hidden" data-val="@captureSequenceFrom"></div>
+
 @section Scripts {
     <script src="/js/playgame.js" asp-append-version="true"></script>
-
-    @if (captureSequenceFrom is not null) {
-        <text>
-            <script>
-                $(document).ready(function () {
-                    selectSquare(@(captureSequenceFrom) $('#square-@(captureSequenceFrom)'));
-                });
-            </script>
-        </text>
-    }
 }

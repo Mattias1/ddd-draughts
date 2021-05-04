@@ -1,5 +1,5 @@
-$(document).ready(function () {
-    $('#cgp-presets').change(function () {
+$(function () {
+    $('#cgp-presets').on('change', function () {
         applyPresets($(this).val());
     });
 });
