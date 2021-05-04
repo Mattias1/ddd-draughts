@@ -12,7 +12,7 @@ namespace Draughts.Domain.AuthUserContext.Models {
             Id = id;
         }
 
-        public static implicit operator long(AdminLogId roleId) => roleId.Id;
-        public static implicit operator string(AdminLogId roleId) => roleId.ToString();
+        public static implicit operator long(AdminLogId? roleId) => roleId?.Id ?? 0;
+        public static implicit operator string(AdminLogId? roleId) => roleId?.ToString() ?? "";
     }
 }

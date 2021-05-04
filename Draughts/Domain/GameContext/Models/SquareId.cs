@@ -18,8 +18,8 @@ namespace Draughts.Domain.GameContext.Models {
             return (x, y);
         }
 
-        public static implicit operator int(SquareId squareId) => squareId.Value;
-        public static implicit operator string(SquareId squareId) => squareId.ToString();
+        public static implicit operator int(SquareId? squareId) => squareId?.Value ?? 0;
+        public static implicit operator string(SquareId? squareId) => squareId?.ToString() ?? "";
 
         public static SquareId FromPosition(int x, int y, int size) {
             if (!BoardPosition.IsPlayable(x, y)) {

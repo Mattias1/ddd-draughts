@@ -12,7 +12,7 @@ namespace Draughts.Domain.UserContext.Models {
             Id = id;
         }
 
-        public static implicit operator long(UserId userId) => userId.Id;
-        public static implicit operator string(UserId userId) => userId.ToString();
+        public static implicit operator long(UserId? userId) => userId?.Id ?? 0;
+        public static implicit operator string(UserId? userId) => userId?.ToString() ?? "";
     }
 }

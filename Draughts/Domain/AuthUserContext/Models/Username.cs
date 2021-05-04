@@ -16,6 +16,6 @@ namespace Draughts.Domain.AuthUserContext.Models {
             Value = value;
         }
 
-        public static implicit operator string(Username username) => username.Value;
+        public static implicit operator string(Username? username) => username?.Value ?? "";
     }
 }

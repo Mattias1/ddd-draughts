@@ -8,6 +8,6 @@ namespace Draughts.Domain.UserContext.Models {
 
         public Rating(int value) => Value = value;
 
-        public static implicit operator int(Rating rating) => rating.Value;
+        public static implicit operator int(Rating? rating) => rating?.Value ?? 0;
     }
 }
