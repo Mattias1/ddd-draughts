@@ -13,10 +13,10 @@ using static Draughts.Domain.AuthUserContext.Models.Permission;
 namespace Draughts.Application.Lobby {
     public class LobbyController : BaseController {
         private readonly IGameRepository _gameRepository;
-        private readonly IGameService _gameService;
+        private readonly GameService _gameService;
         private readonly IUnitOfWork _unitOfWork;
 
-        public LobbyController(IGameRepository gameRepository, IGameService gameService, IUnitOfWork unitOfWork) {
+        public LobbyController(IGameRepository gameRepository, GameService gameService, IUnitOfWork unitOfWork) {
             _gameRepository = gameRepository;
             _gameService = gameService;
             _unitOfWork = unitOfWork;

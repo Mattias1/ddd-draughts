@@ -30,8 +30,13 @@ Optional: Create _appsettings.env.json_ files to override existing settings.
 The json files exist in the _Draughts_, _Draughts.IntegrationTest_ and _Draughts.Command_ projects.
 
 Start the develop dependencies with `sudo ./run-dev.sh start`.
-To initialise the database, run `dotnet build Draughts.Command/Draughts.Command.csproj`
-and `dotnet run --project Draughts.Command/Draughts.Command.csproj data:essential data:dummy`.
+To initialise the database, run
+```
+cd Draughts.Command/ \
+  && dotnet build Draughts.Command.csproj \
+  && dotnet run --project Draughts.Command.csproj data:essential data:dummy \
+  ;  cd ../
+```
 
 You can then edit and run the application with your favourite IDE. It should open at
 <http://localhost:52588>.

@@ -8,7 +8,6 @@ using System.Linq;
 using System.Threading.Tasks;
 
 namespace SqlQueryBuilder.Builder {
-    // TODO: nullables should use orDefault
     public partial class QueryBuilder : IQueryBuilderBase {
         private readonly QueryBuilderOptions _options;
         private readonly Query _query;
@@ -81,9 +80,9 @@ namespace SqlQueryBuilder.Builder {
         }
         public async Task<string> SingleStringAsync() => await SingleValueAsync<string>();
         public async Task<string> SingleStringAsync(string column) => await SingleValueAsync<string>(column);
-        public async Task<string?> SingleOrDefaultStringAsync() => RowClass<string>(await SingleResultAsync());
+        public async Task<string?> SingleOrDefaultStringAsync() => RowClass<string>(await SingleOrDefaultResultAsync());
         public async Task<string?> SingleOrDefaultStringAsync(string column) {
-            return RowClass<string>(await SingleResultAsync(), column);
+            return RowClass<string>(await SingleOrDefaultResultAsync(), column);
         }
         public async Task<IReadOnlyList<string>> ListStringsAsync() => await ListValuesAsync<string>();
         public async Task<IReadOnlyList<string>> ListStringsAsync(string column) => await ListValuesAsync<string>(column);

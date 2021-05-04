@@ -61,6 +61,9 @@ namespace Draughts.Command.Seeders {
                 if (_gameRepository.Count() > 0) {
                     throw new InvalidOperationException("Game table is not empty.");
                 }
+                if (_gameStateRepository.Count() > 0) {
+                    throw new InvalidOperationException("Game state table is not empty.");
+                }
                 tran.Commit();
             });
         }

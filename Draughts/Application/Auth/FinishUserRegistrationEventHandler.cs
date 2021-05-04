@@ -4,9 +4,9 @@ using Draughts.Domain.AuthUserContext.Events;
 
 namespace Draughts.Application.Auth {
     public class FinishUserRegistrationEventHandler : DomainEventHandler<UserCreated> {
-        private readonly IUserRegistrationService _userRegistrationService;
+        private readonly UserRegistrationService _userRegistrationService;
 
-        public FinishUserRegistrationEventHandler(IUserRegistrationService userRegistrationService) {
+        public FinishUserRegistrationEventHandler(UserRegistrationService userRegistrationService) {
             _userRegistrationService = userRegistrationService;
         }
 

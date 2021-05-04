@@ -11,7 +11,7 @@ using System.Collections.Generic;
 using System.Linq;
 
 namespace Draughts.Application.ModPanel.Services {
-    public class EditRoleService : IEditRoleService {
+    public class EditRoleService {
         private readonly IAuthUserRepository _authUserRepository;
         private readonly IClock _clock;
         private readonly IIdGenerator _idGenerator;

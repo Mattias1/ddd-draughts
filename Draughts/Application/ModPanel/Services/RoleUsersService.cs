@@ -10,7 +10,7 @@ using NodaTime;
 using System.Collections.Generic;
 
 namespace Draughts.Application.ModPanel.Services {
-    public class RoleUsersService : IRoleUsersService {
+    public class RoleUsersService {
         private readonly IAuthUserRepository _authUserRepository;
         private readonly IClock _clock;
         private readonly IIdGenerator _idGenerator;

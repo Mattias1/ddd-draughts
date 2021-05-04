@@ -10,11 +10,11 @@ namespace Draughts.Application.Auth {
     public class AuthController : BaseController {
         private const string ALREADY_LOGGED_IN_ERROR = "You're already logged in.";
 
-        private readonly IAuthService _authService;
-        private readonly IUserRegistrationService _userRegistrationService;
+        private readonly AuthService _authService;
+        private readonly UserRegistrationService _userRegistrationService;
         private readonly IUnitOfWork _unitOfWork;
 
-        public AuthController(IAuthService authService, IUserRegistrationService userRegistrationService,
+        public AuthController(AuthService authService, UserRegistrationService userRegistrationService,
                 IUnitOfWork unitOfWork) {
             _authService = authService;
             _userRegistrationService = userRegistrationService;
