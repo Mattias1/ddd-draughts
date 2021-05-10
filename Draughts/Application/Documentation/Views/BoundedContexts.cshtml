@@ -36,7 +36,8 @@
         <li>
             You may want to set explicit boundaries between bounded contexts outside the domain related code as well.
             For example, you can put the corresponding database tables in different databases or schema's.
-            You could put the code in different projects and repositories and have different teams working on them.
+            Or you can put the code in different projects and repositories and have different teams working on them.<br>
+            You don't have to, but physical boundaries help to keep your model clean.
         </li>
     </ul>
 
@@ -58,7 +59,7 @@
             never span accross bounded contexts.
         </li>
         <li>
-            It should never reference domain objects outside the aggregate. If you need to reference to objects in other
+            It should never reference domain objects outside the aggregate. If you need to reference objects in other
             aggregates, store their IDs.
         </li>
         <li>

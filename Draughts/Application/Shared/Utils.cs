@@ -15,14 +15,24 @@ namespace Draughts.Application.Shared {
         public static string BaseUrl { get; set; } = "http://localhost:52588";
 
         public static HtmlString Href(string url, params (string key, object? value)[] queryParams) {
-            Url fullUrl = Url(url);
-            foreach ((string key, object? value) in queryParams) {
-                fullUrl.QueryParams.Add(E(key), E(value?.ToString() ?? ""));
-            }
-            return new HtmlString($"href=\"{E(fullUrl)}\"");
+            string safeUrl = UrlE(url, queryParams);
+            return new HtmlString($"href=\"{safeUrl}\"");
         }
-        public static string UrlE(string url) => E(Url(url));
-        public static Url Url(string url) => url.StartsWith('/') ? Flurl.Url.Combine(BaseUrl, url) : url;
+
+        public static HtmlString Src(string url, params (string key, object? value)[] queryParams) {
+            string safeUrl = UrlE(url, queryParams);
+            return new HtmlString($"src=\"{safeUrl}\"");
+        }
+
+        // public static string UrlE(string url, params (string key, object? value)[] queryParams) => E(Url(url, queryParams));
+        public static string UrlE(string url, params (string key, object? value)[] queryParams) => Url(url, queryParams);
+        public static Url Url(string url, params (string key, object? value)[] queryParams) {
+            Url fullUrl = url.StartsWith('/') ? Flurl.Url.Combine(BaseUrl, url) : new Url(url);
+            foreach ((string key, object? value) in queryParams) {
+                fullUrl.QueryParams.Add(key, value?.ToString() ?? "");
+            }
+            return fullUrl;
+        }
         public static string E(string text) => HtmlEncoder.Default.Encode(text);
 
         public static HtmlString PostLink(string text, string url, params (string key, string value)[] parameters) {

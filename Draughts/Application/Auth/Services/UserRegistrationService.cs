@@ -34,8 +34,8 @@ namespace Draughts.Application.Auth.Services {
         public AuthUser CreateAuthUser(string? name, string? email, string? plaintextPassword) {
             return _unitOfWork.WithAuthUserTransaction(tran => {
                 var pendingRegistrationRole = _roleRepository.Find(new RolenameSpecification(Role.PENDING_REGISTRATION_ROLENAME));
-                var authUser = _userRegistrationDomainService.CreateAuthUser(_idGenerator.ReservePool(), pendingRegistrationRole,
-                    name, email, plaintextPassword);
+                var authUser = _userRegistrationDomainService.CreateAuthUser(_idGenerator.ReservePool(),
+                    pendingRegistrationRole, name, email, plaintextPassword);
 
                 _authUserRepository.Save(authUser);
 
