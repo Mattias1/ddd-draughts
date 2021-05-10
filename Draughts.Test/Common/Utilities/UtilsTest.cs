@@ -57,6 +57,12 @@ namespace Draughts.Test.Common.Utilities {
             href.Should().Be($"href=\"{BASE_URL}/search?q=%3Cscript%3Ealert(1);%3C/script%3E\"");
         }
 
+        [Fact]
+        public void SrcIsSecureAgainstXss() {
+            string src = Utils.Src("/script.js", ("version", "<script>alert(1);</script>")).ToString();
+            src.Should().Be($"src=\"{BASE_URL}/script.js?version=%3Cscript%3Ealert%281%29%3B%3C%2Fscript%3E\"");
+        }
+
         [Theory]
         [InlineData(2020, 02, 29, 13, 37, "29 Feb 2020, 13:37")]
         public void DateTimeParsing(int year, int month, int day, int hour, int min, string expected) {

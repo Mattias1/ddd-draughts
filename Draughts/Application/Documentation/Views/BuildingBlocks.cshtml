@@ -36,13 +36,13 @@
 
     <h4>Factories</h4>
     <p>
-        Factories are responsible for creating domain objects, usually aggregates. Currently I'm using my factories
-        wrong, as they do too much work ;)
+        Factories are responsible for building domain objects, usually the entire aggregate. In Draughts they're
+        implemented as a type of domain service or as a static method on the model.
     </p>
 
     <h4>Repositories</h4>
     <p>
-        A repository is reseponsible for all communication with your database (or whatever you use to store data).
-        Usually there's one repository per aggregate. Yes, I'm doing this wrong as well currenlty ;)
+        A repository is reseponsible for all communication with your database (or whatever it is you use to store data).
+        There's one repository per aggregate.
     </p>
 </div>
