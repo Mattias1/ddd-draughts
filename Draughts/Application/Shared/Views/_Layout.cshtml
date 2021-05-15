@@ -25,12 +25,14 @@
 
                 @if (ViewBag.IsLoggedIn) {
                     <div class="nav-user">
-                        Logged in as: @Utils.UserLink(ViewBag.UserId, ViewBag.Username) | @Utils.PostLink("Logout", "/auth/logout")
+                        Logged in as: @Utils.UserLink(ViewBag.UserId, ViewBag.Username)
+                        | @Utils.PostLink("Logout", "/auth/logout")
                     </div>
                 }
                 else {
                     <div class="nav-user">
-                        Viewing as guest: <a @Utils.Href("/auth/login")>Login</a> | <a @Utils.Href("/auth/register")>Register</a>
+                        Viewing as guest: <a @Utils.Href("/auth/login")>Login</a>
+                        | <a @Utils.Href("/auth/register")>Register</a>
                     </div>
                 }
             </div>

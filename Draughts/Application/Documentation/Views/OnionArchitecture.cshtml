@@ -3,21 +3,47 @@
 }
 
 <nav class="side-menu">
-    @Utils.SideMenu(Model)
-</nav>
+    @Utils.SideMenu(Model) </nav>
 
 <div class="text-side-menu-container">
     <h1>@ViewBag.Title</h1>
 
     <h3>Onion architecture</h3>
     <p>
-        This is often called <em>Hexagonal architecture</em>, though I'm not sure what the 6 sides would refer too.
-        I usually define the onion having 3 sides.
+        This pattern is also known as <em>Hexagonal architecture</em> (because it's usually displayed as a hexagon), or
+        <em>Ports and Adapters</em>. I prefer to call it onion architecture because the important thing here is the
+        separation between the layers and not the amount of sides.
     </p>
     <p>
-        Todo. On references being only inwards or sideways, never outwards.
+        <img @Utils.Src("/img/onion-architecture.svg")
+            alt="The layers and elements of the onion architecture."
+            width="400px">
     </p>
     <p>
-        A note that auth should be done outside the domain?
+        The purpose of the onion architecture in contrast with, say, a simple layered architecture, is to separate the
+        domain logic from the application logic.<br>
+        As you do not want to be coupling things like HTTP requests, database queries and domain model modifications
+        together, you'll need a way to divide them.
+    </p>
+    <p>
+        To achieve this separation, an object is only allowed to interact with objects in the same layer or deeper.
+        It's never allowed to interact with layers further to the outside.<br>
+        You'll put most of the domain logic inside the <em>domain model</em>, while the <em>domain services</em> are
+        responsible for the bits of logic that span multiple aggregates.
+        The <em>controllers</em> manage you HTTP requests and the <em>repositories</em> your queries of course. That
+        leaves the <em>application services</em> to tie everything together.<br>
+        If you have logic that spans multiple bounded contexts, you'll usually want the communication to go via events
+        and that's where you'll need <em>event handlers</em>. They function a bit like a controllers, but react to
+        events instead of HTTP requests.
+    </p>
+    <p>
+        Note that sometimes people put repository interfaces inside the domain service layer (though never the
+        implementations). In my opinion this is cheating, as there's no point in pretending that interacting with an
+        interface will really not perform actual object storage logic.
+
+        <!-- TODO: Actually implement this and move this to 'Good to know' -->
+        This has the consequence that we might need to put a tiny bit of domain logic in the application services,
+        outside the domain (like for example guaranteeing uniqueness). That's not ideal, but it's better than allowing
+        queries inside the domain.
     </p>
 </div>
