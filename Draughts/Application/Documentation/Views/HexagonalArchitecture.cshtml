@@ -3,25 +3,26 @@
 }
 
 <nav class="side-menu">
-    @Utils.SideMenu(Model) </nav>
+    @Utils.SideMenu(Model)
+</nav>
 
 <div class="text-side-menu-container">
     <h1>@ViewBag.Title</h1>
 
-    <h3>Onion architecture</h3>
+    <h3>Hexagonal architecture</h3>
     <p>
-        This pattern is also known as <em>Hexagonal architecture</em> (because it's usually displayed as a hexagon), or
-        <em>Ports and Adapters</em>. I prefer to call it onion architecture because the important thing here is the
-        separation between the layers and not the amount of sides.
+        This pattern is also known as <em>Ports and Adapters</em>, or <em>Onion architecture</em>. While the latter
+        would be the most accurate (the separation between the layers is what matters, not the 6 sides), it's usually
+        drawn with hexagons and so the name stuck.
     </p>
     <p>
-        <img @Utils.Src("/img/onion-architecture.svg")
-            alt="The layers and elements of the onion architecture."
+        <img @Utils.Src("/img/hexagonal-architecture.svg")
+            alt="The layers and elements of the hexagonal architecture."
             width="400px">
     </p>
     <p>
-        The purpose of the onion architecture in contrast with, say, a simple layered architecture, is to separate the
-        domain logic from the application logic.<br>
+        The purpose of the hexagonal architecture in contrast with, say, a simple layered architecture, is to separate
+        the domain logic from the application logic.<br>
         As you do not want to be coupling things like HTTP requests, database queries and domain model modifications
         together, you'll need a way to divide them.
     </p>
@@ -42,7 +43,7 @@
         interface will really not perform actual object storage logic.
 
         <!-- TODO: Actually implement this and move this to 'Good to know' -->
-        This has the consequence that we might need to put a tiny bit of domain logic in the application services,
+        This has the consequence that we might need to put a tiny bit of domain logic in the application services
         outside the domain (like for example guaranteeing uniqueness). That's not ideal, but it's better than allowing
         queries inside the domain.
     </p>

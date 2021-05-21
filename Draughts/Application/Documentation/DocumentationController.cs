@@ -5,6 +5,9 @@ using Draughts.Application.Shared;
 
 namespace Draughts.Application.Documentation {
     public class DocumentationController : BaseController {
+        [HttpGet("/docs"), GuestRoute]
+        public IActionResult DocsShortcut() => RedirectPermanent("/documentation");
+
         [HttpGet("/documentation"), GuestRoute]
         public IActionResult DocumentationOverview() => ViewWithMenu();
 
@@ -15,7 +18,7 @@ namespace Draughts.Application.Documentation {
         public IActionResult BoundedContexts() => ViewWithMenu();
 
         [HttpGet, GuestRoute]
-        public IActionResult OnionArchitecture() => ViewWithMenu();
+        public IActionResult HexagonalArchitecture() => ViewWithMenu();
 
         [HttpGet, GuestRoute]
         public IActionResult BuildingBlocks() => ViewWithMenu();
@@ -31,7 +34,7 @@ namespace Draughts.Application.Documentation {
                 ("Overview", "/documentation"),
                 ("Design principles", "/documentation/designprinciples"),
                 ("Bounded contexts", "/documentation/boundedcontexts"),
-                ("Onion architecture", "/documentation/onionarchitecture"),
+                ("Hexagonal architecture", "/documentation/hexagonalarchitecture"),
                 ("Building blocks", "/documentation/buildingblocks"),
                 ("Good to know", "/documentation/goodtoknow"),
                 ("Authentication and authorization", "/documentation/auth")
