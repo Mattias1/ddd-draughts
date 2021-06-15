@@ -15,17 +15,15 @@ namespace Draughts.Application.Shared {
         public static string BaseUrl { get; set; } = "http://localhost:52588";
 
         public static HtmlString Href(string url, params (string key, object? value)[] queryParams) {
-            string safeUrl = UrlE(url, queryParams);
+            string safeUrl = Url(url, queryParams);
             return new HtmlString($"href=\"{safeUrl}\"");
         }
 
         public static HtmlString Src(string url, params (string key, object? value)[] queryParams) {
-            string safeUrl = UrlE(url, queryParams);
+            string safeUrl = Url(url, queryParams);
             return new HtmlString($"src=\"{safeUrl}\"");
         }
 
-        // public static string UrlE(string url, params (string key, object? value)[] queryParams) => E(Url(url, queryParams));
-        public static string UrlE(string url, params (string key, object? value)[] queryParams) => Url(url, queryParams);
         public static Url Url(string url, params (string key, object? value)[] queryParams) {
             Url fullUrl = url.StartsWith('/') ? Flurl.Url.Combine(BaseUrl, url) : new Url(url);
             foreach ((string key, object? value) in queryParams) {
@@ -36,7 +34,7 @@ namespace Draughts.Application.Shared {
         public static string E(string text) => HtmlEncoder.Default.Encode(text);
 
         public static HtmlString PostLink(string text, string url, params (string key, string value)[] parameters) {
-            string s = $"<form class=\"post-link-form\" action=\"{UrlE(url)}\" method=\"post\">";
+            string s = $"<form class=\"post-link-form\" action=\"{Url(url)}\" method=\"post\">";
             foreach (var (key, value) in parameters) {
                 s += $"<input type=\"hidden\" name=\"{E(key)}\" value=\"{E(value)}\">";
             }

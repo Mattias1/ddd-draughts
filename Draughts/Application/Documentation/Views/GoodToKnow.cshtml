@@ -15,9 +15,11 @@
 
     <h4>Database id's</h4>
     <p>
-        A domain does not know about the existence of a database (see <a @Utils.Href("/documentation/hexagonalarchitecture")>
-        hexagonal architecture</a>), so how do we assign id's to a new entity?
-        The answer is to use unique id generators that don't rely on database calls, such as the HiLo algorithm.
+        A domain does not know about the existence of a database and entity creation belongs inside the domain.
+        That raises the question how to create your id's. You could leave the id null and only assign it when saving to
+        the database, but that leaves the domain in an invalid state for a short time.
+        So then how do we assign id's to a new entity? The answer is to use unique id generators that don't rely on
+        database calls, such as the HiLo algorithm.
     </p>
 
     <h4>Repositories and their interface</h4>
@@ -33,5 +35,16 @@
         I 'solved' this myself by admitting the world isn't perfect and we'll make do with this one exception, but if
         you happen to know a good solution here (or have a good argument why the interface really does live on a
         different level than it's implementation) then please tell me :).
+    </p>
+
+    <h4>Uniqueness validation</h4>
+    <p>
+        Some properties of a domain model (like usernames) are unique, which means the domain model should check for
+        their uniqueness. We can do that by querying the database inside the domain, which breaks its isolation, or we
+        can do that check outside the domain, which breaks the single responsibility principle.
+        I think doing this check outside the domain is the lesser of the two evils.<br>
+        See also this blogpost on
+        <a class="extern" href="https://enterprisecraftsmanship.com/posts/domain-model-purity-completeness/">domain
+        model purity vs completeness</a>.
     </p>
 </div>

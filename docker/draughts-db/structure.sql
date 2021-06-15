@@ -4,7 +4,7 @@ USE `draughts_user`;
 
 CREATE TABLE `user` (
     `id` BIGINT NOT NULL,
-    `username` VARCHAR(50) NOT NULL,
+    `username` VARCHAR(25) NOT NULL UNIQUE,
     `rating` INT NOT NULL,
     `rank` VARCHAR(50) NOT NULL,
     `games_played` INT NOT NULL,
@@ -30,7 +30,7 @@ USE `draughts_authuser`;
 
 CREATE TABLE `authuser` (
     `id` BIGINT NOT NULL,
-    `username` VARCHAR(50) NOT NULL,
+    `username` VARCHAR(25) NOT NULL UNIQUE,
     `password_hash` VARCHAR(200) NOT NULL,
     `email` VARCHAR(200) NOT NULL,
     `created_at` DATETIME NOT NULL,
@@ -74,7 +74,7 @@ CREATE TABLE `adminlog` (
     `type` VARCHAR(50) NOT NULL,
     `parameters` VARCHAR(50) NULL,
     `user_id` BIGINT NOT NULL,
-    `username` VARCHAR(50) NOT NULL,
+    `username` VARCHAR(25) NOT NULL,
     `permission` VARCHAR(50) NOT NULL,
     `created_at` DATETIME NOT NULL,
 
@@ -121,7 +121,7 @@ CREATE TABLE `player` (
     `id` BIGINT NOT NULL,
     `user_id` BIGINT NOT NULL,
     `game_id` BIGINT NOT NULL,
-    `username` VARCHAR(50) NOT NULL,
+    `username` VARCHAR(25) NOT NULL,
     `rank` VARCHAR(50) NOT NULL,
     `color` BIT NOT NULL,
     `created_at` DATETIME NOT NULL,
