@@ -91,7 +91,7 @@ namespace Draughts.Command.Seeders {
                     .WithRating(9001)
                     .WithRank(Rank.Ranks.FieldMarshal)
                     .Build());
-                users.Add(UserTestHelper.User("<script>alert('Hi, my name is Bobby');</script>").Build());
+                users.Add(UserTestHelper.User("PendingPlayer").Build());
                 users.Add(UserTestHelper.User("TestPlayerBlack").Build());
                 users.Add(UserTestHelper.User("TestPlayerWhite").Build());
 
@@ -113,7 +113,7 @@ namespace Draughts.Command.Seeders {
                 var adminRole = roles.Single(r => r.Rolename == Role.ADMIN_ROLENAME);
 
                 foreach (var u in users) {
-                    var role = u.Username.Value.Contains("Bobby") ? pendingRegistrationRole : registeredUserRole;
+                    var role = u.Username == "PendingPlayer" ? pendingRegistrationRole : registeredUserRole;
                     var authUserBuilder = AuthUserTestHelper.FromUserAndRoles(u, role).WithPasswordHash("admin");
                     if (u.Username == Username.MATTY) {
                         authUserBuilder.AddRole(adminRole);

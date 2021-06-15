@@ -1,3 +1,4 @@
+using Draughts.Common;
 using Draughts.Common.Utilities;
 using Draughts.Domain.AuthUserContext.Events;
 using Draughts.Domain.AuthUserContext.Models;
@@ -34,6 +35,9 @@ namespace Draughts.Application.Auth.Services {
         public AuthUser CreateAuthUser(string? name, string? email, string? plaintextPassword) {
             return _unitOfWork.WithAuthUserTransaction(tran => {
                 var pendingRegistrationRole = _roleRepository.Find(new RolenameSpecification(Role.PENDING_REGISTRATION_ROLENAME));
+
+                ValidateUsernameAndEmailUniqueness(name, email);
+
                 var authUser = _userRegistrationDomainService.CreateAuthUser(_idGenerator.ReservePool(),
                     pendingRegistrationRole, name, email, plaintextPassword);
 
@@ -43,6 +47,13 @@ namespace Draughts.Application.Auth.Services {
 
                 return tran.CommitWith(authUser);
             });
+        }
+
+        private void ValidateUsernameAndEmailUniqueness(string? name, string? email) {
+            var usernameOrEmailSpec = new UsernameSpecification(name).Or(new EmailSpecification(email));
+            if (_authUserRepository.Count(usernameOrEmailSpec) > 0) {
+                throw new ManualValidationException("This username or email address is already taken.");
+            }
         }
 
         public User CreateUser(UserId userId, Username username) {

@@ -13,6 +13,16 @@ namespace Draughts.IntegrationTest.EndToEnd.Database {
         }
 
         [Fact]
+        public async Task DontRegisterNewUserWithDuplicateUsername() {
+            await _authenticationApi.PostDuplicateUsernameRegistration();
+        }
+
+        [Fact]
+        public async Task DontRegisterNewUserWithDuplicateEmail() {
+            await _authenticationApi.PostDuplicateEmailRegistration();
+        }
+
+        [Fact]
         public async Task RegisterNewUser() {
             await _authenticationApi.VisitRegisterPage();
             await _authenticationApi.PostRegistration();

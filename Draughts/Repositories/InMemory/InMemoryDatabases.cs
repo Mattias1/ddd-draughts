@@ -22,7 +22,7 @@ namespace Draughts.Repositories.InMemory {
         public const long MattyId = 4;
         public const long MathyId = 5;
         public const long JackDeHaasId = 6;
-        public const long BobbyId = 7;
+        public const long PendingPlayerId = 7;
         public const long TestPlayerBlack = 8;
         public const long TestPlayerWhite = 9;
 
@@ -45,7 +45,7 @@ namespace Draughts.Repositories.InMemory {
             database.AddUser(MattyId, Username.MATTY, 2345, Ranks.Lieutenant, 42);
             database.AddUser(MathyId, "Mathy", 800, Ranks.LanceCorporal, 12);
             database.AddUser(JackDeHaasId, "JackDeHaas", 9001, Ranks.FieldMarshal, 1337);
-            database.AddUser(BobbyId, "<script>alert('Hi, my name is Bobby');</script>", 1000, Ranks.Private, 0);
+            database.AddUser(PendingPlayerId, "PendingPlayer", 1000, Ranks.Private, 0);
             database.AddUser(TestPlayerBlack, "TestPlayerBlack", 1000, Ranks.Private, 0);
             database.AddUser(TestPlayerWhite, "TestPlayerWhite", 1000, Ranks.Private, 0);
 
@@ -110,7 +110,7 @@ namespace Draughts.Repositories.InMemory {
             database.AddAuthUser(UserDatabase.MattyId, Username.MATTY, adminRoleId, registeredUserRoleId);
             database.AddAuthUser(UserDatabase.MathyId, "Mathy", registeredUserRoleId);
             database.AddAuthUser(UserDatabase.JackDeHaasId, "JackDeHaas", registeredUserRoleId);
-            database.AddAuthUser(UserDatabase.BobbyId, "<script>alert('Hi, my name is Bobby');</script>", pendingRegistrationRoleId);
+            database.AddAuthUser(UserDatabase.PendingPlayerId, "PendingPlayer", pendingRegistrationRoleId);
             database.AddAuthUser(UserDatabase.TestPlayerBlack, "TestPlayerBlack", registeredUserRoleId);
             database.AddAuthUser(UserDatabase.TestPlayerWhite, "TestPlayerWhite", registeredUserRoleId);
 
