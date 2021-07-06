@@ -234,6 +234,15 @@ namespace SqlQueryBuilder.Test.Builder {
         }
 
         [Fact]
+        public void TestWhereInWithOptimizedBooleans() {
+            string sql = OptimizedNumbersQuery().SelectAllFrom("user")
+                .Where("is_one").Is(true)
+                .And("is_two").Is(false)
+                .ToParameterizedSql();
+            sql.Should().Be("select user.* from user where is_one = 1 and is_two = 0");
+        }
+
+        [Fact]
         public void TestWhereNotIn() {
             string sql = Query().SelectAllFrom("user")
                 .Where("id").Isnt(0)
