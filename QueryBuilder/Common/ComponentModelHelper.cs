@@ -31,33 +31,30 @@ namespace SqlQueryBuilder.Common {
                     continue;
                 }
 
-                if (value is null || value == DBNull.Value) {
-                    SetProperty(result, property, null);
+                var parsedValue = Parse(value, property.PropertyType);
+                try {
+                    property.SetValue(result, parsedValue);
                 }
-                else if (value is string valueStr && DateTimeParser.ParseProperty(property.PropertyType, valueStr, out object? parsedValue)) {
-                    SetProperty(result, property, parsedValue);
-                }
-                else if (value is DateTime systemDateTime
-                        && DateTimeParser.ParseProperty(property.PropertyType, systemDateTime, out object? parsedDateTimeValue)) {
-                    SetProperty(result, property, parsedDateTimeValue);
-                }
-                else if (property.PropertyType == typeof(bool) && IsNumber(value)) {
-                    SetProperty(result, property, Convert.ToBoolean(value));
-                }
-                else {
-                    SetProperty(result, property, value);
+                catch (Exception e) {
+                    throw new SqlQueryBuilderException($"Error trying to set property '{property.DisplayName}' to value '{value}'", e);
                 }
             }
             return result;
         }
 
-        private static void SetProperty<T>(T result, PropertyDescriptor property, object? value) {
-            try {
-                property.SetValue(result, value);
+        public static object? Parse(object? value, Type type) {
+            if (value is string valueStr
+                    && DateTimeParser.ParseProperty(type, valueStr, out object? parsedValue)) {
+                return parsedValue;
             }
-            catch (Exception e) {
-                throw new SqlQueryBuilderException($"Error trying to set property '{property.DisplayName}' to value '{value}'", e);
+            if (value is DateTime systemDateTime
+                    && DateTimeParser.ParseProperty(type, systemDateTime, out object? parsedDateTimeValue)) {
+                return parsedDateTimeValue;
             }
+            if (type == typeof(bool) && IsNumber(value)) {
+                return Convert.ToBoolean(value);
+            }
+            return value;
         }
 
         private static bool IsNumber(object? value) {
