@@ -185,7 +185,7 @@ namespace Draughts.Repositories.Database {
             );
         }
 
-        private GameSettings GetGameSettings() {
+        public GameSettings GetGameSettings() {
             Color firstMoveColor = FirstMoveColorIsWhite ? Color.White : Color.Black;
             var capConstraints = CaptureConstraints switch
             {
@@ -258,20 +258,51 @@ namespace Draughts.Repositories.Database {
 
     public class DbGameState : IDbObject<DbGameState, GameState> {
         public long Id { get; set; }
-        public string CurrentGameState { get; set; }
-        public byte? CaptureSequenceFrom { get; set; }
+        public string? InitialGameState { get; set; }
 
         public bool Equals(DbGameState? other) => Id.Equals(other?.Id);
 
-        public GameState ToDomainModel() {
-            return GameState.FromStorage(new GameId(Id), CurrentGameState, CaptureSequenceFrom);
+        public GameState ToDomainModel(GameSettings settings, IEnumerable<DbMove> dbMoves) {
+            var moves = dbMoves.Select(m => m.ToDomainModel());
+            return GameState.FromStorage(new GameId(Id), settings, InitialGameState, moves);
         }
+
         public static DbGameState FromDomainModel(GameState entity) {
             return new DbGameState {
                 Id = entity.Id,
-                CurrentGameState = entity.StorageString(),
-                CaptureSequenceFrom = (byte?)entity.CaptureSequenceFrom?.Value
+                InitialGameState = entity.InitialStateStorageString()
             };
+        }
+    }
+
+    public class DbMove : IDbObject<DbMove, Move> {
+        public long GameId { get; set; }
+        public short Index { get; set; }
+        public sbyte From { get; set; }
+        public sbyte To { get; set; }
+        public bool IsCapture { get; set; }
+
+        public bool Equals(DbMove? other) => GameId.Equals(other?.GameId) && Index.Equals(other?.Index);
+
+        public Move ToDomainModel() => new Move(new SquareId(From), new SquareId(To), IsCapture);
+
+        public static DbMove FromDomainModel(GameState gameState, Move move, int moveIndex) {
+            return new DbMove {
+                GameId = gameState.Id,
+                Index = Convert.ToInt16(moveIndex),
+                From = Convert.ToSByte(move.From.Value),
+                To = Convert.ToSByte(move.To.Value),
+                IsCapture = move.IsCapture
+            };
+        }
+
+        public static DbMove[] ArrayFromDomainModels(GameState gameState, int currentMaxIndex) {
+            var moves = new DbMove[gameState.Moves.Count - currentMaxIndex - 1];
+            for (int i = 0; i < moves.Length; i++) {
+                int moveIndex = i + currentMaxIndex + 1;
+                moves[i] = FromDomainModel(gameState, gameState.Moves[moveIndex], moveIndex);
+            }
+            return moves;
         }
     }
 

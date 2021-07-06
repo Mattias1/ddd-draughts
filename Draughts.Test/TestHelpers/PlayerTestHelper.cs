@@ -14,7 +14,7 @@ namespace Draughts.Test.TestHelpers {
             return new PlayerBuilder()
                 .WithId(IdTestHelper.Next())
                 .WithUserId(IdTestHelper.Next())
-                .WithUsername("White player")
+                .WithUsername("WhitePlayer")
                 .WithRank(Rank.Ranks.Private)
                 .WithColor(Color.White)
                 .WithCreatedAt(Feb29);
@@ -24,7 +24,7 @@ namespace Draughts.Test.TestHelpers {
             return new PlayerBuilder()
                 .WithId(IdTestHelper.Next())
                 .WithUserId(IdTestHelper.Next())
-                .WithUsername("Black player")
+                .WithUsername("BlackPlayer")
                 .WithRank(Rank.Ranks.Private)
                 .WithColor(Color.Black)
                 .WithCreatedAt(Feb29);

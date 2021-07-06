@@ -228,7 +228,7 @@ namespace Draughts.Test.Domain.GameContext {
             // |.|_|5|_|
             // |_|4|_|4|
             // |.|_|5|_|
-            var board = BoardPosition.FromString("00054405");
+            var board = Board.FromString("00054405");
             var posisbleMoves = PossibleMoveCalculator.ForChainCaptures(board, new SquareId(5), InternationalSettings(4))
                 .Calculate()
                 .Select(m => m.ToString())
@@ -237,7 +237,7 @@ namespace Draughts.Test.Domain.GameContext {
         }
 
         private static List<string> CalculatePossibleMoves(string boardString, Color color, GameSettings settings) {
-            var board = BoardPosition.FromString(boardString);
+            var board = Board.FromString(boardString);
             return PossibleMoveCalculator.ForNewTurn(board, color, settings)
                 .Calculate()
                 .Select(m => m.ToString())

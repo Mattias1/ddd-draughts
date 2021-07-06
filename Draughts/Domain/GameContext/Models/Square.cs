@@ -3,11 +3,11 @@ using System.Diagnostics.CodeAnalysis;
 namespace Draughts.Domain.GameContext.Models {
     // Right now this class is mutuable because the BoardPosition is.
     public class Square {
-        private BoardPosition _board;
+        private Board _board;
         public SquareId Id { get; }
         public Piece Piece { get; internal set; }
 
-        public Square(SquareId id, Piece piece, BoardPosition board) {
+        public Square(SquareId id, Piece piece, Board board) {
             Id = id;
             Piece = piece;
             _board = board;
