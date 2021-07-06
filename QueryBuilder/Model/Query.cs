@@ -151,6 +151,10 @@ namespace SqlQueryBuilder.Model {
                 Builder.Append(parameter);
                 parameterize = false;
             }
+            else if (Options.DontParameterizeNumbers && parameter is bool booleanParameter) {
+                Builder.Append(booleanParameter ? 1 : 0);
+                parameterize = false;
+            }
             else {
                 Builder.Append(key);
             }
