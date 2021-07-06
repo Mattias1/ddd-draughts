@@ -21,10 +21,12 @@ namespace SqlQueryBuilder.Model {
         public void AppendToQuery(Query query, bool isFirst) {
             query.Builder
                 .Append(' ').Append(Keyword)
-                .Append(' ').Append(Table)
-                .Append(" on ").Append(LeftColumn)
+                .Append(' ');
+            Table.AppendToQuery(query, true);
+            query.Builder
+                .Append(" on ").Append(query.WrapField(LeftColumn))
                 .Append(' ').Append(Operator)
-                .Append(' ').Append(RightColumn);
+                .Append(' ').Append(query.WrapField(RightColumn));
         }
     }
 }

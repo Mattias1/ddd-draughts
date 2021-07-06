@@ -4,33 +4,28 @@ namespace SqlQueryBuilder.Model {
 
         public Where.WhereType WhereType { get; }
         public string ColumnName { get; }
-        public Comparison[] Comparisons { get; }
+        public IComparison[] Comparisons { get; }
 
         public WhereLeaf(Where.WhereType whereType, string name, string @operator, object? value, ValueType type = ValueType.Any)
-            : this(whereType, name, new[] { new Comparison(@operator, value, type) }) { }
+            : this(whereType, name, new Comparison(@operator, value, type)) { }
 
-        public WhereLeaf(Where.WhereType whereType, string name, params Comparison[] comparisons) {
+        public WhereLeaf(Where.WhereType whereType, string name, params IComparison[] comparisons) {
             WhereType = whereType;
             ColumnName = name;
             Comparisons = comparisons;
         }
 
         public void AppendToQuery(Query query, bool isFirst) {
-            query.Builder.Append(' ').Append(Where.WhereTypeToString(WhereType, isFirst))
-                .Append(' ').Append(ColumnName);
+            query.Builder
+                .Append(' ').Append(Where.WhereTypeToString(WhereType, isFirst))
+                .Append(' ').Append(query.WrapField(ColumnName));
 
-            foreach (var comparison in Comparisons) {
-                query.Builder.Append(' ').Append(comparison.OperatorName).Append(' ');
-                if (comparison.Type == ValueType.Column) {
-                    query.Builder.Append(comparison.Value);
-                }
-                else {
-                    query.AppendParameter(comparison.Value);
-                }
-            }
+            query.AppendQueryParts(Comparisons);
         }
 
-        internal readonly struct Comparison {
+        internal interface IComparison : IQueryPart { }
+
+        internal readonly struct Comparison : IComparison {
             public string OperatorName { get; }
             public object? Value { get; }
             public ValueType Type { get; }
@@ -39,6 +34,16 @@ namespace SqlQueryBuilder.Model {
                 OperatorName = name;
                 Value = value;
                 Type = type;
+            }
+
+            public void AppendToQuery(Query query, bool isFirst) {
+                query.Builder.Append(' ').Append(OperatorName).Append(' ');
+                if (Type == ValueType.Column && Value is string columnValue) {
+                    query.Builder.Append(query.WrapField(columnValue));
+                }
+                else {
+                    query.AppendParameter(Value);
+                }
             }
         }
     }

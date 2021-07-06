@@ -96,6 +96,7 @@ namespace SqlQueryBuilder.Options {
             }
         }
 
+        public string WrapFieldName(string fieldName) => MySqlFlavor.WrapFieldNameStatic(fieldName);
         public (string queryPart, object?[] parameters) Skip(long skipOffset) => MySqlFlavor.SkipStatic(skipOffset);
         public (string queryPart, object?[] parameters) Take(int takeLimit) => MySqlFlavor.TakeStatic(takeLimit);
     }

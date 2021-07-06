@@ -9,9 +9,10 @@ using Xunit;
 
 namespace SqlQueryBuilder.Test.Builder {
     public class QueriesWithDateTimeTest {
-        private IInitialQueryBuilder Query() => QueryBuilder.Init(new FakeSqlFlavor());
+        private IInitialQueryBuilder Query() => QueryBuilder.Init(
+            new QueryBuilderOptions(new FakeSqlFlavor()) { SmartDate = true, WrapFieldNames = false });
         private IInitialQueryBuilder WithoutSmartDateQuery() => QueryBuilder.Init(
-            new QueryBuilderOptions(new FakeSqlFlavor()) { SmartDate = false });
+            new QueryBuilderOptions(new FakeSqlFlavor()) { SmartDate = false, WrapFieldNames = false });
 
         private ZonedClock Clock => FakeClock.FromUtc(2020, 02, 29, 13, 37, 42).InUtc();
 

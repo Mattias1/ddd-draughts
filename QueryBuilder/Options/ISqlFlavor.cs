@@ -11,6 +11,7 @@ namespace SqlQueryBuilder.Options {
         Task<ISqlTransactionFlavor> BeginTransactionAsync();
         ISqlTransactionFlavor BeginTransaction();
 
+        string WrapFieldName(string fieldName);
         (string queryPart, object?[] parameters) Skip(long skipOffset);
         (string queryPart, object?[] parameters) Take(int takeLimit);
     }

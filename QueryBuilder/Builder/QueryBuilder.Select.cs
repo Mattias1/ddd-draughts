@@ -6,9 +6,9 @@ namespace SqlQueryBuilder.Builder {
         public ISelectQueryBuilder Column(string column) => AddSelectColumn(null, column);
 
         public ISelectQueryBuilder CountAllAs(string alias) => CountAs("*", alias);
-        public ISelectQueryBuilder CountAllAs(string table, string alias) => CountAs(ExtractAliasOrColumn(table) + ".*", alias);
+        public ISelectQueryBuilder CountAllAs(string table, string alias) => CountAs(table + ".*", alias);
         public ISelectQueryBuilder CountAll() => Count("*");
-        public ISelectQueryBuilder CountAll(string table) => Count(ExtractAliasOrColumn(table) + ".*");
+        public ISelectQueryBuilder CountAll(string table) => Count(table + ".*");
 
         public ISelectQueryBuilder CountAs(string column, string alias) => AddSelectColumn("count", column, alias);
         public ISelectQueryBuilder Count(string column) => AddSelectColumn("count", column);

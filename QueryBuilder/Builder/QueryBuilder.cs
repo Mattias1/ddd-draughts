@@ -26,11 +26,6 @@ namespace SqlQueryBuilder.Builder {
 
         public ICompleteQueryBuilder Cast() => this;
 
-        private string ExtractAliasOrColumn(string column) {
-            int index = column.LastIndexOf(" ");
-            return index >= 0 ? column.Substring(index + 1) : column;
-        }
-
         public int FirstInt() => FirstValue<int>();
         public int FirstInt(string column) => FirstValue<int>(column);
         public int SingleInt() => SingleValue<int>();
@@ -240,7 +235,7 @@ namespace SqlQueryBuilder.Builder {
         public string ToParameterizedSql() {
             string query = _query.ToParameterizedSql();
             if (_options.OverprotectiveSqlInjection && (query.Contains(';') || query.Contains("--"))) {
-                throw PotentialSqlInjectionException.ForDangerousCharacters();
+                throw new PotentialSqlInjectionException();
             }
             return query;
         }

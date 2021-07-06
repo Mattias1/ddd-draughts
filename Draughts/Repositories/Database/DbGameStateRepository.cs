@@ -12,7 +12,7 @@ namespace Draughts.Repositories.Database {
 
         protected override string TableName => "gamestate";
         private const string MoveTableName = "move";
-        private const string GameTableName = "game";
+        private const string GameTableName = "game"; // Read only; this belongs to a different aggregate.
         protected override IInitialQueryBuilder GetBaseQuery() => _unitOfWork.Query(TransactionDomain.Game);
 
         protected override GameState Parse(DbGameState gs) {

@@ -14,7 +14,7 @@ namespace SqlQueryBuilder.Model {
 
         public void AppendToQuery(Query query, bool isFirst) {
             query.Builder.Append(' ').Append(Where.WhereTypeToString(WhereType, isFirst))
-                .Append(' ').Append(ColumnName)
+                .Append(' ').Append(query.WrapField(ColumnName))
                 .Append(' ').Append(Operator)
                 .Append(" (");
 

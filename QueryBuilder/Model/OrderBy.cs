@@ -13,15 +13,16 @@ namespace SqlQueryBuilder.Model {
         }
 
         public void AppendToQuery(Query query, bool isFirst) {
+            string directionString = Direction switch {
+                OrderDirection.Asc => " asc",
+                OrderDirection.Desc => " desc",
+                _ => ""
+            };
+
             if (!isFirst) {
                 query.Builder.Append(", ");
             }
-            query.Builder.Append(Direction switch
-            {
-                OrderDirection.Asc => $"{ColumnName} asc",
-                OrderDirection.Desc => $"{ColumnName} desc",
-                _ => ColumnName
-            });
+            query.Builder.Append(query.WrapField(ColumnName)).Append(directionString);
         }
     }
 }

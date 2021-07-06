@@ -18,13 +18,13 @@ namespace SqlQueryBuilder.Model {
                 query.Builder.Append(", ");
             }
             if (Function is null) {
-                query.Builder.Append(ColumnName);
+                query.Builder.Append(query.WrapField(ColumnName));
             }
             else {
-                query.Builder.Append(Function).Append('(').Append(ColumnName).Append(')');
+                query.Builder.Append(Function).Append('(').Append(query.WrapField(ColumnName)).Append(')');
             }
             if (Alias is not null) {
-                query.Builder.Append(" as ").Append(Alias);
+                query.Builder.Append(" as ").Append(query.WrapField(Alias));
             }
         }
     }

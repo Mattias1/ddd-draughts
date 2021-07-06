@@ -35,6 +35,8 @@ namespace SqlQueryBuilder.Test.Fakes {
 
         public ISqlTransactionFlavor BeginTransaction() => throw new System.NotImplementedException();
 
+        public string WrapFieldName(string fieldName) => $"`{fieldName}`";
+
         public (string queryPart, object?[] parameters) Skip(long skipOffset) {
             return ("skip ?", new object?[] { skipOffset });
         }
