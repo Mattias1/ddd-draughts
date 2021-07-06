@@ -1,4 +1,5 @@
 using SqlQueryBuilder.Exceptions;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Data.Common;
@@ -9,15 +10,8 @@ namespace SqlQueryBuilder.Options {
     public class SqlBuilderResultRow : IReadOnlyDictionary<string, object?> {
         private Dictionary<string, Dictionary<string, object?>> _results;
 
-        public SqlBuilderResultRow() {
+        protected SqlBuilderResultRow() {
             _results = new Dictionary<string, Dictionary<string, object?>>();
-        }
-
-        private void Add(string table, string column, object? value) {
-            if (!_results.ContainsKey(table)) {
-                _results[table] = new Dictionary<string, object?>();
-            }
-            _results[table][column] = value;
         }
 
         public IReadOnlyList<string> TableNames() => _results.Keys.ToList().AsReadOnly();
@@ -44,6 +38,20 @@ namespace SqlQueryBuilder.Options {
                 result.Add(columnSchemas[i].BaseTableName ?? "", reader.GetName(i), reader.GetValue(i));
             }
             return result;
+        }
+
+        protected void Add(string table, string column, object? value) {
+            if (!_results.ContainsKey(table)) {
+                _results[table] = new Dictionary<string, object?>();
+            }
+            _results[table][column] = ParseBasics(value);
+        }
+
+        private static object? ParseBasics(object? value) {
+            if (value == DBNull.Value) {
+                return null;
+            }
+            return value;
         }
 
         // --- IReadOnlyDictionary implementation ---

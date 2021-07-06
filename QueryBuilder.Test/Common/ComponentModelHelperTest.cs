@@ -68,20 +68,6 @@ namespace SqlQueryBuilder.Test.Common {
         }
 
         [Fact]
-        public void TestDictionaryToObjectWithDbNull() {
-            var dict = new Dictionary<string, object?> {
-                { "Id", 1 },
-                { "Name", "name" },
-                { "Number", null },
-                { "check", false },
-                { "DateTime", DBNull.Value }
-            };
-
-            var obj = ComponentModelHelper.ToObject<TestObject>(dict);
-            obj.DateTime.Should().BeNull();
-        }
-
-        [Fact]
         public void TestDictionaryToObjectWithOneAsBoolean() {
             var dict = new Dictionary<string, object?> {
                 { "Id", 1 },
