@@ -13,12 +13,21 @@ namespace Draughts.Repositories.InMemory {
         }
 
         protected override IList<GameState> GetBaseQuery() {
-            return GameDatabase.Get.GameStatesTable.Select(g => g.ToDomainModel()).ToList();
+            var settings = GameDatabase.Get.GamesTable.ToDictionary(g => g.Id, g => g.GetGameSettings());
+            var moves = GameDatabase.Get.MovesTable.ToLookup(m => m.GameId);
+            return GameDatabase.Get.GameStatesTable
+                .Select(g => g.ToDomainModel(settings[g.Id], moves[g.Id]))
+                .ToList();
         }
 
         public override void Save(GameState entity) {
             var dbGameState = DbGameState.FromDomainModel(entity);
             _unitOfWork.Store(dbGameState, tran => GameDatabase.Temp(tran).GameStatesTable);
+
+            var maxDbIndex = GameDatabase.Get.MovesTable.Select(m => (int?)m.Index).Max() ?? -1;
+            foreach (var dbMove in DbMove.ArrayFromDomainModels(entity, maxDbIndex)) {
+                _unitOfWork.Store(dbMove, tran => GameDatabase.Temp(tran).MovesTable);
+            }
         }
     }
 }

@@ -10,7 +10,7 @@ namespace Draughts.Test.Domain.GameContext {
             // |.|_|.|_|
             // |_|.|_|.|
             // |5|_|5|_|
-            var board = BoardPosition.InitialSetup(4);
+            var board = Board.InitialSetup(4);
 
             board.Size.Should().Be(4);
 
@@ -22,7 +22,7 @@ namespace Draughts.Test.Domain.GameContext {
                     else if (y == 3 && (x == 0 || x == 2)) {
                         board[x, y]!.Piece.Should().Be(Piece.WhiteMan);
                     }
-                    else if (BoardPosition.IsPlayable(x, y)) {
+                    else if (Board.IsPlayable(x, y)) {
                         board[x, y]!.Piece.Should().Be(Piece.Empty, $"because we're at ({x}, {y})");
                     }
                     else {
@@ -37,34 +37,34 @@ namespace Draughts.Test.Domain.GameContext {
 
         [Fact]
         public void InitialBoard8x8() {
-            var board = BoardPosition.InitialSetup(8);
-            board.Should().Be(BoardPosition.FromString("4444,4444,4444,0000,0000,5555,5555,5555", ","));
+            var board = Board.InitialSetup(8);
+            board.Should().Be(Board.FromString("4444,4444,4444,0000,0000,5555,5555,5555", ","));
         }
 
         [Fact]
         public void InitialBoard10x10() {
-            var board = BoardPosition.InitialSetup(10);
-            board.Should().Be(BoardPosition.FromString("44444,44444,44444,44444,00000,00000,55555,55555,55555,55555", ","));
+            var board = Board.InitialSetup(10);
+            board.Should().Be(Board.FromString("44444,44444,44444,44444,00000,00000,55555,55555,55555,55555", ","));
         }
 
         [Fact]
         public void BoardToString() {
-            BoardPosition.InitialSetup(4).ToString().Should().Be("44000055");
+            Board.InitialSetup(4).ToString().Should().Be("44000055");
         }
 
         [Fact]
         public void BoardToLongString() {
-            BoardPosition.InitialSetup(4).ToLongString(",").Should().Be(" 4 4,0 0 , 0 0,5 5 ");
+            Board.InitialSetup(4).ToLongString(",").Should().Be(" 4 4,0 0 , 0 0,5 5 ");
         }
 
         [Fact]
         public void StringToBoard() {
-            BoardPosition.FromString("44000055").Should().Be(BoardPosition.InitialSetup(4));
+            Board.FromString("44000055").Should().Be(Board.InitialSetup(4));
         }
 
         [Fact]
         public void LongStringToBoard() {
-            BoardPosition.FromString(" 4 4,0 0 , 0 0,5 5 ", ",").Should().Be(BoardPosition.InitialSetup(4));
+            Board.FromString(" 4 4,0 0 , 0 0,5 5 ", ",").Should().Be(Board.InitialSetup(4));
         }
 
         [Theory]
@@ -76,7 +76,23 @@ namespace Draughts.Test.Domain.GameContext {
         [InlineData(2, 3, true), InlineData(3, 3, false)]
         [InlineData(6, 7, true), InlineData(7, 7, false)]
         public void IsPlayable(int x, int y, bool expectedResult) {
-            BoardPosition.IsPlayable(x, y).Should().Be(expectedResult);
+            Board.IsPlayable(x, y).Should().Be(expectedResult);
+        }
+
+        [Fact]
+        public void CopiedBoardMatchesOriginal() {
+            var board = Board.FromString("440 404 000 050 055 007");
+            var copy = board.Copy();
+            copy.Should().Be(board);
+        }
+
+        [Fact]
+        public void CopiedBoardDoesntModifyOriginal() {
+            var board = Board.FromString("440 404 000 050 055 007");
+            var copy = board.Copy();
+            copy.PerformNewMove(new SquareId(4), new SquareId(7), GameSettings.International, out bool canCaptureMore);
+            board.ToLongString(" ", "").Should().Be("440 404 000 050 055 007");
+            copy.ToLongString(" ", "").Should().Be("440 004 400 050 055 007");
         }
     }
 }

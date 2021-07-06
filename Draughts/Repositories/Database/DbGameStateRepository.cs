@@ -11,9 +11,21 @@ namespace Draughts.Repositories.Database {
         }
 
         protected override string TableName => "gamestate";
+        private const string MoveTableName = "move";
+        private const string GameTableName = "game"; // Read only; this belongs to a different aggregate.
         protected override IInitialQueryBuilder GetBaseQuery() => _unitOfWork.Query(TransactionDomain.Game);
 
-        protected override GameState Parse(DbGameState gs) => gs.ToDomainModel();
+        protected override GameState Parse(DbGameState gs) {
+            var settings = GetBaseQuery().SelectAllFrom(GameTableName)
+                .Where("id").Is(gs.Id)
+                .Single<DbGame>()
+                .GetGameSettings();
+            var moves = GetBaseQuery().SelectAllFrom(MoveTableName)
+                .Where("game_id").Is(gs.Id)
+                .OrderByAsc("index")
+                .List<DbMove>();
+            return gs.ToDomainModel(settings, moves);
+        }
 
         public override void Save(GameState entity) {
             var obj = DbGameState.FromDomainModel(entity);
@@ -21,7 +33,16 @@ namespace Draughts.Repositories.Database {
                 GetBaseQuery().InsertInto(TableName).InsertFrom(obj).Execute();
             }
             else {
-                GetBaseQuery().Update(TableName).SetWithoutIdFrom(obj).Where("id").Is(entity.Id).Execute();
+                // There's no reason to update a game state entity, nothing can change
+            }
+
+            int maxDbIndex = GetBaseQuery().Select().Max("index")
+                .From(MoveTableName)
+                .Where("game_id").Is(entity.Id)
+                .SingleOrDefaultValue<short>() ?? -1;
+            if (entity.Moves.Count > maxDbIndex + 1) {
+                var newMoves = DbMove.ArrayFromDomainModels(entity, maxDbIndex);
+                GetBaseQuery().InsertInto(MoveTableName).InsertFrom(newMoves).Execute();
             }
         }
     }

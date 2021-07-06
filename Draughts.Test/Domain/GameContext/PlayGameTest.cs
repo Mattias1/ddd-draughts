@@ -5,6 +5,7 @@ using Draughts.Test.TestHelpers;
 using FluentAssertions;
 using NodaTime.Testing;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using Xunit;
 
@@ -58,10 +59,10 @@ namespace Draughts.Test.Domain.GameContext {
             // |_|4|_|4|_|.|
             // |4|_|4|_|.|_|
             // |_|.|_|.|_|.|
-            // |5|_|5|_|.|_|
+            // |5|_|5|_|x|_|
             // |_|.|_|4|_|5|
             // |.|_|.|_|5|_|
-            var (game, gameState) = BuildGame("440 440 000 550 045 005", Color.Black, 14);
+            var (game, gameState) = BuildGame("440 440 004 555 005 005", Color.Black, "9x14");
 
             DoMove(game, gameState, 14, 7);
 
@@ -119,7 +120,7 @@ namespace Draughts.Test.Domain.GameContext {
         [Fact]
         public void CantMoveWhenGameIsFinished() {
             var game = GameTestHelper.FinishedMiniGame(Color.White).Build();
-            var gameState = GameState.FromStorage(game.Id, "000 000 005 000 000 000", game.Settings.BoardSize);
+            var gameState = GameState.FromStorage(game.Id, game.Settings, "000 000 005 000 000 000", new Move[0]);
 
             Action doMove = () => DoMoveAs(game, gameState, 9, 6, Color.White);
 
@@ -163,20 +164,20 @@ namespace Draughts.Test.Domain.GameContext {
             // |_|4|_|4|_|.|
             // |4|_|4|_|.|_|
             // |_|.|_|.|_|.|
-            // |5|_|5|_|.|_|
+            // |5|_|5|_|x|_|
             // |_|.|_|4|_|5|
             // |.|_|.|_|5|_|
-            var (game, gameState) = BuildGame("440 440 000 550 045 005", Color.Black, 14);
+            var (game, gameState) = BuildGame("440 440 004 555 005 005", Color.Black, "9x14");
 
             Action doMove = () => DoMove(game, gameState, 5, 8);
 
             doMove.Should().Throw<ManualValidationException>().WithMessage(GameState.ERROR_CAPTURE_SEQUENCE);
         }
 
-        private (Game game, GameState gameState) BuildGame(string boardString, Color turn, int? captureSequenceFrom = null) {
-            var board = BoardPosition.FromString(boardString);
+        private (Game game, GameState gameState) BuildGame(string boardString, Color turn, params string[] moves) {
+            var board = Board.FromString(boardString);
             var game = GameTestHelper.StartedMiniGame().WithTurn(turn).Build();
-            var gameState = GameState.FromStorage(game.Id, boardString, captureSequenceFrom);
+            var gameState = GameState.FromStorage(game.Id, game.Settings, boardString, moves.Select(Move.FromString));
             return (game, gameState);
         }
 

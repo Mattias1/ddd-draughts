@@ -86,7 +86,7 @@ namespace Draughts.Test.Domain.GameContext {
         [InlineData(4, null, null, null, 8)]
         [InlineData(29, null, 25, null, null)]
         public void BorderSquaresOn8x8Board(int n, int? nw, int? ne, int? se, int? sw) {
-            var board = BoardPosition.InitialSetup(8);
+            var board = Board.InitialSetup(8);
             var square = board[new SquareId(n)];
 
             Square? result;
