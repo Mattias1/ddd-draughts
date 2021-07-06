@@ -5,7 +5,7 @@ using static Draughts.Domain.GameContext.Models.GameSettings;
 
 namespace Draughts.Domain.GameContext.Models {
     public class PossibleMoveCalculator {
-        private BoardPosition _board;
+        private Board _board;
         private GameSettings _settings;
         private Color _currentTurn;
         private SquareId? _restrictedTo;
@@ -13,7 +13,7 @@ namespace Draughts.Domain.GameContext.Models {
 
         private bool MustCapture => _minCaptureSequence > 0;
 
-        private PossibleMoveCalculator(BoardPosition board, GameSettings settings,
+        private PossibleMoveCalculator(Board board, GameSettings settings,
                 Color currentTurn, SquareId? restrictedTo, int minCaptureSequence) {
             _board = board;
             _settings = settings;
@@ -182,11 +182,11 @@ namespace Draughts.Domain.GameContext.Models {
             return target;
         }
 
-        public static PossibleMoveCalculator ForNewTurn(BoardPosition board, Color currentTurn, GameSettings settings) {
+        public static PossibleMoveCalculator ForNewTurn(Board board, Color currentTurn, GameSettings settings) {
             return new PossibleMoveCalculator(board, settings, currentTurn, null, 0);
         }
 
-        public static PossibleMoveCalculator ForChainCaptures(BoardPosition board, SquareId from, GameSettings settings) {
+        public static PossibleMoveCalculator ForChainCaptures(Board board, SquareId from, GameSettings settings) {
             var currentTurn = board[from].Color ?? throw new ManualValidationException("Invalid move.");
             return new PossibleMoveCalculator(board, settings, currentTurn, from, 1);
         }

@@ -7,7 +7,7 @@ using System.Text;
 
 namespace Draughts.Domain.GameContext.Models {
     // This class is like a mutuable value object. It could be immutable, but that'd be not very performant. Maybe. Hmmm. :/
-    public class BoardPosition : IEquatable<BoardPosition> {
+    public class Board : IEquatable<Board> {
         private readonly Square[] _squares;
         public int Size { get; }
 
@@ -23,7 +23,7 @@ namespace Draughts.Domain.GameContext.Models {
 
         public int NrOfPlayableSquares => _squares.Length;
 
-        private BoardPosition(int size, Piece[] pieces) {
+        private Board(int size, Piece[] pieces) {
             Size = size;
             var squares = new Square[pieces.Length];
             for (int i = 0; i < squares.Length; i++) {
@@ -32,25 +32,30 @@ namespace Draughts.Domain.GameContext.Models {
             _squares = squares;
         }
 
-        public void PerformNewMove(SquareId from, SquareId to, GameSettings settings,out bool canCaptureMore) {
-            var currentTurn = this[from].Color ?? throw new ManualValidationException("Invalid move.");
+        public Move PerformNewMove(SquareId from, SquareId to, GameSettings settings, out bool canCaptureMore) {
+            var currentTurn = this[from].Color ?? throw new ManualValidationException($"Invalid move ({from}, {to}).");
             var possibleMoves = PossibleMoveCalculator.ForNewTurn(this, currentTurn, settings).Calculate();
-            PerformMove(from, to, possibleMoves, out canCaptureMore);
+            return PerformMove(from, to, possibleMoves, out canCaptureMore);
         }
 
-        public void PerformChainCaptureMove(SquareId from, SquareId to, GameSettings settings, out bool canCaptureMore) {
+        public Move PerformChainCaptureMove(SquareId from, SquareId to, GameSettings settings, out bool canCaptureMore) {
             var possibleMoves = PossibleMoveCalculator.ForChainCaptures(this, from, settings).Calculate();
-            PerformMove(from, to, possibleMoves, out canCaptureMore);
+            return PerformMove(from, to, possibleMoves, out canCaptureMore);
         }
 
-        private void PerformMove(SquareId from, SquareId to, IReadOnlyList<PossibleMove> possibleMoves, out bool canCaptureMore) {
+        private Move PerformMove(SquareId from, SquareId to, IReadOnlyList<PossibleMove> possibleMoves, out bool canCaptureMore) {
             var move = possibleMoves.SingleOrDefault(m => m.From == from && m.To == to);
             if (move is null) {
-                throw new ManualValidationException("Invalid move.");
+                throw new ManualValidationException($"Invalid move ({from}, {to}).");
             }
 
             PerformMoveUnsafe(from, to, move.Victim);
             canCaptureMore = move.MoreCapturesAvailable;
+
+            if (!canCaptureMore && IsManOnLastRow(to)) {
+                PromoteUnsafe(to);
+            }
+            return move;
         }
 
         internal void PerformMoveUnsafe(SquareId from, SquareId to, SquareId? victim) {
@@ -69,14 +74,11 @@ namespace Draughts.Domain.GameContext.Models {
             }
         }
 
-        public void Promote(SquareId square) {
-            if (!CanPromote(square)) {
-                throw new ManualValidationException("Invalid move.");
-            }
+        private void PromoteUnsafe(SquareId square) {
             this[square].Piece = this[square].Piece.Promoted();
         }
 
-        public bool CanPromote(SquareId squareId) {
+        private bool IsManOnLastRow(SquareId squareId) {
             var square = this[squareId];
             if (square.Color is null || square.IsKing) {
                 return false;
@@ -101,16 +103,21 @@ namespace Draughts.Domain.GameContext.Models {
             return sb.ToString();
         }
 
-        public static BoardPosition FromString(string input, string separator = "\n", string empty = " ") {
+        public Board Copy() {
+            var pieces = _squares.Select(s => s.Piece).ToArray();
+            return new Board(Size, pieces);
+        }
+
+        public static Board FromString(string input, string separator = "\n", string empty = " ") {
             var pieces = input.ToCharArray().Select(c => c.ToString())
                 .Where(s => s != empty && s != separator)
                 .Select(s => new Piece(byte.Parse(s)))
                 .ToArray();
             int size = Convert.ToInt32(Math.Sqrt(pieces.Length * 2));
-            return new BoardPosition(size, pieces);
+            return new Board(size, pieces);
         }
 
-        public static BoardPosition InitialSetup(int boardSize) {
+        public static Board InitialSetup(int boardSize) {
             int nrOfStartingPieces = boardSize * (boardSize - 2) / 4;
             var pieces = new Piece[nrOfStartingPieces + boardSize + nrOfStartingPieces];
             for (int i = 0; i < nrOfStartingPieces; i++) {
@@ -120,19 +127,19 @@ namespace Draughts.Domain.GameContext.Models {
             for (int i = 0; i < boardSize; i++) {
                 pieces[i + nrOfStartingPieces] = Piece.Empty;
             }
-            return new BoardPosition(boardSize, pieces);
+            return new Board(boardSize, pieces);
         }
 
         public static bool IsPlayable(int x, int y) => (x + y) % 2 == 1;
 
-        public override bool Equals(object? obj) => Equals(obj as BoardPosition);
-        public bool Equals(BoardPosition? other) {
+        public override bool Equals(object? obj) => Equals(obj as Board);
+        public bool Equals(Board? other) {
             return other is not null && _squares.Select(s => s.Piece).SequenceEqual(other._squares.Select(s => s.Piece));
         }
 
         public override int GetHashCode() => ComparisonUtils.GetHashCode(_squares);
 
-        public static bool operator ==(BoardPosition? left, BoardPosition? right) => ComparisonUtils.NullSafeEquals(left, right);
-        public static bool operator !=(BoardPosition? left, BoardPosition? right) => ComparisonUtils.NullSafeNotEquals(left, right);
+        public static bool operator ==(Board? left, Board? right) => ComparisonUtils.NullSafeEquals(left, right);
+        public static bool operator !=(Board? left, Board? right) => ComparisonUtils.NullSafeNotEquals(left, right);
     }
 }

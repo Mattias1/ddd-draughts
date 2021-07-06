@@ -183,6 +183,7 @@ namespace Draughts.Repositories.InMemory {
         public List<DbGame> GamesTable { get; }
         public List<DbPlayer> PlayersTable { get; }
         public List<DbGameState> GameStatesTable { get; }
+        public List<DbMove> MovesTable { get; }
         public List<DomainEvent> DomainEventsTable { get; }
 
         public static GameDatabase Initialize() {
@@ -205,6 +206,7 @@ namespace Draughts.Repositories.InMemory {
             GamesTable = new List<DbGame>();
             PlayersTable = new List<DbPlayer>();
             GameStatesTable = new List<DbGameState>();
+            MovesTable = new List<DbMove>();
             DomainEventsTable = new List<DomainEvent>();
         }
 
@@ -232,8 +234,7 @@ namespace Draughts.Repositories.InMemory {
             });
             GameStatesTable.Add(new DbGameState {
                 Id = id,
-                CurrentGameState = GameState.InitialState(new GameId(id), settings.BoardSize).StorageString(),
-                CaptureSequenceFrom = null
+                InitialGameState = null
             });
         }
 

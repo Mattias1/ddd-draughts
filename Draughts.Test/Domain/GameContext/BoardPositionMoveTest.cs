@@ -6,11 +6,7 @@ using Xunit;
 
 namespace Draughts.Test.Domain.GameContext {
     public class BoardPositionMoveTest {
-        private GameSettings _settings;
-
-        public BoardPositionMoveTest() {
-            _settings = GameSettings.International;
-        }
+        private readonly GameSettings _settings = GameSettings.International;
 
         [Fact]
         public void InvalidMoveTrows() {
@@ -18,8 +14,8 @@ namespace Draughts.Test.Domain.GameContext {
             // |.|_|.|_|
             // |_|.|_|.|
             // |.|_|5|_|
-            var board = Board("40 00 00 05");
-            Action doMove = () => board.PerformNewMove(Pos(1, 0), Pos(1, 2), _settings, out bool canCaptureMore);
+            var board = Board.FromString("40 00 00 05");
+            Action doMove = () => Move(board, 1, 5, out bool _);
             doMove.Should().Throw<ManualValidationException>();
             board.ToLongString(" ", "").Should().Be("40 00 00 05");
         }
@@ -30,8 +26,8 @@ namespace Draughts.Test.Domain.GameContext {
             // |.|_|.|_|
             // |_|.|_|.|
             // |.|_|5|_|
-            var board = Board("40 00 00 05");
-            board.PerformNewMove(Pos(1, 0), Pos(0, 1), _settings, out bool canCaptureMore);
+            var board = Board.FromString("40 00 00 05");
+            Move(board, 1, 3, out bool canCaptureMore);
             board.ToLongString(" ", "").Should().Be("00 40 00 05");
             canCaptureMore.Should().BeFalse();
         }
@@ -42,8 +38,8 @@ namespace Draughts.Test.Domain.GameContext {
             // |.|_|5|_|
             // |_|.|_|.|
             // |.|_|5|_|
-            var board = Board("40 05 00 05");
-            board.PerformNewMove(Pos(1, 0), Pos(3, 2), _settings, out bool canCaptureMore);
+            var board = Board.FromString("40 05 00 05");
+            Move(board, 1, 6, out bool canCaptureMore);
             board.ToLongString(" ", "").Should().Be("00 00 04 05");
             canCaptureMore.Should().BeFalse();
         }
@@ -54,8 +50,8 @@ namespace Draughts.Test.Domain.GameContext {
             // |.|_|5|_|
             // |_|4|_|.|
             // |.|_|5|_|
-            var board = Board("40 05 40 05");
-            Action doMove = () => board.PerformChainCaptureMove(Pos(1, 0), Pos(3, 0), _settings, out bool canCaptureMore);
+            var board = Board.FromString("40 05 40 05");
+            Action doMove = () => board.PerformChainCaptureMove(new SquareId(1), new SquareId(2), _settings, out bool _);
             doMove.Should().Throw<ManualValidationException>();
             board.ToLongString(" ", "").Should().Be("40 05 40 05");
         }
@@ -66,8 +62,8 @@ namespace Draughts.Test.Domain.GameContext {
             // |.|_|5|_|
             // |_|4|_|.|
             // |.|_|5|_|
-            var board = Board("40 05 40 05");
-            Action doMove = () => board.PerformChainCaptureMove(Pos(1, 0), Pos(0, 1), _settings, out bool canCaptureMore);
+            var board = Board.FromString("40 05 40 05");
+            Action doMove = () => board.PerformChainCaptureMove(new SquareId(1), new SquareId(3), _settings, out bool _);
             doMove.Should().Throw<ManualValidationException>();
             board.ToLongString(" ", "").Should().Be("40 05 40 05");
         }
@@ -78,73 +74,72 @@ namespace Draughts.Test.Domain.GameContext {
             // |.|_|5|_|
             // |_|4|_|.|
             // |.|_|5|_|
-            var board = Board("40 05 40 05");
-            board.PerformChainCaptureMove(Pos(1, 0), Pos(3, 2), _settings, out bool canCaptureMore);
+            var board = Board.FromString("40 05 40 05");
+            board.PerformChainCaptureMove(new SquareId(1), new SquareId(6), _settings, out bool canCaptureMore);
             board.ToLongString(" ", "").Should().Be("00 00 44 05");
             canCaptureMore.Should().BeFalse();
         }
 
         [Fact]
-        public void BlackManCanPromoteOnLastLine() {
-            // |_|.|_|.|
-            // |.|_|.|_|
-            // |_|.|_|.|
-            // |4|_|.|_|
-            Board("00 00 00 40").CanPromote(Pos(0, 3)).Should().BeTrue();
-        }
-
-        [Fact]
-        public void WhiteManCanPromoteOnFirstLine() {
-            // |_|.|_|5|
-            // |.|_|.|_|
-            // |_|.|_|.|
-            // |5|_|.|_|
-            Board("05 00 00 00").CanPromote(Pos(3, 0)).Should().BeTrue();
-        }
-
-        [Fact]
-        public void BlackManCantPromoteOnFirstLine() {
-            // |_|4|_|.|
-            // |.|_|.|_|
-            // |_|.|_|.|
-            // |.|_|.|_|
-            Board("40 00 00 00").CanPromote(Pos(3, 0)).Should().BeFalse();
-        }
-
-        [Fact]
-        public void KingCantPromote() {
-            // |_|.|_|.|
-            // |.|_|.|_|
-            // |_|.|_|.|
-            // |6|_|.|_|
-            Board("00 00 00 60").CanPromote(Pos(0, 3)).Should().BeFalse();
-        }
-
-        [Fact]
-        public void InvalidPromoteThrows() {
+        public void BlackManPromotesOnLastLine() {
             // |_|.|_|.|
             // |.|_|.|_|
             // |_|4|_|.|
             // |.|_|.|_|
-            var board = Board("00 00 40 00");
-            Action promote = () => board.Promote(Pos(1, 2));
-            promote.Should().Throw<ManualValidationException>();
-            board.ToLongString(" ", "").Should().Be("00 00 40 00");
-        }
-
-        [Fact]
-        public void PromotePiece() {
-            // |_|.|_|.|
-            // |.|_|.|_|
-            // |_|.|_|.|
-            // |4|_|.|_|
-            var board = Board("00 00 00 40");
-            board.Promote(Pos(0, 3));
+            var board = Board.FromString("00 00 40 00");
+            Move(board, 5, 7, out bool _);
             board.ToLongString(" ", "").Should().Be("00 00 00 60");
         }
 
-        private BoardPosition Board(string board) => BoardPosition.FromString(board);
+        [Fact]
+        public void WhiteManPromotesOnFirstLine() {
+            // |_|.|_|.|
+            // |.|_|5|_|
+            // |_|.|_|.|
+            // |.|_|.|_|
+            var board = Board.FromString("00 05 00 00");
+            Move(board, 4, 2, out bool _);
+            board.ToLongString(" ", "").Should().Be("07 00 00 00");
+        }
 
-        private SquareId Pos(int x, int y) => SquareId.FromPosition(x, y, 4);
+        [Fact]
+        public void BlackManDoesntPromoteOnFirstLine() {
+            // |_|.|_|.|
+            // |.|_|5|_|
+            // |_|.|_|4|
+            // |.|_|.|_|
+            var board = Board.FromString("00 05 04 00");
+            Move(board, 6, 1, out bool _);
+            board.ToLongString(" ", "").Should().Be("40 00 00 00");
+        }
+
+        [Fact]
+        public void KingStaysAsHeIs() {
+            // |_|.|_|.|
+            // |.|_|.|_|
+            // |_|6|_|.|
+            // |.|_|.|_|
+            var board = Board.FromString("00 00 60 00");
+            Move(board, 5, 7, out bool _);
+            board.ToLongString(" ", "").Should().Be("00 00 00 60");
+        }
+
+        [Fact]
+        public void DontPromoteInsideChainCapture() {
+            // |_|.|_|.|_|.|
+            // |.|_|4|_|4|_|
+            // |_|5|_|.|_|.|
+            // |.|_|.|_|.|_|
+            // |_|.|_|.|_|.|
+            // |.|_|.|_|.|_|
+            var board = Board.FromString("000 044 500 000 000 000");
+            Move(board, 7, 2, out bool canCaptureMore);
+            board.ToLongString(" ", "").Should().Be("050 004 000 000 000 000");
+            canCaptureMore.Should().BeTrue();
+        }
+
+        private void Move(Board board, int from, int to, out bool canCaptureMore) {
+            board.PerformNewMove(new SquareId(from), new SquareId(to), _settings, out canCaptureMore);
+        }
     }
 }

@@ -6,7 +6,7 @@ namespace Draughts.Domain.GameContext.Models {
         public override int Value { get; }
 
         public SquareId(int? value) {
-            if (value is null || value < 1) {
+            if (value is null || value < 1 || value > byte.MaxValue) {
                 throw new ManualValidationException("Invalid square id.");
             }
             Value = value.Value;
@@ -22,7 +22,7 @@ namespace Draughts.Domain.GameContext.Models {
         public static implicit operator string(SquareId? squareId) => squareId?.ToString() ?? "";
 
         public static SquareId FromPosition(int x, int y, int size) {
-            if (!BoardPosition.IsPlayable(x, y)) {
+            if (!Board.IsPlayable(x, y)) {
                 throw new ManualValidationException($"This position ({x}, {y}) is not playable.");
             }
             return new SquareId((x + 2 + y * size) / 2);

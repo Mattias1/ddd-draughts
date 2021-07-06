@@ -1,5 +1,8 @@
 using Draughts.Common;
 using Draughts.Common.OoConcepts;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Draughts.Domain.GameContext.Models {
     public class GameState : Entity<GameState, GameId> {
@@ -10,11 +13,18 @@ namespace Draughts.Domain.GameContext.Models {
 
         public override GameId Id { get; }
 
-        public BoardPosition Board { get; }
+        private List<Move> _moves;
+
+        public Board? _initialBoard;
+        public Board Board { get; }
         public SquareId? CaptureSequenceFrom { get; private set; }
 
-        private GameState(GameId gameId, BoardPosition board, SquareId? captureSequenceFrom) {
+        public IReadOnlyList<Move> Moves => _moves.AsReadOnly();
+
+        private GameState(GameId gameId, Board? initialBoard, List<Move> moves, Board board, SquareId? captureSequenceFrom) {
             Id = gameId;
+            _initialBoard = initialBoard;
+            _moves = moves;
             Board = board;
             CaptureSequenceFrom = captureSequenceFrom;
         }
@@ -35,10 +45,6 @@ namespace Draughts.Domain.GameContext.Models {
             }
             CaptureSequenceFrom = null;
 
-            if (Board.CanPromote(to)) {
-                Board.Promote(to);
-            }
-
             if (Board.NrOfPiecesPerColor(currentTurn.Other) == 0) {
                 return MoveResult.GameOver;
             }
@@ -47,26 +53,47 @@ namespace Draughts.Domain.GameContext.Models {
         }
 
         private void PerformMove(SquareId from, SquareId to, GameSettings settings, out bool canCaptureMore) {
+            Move move;
             if (CaptureSequenceFrom is null) {
-                Board.PerformNewMove(from, to, settings, out canCaptureMore);
+                move = Board.PerformNewMove(from, to, settings, out canCaptureMore);
             }
             else {
                 if (CaptureSequenceFrom != from) {
                     throw new ManualValidationException(ERROR_CAPTURE_SEQUENCE);
                 }
-                Board.PerformChainCaptureMove(from, to, settings, out canCaptureMore);
+                move = Board.PerformChainCaptureMove(from, to, settings, out canCaptureMore);
             }
+            _moves.Add(move);
         }
 
-        public string StorageString() => Board.ToString();
+        public string? InitialStateStorageString() => _initialBoard?.ToString();
 
-        public static GameState FromStorage(GameId gameId, string storage, int? captureFromSquare) {
-            var captureSequenceFrom = captureFromSquare is null ? null : new SquareId(captureFromSquare);
-            return new GameState(gameId, BoardPosition.FromString(storage), captureSequenceFrom);
+        public static GameState FromStorage(GameId gameId, GameSettings settings, string? storage, IEnumerable<Move> moves) {
+            var board = storage is null ? Board.InitialSetup(settings.BoardSize) : Board.FromString(storage);
+            var initialBoard = storage is null ? null : board.Copy();
+            SquareId? captureSequenceFrom = PerformAllMoves(board, moves, settings);
+
+            return new GameState(gameId, initialBoard, moves.ToList(), board, captureSequenceFrom);
+        }
+
+        private static SquareId? PerformAllMoves(Board board, IEnumerable<Move> moves, GameSettings settings) {
+            SquareId? captureSequenceFrom = null;
+            foreach (var move in moves) {
+                bool canCaptureMore;
+                if (captureSequenceFrom is null) {
+                    board.PerformNewMove(move.From, move.To, settings, out canCaptureMore);
+                }
+                else {
+                    board.PerformChainCaptureMove(move.From, move.To, settings, out canCaptureMore);
+                }
+                captureSequenceFrom = canCaptureMore ? move.To : null;
+            }
+
+            return captureSequenceFrom;
         }
 
         public static GameState InitialState(GameId gameId, int boardSize) {
-            return new GameState(gameId, BoardPosition.InitialSetup(boardSize), null);
+            return new GameState(gameId, null, new List<Move>(), Board.InitialSetup(boardSize), null);
         }
     }
 }

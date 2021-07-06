@@ -134,10 +134,25 @@ CREATE TABLE `player` (
 
 CREATE TABLE `gamestate` (
     `id` BIGINT NOT NULL,
-    `current_game_state` VARCHAR(72) NOT NULL,
-    `capture_sequence_from` TINYINT UNSIGNED NULL,
+    `initial_game_state` VARCHAR(72) NULL,
 
-    PRIMARY KEY (`id`)
+    PRIMARY KEY (`id`),
+    CONSTRAINT fk_gs_game FOREIGN KEY (`id`)
+        REFERENCES `game` (`id`)
+        ON UPDATE RESTRICT ON DELETE CASCADE
+);
+
+CREATE TABLE `move` (
+    `game_id` BIGINT NOT NULL,
+    `index` SMALLINT NOT NULL,
+    `from` TINYINT NOT NULL,
+    `to` TINYINT NOT NULL,
+    `is_capture` BIT NOT NULL,
+
+    PRIMARY KEY (`game_id`, `index`),
+    CONSTRAINT fk_move_gs FOREIGN KEY (`game_id`)
+        REFERENCES `gamestate` (`id`)
+        ON UPDATE RESTRICT ON DELETE CASCADE
 );
 
 CREATE TABLE `event` (

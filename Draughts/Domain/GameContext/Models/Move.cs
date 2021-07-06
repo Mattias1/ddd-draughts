@@ -1,3 +1,4 @@
+using Draughts.Common;
 using Draughts.Common.OoConcepts;
 using System.Collections.Generic;
 
@@ -7,7 +8,7 @@ namespace Draughts.Domain.GameContext.Models {
         public SquareId To { get; }
         public bool IsCapture { get; }
 
-        protected Move(SquareId from, SquareId to, bool isCapture) {
+        public Move(SquareId from, SquareId to, bool isCapture) {
             From = from;
             To = to;
             IsCapture = isCapture;
@@ -18,6 +19,17 @@ namespace Draughts.Domain.GameContext.Models {
         protected override IEnumerable<object> GetEqualityComponents() {
             yield return From;
             yield return To;
+        }
+
+        public static Move FromString(string move) {
+            bool isCapture = move.Contains('x');
+            var splitted = move.Split(isCapture ? 'x' : '-');
+            if (splitted.Length != 2
+                    || !int.TryParse(splitted[0].Trim(), out int from)
+                    || !int.TryParse(splitted[1].Trim(), out int to)) {
+                throw new ManualValidationException("Invalid move notation: " + move);
+            }
+            return new Move(new SquareId(from), new SquareId(to), isCapture);
         }
     }
 
