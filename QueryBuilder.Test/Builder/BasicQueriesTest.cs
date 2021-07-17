@@ -192,7 +192,7 @@ namespace SqlQueryBuilder.Test.Builder {
 
         [Fact]
         public void NoSemicolonAllowedOutsideParameterizedString() {
-            Action func = () => Query().SelectAllFrom("user;").ToParameterizedSql();
+            Action func = () => Query().SelectAllFrom("user;").Where("username").Eq("test").ToParameterizedSql();
             func.Should().Throw<PotentialSqlInjectionException>();
         }
 

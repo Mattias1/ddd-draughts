@@ -234,7 +234,9 @@ namespace SqlQueryBuilder.Builder {
 
         public string ToParameterizedSql() {
             string query = _query.ToParameterizedSql();
-            if (_options.OverprotectiveSqlInjection && (query.Contains(';') || query.Contains("--"))) {
+            int semiColonIndex = query.IndexOf(';');
+            if (_options.OverprotectiveSqlInjection
+                    && (semiColonIndex >= 0 && semiColonIndex != query.Length - 1 || query.Contains("--"))) {
                 throw new PotentialSqlInjectionException();
             }
             return query;
