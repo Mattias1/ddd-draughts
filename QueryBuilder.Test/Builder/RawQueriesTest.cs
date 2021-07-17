@@ -123,8 +123,14 @@ namespace SqlQueryBuilder.Test.Builder {
 
         [Fact]
         public void NoSemicolonAllowedOutsideParameterizedString() {
-            Action func = () => Query().Raw("select * from user;").ToParameterizedSql();
+            Action func = () => Query().Raw("select * from user; ").ToParameterizedSql();
             func.Should().Throw<PotentialSqlInjectionException>();
+        }
+
+        [Fact]
+        public void SemicolonAllowedAsLastCharacter() {
+            Action func = () => Query().Raw("select * from user;").ToParameterizedSql();
+            func.Should().NotThrow();
         }
 
         [Fact]
