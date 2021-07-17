@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System;
 using System.Linq;
 using System.Text;
+using SqlQueryBuilder.Exceptions;
 
 namespace SqlQueryBuilder.Model {
     internal class Query {
@@ -11,19 +12,19 @@ namespace SqlQueryBuilder.Model {
 
         public List<IQueryPart> RawQueryParts { get; } = new List<IQueryPart>();
 
-        public Table? InsertTable { get; set; }
+        public ITable? InsertTable { get; set; }
         public List<IColumn> InsertColumns { get; } = new List<IColumn>();
         public List<IInsertValue> InsertValues { get; } = new List<IInsertValue>();
 
-        public Table? UpdateTable { get; set; }
+        public ITable? UpdateTable { get; set; }
         public List<ISetColumn> UpdateValues { get; } = new List<ISetColumn>();
 
-        public Table? DeleteTable { get; set; }
+        public ITable? DeleteTable { get; set; }
 
         public List<IColumn> SelectColumns { get; } = new List<IColumn>();
         public bool Distinct { get; set; } = false;
 
-        public List<Table> SelectFrom { get; } = new List<Table>();
+        public List<ITable> SelectFrom { get; } = new List<ITable>();
         public List<IJoin> Joins { get; } = new List<IJoin>();
         public List<IWhere> WhereForest { get; } = new List<IWhere>();
         public List<IColumn> GroupByColumns { get; } = new List<IColumn>();
@@ -35,12 +36,17 @@ namespace SqlQueryBuilder.Model {
         public Dictionary<string, object?> Parameters { get; private set; }
         public StringBuilder Builder { get; private set; }
 
-        public Query(QueryBuilderOptions options) : this(options, new Dictionary<string, object?>(), new StringBuilder()) { }
+        private readonly char[] _forbiddenFieldNameCharacters;
+
+        public Query(QueryBuilderOptions options)
+            : this(options, new Dictionary<string, object?>(), new StringBuilder()) { }
 
         internal Query(QueryBuilderOptions options, Dictionary<string, object?> parameters, StringBuilder sb) {
             Options = options;
             Parameters = parameters;
             Builder = sb;
+
+            _forbiddenFieldNameCharacters = options.SqlFlavor.ForbiddenFieldNameCharacters();
         }
 
         public override string ToString() => ToParameterizedSql();
@@ -59,42 +65,21 @@ namespace SqlQueryBuilder.Model {
                 AppendQueryParts(RawQueryParts);
             }
 
-            if (InsertTable is not null) {
-                Builder.Append("insert into ").Append(InsertTable);
-                if (InsertColumns.Count > 0) {
-                    Builder.Append(" (");
-                    AppendQueryParts(InsertColumns);
-                    Builder.Append(')');
-                }
-                bool isFirst = true;
-                foreach (var chunk in InsertValues.Chunk(InsertColumns.Count)) {
-                    if (chunk.Count() != InsertColumns.Count && InsertColumns.Count != 0) {
-                        throw new InvalidOperationException("Wrong number of insert values.");
-                    }
-                    Builder.Append(isFirst ? " values (" : ", (");
-                    AppendQueryParts(chunk);
-                    Builder.Append(')');
-                    isFirst = false;
-                }
-            }
+            AppendInsertParts();
 
             if (UpdateTable is not null) {
-                Builder.Append("update ").Append(UpdateTable).Append(" set ");
+                Builder.Append("update ");
+                UpdateTable.AppendToQuery(this, true);
+                Builder.Append(" set ");
                 AppendQueryParts(UpdateValues);
             }
 
             if (DeleteTable is not null) {
-                Builder.Append("delete from ").Append(DeleteTable);
+                Builder.Append("delete from ");
+                DeleteTable.AppendToQuery(this, true);
             }
 
-            if (SelectColumns.Count > 0 || SelectFrom.Count > 0) {
-                Builder.Append("select ");
-                if (Distinct) {
-                    Builder.Append("distinct ");
-                }
-                AppendQueryParts(SelectColumns);
-                Builder.Append(" from ").AppendJoin(", ", SelectFrom);
-            }
+            AppendSelectFromParts();
 
             if (Joins.Count > 0) {
                 AppendQueryParts(Joins);
@@ -123,6 +108,40 @@ namespace SqlQueryBuilder.Model {
             }
 
             return Builder.ToString();
+        }
+
+        private void AppendInsertParts() {
+            if (InsertTable is not null) {
+                Builder.Append("insert into ");
+                InsertTable.AppendToQuery(this, true);
+                if (InsertColumns.Count > 0) {
+                    Builder.Append(" (");
+                    AppendQueryParts(InsertColumns);
+                    Builder.Append(')');
+                }
+                bool isFirst = true;
+                foreach (var chunk in InsertValues.Chunk(InsertColumns.Count)) {
+                    if (chunk.Count() != InsertColumns.Count && InsertColumns.Count != 0) {
+                        throw new InvalidOperationException("Wrong number of insert values.");
+                    }
+                    Builder.Append(isFirst ? " values (" : ", (");
+                    AppendQueryParts(chunk);
+                    Builder.Append(')');
+                    isFirst = false;
+                }
+            }
+        }
+
+        private void AppendSelectFromParts() {
+            if (SelectColumns.Count > 0 || SelectFrom.Count > 0) {
+                Builder.Append("select ");
+                if (Distinct) {
+                    Builder.Append("distinct ");
+                }
+                AppendQueryParts(SelectColumns);
+                Builder.Append(" from ");
+                AppendQueryParts(SelectFrom);
+            }
         }
 
         public void AppendQueryParts(IEnumerable<IQueryPart> queryParts) {
@@ -162,6 +181,19 @@ namespace SqlQueryBuilder.Model {
             if (parameterize) {
                 Parameters.Add(key, parameter);
             }
+        }
+
+        public string WrapField(string fieldName) {
+            if (Options.WrapFieldNames) {
+                if (_forbiddenFieldNameCharacters.Any(fieldName.Contains)) {
+                    throw new PotentialSqlInjectionException();
+                }
+                var wrappedNames = fieldName.Split('.').Select(n => {
+                    return n == "*" ? n : Options.SqlFlavor.WrapFieldName(n);
+                });
+                return string.Join('.', wrappedNames);
+            }
+            return fieldName;
         }
 
         public Query Clone() {

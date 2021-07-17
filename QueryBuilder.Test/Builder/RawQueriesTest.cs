@@ -24,7 +24,7 @@ namespace SqlQueryBuilder.Test.Builder {
                 .RawWhere(" where ?=?", 42, 42)
                 .RawOrderBy("rating, ? desc", 1337)
                 .ToUnsafeSql();
-            sql.Should().Be("select *, 1337 from user where 42=42 order by rating, 1337 desc");
+            sql.Should().Be("select *, 1337 from `user` where 42=42 order by rating, 1337 desc");
         }
 
         [Fact]
@@ -33,24 +33,24 @@ namespace SqlQueryBuilder.Test.Builder {
                 .RawInsertColumn("username, rating")
                 .RawInsertValue("?, 13", "unlucky")
                 .ToParameterizedSql();
-            sql.Should().Be("insert into user (username, rating) values (@0, 13)");
+            sql.Should().Be("insert into `user` (username, rating) values (@0, 13)");
         }
 
         [Fact]
         public void TestRawUpdate() {
             string sql = Query().Update("user").RawSet("username = ?, rating = 13", "unlucky").ToParameterizedSql();
-            sql.Should().Be("update user set username = @0, rating = 13");
+            sql.Should().Be("update `user` set username = @0, rating = 13");
         }
 
         [Fact]
         public void TestRawJoin() {
-            string sql = Query().SelectAllFrom("user u")
-                .Join("role_user ru", "u.id", "ru.user_id")
+            string sql = Query().SelectAllFromAs("user", "u")
+                .JoinAs("role_user", "ru", "u.id", "ru.user_id")
                 .RawJoin(" left outer join role r on ru.role_id = r.id")
                 .ToParameterizedSql();
-            sql.Should().Be("select u.* from user u " +
-                "join role_user ru on u.id = ru.user_id " +
-                "left outer join role r on ru.role_id = r.id");
+            sql.Should().Be("select `u`.* from `user` as `u` "
+                + "join `role_user` as `ru` on `u`.`id` = `ru`.`user_id` "
+                + "left outer join role r on ru.role_id = r.id");
         }
 
         [Fact]
@@ -59,7 +59,7 @@ namespace SqlQueryBuilder.Test.Builder {
                 .Column("username").RawColumn(", 42").Column("rating")
                 .From("user")
                 .ToParameterizedSql();
-            sql.Should().Be("select distinct username, 42, rating from user");
+            sql.Should().Be("select distinct `username`, 42, `rating` from `user`");
         }
 
         [Fact]
@@ -67,7 +67,7 @@ namespace SqlQueryBuilder.Test.Builder {
             string sql = Query().SelectAllFrom("user")
                 .RawWhere(" where games_played = ? or games_played = ?", 42, 1337)
                 .ToParameterizedSql();
-            sql.Should().Be("select user.* from user where games_played = @0 or games_played = @1");
+            sql.Should().Be("select `user`.* from `user` where games_played = @0 or games_played = @1");
         }
 
         [Fact]
@@ -81,10 +81,10 @@ namespace SqlQueryBuilder.Test.Builder {
                     .And(p => p.AndNot(r => r.RawWhere("3=3")))
                 ).RawWhere(" or (username is null and ?=?)", 4, 4)
                 .ToParameterizedSql();
-            sql.Should().Be("select user.* from user " +
-                "where username like @0 " +
-                "or (1=1 and username is null) " +
-                "or (username is null and 2=2 and (not (3=3))) " +
+            sql.Should().Be("select `user`.* from `user` " +
+                "where `username` like @0 " +
+                "or (1=1 and `username` is null) " +
+                "or (`username` is null and 2=2 and (not (3=3))) " +
                 "or (username is null and @1=@2)");
         }
 
@@ -94,7 +94,7 @@ namespace SqlQueryBuilder.Test.Builder {
                 .RawGroupBy("rank")
                 .RawHaving(" having count(*) > ?", 10)
                 .ToParameterizedSql();
-            sql.Should().Be("select rank, count(*) from user group by rank having count(*) > @0");
+            sql.Should().Be("select `rank`, count(*) from `user` group by rank having count(*) > @0");
         }
 
         [Fact]
@@ -102,7 +102,7 @@ namespace SqlQueryBuilder.Test.Builder {
             string sql = Query().SelectAllFrom("user")
                 .RawOrderBy("rank asc, rating, games_played desc")
                 .ToParameterizedSql();
-            sql.Should().Be("select user.* from user order by rank asc, rating, games_played desc");
+            sql.Should().Be("select `user`.* from `user` order by rank asc, rating, games_played desc");
         }
 
         [Fact]
@@ -110,7 +110,15 @@ namespace SqlQueryBuilder.Test.Builder {
             string sql = Query().SelectAllFrom("user")
                 .RawLimit(" limit ?, ?", 6, 3)
                 .ToParameterizedSql();
-            sql.Should().Be("select user.* from user limit @0, @1");
+            sql.Should().Be("select `user`.* from `user` limit @0, @1");
+        }
+
+        [Fact]
+        public void NoWrappingCharactersAllowedAsFieldNames() {
+            Action func = () => Query().SelectAllFrom("user")
+                .Where("hack`the").EqColumn("planet]")
+                .ToParameterizedSql();
+            func.Should().Throw<PotentialSqlInjectionException>();
         }
 
         [Fact]

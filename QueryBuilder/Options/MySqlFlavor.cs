@@ -1,5 +1,6 @@
 using MySql.Data.MySqlClient;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace SqlQueryBuilder.Options {
@@ -77,6 +78,9 @@ namespace SqlQueryBuilder.Options {
             return await MySqlTransactionFlavor.BeginTransactionAsync(_connection);
         }
         public ISqlTransactionFlavor BeginTransaction() => MySqlTransactionFlavor.BeginTransaction(_connection);
+
+        public string WrapFieldName(string fieldName) => WrapFieldNameStatic(fieldName);
+        public static string WrapFieldNameStatic(string fieldName) => $"`{fieldName}`";
 
         public (string queryPart, object?[] parameters) Skip(long skipOffset) => SkipStatic(skipOffset);
         public (string queryPart, object?[] parameters) Take(int takeLimit) => TakeStatic(takeLimit);

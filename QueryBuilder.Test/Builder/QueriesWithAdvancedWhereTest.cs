@@ -8,10 +8,16 @@ using Xunit;
 namespace SqlQueryBuilder.Test.Builder {
     public class QueriesWithAdvancedWhereTest {
         private IInitialQueryBuilder Query() => QueryBuilder.Init(new QueryBuilderOptions(new FakeSqlFlavor()) {
-            DontParameterizeNumbers = false
+            DontParameterizeNumbers = false,
+            WrapFieldNames = false
         });
         private IInitialQueryBuilder OptimizedNumbersQuery() => QueryBuilder.Init(new QueryBuilderOptions(new FakeSqlFlavor()) {
-            DontParameterizeNumbers = true
+            DontParameterizeNumbers = true,
+            WrapFieldNames = false
+        });
+        private IInitialQueryBuilder WrapFieldNamesQuery() => QueryBuilder.Init(new QueryBuilderOptions(new FakeSqlFlavor()) {
+            DontParameterizeNumbers = false,
+            WrapFieldNames = true
         });
 
         [Fact]
@@ -214,6 +220,15 @@ namespace SqlQueryBuilder.Test.Builder {
                 .Where("u.username").LtEqColumn("a.username")
                 .ToParameterizedSql();
             sql.Should().Be("select * from user as u, authuser as a where u.username <= a.username");
+        }
+
+        [Fact]
+        public void TestWrappedColumnName() {
+            string sql = WrapFieldNamesQuery().SelectAll().FromAs("user", "u")
+                .FromAs("authuser", "a")
+                .Where("u.username").EqColumn("a.username")
+                .ToParameterizedSql();
+            sql.Should().Be("select * from `user` as `u`, `authuser` as `a` where `u`.`username` = `a`.`username`");
         }
 
         [Fact]

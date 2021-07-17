@@ -16,7 +16,7 @@ namespace SqlQueryBuilder.Test.Builder {
         [Fact]
         public void TestSimpleSelectSql() {
             string sql = Query().SelectAllFrom("user").ToParameterizedSql();
-            sql.Should().Be("select user.* from user");
+            sql.Should().Be("select `user`.* from `user`");
         }
 
         [Fact]
@@ -24,7 +24,7 @@ namespace SqlQueryBuilder.Test.Builder {
             string sql = Query().SelectAllFrom("user")
                 .OrderByDesc("rating")
                 .ToParameterizedSql();
-            sql.Should().Be("select user.* from user order by rating desc");
+            sql.Should().Be("select `user`.* from `user` order by `rating` desc");
         }
 
         [Fact]
@@ -32,7 +32,7 @@ namespace SqlQueryBuilder.Test.Builder {
             string sql = Query().SelectAllFrom("user")
                 .OrderByDesc("rank", "rating").OrderByAsc("games_played", "id")
                 .ToParameterizedSql();
-            sql.Should().Be("select user.* from user order by rank, rating desc, games_played, id asc");
+            sql.Should().Be("select `user`.* from `user` order by `rank`, `rating` desc, `games_played`, `id` asc");
         }
 
         [Fact]
@@ -40,7 +40,7 @@ namespace SqlQueryBuilder.Test.Builder {
             string sql = Query().SelectAllFrom("user")
                 .OrderByDesc("rank", "rating").OrderByDesc("games_played").OrderByDesc("id")
                 .ToParameterizedSql();
-            sql.Should().Be("select user.* from user order by rank, rating desc, games_played desc, id desc");
+            sql.Should().Be("select `user`.* from `user` order by `rank`, `rating` desc, `games_played` desc, `id` desc");
         }
 
         [Fact]
@@ -49,7 +49,7 @@ namespace SqlQueryBuilder.Test.Builder {
                 .InsertInto("user")
                 .Values(1, 2, "admin", 1000, "Private", 0)
                 .ToParameterizedSql();
-            sql.Should().Be("insert into user values (@0, @1, @2, @3, @4, @5)");
+            sql.Should().Be("insert into `user` values (@0, @1, @2, @3, @4, @5)");
         }
 
         [Fact]
@@ -59,7 +59,7 @@ namespace SqlQueryBuilder.Test.Builder {
                 .Columns("id", "username", "rank")
                 .Values(1, "admin", "Private")
                 .ToParameterizedSql();
-            sql.Should().Be("insert into user (id, username, rank) values (@0, @1, @2)");
+            sql.Should().Be("insert into `user` (`id`, `username`, `rank`) values (@0, @1, @2)");
         }
 
         [Fact]
@@ -69,7 +69,7 @@ namespace SqlQueryBuilder.Test.Builder {
                 .Columns("id", "username", "rank")
                 .Values(1, "admin", null)
                 .ToUnsafeSql();
-            sql.Should().Be("insert into user (id, username, rank) values (1, 'admin', null)");
+            sql.Should().Be("insert into `user` (`id`, `username`, `rank`) values (1, 'admin', null)");
         }
 
         [Fact]
@@ -80,7 +80,7 @@ namespace SqlQueryBuilder.Test.Builder {
                 .Values(1, "admin", null)
                 .Values(2, "user", null)
                 .ToUnsafeSql();
-            sql.Should().Be("insert into user (id, username, rank) values (1, 'admin', null), (2, 'user', null)");
+            sql.Should().Be("insert into `user` (`id`, `username`, `rank`) values (1, 'admin', null), (2, 'user', null)");
         }
 
         [Fact]
@@ -90,7 +90,7 @@ namespace SqlQueryBuilder.Test.Builder {
                 { "rating", 1337 }
             };
             string sql = Query().InsertInto("user").InsertFromDictionary(dict).ToParameterizedSql();
-            sql.Should().Be("insert into user (username, rating) values (@0, @1)");
+            sql.Should().Be("insert into `user` (`username`, `rating`) values (@0, @1)");
         }
 
         [Fact]
@@ -100,7 +100,7 @@ namespace SqlQueryBuilder.Test.Builder {
                 Rating = 1337
             };
             string sql = Query().InsertInto("user").InsertFrom(model).ToParameterizedSql();
-            sql.Should().Be("insert into user (username, rating) values (@0, @1)");
+            sql.Should().Be("insert into `user` (`username`, `rating`) values (@0, @1)");
         }
 
         [Fact]
@@ -114,7 +114,7 @@ namespace SqlQueryBuilder.Test.Builder {
                 Rating = 42
             };
             string sql = Query().InsertInto("user").InsertFrom(model1, model2).ToParameterizedSql();
-            sql.Should().Be("insert into user (username, rating) values (@0, @1), (@2, @3)");
+            sql.Should().Be("insert into `user` (`username`, `rating`) values (@0, @1), (@2, @3)");
         }
 
         [Fact]
@@ -126,7 +126,7 @@ namespace SqlQueryBuilder.Test.Builder {
                 .SetColumn("games_played", 1)
                 .Where("id").Is(1)
                 .ToParameterizedSql();
-            sql.Should().Be("update user set rating = @0, rank = @1, games_played = @2 where id = @3");
+            sql.Should().Be("update `user` set `rating` = @0, `rank` = @1, `games_played` = @2 where `id` = @3");
         }
 
         [Fact]
@@ -139,7 +139,8 @@ namespace SqlQueryBuilder.Test.Builder {
                 .SetColumn("games_played", 1)
                 .Where("id").Is(2)
                 .ToUnsafeSql();
-            sql.Should().Be("update user set rating = 1100, username = 'Miss Piggy', rank = null, games_played = 1 where id = 2");
+            sql.Should().Be("update `user` set `rating` = 1100, `username` = 'Miss Piggy', "
+                + "`rank` = null, `games_played` = 1 where `id` = 2");
         }
 
         [Fact]
@@ -149,7 +150,7 @@ namespace SqlQueryBuilder.Test.Builder {
                 { "rating", 1337 }
             };
             string sql = Query().Update("user").SetFromDictionary(dict).Where("id").Is(42).ToParameterizedSql();
-            sql.Should().Be("update user set username = @0, rating = @1 where id = @2");
+            sql.Should().Be("update `user` set `username` = @0, `rating` = @1 where `id` = @2");
         }
 
         [Fact]
@@ -159,7 +160,7 @@ namespace SqlQueryBuilder.Test.Builder {
                 Rating = 1337
             };
             string sql = Query().Update("user").SetFrom(model).Where("id").Is(42).ToParameterizedSql();
-            sql.Should().Be("update user set username = @0, rating = @1 where id = @2");
+            sql.Should().Be("update `user` set `username` = @0, `rating` = @1 where `id` = @2");
         }
 
         [Fact]
@@ -168,7 +169,7 @@ namespace SqlQueryBuilder.Test.Builder {
                 .DeleteFrom("user")
                 .Where("id").Is(1)
                 .ToParameterizedSql();
-            sql.Should().Be("delete from user where id = @0");
+            sql.Should().Be("delete from `user` where `id` = @0");
         }
 
         [Fact]
@@ -177,7 +178,7 @@ namespace SqlQueryBuilder.Test.Builder {
                 .DeleteFrom("user")
                 .Where("id").Is(1)
                 .ToUnsafeSql();
-            sql.Should().Be("delete from user where id = 1");
+            sql.Should().Be("delete from `user` where `id` = 1");
         }
 
         [Fact]
@@ -185,8 +186,8 @@ namespace SqlQueryBuilder.Test.Builder {
             var query = Query().SelectAllFrom("user").Where("id").Gt(42);
             string sqlCount = query.CloneWithoutSelect().CountAll().ToUnsafeSql();
             string sqlList = query.Skip(3).Take(6).ToUnsafeSql();
-            sqlCount.Should().Be("select count(*) from user where id > 42");
-            sqlList.Should().Be("select user.* from user where id > 42 take 6 skip 3");
+            sqlCount.Should().Be("select count(*) from `user` where `id` > 42");
+            sqlList.Should().Be("select `user`.* from `user` where `id` > 42 take 6 skip 3");
         }
 
         [Fact]
