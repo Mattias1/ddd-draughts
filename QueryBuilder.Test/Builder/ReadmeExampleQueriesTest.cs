@@ -18,7 +18,7 @@ namespace SqlQueryBuilder.Test.Builder {
                 .OrderByDesc("created_at")
                 .ToParameterizedSql();
 
-            sql.Should().Be("select user.* from user where username like @0 order by created_at desc");
+            sql.Should().Be("select `user`.* from `user` where `username` like @0 order by `created_at` desc");
         }
 
         [Fact]
@@ -35,7 +35,7 @@ namespace SqlQueryBuilder.Test.Builder {
                 .InsertFrom(model)
                 .ToParameterizedSql();
 
-            sql.Should().Be("insert into user (id, username, email, created_at) values (42, @0, @1, @2)");
+            sql.Should().Be("insert into `user` (`id`, `username`, `email`, `created_at`) values (42, @0, @1, @2)");
         }
 
         [Fact]
@@ -58,22 +58,22 @@ namespace SqlQueryBuilder.Test.Builder {
                 .OrderByAsc("roles");
             string sql = query.ToUnsafeSql();
 
-            sql.Should().Be(
-                "select u.id, u.username, count(r.id) as roles " +
-                "from user as u " +
-                "join role_user as ru on u.id = ru.user_id " +
-                "join role as r on ru.role_id = r.id " +
-                "where (" +
-                    "u.created_at >= '2020-03-01' " +
-                    "or username = 'moderator'" +
-                ") " +
-                "and not (" +
-                    "u.id = 1 " +
-                    "or u.username = 'admin'" +
-                ") " +
-                "group by u.id, u.username " +
-                "having roles >= 3 " +
-                "order by roles asc"
+            sql.Should().Be(""
+                + "select `u`.`id`, `u`.`username`, count(`r`.`id`) as `roles` "
+                + "from `user` as `u` "
+                + "join `role_user` as `ru` on `u`.`id` = `ru`.`user_id` "
+                + "join `role` as `r` on `ru`.`role_id` = `r`.`id` "
+                + "where ("
+                    + "`u`.`created_at` >= '2020-03-01' "
+                    + "or `username` = 'moderator'"
+                + ") "
+                + "and not ("
+                    + "`u`.`id` = 1 "
+                    + "or `u`.`username` = 'admin'"
+                + ") "
+                + "group by `u`.`id`, `u`.`username` "
+                + "having `roles` >= 3 "
+                + "order by `roles` asc"
             );
         }
 

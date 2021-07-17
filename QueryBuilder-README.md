@@ -21,7 +21,7 @@ public IReadOnlyList<UserTable> Search(string name) {
         .Where("username").Like($"%{name}%")
         .OrderByDesc("created_at")
         .List<UserTable>();
-    // Executes "select user.* from user where username like @0 order by created_at desc"
+    // Executes "select `user`.* from `user` where `username` like @0 order by `created_at` desc"
 }
 ```
 
@@ -32,7 +32,7 @@ public bool SaveUser(UserModel model) {
         .InsertInto("user")
         .InsertFrom(model)
         .Execute();
-    // Executes "insert into user (id, username, email, created_at) values (42, @0, @1, @2)"
+    // Executes "insert into `user` (`id`, `username`, `email`, `created_at`) values (42, @0, @1, @2)"
 }
 
 public class UserModel {
@@ -68,21 +68,21 @@ public async Task<IReadOnlyList<GroupingModel>> NewUsersWithManyRoles() {
 
     string rawUnsafeSql = query.ToUnsafeSql();
     // The executed sql, with parameters inserted for debugging purposes, shows us the following:
-    // select u.id, u.username, count(r.id) as roles
-    // from user as u
-    // join role_user as ru on u.id = ru.user_id
-    // join role as r on ru.role_id = r.id
+    // select `u`.`id`, `u`.`username`, count(`r`.`id`) as `roles`
+    // from `user` as `u`
+    // join `role_user` as `ru` on `u`.`id` = `ru`.`user_id`
+    // join `role` as `r` on `ru`.`role_id` = `r`.`id`
     // where (
-    //     u.created_at >= '2020-03-01'
-    //     or username = 'moderator'
+    //     `u`.`created_at` >= '2020-03-01'
+    //     or `username` = 'moderator'
     // )
     // and not (
-    //     u.id = 1
-    //     or u.username = 'admin'
+    //     `u`.`id` = 1
+    //     or `u`.`username` = 'admin'
     // )
-    // group by u.id, u.username
-    // having roles >= 3
-    // order by roles asc
+    // group by `u`.`id`, `u`.`username`
+    // having `roles` >= 3
+    // order by `roles` asc
 
     return await query.ListAsync<GroupingModel>();
 }

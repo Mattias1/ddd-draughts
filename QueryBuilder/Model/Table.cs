@@ -1,5 +1,7 @@
 namespace SqlQueryBuilder.Model {
-    internal readonly struct Table {
+    internal interface ITable : IQueryPart { }
+
+    internal readonly struct Table : ITable {
         public string TableName { get; }
         public string? Alias { get; }
 
@@ -8,6 +10,14 @@ namespace SqlQueryBuilder.Model {
             Alias = alias;
         }
 
-        public override string ToString() => Alias is null ? TableName : $"{TableName} as {Alias}";
+        public void AppendToQuery(Query query, bool isFirst) {
+            if (!isFirst) {
+                query.Builder.Append(", ");
+            }
+            query.Builder.Append(query.WrapField(TableName));
+            if (Alias is not null) {
+                query.Builder.Append(" as ").Append(query.WrapField(Alias));
+            }
+        }
     }
 }

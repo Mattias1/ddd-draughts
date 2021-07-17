@@ -16,7 +16,7 @@ namespace SqlQueryBuilder.Model {
             if (!isFirst) {
                 query.Builder.Append(", ");
             }
-            query.Builder.Append(ColumnName).Append(" = ");
+            query.Builder.Append(query.WrapField(ColumnName)).Append(" = ");
             query.AppendParameter(Value);
         }
     }
