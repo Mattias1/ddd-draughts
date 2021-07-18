@@ -21,5 +21,7 @@ namespace SqlQueryBuilder.Builder {
         IQueryBuilder OrNot(QueryFunction queryFunc);
 
         IQueryBuilder RawWhere(string queryPart, params object?[] parameters);
+
+        IQueryBuilder WithoutWhere();
     }
 }

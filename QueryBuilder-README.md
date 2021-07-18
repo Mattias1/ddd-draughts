@@ -1,5 +1,5 @@
 SQL Query builder
-------------------
+==================
 A lightweight querybuilder for my database interactions.
 
 Since Linq to SQL is no longer supported and something like NHibernate or Entity framework is way
@@ -8,7 +8,7 @@ So naturally I decided to add another query builder to the pile ;)
 
 Examples
 ---------
-A simple search query:
+A simple select query:
 ```
 public IInitialQueryBuilder Query() {
     var sqlFlavor = new MySqlFlavor("localhost", "sql_user", "sql_password", "sql_database");
@@ -25,14 +25,15 @@ public IReadOnlyList<UserTable> Search(string name) {
 }
 ```
 
-Or maybe you'd like to:
+Or an update query:
 ```
 public bool SaveUser(UserModel model) {
     return Query()
-        .InsertInto("user")
-        .InsertFrom(model)
+        .Update("user")
+        .SetFrom(model)
+        .Where("id").Is(42)
         .Execute();
-    // Executes "insert into `user` (`id`, `username`, `email`, `created_at`) values (42, @0, @1, @2)"
+    // Executes "update `user` set `id` = 42, `username` = @0, `email` = @1, `created_at` = @2 where `id` = 42"
 }
 
 public class UserModel {
@@ -44,7 +45,8 @@ public class UserModel {
 ```
 Note that the id is not parameterized, because it's a `long` type, and therefore safe. This will
 give you a performance boost for large where in lists.
-You can turn this off if you want (provide an option in the Init).
+Also note that if you forget the where clause, it'll throw an exception.
+You can turn these [options](/QueryBuilder-Options.md) off if you want.
 
 A more complicated example:
 ```
@@ -67,6 +69,7 @@ public async Task<IReadOnlyList<GroupingModel>> NewUsersWithManyRoles() {
         .OrderByAsc("roles");
 
     string rawUnsafeSql = query.ToUnsafeSql();
+
     // The executed sql, with parameters inserted for debugging purposes, shows us the following:
     // select `u`.`id`, `u`.`username`, count(`r`.`id`) as `roles`
     // from `user` as `u`
@@ -91,4 +94,4 @@ Note that the date check `if date > feb 29` is transformed to `if date >= march 
 that noon feb 29 for example is not included in the check. This is only done for a `LocalDate`, not
 for any other date types, like `LocalDateTime` or `System.DateTime` (if you can't user NodaTime) for
 example.
-Again, if you don't like this, you can turn it off as option.
+Again, if you don't like this, you can turn the [option](/QueryBuilder-Options.md) off.

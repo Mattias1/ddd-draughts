@@ -31,11 +31,14 @@ namespace SqlQueryBuilder.Test.Builder {
             };
 
             string sql = Query()
-                .InsertInto("user")
-                .InsertFrom(model)
+                .Update("user")
+                .SetFrom(model)
+                .Where("id").Is(42)
                 .ToParameterizedSql();
 
-            sql.Should().Be("insert into `user` (`id`, `username`, `email`, `created_at`) values (42, @0, @1, @2)");
+            sql.Should().Be("update `user` "
+                + "set `id` = 42, `username` = @0, `email` = @1, `created_at` = @2 "
+                + "where `id` = 42");
         }
 
         [Fact]
