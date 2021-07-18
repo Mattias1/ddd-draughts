@@ -278,8 +278,8 @@ namespace Draughts.Repositories.Database {
     public class DbMove : IDbObject<DbMove, Move> {
         public long GameId { get; set; }
         public short Index { get; set; }
-        public sbyte From { get; set; }
-        public sbyte To { get; set; }
+        public byte From { get; set; }
+        public byte To { get; set; }
         public bool IsCapture { get; set; }
 
         public bool Equals(DbMove? other) => GameId.Equals(other?.GameId) && Index.Equals(other?.Index);
@@ -290,8 +290,8 @@ namespace Draughts.Repositories.Database {
             return new DbMove {
                 GameId = gameState.Id,
                 Index = Convert.ToInt16(moveIndex),
-                From = Convert.ToSByte(move.From.Value),
-                To = Convert.ToSByte(move.To.Value),
+                From = Convert.ToByte(move.From.Value),
+                To = Convert.ToByte(move.To.Value),
                 IsCapture = move.IsCapture
             };
         }

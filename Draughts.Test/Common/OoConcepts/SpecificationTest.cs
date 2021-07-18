@@ -52,7 +52,7 @@ namespace Draughts.Test.Common.OoConcepts {
 
             aSpec.And(bSpec).ApplyQueryBuilder(q);
 
-            q.ToUnsafeSql().Should().Be("select test.* from test where number > 0 and number < 0");
+            q.ToUnsafeSql().Should().Be("select `test`.* from `test` where `number` > 0 and `number` < 0");
         }
 
         [Fact]
@@ -64,7 +64,7 @@ namespace Draughts.Test.Common.OoConcepts {
 
             aSpec.Or(bSpec).ApplyQueryBuilder(q);
 
-            q.ToUnsafeSql().Should().Be("select test.* from test where number > 0 or number < 0");
+            q.ToUnsafeSql().Should().Be("select `test`.* from `test` where `number` > 0 or `number` < 0");
         }
 
         [Fact]
@@ -74,7 +74,7 @@ namespace Draughts.Test.Common.OoConcepts {
 
             spec.Not().ApplyQueryBuilder(q);
 
-            q.ToUnsafeSql().Should().Be("select test.* from test where not (number > 0)");
+            q.ToUnsafeSql().Should().Be("select `test`.* from `test` where not (`number` > 0)");
         }
 
         [Fact]

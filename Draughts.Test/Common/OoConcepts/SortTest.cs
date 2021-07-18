@@ -17,7 +17,7 @@ namespace Draughts.Test.Common.OoConcepts {
 
             sort.ApplyQueryBuilder(q);
 
-            q.ToUnsafeSql().Should().Be("select test.* from test order by value desc");
+            q.ToUnsafeSql().Should().Be("select `test`.* from `test` order by `value` desc");
         }
 
         private class SortTestSort : Sort<SortTestNumber, int> {

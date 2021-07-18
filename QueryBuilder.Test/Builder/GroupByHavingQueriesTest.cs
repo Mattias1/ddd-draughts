@@ -31,8 +31,8 @@ namespace SqlQueryBuilder.Test.Builder {
             string sql = Query().Select("rank", "games_played").AvgAs("rating", "avg_rating").From("user")
                 .GroupBy("rank", "games_played")
                 .ToParameterizedSql();
-            sql.Should().Be("select `rank`, `games_played`, avg(`rating`) as `avg_rating` from `user`"
-                + " group by `rank`, `games_played`");
+            sql.Should().Be("select `rank`, `games_played`, avg(`rating`) as `avg_rating` from `user` "
+                + "group by `rank`, `games_played`");
         }
 
         [Fact]
@@ -42,8 +42,8 @@ namespace SqlQueryBuilder.Test.Builder {
                 .Having("ranks").LtEq(50)
                 .OrderByAsc("ranks")
                 .ToParameterizedSql();
-            sql.Should().Be("select `rank`, count(*) as `ranks` from `user`"
-                + " group by `rank` having `ranks` <= @0 order by `ranks` asc");
+            sql.Should().Be("select `rank`, count(*) as `ranks` from `user` "
+                + "group by `rank` having `ranks` <= @0 order by `ranks` asc");
         }
 
         [Fact]
@@ -65,12 +65,12 @@ namespace SqlQueryBuilder.Test.Builder {
                 .OrHaving("rating").Eq(1337)
                 .ToParameterizedSql();
 
-            sql.Should().Be("select `user`.* from `user`"
-                + " having (`rating` > @0 and `games_played` > @1)"
-                + " or (`rating` > @2 and `games_played` > @3 and ("
+            sql.Should().Be("select `user`.* from `user` "
+                + "having (`rating` > @0 and `games_played` > @1) "
+                + "or (`rating` > @2 and `games_played` > @3 and ("
                 + "not (`rank` like @4) or not (`rank` like @5) and not (`rank` like @6))"
-                + ")"
-                + " or `rating` = @7");
+                + ") "
+                + "or `rating` = @7");
         }
     }
 }

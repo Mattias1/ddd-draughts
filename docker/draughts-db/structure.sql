@@ -145,8 +145,8 @@ CREATE TABLE `gamestate` (
 CREATE TABLE `move` (
     `game_id` BIGINT NOT NULL,
     `index` SMALLINT NOT NULL,
-    `from` TINYINT NOT NULL,
-    `to` TINYINT NOT NULL,
+    `from` TINYINT UNSIGNED NOT NULL,
+    `to` TINYINT UNSIGNED NOT NULL,
     `is_capture` BIT NOT NULL,
 
     PRIMARY KEY (`game_id`, `index`),

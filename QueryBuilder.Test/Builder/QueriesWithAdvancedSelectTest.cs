@@ -46,8 +46,8 @@ namespace SqlQueryBuilder.Test.Builder {
                 .Min("rating")
                 .From("user")
                 .ToParameterizedSql();
-            sql.Should().Be("select `id`, count(*), count(`admin`), sum(`rating`), avg(`rating`),"
-                + " max(`rating`), min(`rating`) from `user`");
+            sql.Should().Be("select `id`, count(*), count(`admin`), sum(`rating`), avg(`rating`), "
+                + "max(`rating`), min(`rating`) from `user`");
         }
 
         [Fact]
@@ -62,8 +62,8 @@ namespace SqlQueryBuilder.Test.Builder {
                 .MinAs("rating", "minn")
                 .From("user")
                 .ToParameterizedSql();
-            sql.Should().Be("select `id`, count(*) as `rowcount`, count(`admin`) as `admins`, sum(`rating`) as `summ`, " +
-                "avg(`rating`) as `avgg`, max(`rating`) as `maxx`, min(`rating`) as `minn` from `user`");
+            sql.Should().Be("select `id`, count(*) as `rowcount`, count(`admin`) as `admins`, sum(`rating`) as `summ`, "
+                + "avg(`rating`) as `avgg`, max(`rating`) as `maxx`, min(`rating`) as `minn` from `user`");
         }
 
         [Fact]
@@ -73,8 +73,8 @@ namespace SqlQueryBuilder.Test.Builder {
                 .FromAs("street", "s")
                 .Where("u.street_id").IsColumn("s.id")
                 .ToParameterizedSql();
-            sql.Should().Be("select `y`.`id`, `s`.`id`, `s`.`name`"
-                + " from `user` as `u`, `street` as `s` where `u`.`street_id` = `s`.`id`");
+            sql.Should().Be("select `y`.`id`, `s`.`id`, `s`.`name` "
+                + "from `user` as `u`, `street` as `s` where `u`.`street_id` = `s`.`id`");
         }
 
         [Fact]
@@ -163,9 +163,9 @@ namespace SqlQueryBuilder.Test.Builder {
                 .JoinAs("authuser_role", "ar", "a.id", "ar.user_id")
                 .JoinAs("role", "r", "ar.role_id", "r.id")
                 .ToParameterizedSql();
-            sql.Should().Be("select `a`.* from `authuser` as `a` " +
-                "join `authuser_role` as `ar` on `a`.`id` = `ar`.`user_id` " +
-                "join `role` as `r` on `ar`.`role_id` = `r`.`id`");
+            sql.Should().Be("select `a`.* from `authuser` as `a` "
+                + "join `authuser_role` as `ar` on `a`.`id` = `ar`.`user_id` "
+                + "join `role` as `r` on `ar`.`role_id` = `r`.`id`");
         }
 
         [Fact]
@@ -175,11 +175,11 @@ namespace SqlQueryBuilder.Test.Builder {
             q.JoinAs("other_table", "o", "o.user_id", "u.id").Where("o.other_column").Isnt(2).OrderByDesc("o.other_order");
             string sql = q.ToParameterizedSql();
 
-            sql.Should().Be("select `u`.* from `user` as `u` " +
-                "join `some_table` as `s` on `s`.`user_id` = `u`.`id` " +
-                "join `other_table` as `o` on `o`.`user_id` = `u`.`id` " +
-                "where `s`.`some_column` = @0 and `o`.`other_column` != @1 " +
-                "order by `s`.`some_order` asc, `o`.`other_order` desc");
+            sql.Should().Be("select `u`.* from `user` as `u` "
+                + "join `some_table` as `s` on `s`.`user_id` = `u`.`id` "
+                + "join `other_table` as `o` on `o`.`user_id` = `u`.`id` "
+                + "where `s`.`some_column` = @0 and `o`.`other_column` != @1 "
+                + "order by `s`.`some_order` asc, `o`.`other_order` desc");
         }
     }
 }
