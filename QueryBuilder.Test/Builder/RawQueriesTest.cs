@@ -9,7 +9,8 @@ using Xunit;
 namespace SqlQueryBuilder.Test.Builder {
     public class RawQueriesTest {
         private IInitialQueryBuilder Query() => QueryBuilder.Init(new QueryBuilderOptions(new FakeSqlFlavor()) {
-            DontParameterizeNumbers = false
+            DontParameterizeNumbers = false,
+            GuardForForgottenWhere = false
         });
 
         [Fact]

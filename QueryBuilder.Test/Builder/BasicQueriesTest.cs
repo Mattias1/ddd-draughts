@@ -164,6 +164,18 @@ namespace SqlQueryBuilder.Test.Builder {
         }
 
         [Fact]
+        public void DontUpdateWithoutWhere() {
+            Action func = () => Query().Update("user").SetColumn("rating", 42).ToParameterizedSql();
+            func.Should().Throw<SqlQueryBuilderException>();
+        }
+
+        [Fact]
+        public void AllowExplicitlyUpdatingWithoutWhere() {
+            Action func = () => Query().Update("user").SetColumn("rating", 42).WithoutWhere().ToParameterizedSql();
+            func.Should().NotThrow();
+        }
+
+        [Fact]
         public void TestSimpleDelete() {
             string sql = Query()
                 .DeleteFrom("user")
@@ -179,6 +191,12 @@ namespace SqlQueryBuilder.Test.Builder {
                 .Where("id").Is(1)
                 .ToUnsafeSql();
             sql.Should().Be("delete from `user` where `id` = 1");
+        }
+
+        [Fact]
+        public void DontDeleteWithoutWhere() {
+            Action func = () => Query().DeleteFrom("user").ToParameterizedSql();
+            func.Should().Throw<SqlQueryBuilderException>();
         }
 
         [Fact]

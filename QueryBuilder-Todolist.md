@@ -12,8 +12,6 @@ Things to do before making this a nuget package (or version 1.0.0):
   (can having use the same?)
 - Having with count, max, etc. functions
 - Option: Capitalisation of keywords
-- Option: Throw for delete and update queries without where (and add a 'WithoutWhere()' method?)
-  - Needs documentation and a very friendly exception ;)
 - Documentation comments `///`
 - SqlServer, PostgreSql
 - Integration tests for the readme example queries

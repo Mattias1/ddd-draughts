@@ -41,5 +41,10 @@ namespace SqlQueryBuilder.Builder {
             _preparedLeaf = (type, column, _query.WhereForest);
             return this;
         }
+
+        public IQueryBuilder WithoutWhere() {
+            _explicitlyWithoutWhere = true;
+            return this;
+        }
     }
 }

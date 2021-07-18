@@ -6,21 +6,23 @@ namespace SqlQueryBuilder.Options {
         public bool OverprotectiveSqlInjection { get; set; }
         public bool AddParameterizedSqlToException { get; set; }
         public bool DontParameterizeNumbers { get; set; }
+        public bool GuardForForgottenWhere { get; set; }
         public bool WrapFieldNames { get; set; }
 
         public QueryBuilderOptions(ISqlFlavor sqlFlavor) : this(sqlFlavor, Default) { }
         public QueryBuilderOptions(ISqlFlavor sqlFlavor, IColumnFormat columnFormat)
             : this(sqlFlavor, columnFormat, smartDate: true, overprotective: true, addSqlToException: true,
-                  dontParameterizeNumbers: true, wrapFieldNames: true) { }
+                  dontParameterizeNumbers: true, guardForForgottenWhere: true, wrapFieldNames: true) { }
         public QueryBuilderOptions(ISqlFlavor sqlFlavor, IColumnFormat columnFormat,
                 bool smartDate, bool overprotective, bool addSqlToException,
-                bool dontParameterizeNumbers, bool wrapFieldNames) {
+                bool dontParameterizeNumbers, bool guardForForgottenWhere, bool wrapFieldNames) {
             SqlFlavor = sqlFlavor;
             ColumnFormat = columnFormat;
             SmartDate = smartDate;
             OverprotectiveSqlInjection = overprotective;
             AddParameterizedSqlToException = addSqlToException;
             DontParameterizeNumbers = dontParameterizeNumbers;
+            GuardForForgottenWhere = guardForForgottenWhere;
             WrapFieldNames = wrapFieldNames;
         }
 
@@ -28,14 +30,14 @@ namespace SqlQueryBuilder.Options {
         public static QueryBuilderOptions SmartPreset(ISqlFlavor sqlFlavor, IColumnFormat columnFormat) {
             return new QueryBuilderOptions(sqlFlavor, columnFormat,
                 smartDate: true, overprotective: true, addSqlToException: true,
-                dontParameterizeNumbers: true, wrapFieldNames: true);
+                dontParameterizeNumbers: true, guardForForgottenWhere: true, wrapFieldNames: true);
         }
 
         public static QueryBuilderOptions PlainPreset(ISqlFlavor sqlFlavor) => PlainPreset(sqlFlavor, None);
         public static QueryBuilderOptions PlainPreset(ISqlFlavor sqlFlavor, IColumnFormat columnFormat) {
             return new QueryBuilderOptions(sqlFlavor, columnFormat,
                 smartDate: false, overprotective: false, addSqlToException: false,
-                dontParameterizeNumbers: false, wrapFieldNames: false);
+                dontParameterizeNumbers: false, guardForForgottenWhere: false, wrapFieldNames: false);
         }
 
         public static IColumnFormat Default => CamelToSnakeCase;
@@ -46,7 +48,7 @@ namespace SqlQueryBuilder.Options {
             return new QueryBuilderOptions(
                 SqlFlavor, ColumnFormat,
                 SmartDate, OverprotectiveSqlInjection, AddParameterizedSqlToException,
-                DontParameterizeNumbers, WrapFieldNames
+                DontParameterizeNumbers, GuardForForgottenWhere, WrapFieldNames
             );
         }
     }

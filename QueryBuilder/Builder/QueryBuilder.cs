@@ -11,6 +11,7 @@ namespace SqlQueryBuilder.Builder {
     public partial class QueryBuilder : IQueryBuilderBase {
         private readonly QueryBuilderOptions _options;
         private readonly Query _query;
+        private bool _explicitlyWithoutWhere;
 
         public static IInitialQueryBuilder Init(ISqlFlavor sqlFlavor) => Init(new QueryBuilderOptions(sqlFlavor));
         public static IInitialQueryBuilder Init(ISqlFlavor sqlFlavor, IColumnFormat columnFormat)
@@ -22,6 +23,7 @@ namespace SqlQueryBuilder.Builder {
         private QueryBuilder(QueryBuilderOptions options, Query query) {
             _options = options;
             _query = query;
+            _explicitlyWithoutWhere = false;
         }
 
         public ICompleteQueryBuilder Cast() => this;
@@ -233,11 +235,22 @@ namespace SqlQueryBuilder.Builder {
         }
 
         public string ToParameterizedSql() {
+            if (_options.GuardForForgottenWhere && !_explicitlyWithoutWhere
+                    && _query.WhereForest.Count == 0
+                    && (_query.UpdateTable is not null || _query.DeleteTable is not null)) {
+                string aQueryType = _query.UpdateTable is not null ? "an update" : "a delete";
+                throw new SqlQueryBuilderException($"You are trying to execute {aQueryType} query without a where. "
+                    + "If this is intentional, please specify by calling '.WithoutWhere()'.");
+            }
             string query = _query.ToParameterizedSql();
             int semiColonIndex = query.IndexOf(';');
-            if (_options.OverprotectiveSqlInjection
-                    && (semiColonIndex >= 0 && semiColonIndex != query.Length - 1 || query.Contains("--"))) {
-                throw new PotentialSqlInjectionException();
+            if (_options.OverprotectiveSqlInjection) {
+                if (semiColonIndex >= 0 && semiColonIndex != query.Length - 1) {
+                    throw new PotentialSqlInjectionException(";");
+                }
+                if (query.Contains("--")) {
+                    throw new PotentialSqlInjectionException("--");
+                }
             }
             return query;
         }
