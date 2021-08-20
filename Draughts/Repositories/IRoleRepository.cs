@@ -1,4 +1,4 @@
-using Draughts.Domain.AuthUserContext.Models;
+using Draughts.Domain.AuthContext.Models;
 using System.Collections.Generic;
 
 namespace Draughts.Repositories {

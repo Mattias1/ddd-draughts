@@ -1,4 +1,4 @@
-using Draughts.Domain.AuthUserContext.Models;
+using Draughts.Domain.AuthContext.Models;
 using Draughts.Domain.GameContext.Models;
 using Draughts.Domain.UserContext.Models;
 using NodaTime;
@@ -55,7 +55,7 @@ namespace Draughts.Repositories.Database {
             return new AuthUser(
                 new UserId(Id),
                 new Username(Username),
-                Domain.AuthUserContext.Models.PasswordHash.FromStorage(PasswordHash),
+                Domain.AuthContext.Models.PasswordHash.FromStorage(PasswordHash),
                 new Email(Email),
                 CreatedAt,
                 roles

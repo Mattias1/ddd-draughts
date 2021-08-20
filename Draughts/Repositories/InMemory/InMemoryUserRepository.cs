@@ -1,4 +1,4 @@
-using Draughts.Domain.AuthUserContext.Specifications;
+using Draughts.Domain.AuthContext.Specifications;
 using Draughts.Domain.UserContext.Models;
 using Draughts.Repositories.Database;
 using Draughts.Repositories.Transaction;

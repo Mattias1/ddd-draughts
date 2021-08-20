@@ -7,9 +7,9 @@ using SqlQueryBuilder.Common;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using static Draughts.Domain.AuthUserContext.Models.Permission;
+using static Draughts.Domain.AuthContext.Models.Permission;
 
-namespace Draughts.Domain.AuthUserContext.Models {
+namespace Draughts.Domain.AuthContext.Models {
     public class AdminLog : Entity<AdminLog, AdminLogId> {
         public override AdminLogId Id { get; }
         public string Type { get; }

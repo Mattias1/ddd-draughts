@@ -1,7 +1,7 @@
 using Draughts.Common.OoConcepts;
 using System.Collections.Generic;
 
-namespace Draughts.Domain.AuthUserContext.Models {
+namespace Draughts.Domain.AuthContext.Models {
     public class Permission : StringValueObject<Permission> {
         public override string Value { get; }
 

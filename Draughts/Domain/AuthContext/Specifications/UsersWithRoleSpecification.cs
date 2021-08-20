@@ -1,5 +1,5 @@
 using Draughts.Common.OoConcepts;
-using Draughts.Domain.AuthUserContext.Models;
+using Draughts.Domain.AuthContext.Models;
 using SqlQueryBuilder.Builder;
 using System;
 using System.Collections.Generic;
@@ -7,7 +7,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using static Draughts.Repositories.Database.JoinEnum;
 
-namespace Draughts.Domain.AuthUserContext.Specifications {
+namespace Draughts.Domain.AuthContext.Specifications {
     public class UsersWithRoleSpecification : Specification<AuthUser> {
         private readonly RoleId _roleId;
 

@@ -5,7 +5,7 @@ using NodaTime;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Draughts.Domain.AuthUserContext.Models {
+namespace Draughts.Domain.AuthContext.Models {
     public class AuthUser : Entity<AuthUser, UserId> {
         public static IReadOnlyList<string> PROTECTED_USERS => new [] { Username.ADMIN, Username.MATTY };
 

@@ -1,4 +1,4 @@
-using Draughts.Domain.AuthUserContext.Models;
+using Draughts.Domain.AuthContext.Models;
 using Draughts.Domain.UserContext.Models;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;

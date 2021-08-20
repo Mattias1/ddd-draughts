@@ -1,12 +1,12 @@
 using Draughts.Common;
-using Draughts.Domain.AuthUserContext.Models;
-using Draughts.Domain.AuthUserContext.Services;
+using Draughts.Domain.AuthContext.Models;
+using Draughts.Domain.AuthContext.Services;
 using Draughts.Test.TestHelpers;
 using FluentAssertions;
 using System;
 using Xunit;
 
-namespace Draughts.Test.Domain.AuthUserContext {
+namespace Draughts.Test.Domain.AuthContext {
     public class AuthUserRolesTest {
         private static readonly Role RegisteredRole = RoleTestHelper.RegisteredUser().Build();
         private static readonly Role AdminRole = RoleTestHelper.Admin().Build();

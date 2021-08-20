@@ -1,11 +1,11 @@
 using Draughts.Common.Utilities;
-using Draughts.Domain.AuthUserContext.Models;
+using Draughts.Domain.AuthContext.Models;
 using Draughts.Domain.UserContext.Models;
 using Draughts.IntegrationTest.EndToEnd.Base;
 using Draughts.Repositories.InMemory;
 using Microsoft.AspNetCore.Hosting;
 using System.Linq;
-using static Draughts.Domain.AuthUserContext.Models.Permission;
+using static Draughts.Domain.AuthContext.Models.Permission;
 
 namespace Draughts.IntegrationTest.EndToEnd.InMemory {
     public class InMemoryApiTester : BaseApiTester {

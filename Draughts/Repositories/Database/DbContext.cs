@@ -22,7 +22,7 @@ namespace Draughts.Repositories.Database {
         }
 
         public ISqlTransactionFlavor BeginUserTransaction() => _userDb.Connection().BeginTransaction();
-        public ISqlTransactionFlavor BeginAuthUserTransaction() => _authUserDb.Connection().BeginTransaction();
+        public ISqlTransactionFlavor BeginAuthTransaction() => _authUserDb.Connection().BeginTransaction();
         public ISqlTransactionFlavor BeginGameTransaction() => _gameDb.Connection().BeginTransaction();
         public ISqlTransactionFlavor BeginMiscTransaction() => _miscDb.Connection().BeginTransaction();
 

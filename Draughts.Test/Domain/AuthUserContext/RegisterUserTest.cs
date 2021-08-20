@@ -1,13 +1,13 @@
 using Draughts.Common;
-using Draughts.Domain.AuthUserContext.Models;
-using Draughts.Domain.AuthUserContext.Services;
+using Draughts.Domain.AuthContext.Models;
+using Draughts.Domain.AuthContext.Services;
 using Draughts.Test.TestHelpers;
 using FluentAssertions;
 using NodaTime.Testing;
 using System;
 using Xunit;
 
-namespace Draughts.Test.Domain.AuthUserContext {
+namespace Draughts.Test.Domain.AuthContext {
     public class RegisterUserTest {
         private static readonly Role PendingRole = RoleTestHelper.PendingRegistration().Build();
         private static readonly Role RegisteredRole = RoleTestHelper.RegisteredUser().Build();

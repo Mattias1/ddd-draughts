@@ -1,8 +1,8 @@
 using Draughts.Common.Events;
-using Draughts.Domain.AuthUserContext.Events;
+using Draughts.Domain.AuthContext.Events;
 using Draughts.Repositories.Transaction;
 using Draughts.Repositories;
-using Draughts.Domain.AuthUserContext.Models;
+using Draughts.Domain.AuthContext.Models;
 using NodaTime;
 using System;
 
@@ -45,7 +45,7 @@ namespace Draughts.Application.Auth {
         }
 
         public void Handle(RoleCreated evt) {
-            _unitOfWork.WithAuthUserTransaction(tran => {
+            _unitOfWork.WithAuthTransaction(tran => {
                 var authUser = _authUserRepository.FindById(evt.CreatedBy);
                 var adminLog = AdminLog.CreateRoleLog(_idGenerator.ReservePool(), _clock, authUser, evt.RoleId, evt.Rolename);
                 _adminLogRepository.Save(adminLog);
@@ -55,7 +55,7 @@ namespace Draughts.Application.Auth {
         }
 
         public void Handle(RoleEdited evt) {
-            _unitOfWork.WithAuthUserTransaction(tran => {
+            _unitOfWork.WithAuthTransaction(tran => {
                 var authUser = _authUserRepository.FindById(evt.EditedBy);
                 var adminLog = AdminLog.EditRoleLog(_idGenerator.ReservePool(), _clock, authUser, evt.RoleId, evt.Rolename);
                 _adminLogRepository.Save(adminLog);
@@ -65,7 +65,7 @@ namespace Draughts.Application.Auth {
         }
 
         public void Handle(UserGainedRole evt) {
-            _unitOfWork.WithAuthUserTransaction(tran => {
+            _unitOfWork.WithAuthTransaction(tran => {
                 var authUser = _authUserRepository.FindById(evt.AssignedBy);
                 var adminLog = AdminLog.RoleGainedLog(_idGenerator.ReservePool(), _clock, authUser,
                     evt.RoleId, evt.Rolename, evt.UserId, evt.Username);
@@ -76,7 +76,7 @@ namespace Draughts.Application.Auth {
         }
 
         public void Handle(UserLostRole evt) {
-            _unitOfWork.WithAuthUserTransaction(tran => {
+            _unitOfWork.WithAuthTransaction(tran => {
                 var authUser = _authUserRepository.FindById(evt.RemovedBy);
                 var adminLog = AdminLog.RoleLostLog(_idGenerator.ReservePool(), _clock, authUser,
                     evt.RoleId, evt.Rolename, evt.UserId, evt.Username);

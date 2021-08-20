@@ -1,8 +1,8 @@
 using Draughts.Common;
-using Draughts.Domain.AuthUserContext.Events;
-using Draughts.Domain.AuthUserContext.Models;
-using Draughts.Domain.AuthUserContext.Services;
-using Draughts.Domain.AuthUserContext.Specifications;
+using Draughts.Domain.AuthContext.Events;
+using Draughts.Domain.AuthContext.Models;
+using Draughts.Domain.AuthContext.Services;
+using Draughts.Domain.AuthContext.Specifications;
 using Draughts.Domain.UserContext.Models;
 using Draughts.Repositories;
 using Draughts.Repositories.Transaction;
@@ -29,7 +29,7 @@ namespace Draughts.Application.ModPanel.Services {
         }
 
         public (Role role, IReadOnlyList<AuthUser> authUsers) GetRoleWithUsers(RoleId roleId) {
-            return _unitOfWork.WithAuthUserTransaction(tran => {
+            return _unitOfWork.WithAuthTransaction(tran => {
                 var role = FindRole(roleId);
                 var authUsers = _authUserRepository.List(new UsersWithRoleSpecification(roleId));
                 return tran.CommitWith((role, authUsers));
@@ -37,7 +37,7 @@ namespace Draughts.Application.ModPanel.Services {
         }
 
         public void AssignRole(UserId responsibleUserId, RoleId roleId, Username username) {
-            _unitOfWork.WithAuthUserTransaction(tran => {
+            _unitOfWork.WithAuthTransaction(tran => {
                 var role = FindRole(roleId);
                 var authUser = _authUserRepository.FindOrNull(new UsernameSpecification(username));
                 if (authUser is null) {
@@ -54,7 +54,7 @@ namespace Draughts.Application.ModPanel.Services {
         }
 
         public void RemoveRole(UserId responsibleUserId, RoleId roleId, UserId userId) {
-            _unitOfWork.WithAuthUserTransaction(tran => {
+            _unitOfWork.WithAuthTransaction(tran => {
                 var role = FindRole(roleId);
                 var authUser = _authUserRepository.FindByIdOrNull(userId);
                 if (authUser is null) {

@@ -1,6 +1,6 @@
 using Draughts.Common.Events;
 using Draughts.Common.Utilities;
-using Draughts.Domain.AuthUserContext.Events;
+using Draughts.Domain.AuthContext.Events;
 using Draughts.Test.TestHelpers;
 using FluentAssertions;
 using Xunit;

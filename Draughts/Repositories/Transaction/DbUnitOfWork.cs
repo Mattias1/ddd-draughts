@@ -28,10 +28,10 @@ namespace Draughts.Repositories.Transaction {
             _eventQueue = new EventQueue(clock, _eventHandlers);
         }
 
-        public void WithAuthUserTransaction(Action<ITransaction> function) => WithTransaction(TransactionDomain.AuthUser, function);
+        public void WithAuthTransaction(Action<ITransaction> function) => WithTransaction(TransactionDomain.Auth, function);
         public void WithGameTransaction(Action<ITransaction> function) => WithTransaction(TransactionDomain.Game, function);
         public void WithUserTransaction(Action<ITransaction> function) => WithTransaction(TransactionDomain.User, function);
-        public T WithAuthUserTransaction<T>(Func<ITransaction, T> function) => WithTransaction(TransactionDomain.AuthUser, function);
+        public T WithAuthTransaction<T>(Func<ITransaction, T> function) => WithTransaction(TransactionDomain.Auth, function);
         public T WithGameTransaction<T>(Func<ITransaction, T> function) => WithTransaction(TransactionDomain.Game, function);
         public T WithUserTransaction<T>(Func<ITransaction, T> function) => WithTransaction(TransactionDomain.User, function);
 

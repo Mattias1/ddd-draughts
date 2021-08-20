@@ -1,4 +1,4 @@
-using Draughts.Domain.AuthUserContext.Models;
+using Draughts.Domain.AuthContext.Models;
 using Draughts.Repositories.Transaction;
 using SqlQueryBuilder.Builder;
 using System.Collections.Generic;
@@ -19,7 +19,7 @@ namespace Draughts.Repositories.Database {
 
         protected override string TableName => "role";
         private const string PermissionRoleTableName = "permission_role";
-        protected override IInitialQueryBuilder GetBaseQuery() => _unitOfWork.Query(TransactionDomain.AuthUser);
+        protected override IInitialQueryBuilder GetBaseQuery() => _unitOfWork.Query(TransactionDomain.Auth);
         private IQueryBuilder GetPermissionRoleQuery() => GetBaseQuery().SelectAllFrom(PermissionRoleTableName);
 
         protected override IReadOnlyList<Role> Parse(IReadOnlyList<DbRole> qs) {

@@ -38,7 +38,7 @@ namespace Draughts.Application.Shared.Middleware {
                 return;
             }
 
-            var userPermissions = _unitOfWork.WithAuthUserTransaction(tran => {
+            var userPermissions = _unitOfWork.WithAuthTransaction(tran => {
                 var permissions = _authService.PermissionsForJwt(jwt!);
                 return tran.CommitWith(permissions);
             });

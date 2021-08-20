@@ -1,9 +1,9 @@
 using Draughts.Common;
-using Draughts.Domain.AuthUserContext.Models;
+using Draughts.Domain.AuthContext.Models;
 using System;
 using System.Linq;
 
-namespace Draughts.Domain.AuthUserContext.Services {
+namespace Draughts.Domain.AuthContext.Services {
     public class UserRoleDomainService : IUserRoleDomainService {
         public void AssignRole(AuthUser authUser, Role role) {
             authUser.AssignRole(role.Id);

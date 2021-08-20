@@ -1,10 +1,10 @@
 using Draughts.Common;
-using Draughts.Domain.AuthUserContext.Models;
+using Draughts.Domain.AuthContext.Models;
 using FluentAssertions;
 using System;
 using Xunit;
 
-namespace Draughts.Test.Domain.AuthUserContext {
+namespace Draughts.Test.Domain.AuthContext {
     public class UsernameTest {
         [Fact]
         public void NameCanBeAlphaDash() {

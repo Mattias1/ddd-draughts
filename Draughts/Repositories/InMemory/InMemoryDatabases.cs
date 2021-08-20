@@ -1,6 +1,6 @@
 using Draughts.Common.Events;
 using Draughts.Common.Utilities;
-using Draughts.Domain.AuthUserContext.Models;
+using Draughts.Domain.AuthContext.Models;
 using Draughts.Domain.GameContext.Models;
 using Draughts.Domain.UserContext.Models;
 using Draughts.Repositories.Database;
@@ -9,7 +9,7 @@ using NodaTime;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using static Draughts.Domain.AuthUserContext.Models.Permission;
+using static Draughts.Domain.AuthContext.Models.Permission;
 using static Draughts.Domain.UserContext.Models.Rank;
 
 namespace Draughts.Repositories.InMemory {
@@ -79,9 +79,9 @@ namespace Draughts.Repositories.InMemory {
         }
     }
 
-    public class AuthUserDatabase : IInMemoryDatabase {
-        private static AuthUserDatabase? _instance;
-        public static AuthUserDatabase Get => _instance ??= Initialize();
+    public class AuthDatabase : IInMemoryDatabase {
+        private static AuthDatabase? _instance;
+        public static AuthDatabase Get => _instance ??= Initialize();
 
         public List<DbPermissionRole> PermissionRolesTable { get; }
         public List<DbRole> RolesTable { get; }
@@ -90,8 +90,8 @@ namespace Draughts.Repositories.InMemory {
         public List<DbAdminLog> AdminLogsTable { get; }
         public List<DomainEvent> DomainEventsTable { get; }
 
-        private static AuthUserDatabase Initialize() {
-            var database = new AuthUserDatabase();
+        private static AuthDatabase Initialize() {
+            var database = new AuthDatabase();
 
             long adminRoleId = 1;
             long pendingRegistrationRoleId = 2;
@@ -117,7 +117,7 @@ namespace Draughts.Repositories.InMemory {
             return database;
         }
 
-        private AuthUserDatabase() {
+        private AuthDatabase() {
             PermissionRolesTable = new List<DbPermissionRole>();
             RolesTable = new List<DbRole>();
             AuthUserRolesTable = new List<DbAuthUserRole>();
@@ -165,11 +165,11 @@ namespace Draughts.Repositories.InMemory {
             }
         }
 
-        private static Dictionary<ITransaction, AuthUserDatabase> _tempDatabases = new Dictionary<ITransaction, AuthUserDatabase>();
-        public static void CreateTempDatabase(ITransaction transaction) => _tempDatabases[transaction] = new AuthUserDatabase();
+        private static Dictionary<ITransaction, AuthDatabase> _tempDatabases = new Dictionary<ITransaction, AuthDatabase>();
+        public static void CreateTempDatabase(ITransaction transaction) => _tempDatabases[transaction] = new AuthDatabase();
         public static void RemoveTempDatabase(ITransaction transaction) => _tempDatabases.Remove(transaction);
-        public static AuthUserDatabase Temp(ITransaction transaction) {
-            if (_tempDatabases.TryGetValue(transaction, out AuthUserDatabase? database)) {
+        public static AuthDatabase Temp(ITransaction transaction) {
+            if (_tempDatabases.TryGetValue(transaction, out AuthDatabase? database)) {
                 return database;
             }
             throw new InvalidOperationException("Transaction is not open - no temp database is created.");

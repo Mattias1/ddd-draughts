@@ -1,4 +1,4 @@
-using Draughts.Domain.AuthUserContext.Models;
+using Draughts.Domain.AuthContext.Models;
 using Draughts.Repositories.Transaction;
 using SqlQueryBuilder.Builder;
 using System;
@@ -12,7 +12,7 @@ namespace Draughts.Repositories.Database {
         }
 
         protected override string TableName => "adminlog";
-        protected override IInitialQueryBuilder GetBaseQuery() => _unitOfWork.Query(TransactionDomain.AuthUser);
+        protected override IInitialQueryBuilder GetBaseQuery() => _unitOfWork.Query(TransactionDomain.Auth);
 
         protected override AdminLog Parse(DbAdminLog q) => q.ToDomainModel();
 

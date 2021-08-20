@@ -3,7 +3,7 @@ using Draughts.Common.OoConcepts;
 using System;
 using System.Text.RegularExpressions;
 
-namespace Draughts.Domain.AuthUserContext.Models {
+namespace Draughts.Domain.AuthContext.Models {
     public class Username : StringValueObject<Username> {
         public const string ADMIN = "admin";
         public const string MATTY = "Matty";

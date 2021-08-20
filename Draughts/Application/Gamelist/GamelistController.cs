@@ -7,7 +7,7 @@ using Draughts.Domain.GameContext.Specifications;
 using Draughts.Repositories;
 using Draughts.Repositories.Transaction;
 using Microsoft.AspNetCore.Mvc;
-using static Draughts.Domain.AuthUserContext.Models.Permission;
+using static Draughts.Domain.AuthContext.Models.Permission;
 
 namespace Draughts.Application {
     [Requires(Permissions.PLAY_GAME)]

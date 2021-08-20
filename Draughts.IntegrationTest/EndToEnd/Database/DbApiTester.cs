@@ -1,4 +1,4 @@
-using Draughts.Domain.AuthUserContext.Specifications;
+using Draughts.Domain.AuthContext.Specifications;
 using Draughts.IntegrationTest.EndToEnd.Base;
 using Draughts.Repositories;
 using Draughts.Repositories.Database;
@@ -34,7 +34,7 @@ namespace Draughts.IntegrationTest.EndToEnd.Database {
         public override string LoginAsTestPlayerBlack() => LoginAs("TestPlayerBlack");
         public override string LoginAsTestPlayerWhite() => LoginAs("TestPlayerWhite");
         private string LoginAs(string username) {
-            var authUser = UnitOfWork.WithAuthUserTransaction(tran => {
+            var authUser = UnitOfWork.WithAuthTransaction(tran => {
                 var authUser = AuthUserRepository.Find(new UsernameSpecification(username));
                 return tran.CommitWith(authUser);
             });

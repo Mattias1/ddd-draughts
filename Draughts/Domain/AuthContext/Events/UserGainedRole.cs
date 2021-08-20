@@ -1,10 +1,10 @@
 using Draughts.Common.Events;
-using Draughts.Domain.AuthUserContext.Models;
+using Draughts.Domain.AuthContext.Models;
 using Draughts.Domain.UserContext.Models;
 using NodaTime;
 using System;
 
-namespace Draughts.Domain.AuthUserContext.Events {
+namespace Draughts.Domain.AuthContext.Events {
     public class UserGainedRole : DomainEvent {
         public const string TYPE = "role.gained";
 

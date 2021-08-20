@@ -34,7 +34,7 @@ namespace Draughts.Application.Auth {
             try {
                 ValidateNotNull(request?.Name, request?.Password);
 
-                var (jwt, permissions) = _unitOfWork.WithAuthUserTransaction(tran => {
+                var (jwt, permissions) = _unitOfWork.WithAuthTransaction(tran => {
                     var jwt = _authService.GenerateJwt(request!.Name, request.Password);
                     var permissions = _authService.PermissionsForJwt(jwt);
 
