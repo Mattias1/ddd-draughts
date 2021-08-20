@@ -1,5 +1,5 @@
 using Draughts.Common.Utilities;
-using Draughts.Domain.AuthUserContext.Models;
+using Draughts.Domain.AuthContext.Models;
 using FluentAssertions;
 using NodaTime;
 using System.Globalization;

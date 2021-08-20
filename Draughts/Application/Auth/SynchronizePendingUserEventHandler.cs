@@ -1,6 +1,6 @@
 using Draughts.Common.Events;
 using Draughts.Application.Auth.Services;
-using Draughts.Domain.AuthUserContext.Events;
+using Draughts.Domain.AuthContext.Events;
 
 namespace Draughts.Application.Auth {
     public class SynchronizePendingUserEventHandler : DomainEventHandler<AuthUserCreated> {

@@ -1,4 +1,4 @@
-using Draughts.Domain.AuthUserContext.Models;
+using Draughts.Domain.AuthContext.Models;
 using Draughts.Domain.UserContext.Models;
 using Draughts.Repositories;
 using Draughts.Repositories.Database;
@@ -37,7 +37,7 @@ namespace Draughts.Command.Seeders {
                 }
                 tran.Commit();
             });
-            _unitOfWork.WithAuthUserTransaction(tran => {
+            _unitOfWork.WithAuthTransaction(tran => {
                 if (_authUserRepository.Count() > 0) {
                     throw new InvalidOperationException("Auth user table is not empty.");
                 }
@@ -87,7 +87,7 @@ namespace Draughts.Command.Seeders {
 
             var adminAuthUser = AuthUserTestHelper.FromUserAndRoles(admin, registeredUserRole, adminRole).Build();
 
-            _unitOfWork.WithAuthUserTransaction(tran => {
+            _unitOfWork.WithAuthTransaction(tran => {
                 _roleRepository.Save(pendingRegistrationRole);
                 _roleRepository.Save(registeredUserRole);
                 _roleRepository.Save(adminRole);

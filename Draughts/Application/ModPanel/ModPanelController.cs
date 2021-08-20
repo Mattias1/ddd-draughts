@@ -4,13 +4,13 @@ using Draughts.Application.Shared;
 using Draughts.Application.Shared.Attributes;
 using Draughts.Application.Shared.ViewModels;
 using Draughts.Common;
-using Draughts.Domain.AuthUserContext.Models;
-using Draughts.Domain.AuthUserContext.Specifications;
+using Draughts.Domain.AuthContext.Models;
+using Draughts.Domain.AuthContext.Specifications;
 using Draughts.Domain.UserContext.Models;
 using Draughts.Repositories;
 using Draughts.Repositories.Transaction;
 using Microsoft.AspNetCore.Mvc;
-using static Draughts.Domain.AuthUserContext.Models.Permission;
+using static Draughts.Domain.AuthContext.Models.Permission;
 
 namespace Draughts.Application.ModPanel {
     public class ModPanelController : BaseController {
@@ -143,7 +143,7 @@ namespace Draughts.Application.ModPanel {
         }
 
         private Pagination<AdminLog> GetAdminLogs(int page, int pageSize) {
-            var adminLogs = _unitOfWork.WithAuthUserTransaction(tran => {
+            var adminLogs = _unitOfWork.WithAuthTransaction(tran => {
                 var adminLogs = _adminLogRepository.Paginate(page, pageSize, new AdminLogIdSort());
                 return tran.CommitWith(adminLogs);
             });

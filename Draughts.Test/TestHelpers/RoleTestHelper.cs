@@ -1,11 +1,11 @@
 using Draughts.Common.Utilities;
-using Draughts.Domain.AuthUserContext.Models;
+using Draughts.Domain.AuthContext.Models;
 using NodaTime;
 using NodaTime.Testing;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using static Draughts.Domain.AuthUserContext.Models.Permission;
+using static Draughts.Domain.AuthContext.Models.Permission;
 
 namespace Draughts.Test.TestHelpers {
     public class RoleTestHelper {

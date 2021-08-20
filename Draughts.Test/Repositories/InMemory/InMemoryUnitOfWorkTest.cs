@@ -1,6 +1,6 @@
 using Draughts.Common.Events;
 using Draughts.Common.Utilities;
-using Draughts.Domain.AuthUserContext.Events;
+using Draughts.Domain.AuthContext.Events;
 using Draughts.Domain.UserContext.Models;
 using Draughts.Repositories.Database;
 using Draughts.Repositories.InMemory;
@@ -23,61 +23,61 @@ namespace Draughts.Test.Repositories.InMemory {
             _fakeDomainEventHandler = new FakeDomainEventHandler();
             _unitOfWork = new InMemoryUnitOfWork(_clock, IdTestHelper.BuildFakeGenerator());
 
-            AuthUserDatabase.Get.AuthUsersTable.Clear();
-            AuthUserDatabase.Get.RolesTable.Clear();
-            AuthUserDatabase.Get.DomainEventsTable.Clear();
+            AuthDatabase.Get.AuthUsersTable.Clear();
+            AuthDatabase.Get.RolesTable.Clear();
+            AuthDatabase.Get.DomainEventsTable.Clear();
         }
 
         [Fact]
         public void DontPersistAnythingWhenNotCommitting() {
-            using (var tran = _unitOfWork.BeginTransaction(TransactionDomain.AuthUser)) {
+            using (var tran = _unitOfWork.BeginTransaction(TransactionDomain.Auth)) {
                 StoreTestRole(1);
 
                 // No commit
             }
 
-            AuthUserDatabase.Get.RolesTable.Should().BeEmpty();
+            AuthDatabase.Get.RolesTable.Should().BeEmpty();
         }
 
         [Fact]
         public void RollbackWhenThrowing() {
             try {
-                _unitOfWork.WithTransaction(TransactionDomain.AuthUser, tran => {
+                _unitOfWork.WithTransaction(TransactionDomain.Auth, tran => {
                     StoreTestRole(1);
                     int zero = 0;
                     int result = 42 / zero;
                 });
             }
             catch (DivideByZeroException) {
-                _unitOfWork.WithTransaction(TransactionDomain.AuthUser, tran => {
+                _unitOfWork.WithTransaction(TransactionDomain.Auth, tran => {
                     StoreTestRole(2);
 
                     tran.Commit();
                 });
             }
 
-            AuthUserDatabase.Get.RolesTable.Should().Contain(r => r.Id == 2);
-            AuthUserDatabase.Get.RolesTable.Should().HaveCount(1);
+            AuthDatabase.Get.RolesTable.Should().Contain(r => r.Id == 2);
+            AuthDatabase.Get.RolesTable.Should().HaveCount(1);
         }
 
         [Fact]
         public void PersistsEverythingWhenCommitting() {
-            using (var tran = _unitOfWork.BeginTransaction(TransactionDomain.AuthUser)) {
+            using (var tran = _unitOfWork.BeginTransaction(TransactionDomain.Auth)) {
                 StoreTestRole(1);
                 StoreTestRole(2);
 
                 tran.Commit();
             }
 
-            AuthUserDatabase.Get.RolesTable.Should().Contain(r => r.Id == 1);
-            AuthUserDatabase.Get.RolesTable.Should().Contain(r => r.Id == 2);
-            AuthUserDatabase.Get.RolesTable.Should().HaveCount(2);
+            AuthDatabase.Get.RolesTable.Should().Contain(r => r.Id == 1);
+            AuthDatabase.Get.RolesTable.Should().Contain(r => r.Id == 2);
+            AuthDatabase.Get.RolesTable.Should().HaveCount(2);
         }
 
         [Fact]
         public void ThrowWhenATransactionWithThisDomainIsAlreadyStarted() {
-            using (var tran = _unitOfWork.BeginTransaction(TransactionDomain.AuthUser)) {
-                Action beginTransAction = () => _unitOfWork.BeginTransaction(TransactionDomain.AuthUser);
+            using (var tran = _unitOfWork.BeginTransaction(TransactionDomain.Auth)) {
+                Action beginTransAction = () => _unitOfWork.BeginTransaction(TransactionDomain.Auth);
                 beginTransAction.Should().Throw<InvalidOperationException>();
             }
         }
@@ -93,7 +93,7 @@ namespace Draughts.Test.Repositories.InMemory {
         public void DontFireEventWhenRollbacking() {
             _unitOfWork.Register(_fakeDomainEventHandler);
 
-            _unitOfWork.WithTransaction(TransactionDomain.AuthUser, tran => {
+            _unitOfWork.WithTransaction(TransactionDomain.Auth, tran => {
                 RaiseEvent(1);
 
                 // No commit
@@ -106,7 +106,7 @@ namespace Draughts.Test.Repositories.InMemory {
         public void FireEventWhenCommitting() {
             _unitOfWork.Register(_fakeDomainEventHandler);
 
-            _unitOfWork.WithTransaction(TransactionDomain.AuthUser, tran => {
+            _unitOfWork.WithTransaction(TransactionDomain.Auth, tran => {
                 RaiseEvent(1);
 
                 tran.Commit();
@@ -120,7 +120,7 @@ namespace Draughts.Test.Repositories.InMemory {
         public void FireEventOnlyOnceWhenCommittingAndReFiringAll() {
             _unitOfWork.Register(_fakeDomainEventHandler);
 
-            _unitOfWork.WithTransaction(TransactionDomain.AuthUser, tran => {
+            _unitOfWork.WithTransaction(TransactionDomain.Auth, tran => {
                 RaiseEvent(1);
 
                 tran.Commit();
@@ -148,7 +148,7 @@ namespace Draughts.Test.Repositories.InMemory {
 
         private void StoreTestRole(long id) {
             var role = BuildTestRole(id);
-            _unitOfWork.Store(role, tran => AuthUserDatabase.Temp(tran).RolesTable);
+            _unitOfWork.Store(role, tran => AuthDatabase.Temp(tran).RolesTable);
         }
 
         private DbRole BuildTestRole(long id) {

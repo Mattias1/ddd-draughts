@@ -1,7 +1,7 @@
 using Draughts.Application.Shared;
 using Draughts.Application.Shared.ViewModels;
 using Draughts.Common.Utilities;
-using Draughts.Domain.AuthUserContext.Models;
+using Draughts.Domain.AuthContext.Models;
 using Draughts.Domain.GameContext.Models;
 using Draughts.Domain.UserContext.Models;
 using Draughts.Repositories;

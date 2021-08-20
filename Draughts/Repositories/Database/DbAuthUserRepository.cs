@@ -1,7 +1,7 @@
 using Draughts.Common.OoConcepts;
 using Draughts.Common.Utilities;
-using Draughts.Domain.AuthUserContext.Models;
-using Draughts.Domain.AuthUserContext.Specifications;
+using Draughts.Domain.AuthContext.Models;
+using Draughts.Domain.AuthContext.Specifications;
 using Draughts.Domain.UserContext.Models;
 using Draughts.Repositories.Transaction;
 using SqlQueryBuilder.Builder;
@@ -20,7 +20,7 @@ namespace Draughts.Repositories.Database {
         }
 
         protected override string TableName => "authuser";
-        protected override IInitialQueryBuilder GetBaseQuery() => _unitOfWork.Query(TransactionDomain.AuthUser);
+        protected override IInitialQueryBuilder GetBaseQuery() => _unitOfWork.Query(TransactionDomain.Auth);
         private IQueryBuilder GetAuthuserRoleQuery() => GetBaseQuery().SelectAllFrom("authuser_role");
 
         protected override IQueryBuilder ApplySpec(Specification<AuthUser> spec, IQueryBuilder builder) {

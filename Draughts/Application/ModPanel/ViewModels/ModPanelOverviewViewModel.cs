@@ -1,5 +1,5 @@
 using Draughts.Application.Shared.ViewModels;
-using Draughts.Domain.AuthUserContext.Models;
+using Draughts.Domain.AuthContext.Models;
 using Draughts.Repositories;
 using System.Collections.Generic;
 

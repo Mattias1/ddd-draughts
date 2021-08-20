@@ -1,13 +1,13 @@
 using Draughts.Common;
 using Draughts.Common.Utilities;
-using Draughts.Domain.AuthUserContext.Models;
+using Draughts.Domain.AuthContext.Models;
 using Draughts.Domain.UserContext.Models;
 using Draughts.Repositories;
 using NodaTime;
 using System;
 using System.Linq;
 
-namespace Draughts.Domain.AuthUserContext.Services {
+namespace Draughts.Domain.AuthContext.Services {
     public class UserRegistrationDomainService : IUserRegistrationDomainService {
         private readonly IClock _clock;
         private readonly IUserRoleDomainService _userRoleService;

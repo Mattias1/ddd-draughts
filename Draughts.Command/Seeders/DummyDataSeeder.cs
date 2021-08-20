@@ -1,4 +1,4 @@
-using Draughts.Domain.AuthUserContext.Models;
+using Draughts.Domain.AuthContext.Models;
 using Draughts.Domain.GameContext.Models;
 using Draughts.Domain.UserContext.Models;
 using Draughts.Repositories;
@@ -33,7 +33,7 @@ namespace Draughts.Command.Seeders {
             EnsureDatabasesContainOnlyEssentialData();
 
             var users = SeedUserDomain();
-            SeedAuthUserDomain(users);
+            SeedAuthDomain(users);
             SeedGameDomain(users);
         }
 
@@ -46,7 +46,7 @@ namespace Draughts.Command.Seeders {
                 tran.Commit();
             });
 
-            _unitOfWork.WithAuthUserTransaction(tran => {
+            _unitOfWork.WithAuthTransaction(tran => {
                 var authUsers = _authUserRepository.List();
                 if (authUsers.Count != 1 && authUsers[0].Username != "admin") {
                     throw new InvalidOperationException("Auth user table should be empty except for the admin user.");
@@ -105,8 +105,8 @@ namespace Draughts.Command.Seeders {
             return users.AsReadOnly();
         }
 
-        private void SeedAuthUserDomain(IReadOnlyList<User> users) {
-            _unitOfWork.WithAuthUserTransaction(tran => {
+        private void SeedAuthDomain(IReadOnlyList<User> users) {
+            _unitOfWork.WithAuthTransaction(tran => {
                 var roles = _roleRepository.List();
                 var pendingRegistrationRole = roles.Single(r => r.Rolename == Role.PENDING_REGISTRATION_ROLENAME);
                 var registeredUserRole = roles.Single(r => r.Rolename == Role.REGISTERED_USER_ROLENAME);

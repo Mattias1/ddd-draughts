@@ -1,4 +1,4 @@
-using Draughts.Domain.AuthUserContext.Models;
+using Draughts.Domain.AuthContext.Models;
 using Draughts.Repositories.Database;
 using Draughts.Repositories.Transaction;
 using System.Collections.Generic;
@@ -13,12 +13,12 @@ namespace Draughts.Repositories.InMemory {
         }
 
         protected override IList<AdminLog> GetBaseQuery() {
-            return AuthUserDatabase.Get.AdminLogsTable.Select(u => u.ToDomainModel()).ToList();
+            return AuthDatabase.Get.AdminLogsTable.Select(u => u.ToDomainModel()).ToList();
         }
 
         public override void Save(AdminLog entity) {
             var dbAdminLog = DbAdminLog.FromDomainModel(entity);
-            _unitOfWork.Store(dbAdminLog, tran => AuthUserDatabase.Temp(tran).AdminLogsTable);
+            _unitOfWork.Store(dbAdminLog, tran => AuthDatabase.Temp(tran).AdminLogsTable);
         }
     }
 }

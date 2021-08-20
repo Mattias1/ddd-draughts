@@ -1,6 +1,6 @@
 using Draughts.Application.Shared.Middleware;
 using Draughts.Common;
-using Draughts.Domain.AuthUserContext.Models;
+using Draughts.Domain.AuthContext.Models;
 using Flurl;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;

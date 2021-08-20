@@ -4,9 +4,9 @@ using FluentAssertions;
 using System;
 using System.Linq;
 using Xunit;
-using static Draughts.Domain.AuthUserContext.Models.Permission;
+using static Draughts.Domain.AuthContext.Models.Permission;
 
-namespace Draughts.Test.Domain.AuthUserContext {
+namespace Draughts.Test.Domain.AuthContext {
     public class RoleTest {
         [Fact]
         public void ThrowWhenRoleNameIsTooShort() {

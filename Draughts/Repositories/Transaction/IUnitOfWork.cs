@@ -6,10 +6,10 @@ using System.Collections.Generic;
 
 namespace Draughts.Repositories.Transaction {
     public interface IUnitOfWork {
-        void WithAuthUserTransaction(Action<ITransaction> function);
+        void WithAuthTransaction(Action<ITransaction> function);
         void WithGameTransaction(Action<ITransaction> function);
         void WithUserTransaction(Action<ITransaction> function);
-        T WithAuthUserTransaction<T>(Func<ITransaction, T> function);
+        T WithAuthTransaction<T>(Func<ITransaction, T> function);
         T WithGameTransaction<T>(Func<ITransaction, T> function);
         T WithUserTransaction<T>(Func<ITransaction, T> function);
 

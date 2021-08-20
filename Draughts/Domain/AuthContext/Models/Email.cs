@@ -2,7 +2,7 @@ using Draughts.Common;
 using Draughts.Common.OoConcepts;
 using System.Text.RegularExpressions;
 
-namespace Draughts.Domain.AuthUserContext.Models {
+namespace Draughts.Domain.AuthContext.Models {
     public class Email : StringValueObject<Email> {
         public const int MAX_LENGTH = 200;
 

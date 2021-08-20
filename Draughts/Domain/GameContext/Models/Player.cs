@@ -1,5 +1,5 @@
 using Draughts.Common.OoConcepts;
-using Draughts.Domain.AuthUserContext.Models;
+using Draughts.Domain.AuthContext.Models;
 using Draughts.Domain.UserContext.Models;
 using NodaTime;
 

@@ -9,7 +9,7 @@ using static Draughts.Repositories.Transaction.PairTableFunctions;
 
 namespace Draughts.Repositories.Transaction {
     public abstract class TransactionDomain : IEquatable<TransactionDomain> {
-        public static TransactionDomain AuthUser => new AuthUserTransactionDomain();
+        public static TransactionDomain Auth => new AuthTransactionDomain();
         public static TransactionDomain User => new UserTransactionDomain();
         public static TransactionDomain Game => new GameTransactionDomain();
 
@@ -33,27 +33,27 @@ namespace Draughts.Repositories.Transaction {
         public static bool operator ==(TransactionDomain? left, TransactionDomain? right) => ComparisonUtils.NullSafeEquals(left, right);
         public static bool operator !=(TransactionDomain? left, TransactionDomain? right) => ComparisonUtils.NullSafeNotEquals(left, right);
 
-        public class AuthUserTransactionDomain : TransactionDomain {
-            public const string KEY = "AuthUser";
+        public class AuthTransactionDomain : TransactionDomain {
+            public const string KEY = "Auth";
             public override string Key => KEY;
 
             public override List<DomainEvent> TempDomainEventsTable(ITransaction transaction) {
-                return AuthUserDatabase.Temp(transaction).DomainEventsTable;
+                return AuthDatabase.Temp(transaction).DomainEventsTable;
             }
 
             public override void ApplyForAllTablePairs(ITransaction tran, IPairTableFunction func) {
-                func.Apply(AuthUserDatabase.Temp(tran).RolesTable, AuthUserDatabase.Get.RolesTable);
-                func.Apply(AuthUserDatabase.Temp(tran).PermissionRolesTable, AuthUserDatabase.Get.PermissionRolesTable);
-                func.Apply(AuthUserDatabase.Temp(tran).AuthUsersTable, AuthUserDatabase.Get.AuthUsersTable);
-                func.Apply(AuthUserDatabase.Temp(tran).AuthUserRolesTable, AuthUserDatabase.Get.AuthUserRolesTable);
-                func.Apply(AuthUserDatabase.Temp(tran).AdminLogsTable, AuthUserDatabase.Get.AdminLogsTable);
-                func.Apply(AuthUserDatabase.Temp(tran).DomainEventsTable, AuthUserDatabase.Get.DomainEventsTable);
+                func.Apply(AuthDatabase.Temp(tran).RolesTable, AuthDatabase.Get.RolesTable);
+                func.Apply(AuthDatabase.Temp(tran).PermissionRolesTable, AuthDatabase.Get.PermissionRolesTable);
+                func.Apply(AuthDatabase.Temp(tran).AuthUsersTable, AuthDatabase.Get.AuthUsersTable);
+                func.Apply(AuthDatabase.Temp(tran).AuthUserRolesTable, AuthDatabase.Get.AuthUserRolesTable);
+                func.Apply(AuthDatabase.Temp(tran).AdminLogsTable, AuthDatabase.Get.AdminLogsTable);
+                func.Apply(AuthDatabase.Temp(tran).DomainEventsTable, AuthDatabase.Get.DomainEventsTable);
             }
 
-            public override void CreateTempDatabase(ITransaction tran) => AuthUserDatabase.CreateTempDatabase(tran);
-            public override void RemoveTempDatabase(ITransaction tran) => AuthUserDatabase.RemoveTempDatabase(tran);
+            public override void CreateTempDatabase(ITransaction tran) => AuthDatabase.CreateTempDatabase(tran);
+            public override void RemoveTempDatabase(ITransaction tran) => AuthDatabase.RemoveTempDatabase(tran);
 
-            public override ISqlTransactionFlavor BeginTransaction() => DbContext.Get.BeginAuthUserTransaction();
+            public override ISqlTransactionFlavor BeginTransaction() => DbContext.Get.BeginAuthTransaction();
         }
 
         public class UserTransactionDomain : TransactionDomain {

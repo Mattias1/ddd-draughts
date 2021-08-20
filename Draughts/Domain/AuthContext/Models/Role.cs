@@ -4,7 +4,7 @@ using NodaTime;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Draughts.Domain.AuthUserContext.Models {
+namespace Draughts.Domain.AuthContext.Models {
     public class Role : Entity<Role, RoleId> {
         public const string ADMIN_ROLENAME = "Admin";
         public const string PENDING_REGISTRATION_ROLENAME = "Pending registration";

@@ -1,9 +1,9 @@
 using Draughts.Common;
 using Draughts.Common.Utilities;
-using Draughts.Domain.AuthUserContext.Events;
-using Draughts.Domain.AuthUserContext.Models;
-using Draughts.Domain.AuthUserContext.Services;
-using Draughts.Domain.AuthUserContext.Specifications;
+using Draughts.Domain.AuthContext.Events;
+using Draughts.Domain.AuthContext.Models;
+using Draughts.Domain.AuthContext.Services;
+using Draughts.Domain.AuthContext.Specifications;
 using Draughts.Domain.UserContext.Models;
 using Draughts.Repositories;
 using Draughts.Repositories.Transaction;
@@ -33,7 +33,7 @@ namespace Draughts.Application.Auth.Services {
         }
 
         public AuthUser CreateAuthUser(string? name, string? email, string? plaintextPassword) {
-            return _unitOfWork.WithAuthUserTransaction(tran => {
+            return _unitOfWork.WithAuthTransaction(tran => {
                 var pendingRegistrationRole = _roleRepository.Find(new RolenameSpecification(Role.PENDING_REGISTRATION_ROLENAME));
 
                 ValidateUsernameAndEmailUniqueness(name, email);
@@ -68,7 +68,7 @@ namespace Draughts.Application.Auth.Services {
         }
 
         public AuthUser FinishRegistration(UserId id) {
-            return _unitOfWork.WithAuthUserTransaction(tran => {
+            return _unitOfWork.WithAuthTransaction(tran => {
                 var registeredUserRole = _roleRepository.Find(new RolenameSpecification(Role.REGISTERED_USER_ROLENAME));
                 var pendingRegistrationRole = _roleRepository.Find(new RolenameSpecification(Role.PENDING_REGISTRATION_ROLENAME));
                 var authUser = _authUserRepository.FindById(id);

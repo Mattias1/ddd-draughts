@@ -1,7 +1,7 @@
 using Draughts.Common;
 using Draughts.Common.OoConcepts;
 
-namespace Draughts.Domain.AuthUserContext.Models {
+namespace Draughts.Domain.AuthContext.Models {
     public class AdminLogId : IdValueObject<AdminLogId> {
         public override long Id { get; }
 

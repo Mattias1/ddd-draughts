@@ -6,7 +6,7 @@ using Draughts.Common;
 using Draughts.Domain.GameContext.Models;
 using Draughts.Repositories.Transaction;
 using Microsoft.AspNetCore.Mvc;
-using static Draughts.Domain.AuthUserContext.Models.Permission;
+using static Draughts.Domain.AuthContext.Models.Permission;
 
 namespace Draughts.Application.PlayGame {
     public class PlayGameController : BaseController {

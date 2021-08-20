@@ -1,10 +1,10 @@
 using Draughts.Common.OoConcepts;
-using Draughts.Domain.AuthUserContext.Models;
+using Draughts.Domain.AuthContext.Models;
 using SqlQueryBuilder.Builder;
 using System;
 using System.Linq.Expressions;
 
-namespace Draughts.Domain.AuthUserContext.Specifications {
+namespace Draughts.Domain.AuthContext.Specifications {
     public class UsernameSpecification : Specification<AuthUser> {
         private readonly string? _username;
 
