@@ -64,7 +64,13 @@ namespace Draughts.Repositories.InMemory {
             var now = SystemClock.Instance.UtcNow();
             UsersTable.Add(new DbUser {
                 Id = id, Username = name, Rating = rating, Rank = rank.Name,
-                GamesPlayed = gamesPlayed, CreatedAt = now
+                TotalPlayed = gamesPlayed, TotalWon = gamesPlayed, TotalTied = 0, TotalLost = 0,
+                InternationalPlayed = gamesPlayed, InternationalWon = gamesPlayed,
+                InternationalTied = 0, InternationalLost = 0,
+                EnglishAmericanPlayed = gamesPlayed, EnglishAmericanWon = gamesPlayed,
+                EnglishAmericanTied = 0, EnglishAmericanLost = 0,
+                OtherPlayed = gamesPlayed, OtherWon = gamesPlayed, OtherTied = 0, OtherLost = 0,
+                CreatedAt = now
             });
         }
 

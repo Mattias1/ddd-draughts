@@ -58,7 +58,7 @@ namespace Draughts.Application.Auth.Services {
 
         public User CreateUser(UserId userId, Username username) {
             return _unitOfWork.WithTransaction(TransactionDomain.User, tran => {
-                var user = new User(userId, username, Rating.StartRating, Rank.Ranks.Private, 0, _clock.UtcNow());
+                var user = User.BuildNew(userId, username, _clock.UtcNow());
                 _userRepository.Save(user);
 
                 _unitOfWork.Raise(UserCreated.Factory(user));

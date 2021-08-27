@@ -10,12 +10,13 @@ namespace Draughts.Test.TestHelpers {
         private static readonly ZonedDateTime Feb29 = FakeClock.FromUtc(2020, 02, 29).UtcNow();
 
         public static UserBuilder User(string name = "user") {
+            var userId = new UserId(IdTestHelper.NextForUser());
             return new UserBuilder()
-                .WithId(IdTestHelper.NextForUser())
+                .WithId(userId)
                 .WithUsername(name)
                 .WithRating(Rating.StartRating)
                 .WithRank(Rank.Ranks.Private)
-                .WithGamesPlayed(0)
+                .WithUserStatistics(UserStatistics.BuildNew(userId))
                 .WithCreatedAt(Feb29);
         }
 
@@ -25,7 +26,7 @@ namespace Draughts.Test.TestHelpers {
             private Username? _username;
             private Rating? _rating;
             private Rank? _rank;
-            private int _gamesPlayed;
+            private UserStatistics? _userStatistics;
             private ZonedDateTime? _createdAt;
 
             public UserBuilder WithId(long id) => WithId(new UserId(id));
@@ -51,8 +52,8 @@ namespace Draughts.Test.TestHelpers {
                 return this;
             }
 
-            public UserBuilder WithGamesPlayed(int gamesPlayed) {
-                _gamesPlayed = gamesPlayed;
+            public UserBuilder WithUserStatistics(UserStatistics userStatistics) {
+                _userStatistics = userStatistics;
                 return this;
             }
 
@@ -74,11 +75,14 @@ namespace Draughts.Test.TestHelpers {
                 if (_rank is null) {
                     throw new InvalidOperationException("Rank is not nullable");
                 }
+                if (_userStatistics is null) {
+                    throw new InvalidOperationException("UserStatistics is not nullable");
+                }
                 if (_createdAt is null) {
                     throw new InvalidOperationException("CreatedAt is not nullable");
                 }
 
-                return new User(_id, _username, _rating, _rank, _gamesPlayed, _createdAt.Value);
+                return new User(_id, _username, _rating, _rank, _userStatistics, _createdAt.Value);
             }
         }
     }

@@ -14,18 +14,40 @@ namespace Draughts.Repositories.Database {
         public string Username { get; set; }
         public int Rating { get; set; }
         public string Rank { get; set; }
-        public int GamesPlayed { get; set; }
         public ZonedDateTime CreatedAt { get; set; }
+        public int TotalPlayed { get; set; }
+        public int TotalWon { get; set; }
+        public int TotalTied { get; set; }
+        public int TotalLost { get; set; }
+        public int InternationalPlayed { get; set; }
+        public int InternationalWon { get; set; }
+        public int InternationalTied { get; set; }
+        public int InternationalLost { get; set; }
+        public int EnglishAmericanPlayed { get; set; }
+        public int EnglishAmericanWon { get; set; }
+        public int EnglishAmericanTied { get; set; }
+        public int EnglishAmericanLost { get; set; }
+        public int OtherPlayed { get; set; }
+        public int OtherWon { get; set; }
+        public int OtherTied { get; set; }
+        public int OtherLost { get; set; }
 
         public bool Equals(DbUser? other) => Id.Equals(other?.Id);
 
         public User ToDomainModel() {
+            var userId = new UserId(Id);
             return new User(
-                new UserId(Id),
+                userId,
                 new Username(Username),
                 new Rating(Rating),
                 Ranks.All.Single(r => r.Name == Rank),
-                GamesPlayed,
+                new UserStatistics(
+                    userId,
+                    new GamesTally(TotalPlayed, TotalWon, TotalTied, TotalLost),
+                    new GamesTally(InternationalPlayed, InternationalWon, InternationalTied, InternationalLost),
+                    new GamesTally(EnglishAmericanPlayed, EnglishAmericanWon, EnglishAmericanTied, EnglishAmericanLost),
+                    new GamesTally(OtherPlayed, OtherWon, OtherTied, OtherLost)
+                ),
                 CreatedAt
             );
         }
@@ -36,7 +58,22 @@ namespace Draughts.Repositories.Database {
                 Username = entity.Username,
                 Rating = entity.Rating,
                 Rank = entity.Rank.Name,
-                GamesPlayed = entity.GamesPlayed,
+                TotalPlayed  = entity.Statistics.TotalTally.Played,
+                TotalWon = entity.Statistics.TotalTally.Won,
+                TotalTied = entity.Statistics.TotalTally.Tied,
+                TotalLost = entity.Statistics.TotalTally.Lost,
+                InternationalPlayed = entity.Statistics.InternationalTally.Played,
+                InternationalWon = entity.Statistics.InternationalTally.Won,
+                InternationalTied = entity.Statistics.InternationalTally.Tied,
+                InternationalLost = entity.Statistics.InternationalTally.Lost,
+                EnglishAmericanPlayed = entity.Statistics.EnglishAmericanTally.Played,
+                EnglishAmericanWon = entity.Statistics.EnglishAmericanTally.Won,
+                EnglishAmericanTied = entity.Statistics.EnglishAmericanTally.Tied,
+                EnglishAmericanLost = entity.Statistics.EnglishAmericanTally.Lost,
+                OtherPlayed = entity.Statistics.OtherTally.Played,
+                OtherWon = entity.Statistics.OtherTally.Won,
+                OtherTied = entity.Statistics.OtherTally.Tied,
+                OtherLost = entity.Statistics.OtherTally.Lost,
                 CreatedAt = entity.CreatedAt
             };
         }
