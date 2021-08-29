@@ -13,9 +13,9 @@ namespace Draughts.Application.Shared.ViewModels {
     }
 
     public class UserViewModel : BasicUserViewModel {
-        public Rating Rating { get; private set; }
-        public Rank Rank { get; private set; }
-        public UserStatistics Statistics { get; private set; }
+        public Rating Rating { get; }
+        public Rank Rank { get; }
+        public UserStatistics Statistics { get; }
 
         public UserViewModel(User user) : base(user.Id, user.Username) {
             Rating = user.Rating;
