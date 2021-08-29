@@ -42,6 +42,7 @@ namespace Draughts.Common {
         private static void ConfigureEventHandlers(IServiceCollection services) {
             services.AddSingleton<SynchronizePendingUserEventHandler>();
             services.AddSingleton<FinishUserRegistrationEventHandler>();
+            services.AddSingleton<FinishedGameEventHandler>();
             services.AddSingleton<ModPanelRoleEventHandler>();
         }
 
@@ -93,6 +94,7 @@ namespace Draughts.Common {
 
             unitOfWork.Register(serviceProvider.GetRequiredService<SynchronizePendingUserEventHandler>());
             unitOfWork.Register(serviceProvider.GetRequiredService<FinishUserRegistrationEventHandler>());
+            unitOfWork.Register(serviceProvider.GetRequiredService<FinishedGameEventHandler>());
             unitOfWork.Register(serviceProvider.GetRequiredService<ModPanelRoleEventHandler>());
         }
     }

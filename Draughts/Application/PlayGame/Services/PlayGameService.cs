@@ -1,4 +1,5 @@
 using Draughts.Common;
+using Draughts.Domain.AuthContext.Events;
 using Draughts.Domain.GameContext.Models;
 using Draughts.Domain.GameContext.Services;
 using Draughts.Domain.UserContext.Models;
@@ -27,6 +28,10 @@ namespace Draughts.Application.PlayGame.Services {
 
                 _gameRepository.Save(game);
                 _gameStateRepository.Save(gameState);
+
+                if (game.IsFinished) {
+                    _unitOfWork.Raise(GameFinished.Factory(game));
+                }
 
                 tran.Commit();
             });

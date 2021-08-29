@@ -5,6 +5,7 @@ using System.Collections.Generic;
 
 namespace Draughts.Domain.GameContext.Models {
     public class GameSettings : ValueObject<GameSettings> {
+        public enum GameSettingsPreset { International, EnglishAmerican, Mini, Other };
         public enum DraughtsCaptureConstraints { MaximumPieces, AnyFinishedSequence };
 
         public int BoardSize { get; }
@@ -40,6 +41,13 @@ namespace Draughts.Domain.GameContext.Models {
                 : this == EnglishAmerican ? "English draughts"
                 : this == Mini ? "Mini 6x6"
                 : $"Custom {BoardSize}x{BoardSize}";
+        }
+
+        public GameSettingsPreset PresetEnum {
+            get => this == International ? GameSettingsPreset.International
+                : this == EnglishAmerican ? GameSettingsPreset.EnglishAmerican
+                : this == Mini ? GameSettingsPreset.Mini
+                : GameSettingsPreset.Other;
         }
 
         protected override IEnumerable<object> GetEqualityComponents() {
