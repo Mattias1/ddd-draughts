@@ -22,8 +22,7 @@ namespace Draughts.Application.Users {
         [HttpGet("/user/{userId:long}"), GuestRoute]
         public IActionResult Userprofile(long userId) {
             var user = _unitOfWork.WithUserTransaction(tran => {
-                var user = _userRepository.FindByIdOrNull(new UserId(userId));
-                return tran.CommitWith(user);
+                return _userRepository.FindByIdOrNull(new UserId(userId));
             });
 
             if (user is null) {
@@ -36,8 +35,7 @@ namespace Draughts.Application.Users {
         [HttpGet("/user/list"), GuestRoute]
         public IActionResult Userlist(int page = 1) {
             var users = _unitOfWork.WithUserTransaction(tran => {
-                var users = _userRepository.Paginate(page, PAGE_SIZE, new RankSort());
-                return tran.CommitWith(users);
+                return _userRepository.Paginate(page, PAGE_SIZE, new RankSort());
             });
 
             return View(new UserlistViewModel(users));

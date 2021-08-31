@@ -61,8 +61,6 @@ namespace Draughts.IntegrationTest.EndToEnd.Base {
 
                 createdGame.Players[0].Username.Should().Be(new Username("TestPlayerBlack"));
                 createdGame.Players[1].Username.Should().Be(new Username("TestPlayerWhite"));
-
-                tran.Commit();
             });
         }
     }

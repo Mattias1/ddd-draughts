@@ -45,7 +45,7 @@ namespace Draughts.Application.Auth.Services {
 
                 _unitOfWork.Raise(AuthUserCreated.Factory(authUser));
 
-                return tran.CommitWith(authUser);
+                return authUser;
             });
         }
 
@@ -63,7 +63,7 @@ namespace Draughts.Application.Auth.Services {
 
                 _unitOfWork.Raise(UserCreated.Factory(user));
 
-                return tran.CommitWith(user);
+                return user;
             });
         }
 
@@ -77,7 +77,7 @@ namespace Draughts.Application.Auth.Services {
 
                 _authUserRepository.Save(authUser);
 
-                return tran.CommitWith(authUser);
+                return authUser;
             });
         }
     }

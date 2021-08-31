@@ -29,15 +29,13 @@ namespace Draughts.Application.ModPanel.Services {
 
         public Role GetRole(RoleId roleId) {
             return _unitOfWork.WithAuthTransaction(tran => {
-                var role = FindRole(roleId);
-                return tran.CommitWith(role);
+                return FindRole(roleId);
             });
         }
 
         public IReadOnlyList<Role> GetRoles() {
             return _unitOfWork.WithAuthTransaction(tran => {
-                var roles = _roleRepository.List();
-                return tran.CommitWith(roles);
+                return _roleRepository.List();
             });
         }
 
@@ -51,7 +49,7 @@ namespace Draughts.Application.ModPanel.Services {
 
                 _unitOfWork.Raise(RoleCreated.Factory(role, responsibleUserId));
 
-                return tran.CommitWith(role);
+                return role;
             });
         }
 
@@ -63,8 +61,6 @@ namespace Draughts.Application.ModPanel.Services {
                 _roleRepository.Save(role);
 
                 _unitOfWork.Raise(RoleEdited.Factory(role, responsibleUserId));
-
-                tran.Commit();
             });
         }
 
@@ -79,8 +75,6 @@ namespace Draughts.Application.ModPanel.Services {
                 _roleRepository.Delete(roleId);
 
                 _unitOfWork.Raise(RoleDeleted.Factory(role, responsibleUserId));
-
-                tran.Commit();
             });
         }
 

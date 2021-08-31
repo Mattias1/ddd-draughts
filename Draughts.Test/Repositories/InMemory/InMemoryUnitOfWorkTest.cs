@@ -51,8 +51,6 @@ namespace Draughts.Test.Repositories.InMemory {
             catch (DivideByZeroException) {
                 _unitOfWork.WithTransaction(TransactionDomain.Auth, tran => {
                     StoreTestRole(2);
-
-                    tran.Commit();
                 });
             }
 
@@ -96,7 +94,7 @@ namespace Draughts.Test.Repositories.InMemory {
             _unitOfWork.WithTransaction(TransactionDomain.Auth, tran => {
                 RaiseEvent(1);
 
-                // No commit
+                tran.Rollback();
             });
 
             _fakeDomainEventHandler.HandledEvents.Should().BeEmpty();
@@ -108,8 +106,6 @@ namespace Draughts.Test.Repositories.InMemory {
 
             _unitOfWork.WithTransaction(TransactionDomain.Auth, tran => {
                 RaiseEvent(1);
-
-                tran.Commit();
             });
 
             _fakeDomainEventHandler.HandledEvents.Should().Contain(evt => evt.Id == 1);
@@ -122,8 +118,6 @@ namespace Draughts.Test.Repositories.InMemory {
 
             _unitOfWork.WithTransaction(TransactionDomain.Auth, tran => {
                 RaiseEvent(1);
-
-                tran.Commit();
             });
             _unitOfWork.FireAll();
 

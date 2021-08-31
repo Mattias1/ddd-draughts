@@ -25,8 +25,7 @@ namespace Draughts.Application {
         [HttpGet]
         public IActionResult Pending(int page = 1) {
             var games = _unitOfWork.WithGameTransaction(tran => {
-                var games = MyGameList(page, new PendingGameSpecification());
-                return tran.CommitWith(games);
+                return MyGameList(page, new PendingGameSpecification());
             });
             return View(new GamelistAndMenuViewModel(games, BuildMenu()));
         }
@@ -34,8 +33,7 @@ namespace Draughts.Application {
         [HttpGet]
         public IActionResult Active(int page = 1) {
             var games = _unitOfWork.WithGameTransaction(tran => {
-                var games = MyGameList(page, new ActiveGameSpecification());
-                return tran.CommitWith(games);
+                return MyGameList(page, new ActiveGameSpecification());
             });
             return View(new GamelistAndMenuViewModel(games, BuildMenu()));
         }
@@ -43,8 +41,7 @@ namespace Draughts.Application {
         [HttpGet]
         public IActionResult Finished(int page = 1) {
             var games = _unitOfWork.WithGameTransaction(tran => {
-                var games = MyGameList(page, new FinishedGameSpecification());
-                return tran.CommitWith(games);
+                return MyGameList(page, new FinishedGameSpecification());
             });
             return View(new GamelistAndMenuViewModel(games, BuildMenu()));
         }

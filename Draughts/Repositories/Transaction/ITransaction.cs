@@ -13,7 +13,6 @@ namespace Draughts.Repositories.Transaction {
         event TransactionEventHandler? OnClosed;
 
         void Commit();
-        T CommitWith<T>(T result);
         void Rollback();
         void Start();
     }

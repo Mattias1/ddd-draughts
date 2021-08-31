@@ -20,8 +20,6 @@ namespace Draughts.Application.Auth {
                     user.UpdateStatisticsForFinishedGame(evt.SettingsPreset, evt.Victor);
                     _userRepository.Save(user);
                 }
-
-                tran.Commit();
             });
         }
     }

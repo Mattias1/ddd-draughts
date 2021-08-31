@@ -35,7 +35,6 @@ namespace Draughts.Command.Seeders {
                 if (_userRepository.Count() > 0) {
                     throw new InvalidOperationException("User table is not empty.");
                 }
-                tran.Commit();
             });
             _unitOfWork.WithAuthTransaction(tran => {
                 if (_authUserRepository.Count() > 0) {
@@ -44,7 +43,6 @@ namespace Draughts.Command.Seeders {
                 if (_roleRepository.Count() > 0) {
                     throw new InvalidOperationException("Role table is not empty.");
                 }
-                tran.Commit();
             });
             using (var tranFlavor = DbContext.Get.BeginMiscTransaction()) {
                 if (DbContext.Get.Query(tranFlavor).Select().CountAll().From("id_generation").SingleLong() != 0) {
@@ -73,8 +71,6 @@ namespace Draughts.Command.Seeders {
 
             _unitOfWork.WithUserTransaction(tran => {
                 _userRepository.Save(adminUser);
-
-                tran.Commit();
             });
 
             return adminUser;
@@ -93,8 +89,6 @@ namespace Draughts.Command.Seeders {
                 _roleRepository.Save(adminRole);
 
                 _authUserRepository.Save(adminAuthUser);
-
-                tran.Commit();
             });
         }
     }

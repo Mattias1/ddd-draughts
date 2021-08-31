@@ -38,7 +38,7 @@ namespace Draughts.Application.Auth {
                     var jwt = _authService.GenerateJwt(request!.Name, request.Password);
                     var permissions = _authService.PermissionsForJwt(jwt);
 
-                    return tran.CommitWith((jwt, permissions));
+                    return (jwt, permissions);
                 });
                 AuthContext authContext = AuthContext.AttachToHttpContext(jwt, permissions, HttpContext);
 

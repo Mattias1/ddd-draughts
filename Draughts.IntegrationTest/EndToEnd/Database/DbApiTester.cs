@@ -35,8 +35,7 @@ namespace Draughts.IntegrationTest.EndToEnd.Database {
         public override string LoginAsTestPlayerWhite() => LoginAs("TestPlayerWhite");
         private string LoginAs(string username) {
             var authUser = UnitOfWork.WithAuthTransaction(tran => {
-                var authUser = AuthUserRepository.FindByName(username);
-                return tran.CommitWith(authUser);
+                return AuthUserRepository.FindByName(username);
             });
             return LoginAs(authUser);
         }

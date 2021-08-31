@@ -61,8 +61,6 @@ namespace Draughts.IntegrationTest.EndToEnd.Base {
         public void AssertUserIsCreated() {
             ApiTester.UnitOfWork.WithAuthTransaction(tran => {
                 ApiTester.AuthUserRepository.Count(new UsernameSpecification(CreatedUsername)).Should().Be(1);
-
-                tran.Commit();
             });
         }
     }
