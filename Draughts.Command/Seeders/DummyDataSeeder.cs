@@ -43,7 +43,6 @@ namespace Draughts.Command.Seeders {
                 if (users.Count != 1 && users[0].Username != "admin") {
                     throw new InvalidOperationException("User table should be empty except for the admin user.");
                 }
-                tran.Commit();
             });
 
             _unitOfWork.WithAuthTransaction(tran => {
@@ -54,7 +53,6 @@ namespace Draughts.Command.Seeders {
                 if (_roleRepository.Count() > 3) {
                     throw new InvalidOperationException("Role table contains more roles than expected.");
                 }
-                tran.Commit();
             });
 
             _unitOfWork.WithGameTransaction(tran => {
@@ -64,7 +62,6 @@ namespace Draughts.Command.Seeders {
                 if (_gameStateRepository.Count() > 0) {
                     throw new InvalidOperationException("Game state table is not empty.");
                 }
-                tran.Commit();
             });
         }
 
@@ -98,8 +95,6 @@ namespace Draughts.Command.Seeders {
                 foreach (var u in users) {
                     _userRepository.Save(u);
                 }
-
-                tran.Commit();
             });
 
             return users.AsReadOnly();
@@ -121,8 +116,6 @@ namespace Draughts.Command.Seeders {
 
                     _authUserRepository.Save(authUserBuilder.Build());
                 }
-
-                tran.Commit();
             });
         }
 
@@ -146,8 +139,6 @@ namespace Draughts.Command.Seeders {
                 var player4 = PlayerTestHelper.FromUser(mathy).Build();
                 var game4 = GameTestHelper.PendingGame(GameSettings.Mini, player4).Build();
                 SaveWithInitialGameState(game4);
-
-                tran.Commit();
             });
         }
 

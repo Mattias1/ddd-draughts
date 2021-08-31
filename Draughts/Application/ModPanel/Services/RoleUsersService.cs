@@ -32,7 +32,7 @@ namespace Draughts.Application.ModPanel.Services {
             return _unitOfWork.WithAuthTransaction(tran => {
                 var role = FindRole(roleId);
                 var authUsers = _authUserRepository.List(new UsersWithRoleSpecification(roleId));
-                return tran.CommitWith((role, authUsers));
+                return (role, authUsers);
             });
         }
 
@@ -48,8 +48,6 @@ namespace Draughts.Application.ModPanel.Services {
                 _authUserRepository.Save(authUser);
 
                 _unitOfWork.Raise(UserGainedRole.Factory(role, authUser, responsibleUserId));
-
-                tran.Commit();
             });
         }
 
@@ -65,8 +63,6 @@ namespace Draughts.Application.ModPanel.Services {
                 _authUserRepository.Save(authUser);
 
                 _unitOfWork.Raise(UserLostRole.Factory(role, authUser, responsibleUserId));
-
-                tran.Commit();
             });
         }
 

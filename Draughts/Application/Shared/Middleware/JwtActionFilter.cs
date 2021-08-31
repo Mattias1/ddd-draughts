@@ -39,8 +39,7 @@ namespace Draughts.Application.Shared.Middleware {
             }
 
             var userPermissions = _unitOfWork.WithAuthTransaction(tran => {
-                var permissions = _authService.PermissionsForJwt(jwt!);
-                return tran.CommitWith(permissions);
+                return _authService.PermissionsForJwt(jwt!);
             });
             AuthContext.AttachToHttpContext(jwt!, userPermissions, context.HttpContext);
 

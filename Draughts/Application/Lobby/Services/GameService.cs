@@ -30,8 +30,7 @@ namespace Draughts.Application.Lobby.Services {
 
         public Game CreateGame(UserId userId, GameSettings gameSettings, Color joinColor) {
             var user = _unitOfWork.WithUserTransaction(tran => {
-                var user = _userRepository.FindById(userId);
-                return tran.CommitWith(user);
+                return _userRepository.FindById(userId);
             });
 
             return _unitOfWork.WithGameTransaction(tran => {
@@ -42,14 +41,13 @@ namespace Draughts.Application.Lobby.Services {
                 _gameRepository.Save(game);
                 _gameStateRepository.Save(gameState);
 
-                return tran.CommitWith(game);
+                return game;
             });
         }
 
         public void JoinGame(UserId userId, GameId gameId, Color? color) {
             var user = _unitOfWork.WithUserTransaction(tran => {
-                var user = _userRepository.FindById(userId);
-                return tran.CommitWith(user);
+                return _userRepository.FindById(userId);
             });
 
             _unitOfWork.WithGameTransaction(tran => {
@@ -65,8 +63,6 @@ namespace Draughts.Application.Lobby.Services {
                 game.JoinGame(player, player.CreatedAt);
 
                 _gameRepository.Save(game);
-
-                tran.Commit();
             });
         }
 

@@ -25,8 +25,7 @@ namespace Draughts.Application.Lobby {
         [HttpGet("/lobby"), GuestRoute]
         public IActionResult Lobby() {
             var pendingGames = _unitOfWork.WithGameTransaction(tran => {
-                var games = _gameRepository.List(new PendingGameSpecification());
-                return tran.CommitWith(games);
+                return _gameRepository.List(new PendingGameSpecification());
             });
             return View(new GamelistViewModel(pendingGames));
         }
@@ -34,8 +33,7 @@ namespace Draughts.Application.Lobby {
         [HttpGet("/lobby/spectate"), GuestRoute]
         public IActionResult Spectate() {
             var activeGames = _unitOfWork.WithGameTransaction(tran => {
-                var games = _gameRepository.List(new ActiveGameSpecification());
-                return tran.CommitWith(games);
+                return _gameRepository.List(new ActiveGameSpecification());
             });
             return View(new GamelistViewModel(activeGames));
         }

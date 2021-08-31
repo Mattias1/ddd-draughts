@@ -144,8 +144,7 @@ namespace Draughts.Application.ModPanel {
 
         private Pagination<AdminLog> GetAdminLogs(int page, int pageSize) {
             var adminLogs = _unitOfWork.WithAuthTransaction(tran => {
-                var adminLogs = _adminLogRepository.Paginate(page, pageSize, new AdminLogIdSort());
-                return tran.CommitWith(adminLogs);
+                return _adminLogRepository.Paginate(page, pageSize, new AdminLogIdSort());
             });
             return adminLogs;
         }

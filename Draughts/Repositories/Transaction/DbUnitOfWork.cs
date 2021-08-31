@@ -35,15 +35,21 @@ namespace Draughts.Repositories.Transaction {
         public T WithGameTransaction<T>(Func<ITransaction, T> function) => WithTransaction(TransactionDomain.Game, function);
         public T WithUserTransaction<T>(Func<ITransaction, T> function) => WithTransaction(TransactionDomain.User, function);
 
-
         public void WithTransaction(TransactionDomain domain, Action<ITransaction> function) {
             using (var transaction = BeginTransaction(domain)) {
                 function(transaction);
+                if (transaction.IsOpen) {
+                    transaction.Commit();
+                }
             }
         }
         public T WithTransaction<T>(TransactionDomain domain, Func<ITransaction, T> function) {
             using (var transaction = BeginTransaction(domain)) {
-                return function(transaction);
+                var result = function(transaction);
+                if (transaction.IsOpen) {
+                    transaction.Commit();
+                }
+                return result;
             }
         }
 
@@ -143,10 +149,6 @@ namespace Draughts.Repositories.Transaction {
                 OnOpened?.Invoke(this, new TransactionEventArgs(_transactionDomain));
             }
 
-            public T CommitWith<T>(T result) {
-                Commit();
-                return result;
-            }
             public void Commit() {
                 if (!IsOpen) {
                     throw new InvalidOperationException("Cannot commit the transaction because it isn't open.");

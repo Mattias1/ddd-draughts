@@ -83,8 +83,6 @@ namespace Draughts.IntegrationTest.EndToEnd.Base {
 
                 var authUser = ApiTester.AuthUserRepository.FindByName(ASSIGNED_USERNAME);
                 authUser.RoleIds.Should().Contain(role.Id);
-
-                tran.Commit();
             });
         }
     }

@@ -49,8 +49,6 @@ namespace Draughts.Application.Auth {
                 var authUser = _authUserRepository.FindById(evt.CreatedBy);
                 var adminLog = AdminLog.CreateRoleLog(_idGenerator.ReservePool(), _clock, authUser, evt.RoleId, evt.Rolename);
                 _adminLogRepository.Save(adminLog);
-
-                tran.Commit();
             });
         }
 
@@ -59,8 +57,6 @@ namespace Draughts.Application.Auth {
                 var authUser = _authUserRepository.FindById(evt.EditedBy);
                 var adminLog = AdminLog.EditRoleLog(_idGenerator.ReservePool(), _clock, authUser, evt.RoleId, evt.Rolename);
                 _adminLogRepository.Save(adminLog);
-
-                tran.Commit();
             });
         }
 
@@ -70,8 +66,6 @@ namespace Draughts.Application.Auth {
                 var adminLog = AdminLog.RoleGainedLog(_idGenerator.ReservePool(), _clock, authUser,
                     evt.RoleId, evt.Rolename, evt.UserId, evt.Username);
                 _adminLogRepository.Save(adminLog);
-
-                tran.Commit();
             });
         }
 
@@ -81,8 +75,6 @@ namespace Draughts.Application.Auth {
                 var adminLog = AdminLog.RoleLostLog(_idGenerator.ReservePool(), _clock, authUser,
                     evt.RoleId, evt.Rolename, evt.UserId, evt.Username);
                 _adminLogRepository.Save(adminLog);
-
-                tran.Commit();
             });
         }
     }

@@ -22,8 +22,7 @@ namespace Draughts.Application.PlayGame {
         public IActionResult Game(long gameId) {
             try {
                 var (game, gameState) = _unitOfWork.WithGameTransaction(tran => {
-                    var gameAndStatePair = _playGameService.FindGameAndState(new GameId(gameId));
-                    return tran.CommitWith(gameAndStatePair);
+                    return _playGameService.FindGameAndState(new GameId(gameId));
                 });
 
                 return View(new PlayGameViewModel(game, gameState));

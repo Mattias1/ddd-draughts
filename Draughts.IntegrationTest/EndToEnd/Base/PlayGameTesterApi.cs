@@ -58,8 +58,6 @@ namespace Draughts.IntegrationTest.EndToEnd.Base {
                 var whiteUser = ApiTester.UserRepository.FindByName("TestPlayerWhite");
                 blackUser.Statistics.OtherTally.Won.Should().BeGreaterThan(0);
                 whiteUser.Statistics.OtherTally.Lost.Should().BeGreaterThan(0);
-
-                tran.Commit();
             });
         }
     }

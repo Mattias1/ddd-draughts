@@ -32,8 +32,6 @@ namespace Draughts.Application.PlayGame.Services {
                 if (game.IsFinished) {
                     _unitOfWork.Raise(GameFinished.Factory(game));
                 }
-
-                tran.Commit();
             });
         }
 
