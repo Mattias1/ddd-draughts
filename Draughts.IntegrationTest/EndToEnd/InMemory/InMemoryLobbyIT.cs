@@ -24,6 +24,8 @@ namespace Draughts.IntegrationTest.EndToEnd.InMemory {
 
             _apiTester.LoginAsTestPlayerWhite();
             await _lobbyApi.PostJoinGame();
+
+            _lobbyApi.AssertGameIsStartedWithCorrectPlayers();
         }
     }
 }

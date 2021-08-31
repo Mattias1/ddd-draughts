@@ -1,5 +1,6 @@
 using Draughts.Common.Utilities;
 using Draughts.Domain.AuthContext.Models;
+using Draughts.Domain.AuthContext.Specifications;
 using FluentAssertions;
 using NodaTime;
 using System.Globalization;
@@ -9,7 +10,8 @@ using static Draughts.Application.Auth.AuthController;
 namespace Draughts.IntegrationTest.EndToEnd.Base {
     public class AuthenticationTesterApi<T> where T : BaseApiTester {
         private readonly IClock _clock;
-        public T ApiTester { get; private set; }
+        public T ApiTester { get; }
+        public Username? CreatedUsername { get; private set; }
 
         public AuthenticationTesterApi(T apiTester) {
             _clock = SystemClock.Instance;
@@ -33,6 +35,8 @@ namespace Draughts.IntegrationTest.EndToEnd.Base {
             string dateTimeString = _clock.UtcNow().ToString("yyyyMMdd-hhmmss", CultureInfo.InvariantCulture);
             string username = $"TestUserR-{dateTimeString}";
             await PostRegistration(username, $"{username}@example.com", "/?success=*");
+
+            CreatedUsername = new Username(username);
         }
 
         private async Task PostRegistration(string username, string email, string expectedRedirectLocation) {
@@ -52,6 +56,14 @@ namespace Draughts.IntegrationTest.EndToEnd.Base {
             var result = await ApiTester.PostForm("/auth/login", new LoginRequest("TestPlayerBlack", "admin"));
             result.StatusCode.Should().Be(302);
             result.RedirectLocation().Should().Be("/");
+        }
+
+        public void AssertUserIsCreated() {
+            ApiTester.UnitOfWork.WithAuthTransaction(tran => {
+                ApiTester.AuthUserRepository.Count(new UsernameSpecification(CreatedUsername)).Should().Be(1);
+
+                tran.Commit();
+            });
         }
     }
 }

@@ -26,6 +26,8 @@ namespace Draughts.IntegrationTest.EndToEnd.InMemory {
         public async Task RegisterNewUser() {
             await _authenticationApi.VisitRegisterPage();
             await _authenticationApi.PostRegistration();
+
+            _authenticationApi.AssertUserIsCreated();
         }
 
         [Fact]

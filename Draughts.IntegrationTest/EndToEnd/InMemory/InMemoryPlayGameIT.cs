@@ -69,6 +69,8 @@ namespace Draughts.IntegrationTest.EndToEnd.InMemory {
             await _gameApi.PostMove(8, 16, black);
 
             await _gameApi.ViewGamePageWithVictor("TestPlayerBlack");
+
+            _gameApi.AssertUserStatisticsAreUpdatedCorrectly();
         }
     }
 }

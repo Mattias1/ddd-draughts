@@ -7,12 +7,12 @@ using Microsoft.AspNetCore.Hosting;
 
 namespace Draughts.IntegrationTest.EndToEnd.Database {
     public class DbApiTester : BaseApiTester {
-        public IIdGenerator IdGenerator { get; }
-        public IUnitOfWork UnitOfWork { get; }
-        public IRoleRepository RoleRepository { get; }
-        public IAuthUserRepository AuthUserRepository { get; }
-        public IUserRepository UserRepository { get; }
-        public IGameRepository GameRepository { get; }
+        public override IIdGenerator IdGenerator { get; }
+        public override IUnitOfWork UnitOfWork { get; }
+        public override IRoleRepository RoleRepository { get; }
+        public override IAuthUserRepository AuthUserRepository { get; }
+        public override IUserRepository UserRepository { get; }
+        public override IGameRepository GameRepository { get; }
 
         public DbApiTester() {
             IdGenerator = HiLoIdGenerator.DbHiloGIdGenerator(1, 1, 1);
@@ -35,7 +35,7 @@ namespace Draughts.IntegrationTest.EndToEnd.Database {
         public override string LoginAsTestPlayerWhite() => LoginAs("TestPlayerWhite");
         private string LoginAs(string username) {
             var authUser = UnitOfWork.WithAuthTransaction(tran => {
-                var authUser = AuthUserRepository.Find(new UsernameSpecification(username));
+                var authUser = AuthUserRepository.FindByName(username);
                 return tran.CommitWith(authUser);
             });
             return LoginAs(authUser);
