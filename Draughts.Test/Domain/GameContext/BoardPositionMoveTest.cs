@@ -1,5 +1,6 @@
 using Draughts.Common;
 using Draughts.Domain.GameContext.Models;
+using Draughts.Test.TestHelpers;
 using FluentAssertions;
 using System;
 using Xunit;
@@ -15,7 +16,7 @@ namespace Draughts.Test.Domain.GameContext {
             // |_|.|_|.|
             // |.|_|5|_|
             var board = Board.FromString("40 00 00 05");
-            Action doMove = () => Move(board, 1, 5, out bool _);
+            Action doMove = () => board.PerformNewMove(1.AsSquare(), 5.AsSquare(), _settings, out _);
             doMove.Should().Throw<ManualValidationException>();
             board.ToLongString(" ", "").Should().Be("40 00 00 05");
         }
@@ -27,7 +28,7 @@ namespace Draughts.Test.Domain.GameContext {
             // |_|.|_|.|
             // |.|_|5|_|
             var board = Board.FromString("40 00 00 05");
-            Move(board, 1, 3, out bool canCaptureMore);
+            board.PerformNewMove(1.AsSquare(), 3.AsSquare(), _settings, out bool canCaptureMore);
             board.ToLongString(" ", "").Should().Be("00 40 00 05");
             canCaptureMore.Should().BeFalse();
         }
@@ -39,7 +40,7 @@ namespace Draughts.Test.Domain.GameContext {
             // |_|.|_|.|
             // |.|_|5|_|
             var board = Board.FromString("40 05 00 05");
-            Move(board, 1, 6, out bool canCaptureMore);
+            board.PerformNewMove(1.AsSquare(), 6.AsSquare(), _settings, out bool canCaptureMore);
             board.ToLongString(" ", "").Should().Be("00 00 04 05");
             canCaptureMore.Should().BeFalse();
         }
@@ -51,7 +52,7 @@ namespace Draughts.Test.Domain.GameContext {
             // |_|4|_|.|
             // |.|_|5|_|
             var board = Board.FromString("40 05 40 05");
-            Action doMove = () => board.PerformChainCaptureMove(new SquareId(1), new SquareId(2), _settings, out bool _);
+            Action doMove = () => board.PerformChainCaptureMove(1.AsSquare(), 2.AsSquare(), _settings, out bool _);
             doMove.Should().Throw<ManualValidationException>();
             board.ToLongString(" ", "").Should().Be("40 05 40 05");
         }
@@ -63,7 +64,7 @@ namespace Draughts.Test.Domain.GameContext {
             // |_|4|_|.|
             // |.|_|5|_|
             var board = Board.FromString("40 05 40 05");
-            Action doMove = () => board.PerformChainCaptureMove(new SquareId(1), new SquareId(3), _settings, out bool _);
+            Action doMove = () => board.PerformChainCaptureMove(1.AsSquare(), 3.AsSquare(), _settings, out bool _);
             doMove.Should().Throw<ManualValidationException>();
             board.ToLongString(" ", "").Should().Be("40 05 40 05");
         }
@@ -75,7 +76,7 @@ namespace Draughts.Test.Domain.GameContext {
             // |_|4|_|.|
             // |.|_|5|_|
             var board = Board.FromString("40 05 40 05");
-            board.PerformChainCaptureMove(new SquareId(1), new SquareId(6), _settings, out bool canCaptureMore);
+            board.PerformChainCaptureMove(1.AsSquare(), 6.AsSquare(), _settings, out bool canCaptureMore);
             board.ToLongString(" ", "").Should().Be("00 00 44 05");
             canCaptureMore.Should().BeFalse();
         }
@@ -87,7 +88,7 @@ namespace Draughts.Test.Domain.GameContext {
             // |_|4|_|.|
             // |.|_|.|_|
             var board = Board.FromString("00 00 40 00");
-            Move(board, 5, 7, out bool _);
+            board.PerformNewMove(5.AsSquare(), 7.AsSquare(), _settings, out _);
             board.ToLongString(" ", "").Should().Be("00 00 00 60");
         }
 
@@ -98,7 +99,7 @@ namespace Draughts.Test.Domain.GameContext {
             // |_|.|_|.|
             // |.|_|.|_|
             var board = Board.FromString("00 05 00 00");
-            Move(board, 4, 2, out bool _);
+            board.PerformNewMove(4.AsSquare(), 2.AsSquare(), _settings, out _);
             board.ToLongString(" ", "").Should().Be("07 00 00 00");
         }
 
@@ -109,7 +110,7 @@ namespace Draughts.Test.Domain.GameContext {
             // |_|.|_|4|
             // |.|_|.|_|
             var board = Board.FromString("00 05 04 00");
-            Move(board, 6, 1, out bool _);
+            board.PerformNewMove(6.AsSquare(), 1.AsSquare(), _settings, out _);
             board.ToLongString(" ", "").Should().Be("40 00 00 00");
         }
 
@@ -120,7 +121,7 @@ namespace Draughts.Test.Domain.GameContext {
             // |_|6|_|.|
             // |.|_|.|_|
             var board = Board.FromString("00 00 60 00");
-            Move(board, 5, 7, out bool _);
+            board.PerformNewMove(5.AsSquare(), 7.AsSquare(), _settings, out _);
             board.ToLongString(" ", "").Should().Be("00 00 00 60");
         }
 
@@ -133,13 +134,9 @@ namespace Draughts.Test.Domain.GameContext {
             // |_|.|_|.|_|.|
             // |.|_|.|_|.|_|
             var board = Board.FromString("000 044 500 000 000 000");
-            Move(board, 7, 2, out bool canCaptureMore);
+            board.PerformNewMove(7.AsSquare(), 2.AsSquare(), _settings, out bool canCaptureMore);
             board.ToLongString(" ", "").Should().Be("050 004 000 000 000 000");
             canCaptureMore.Should().BeTrue();
-        }
-
-        private void Move(Board board, int from, int to, out bool canCaptureMore) {
-            board.PerformNewMove(new SquareId(from), new SquareId(to), _settings, out canCaptureMore);
         }
     }
 }

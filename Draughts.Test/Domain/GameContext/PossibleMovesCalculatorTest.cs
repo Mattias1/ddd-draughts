@@ -1,4 +1,5 @@
 using Draughts.Domain.GameContext.Models;
+using Draughts.Test.TestHelpers;
 using FluentAssertions;
 using System.Collections.Generic;
 using System.Linq;
@@ -229,7 +230,7 @@ namespace Draughts.Test.Domain.GameContext {
             // |_|4|_|4|
             // |.|_|5|_|
             var board = Board.FromString("00054405");
-            var posisbleMoves = PossibleMoveCalculator.ForChainCaptures(board, new SquareId(5), InternationalSettings(4))
+            var posisbleMoves = PossibleMoveCalculator.ForChainCaptures(board, 5.AsSquare(), InternationalSettings(4))
                 .Calculate()
                 .Select(m => m.ToString())
                 .ToList();

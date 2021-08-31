@@ -1,5 +1,6 @@
 using Draughts.Common;
 using Draughts.Domain.GameContext.Models;
+using Draughts.Test.TestHelpers;
 using FluentAssertions;
 using System;
 using Xunit;
@@ -20,7 +21,7 @@ namespace Draughts.Test.Domain.GameContext {
             // |3|_|4|_|
             // |_|5|_|6|
             // |7|_|8|_|
-            SquareId.FromPosition(x, y, 4).Should().Be(new SquareId(n));
+            SquareId.FromPosition(x, y, 4).Should().Be(n.AsSquare());
         }
 
         [Theory]
@@ -35,7 +36,7 @@ namespace Draughts.Test.Domain.GameContext {
         [InlineData(2, 3, 14)]
         [InlineData(6, 7, 32)]
         public void CoordinateToIdOn8x8Board(int x, int y, int n) {
-            SquareId.FromPosition(x, y, 8).Should().Be(new SquareId(n));
+            SquareId.FromPosition(x, y, 8).Should().Be(n.AsSquare());
         }
 
         [Fact]
@@ -62,7 +63,7 @@ namespace Draughts.Test.Domain.GameContext {
             // |3|_|4|_|
             // |_|5|_|6|
             // |7|_|8|_|
-            new SquareId(n).ToPosition(4).Should().Be((x, y));
+            n.AsSquare().ToPosition(4).Should().Be((x, y));
         }
 
         [Theory]
@@ -77,7 +78,7 @@ namespace Draughts.Test.Domain.GameContext {
         [InlineData(14, 2, 3)]
         [InlineData(32, 6, 7)]
         public void SquareIdToCoordinateOn8x8Board(int n, int x, int y) {
-            new SquareId(n).ToPosition(8).Should().Be((x, y));
+            n.AsSquare().ToPosition(8).Should().Be((x, y));
         }
 
         [Theory]
@@ -87,7 +88,7 @@ namespace Draughts.Test.Domain.GameContext {
         [InlineData(29, null, 25, null, null)]
         public void BorderSquaresOn8x8Board(int n, int? nw, int? ne, int? se, int? sw) {
             var board = Board.InitialSetup(8);
-            var square = board[new SquareId(n)];
+            var square = board[n.AsSquare()];
 
             Square? result;
             square.TryGetBorder(Direction.NW, out result).Should().Be(nw is not null);
