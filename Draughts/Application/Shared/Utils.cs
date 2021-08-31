@@ -53,11 +53,11 @@ namespace Draughts.Application.Shared {
             return new HtmlString($"<a {Href("/game/" + id)}>game {id}</a>");
         }
 
-        public static HtmlString UserLink(PlayerViewModel player) => RawUserLink(player.UserId, player.Username);
-        public static HtmlString UserLink(BasicUserViewModel user) => RawUserLink(user.Id, user.Username);
-        public static HtmlString UserLink(UserId id, Username name) => RawUserLink(id, name);
-        public static HtmlString UserLinkWithRank(PlayerViewModel player) => RawUserLink(player.UserId, $"{player.Rank.Name} {player.Username}");
-        public static HtmlString UserLinkWithRank(UserViewModel user) => RawUserLink(user.Id, $"{user.Rank.Name} {user.Username}");
+        public static HtmlString UserLink(PlayerViewModel player) => RawUserLink(player.UserId.Value, player.Username.Value);
+        public static HtmlString UserLink(BasicUserViewModel user) => RawUserLink(user.Id.Value, user.Username.Value);
+        public static HtmlString UserLink(UserId id, Username name) => RawUserLink(id.Value, name.Value);
+        public static HtmlString UserLinkWithRank(PlayerViewModel player) => RawUserLink(player.UserId.Value, $"{player.Rank.Name} {player.Username}");
+        public static HtmlString UserLinkWithRank(UserViewModel user) => RawUserLink(user.Id.Value, $"{user.Rank.Name} {user.Username}");
         private static HtmlString RawUserLink(long id, string name) {
             return new HtmlString($"<a class=\"user-a\" {Href("/user/" + id)}>{E(name)}</a>");
         }

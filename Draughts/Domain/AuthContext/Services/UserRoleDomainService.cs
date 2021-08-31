@@ -10,7 +10,7 @@ namespace Draughts.Domain.AuthContext.Services {
         }
 
         public void RemoveRole(AuthUser authUser, Role role) {
-            if (role.Rolename == Role.ADMIN_ROLENAME && AuthUser.PROTECTED_USERS.Contains(authUser.Username)) {
+            if (role.Rolename == Role.ADMIN_ROLENAME && AuthUser.PROTECTED_USERS.Contains(authUser.Username.Value)) {
                 throw new ManualValidationException("You can't remove the admin role from protected users.");
             }
             authUser.RemoveRole(role.Id);

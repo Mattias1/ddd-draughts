@@ -51,9 +51,9 @@ namespace Draughts.Test.Common.OoConcepts {
         }
 
         public class TestId : IdValueObject<TestId> {
-            public override long Id { get; }
+            public override long Value { get; }
 
-            public TestId(long id) => Id = id;
+            public TestId(long id) => Value = id;
         }
     }
 }

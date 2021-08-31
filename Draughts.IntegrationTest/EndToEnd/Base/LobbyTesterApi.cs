@@ -49,7 +49,7 @@ namespace Draughts.IntegrationTest.EndToEnd.Base {
         }
 
         public async Task PostJoinGame() {
-            var result = await ApiTester.PostForm("/lobby/join", new GameJoinRequest(GameId!, null));
+            var result = await ApiTester.PostForm("/lobby/join", new GameJoinRequest(GameId?.Value, null));
             result.StatusCode.Should().Be(302);
             result.RedirectLocation().Should().Match($"/game/{GameId}?success=*");
         }

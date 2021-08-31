@@ -116,9 +116,9 @@ namespace Draughts.Common {
             public JwtData(AuthUser authUser, Instant expires) {
                 Aud = "Draughts";
                 Exp = expires.ToUnixTimeSeconds();
-                Usr = authUser.Id;
-                Una = authUser.Username;
-                Rol = authUser.RoleIds.Select(r => r.Id).ToArray();
+                Usr = authUser.Id.Value;
+                Una = authUser.Username.Value;
+                Rol = authUser.RoleIds.Select(r => r.Value).ToArray();
             }
         }
     }

@@ -21,7 +21,7 @@ namespace Draughts.Test.TestHelpers {
                 .WithId(user.Id)
                 .WithUsername(user.Username)
                 .WithEmail($"{user.Username}@example.com")
-                .WithPasswordHash(user.Username)
+                .WithPasswordHash(user.Username.Value)
                 .WithCreatedAt(user.CreatedAt)
                 .WithRoles(roles);
         }

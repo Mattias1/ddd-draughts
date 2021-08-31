@@ -54,11 +54,11 @@ namespace Draughts.Repositories.Database {
             var obj = DbAuthUser.FromDomainModel(entity);
             if (FindByIdOrNull(entity.Id) is null) {
                 GetBaseQuery().InsertInto(TableName).InsertFrom(obj).Execute();
-                InsertRoles(entity.Id, entity.RoleIds.Select(r => r.Id));
+                InsertRoles(entity.Id, entity.RoleIds.Select(r => r.Value));
             }
             else {
-                var oldRoleIds = QueryRoleIdsForUser(entity.Id).ToArray();
-                var newRoleIds = entity.RoleIds.Select(p => p.Id).ToArray();
+                var oldRoleIds = QueryRoleIdsForUser(entity.Id.Value).ToArray();
+                var newRoleIds = entity.RoleIds.Select(p => p.Value).ToArray();
                 var toDelete = oldRoleIds.Except(newRoleIds).ToArray();
                 var toAdd = newRoleIds.Except(oldRoleIds);
 
@@ -73,11 +73,11 @@ namespace Draughts.Repositories.Database {
             }
         }
 
-        private void InsertRoles(long userId, IEnumerable<long> roleIds) {
+        private void InsertRoles(UserId userId, IEnumerable<long> roleIds) {
             if (!roleIds.Any()) {
                 return;
             }
-            var values = BuildInsertValues(userId, roleIds);
+            var values = BuildInsertValues(userId.Value, roleIds);
             GetBaseQuery().InsertInto("authuser_role")
                 .Columns("user_id", "role_id").Values(values)
                 .Execute();

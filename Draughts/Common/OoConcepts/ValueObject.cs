@@ -18,14 +18,14 @@ namespace Draughts.Common.OoConcepts {
     }
 
     public abstract class IdValueObject<T> : ValueObject<T>, IEquatable<long?>, IComparable<T> where T : IdValueObject<T> {
-        public abstract long Id { get; }
+        public abstract long Value { get; }
 
-        public override string ToString() => Id.ToString();
+        public override string ToString() => Value.ToString();
 
-        public int CompareTo(T? other) => Id.CompareTo(other?.Id);
+        public int CompareTo(T? other) => Value.CompareTo(other?.Value);
 
         protected override IEnumerable<object> GetEqualityComponents() {
-            yield return Id;
+            yield return Value;
         }
 
         public override bool Equals(object? obj) => obj switch
@@ -34,13 +34,13 @@ namespace Draughts.Common.OoConcepts {
             long id => Equals(id),
             _ => false
         };
-        public bool Equals(IdValueObject<T>? obj) => Id == obj?.Id;
-        public bool Equals(long? id) => Id == id;
+        public bool Equals(IdValueObject<T>? obj) => Value == obj?.Value;
+        public bool Equals(long? id) => Value == id;
 
-        public override int GetHashCode() => Id.GetHashCode();
+        public override int GetHashCode() => Value.GetHashCode();
 
-        public static bool operator ==(IdValueObject<T>? left, long? right) => left?.Id == right;
-        public static bool operator !=(IdValueObject<T>? left, long? right) => left?.Id != right;
+        public static bool operator ==(IdValueObject<T>? left, long? right) => left?.Value == right;
+        public static bool operator !=(IdValueObject<T>? left, long? right) => left?.Value != right;
     }
 
     public abstract class IntValueObject<T> : ValueObject<T>, IEquatable<int?>, IComparable<T> where T : IntValueObject<T> {

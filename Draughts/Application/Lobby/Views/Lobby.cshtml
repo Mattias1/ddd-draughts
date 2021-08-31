@@ -38,7 +38,7 @@
                         @if (game.Players.Any(p => p.UserId == ViewBag.UserId)) {
                             <span class="disabled">joined</span>
                         } else {
-                            @Utils.PostLink("join", "lobby/join", ("gameId", game.Id))
+                            @Utils.PostLink("join", "lobby/join", ("gameId", game.Id.ToString()))
                         }
                     </td>
                     <td>@Utils.DateTime(@game.CreatedAt)</td>

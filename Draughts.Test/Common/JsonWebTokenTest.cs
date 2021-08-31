@@ -58,7 +58,7 @@ namespace Draughts.Test.Common {
             jwt.Should().BeNull();
         }
 
-        private static AuthUser BuildAuthUser(long id, string name, params Role[] roles) {
+        private static AuthUser BuildAuthUser(UserId id, string name, params Role[] roles) {
             return AuthUserTestHelper.User(name).WithId(id).WithRoles(roles).Build();
         }
     }

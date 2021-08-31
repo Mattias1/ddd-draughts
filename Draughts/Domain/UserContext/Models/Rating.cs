@@ -7,7 +7,5 @@ namespace Draughts.Domain.UserContext.Models {
         public override int Value { get; }
 
         public Rating(int value) => Value = value;
-
-        public static implicit operator int(Rating? rating) => rating?.Value ?? 0;
     }
 }

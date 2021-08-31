@@ -27,7 +27,7 @@ namespace Draughts.IntegrationTest.EndToEnd.Base {
         }
 
         public async Task PostJoinGame(string cookie) {
-            var result = await ApiTester.As(cookie).PostForm("/lobby/join", new GameJoinRequest(GameId!, null));
+            var result = await ApiTester.As(cookie).PostForm("/lobby/join", new GameJoinRequest(GameId?.Value, null));
             result.StatusCode.Should().Be(302);
             result.RedirectLocation().Should().Match($"/game/{GameId}?success=*");
         }
