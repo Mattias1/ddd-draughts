@@ -42,14 +42,14 @@
             <ul class="p-like">
                 @if (player1 is null) {
                     <li>@Utils.PostLink($"Join as {settings.FirstMove}", "/lobby/join",
-                        ("gameId", Model.Id), ("color", settings.FirstMove.ToString()))</li>
+                        ("gameId", Model.Id.ToString()), ("color", settings.FirstMove.ToString()))</li>
                 }
                 else {
                     <li><span id="nr@(player1.Color)"></span> @player1.Color: @Utils.UserLinkWithRank(player1)</li>
                 }
                 @if (player2 is null) {
                     <li>@Utils.PostLink($"Join as {settings.FirstMove.Other}", "/lobby/join",
-                        ("gameId", Model.Id), ("color", settings.FirstMove.Other.ToString()))</li>
+                        ("gameId", Model.Id.ToString()), ("color", settings.FirstMove.Other.ToString()))</li>
                 }
                 else {
                     <li><span id="nr@(player2.Color)"></span> @player2.Color: @Utils.UserLinkWithRank(player2)</li>

@@ -54,9 +54,9 @@ namespace Draughts.Repositories.Database {
 
         public static DbUser FromDomainModel(User entity) {
             return new DbUser {
-                Id = entity.Id,
-                Username = entity.Username,
-                Rating = entity.Rating,
+                Id = entity.Id.Value,
+                Username = entity.Username.Value,
+                Rating = entity.Rating.Value,
                 Rank = entity.Rank.Name,
                 TotalPlayed  = entity.Statistics.TotalTally.Played,
                 TotalWon = entity.Statistics.TotalTally.Won,
@@ -101,10 +101,10 @@ namespace Draughts.Repositories.Database {
 
         public static DbAuthUser FromDomainModel(AuthUser entity) {
             return new DbAuthUser {
-                Id = entity.Id,
-                Username = entity.Username,
+                Id = entity.Id.Value,
+                Username = entity.Username.Value,
                 PasswordHash = entity.PasswordHash.ToStorage(),
-                Email = entity.Email,
+                Email = entity.Email.Value,
                 CreatedAt = entity.CreatedAt
             };
         }
@@ -132,7 +132,7 @@ namespace Draughts.Repositories.Database {
 
         public static DbRole FromDomainModel(Role entity) {
             return new DbRole {
-                Id = entity.Id,
+                Id = entity.Id.Value,
                 Rolename = entity.Rolename,
                 CreatedAt = entity.CreatedAt
             };
@@ -173,11 +173,11 @@ namespace Draughts.Repositories.Database {
 
         public static DbAdminLog FromDomainModel(AdminLog entity) {
             return new DbAdminLog {
-                Id = entity.Id,
+                Id = entity.Id.Value,
                 Type = entity.Type,
                 Parameters = string.Join(',', entity.Parameters),
-                UserId = entity.UserId,
-                Username = entity.Username,
+                UserId = entity.UserId.Value,
+                Username = entity.Username.Value,
                 Permission = entity.Permission.Value,
                 CreatedAt = entity.CreatedAt
             };
@@ -241,17 +241,17 @@ namespace Draughts.Repositories.Database {
                 _ => throw new InvalidOperationException("Unknown capture constraint")
             };
             return new DbGame {
-                Id = entity.Id,
+                Id = entity.Id.Value,
                 BoardSize = entity.Settings.BoardSize,
                 FirstMoveColorIsWhite = entity.Settings.FirstMove == Color.White,
                 FlyingKings = entity.Settings.FlyingKings,
                 MenCaptureBackwards = entity.Settings.MenCaptureBackwards,
                 CaptureConstraints = captureConstraints,
-                Victor = entity.Victor?.UserId.Id,
+                Victor = entity.Victor?.UserId.Value,
                 CreatedAt = entity.CreatedAt,
                 StartedAt = entity.StartedAt,
                 FinishedAt = entity.FinishedAt,
-                TurnPlayerId = entity.Turn?.Player.Id.Id,
+                TurnPlayerId = entity.Turn?.Player.Id.Value,
                 TurnCreatedAt = entity.Turn?.CreatedAt,
                 TurnExpiresAt = entity.Turn?.ExpiresAt
             };
@@ -282,10 +282,10 @@ namespace Draughts.Repositories.Database {
 
         public static DbPlayer FromDomainModel(Player entity, GameId gameId) {
             return new DbPlayer {
-                Id = entity.Id,
-                UserId = entity.UserId,
-                GameId = gameId,
-                Username = entity.Username,
+                Id = entity.Id.Value,
+                UserId = entity.UserId.Value,
+                GameId = gameId.Value,
+                Username = entity.Username.Value,
                 Rank = entity.Rank.Name,
                 Color = entity.Color == Domain.GameContext.Models.Color.White,
                 CreatedAt = entity.CreatedAt
@@ -306,7 +306,7 @@ namespace Draughts.Repositories.Database {
 
         public static DbGameState FromDomainModel(GameState entity) {
             return new DbGameState {
-                Id = entity.Id,
+                Id = entity.Id.Value,
                 InitialGameState = entity.InitialStateStorageString()
             };
         }
@@ -325,7 +325,7 @@ namespace Draughts.Repositories.Database {
 
         public static DbMove FromDomainModel(GameState gameState, Move move, int moveIndex) {
             return new DbMove {
-                GameId = gameState.Id,
+                GameId = gameState.Id.Value,
                 Index = Convert.ToInt16(moveIndex),
                 From = Convert.ToByte(move.From.Value),
                 To = Convert.ToByte(move.To.Value),

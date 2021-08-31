@@ -29,7 +29,7 @@ namespace Draughts.Repositories.InMemory {
             var dbAuthUser = DbAuthUser.FromDomainModel(entity);
             _unitOfWork.Store(dbAuthUser, tran => AuthDatabase.Temp(tran).AuthUsersTable);
 
-            foreach (var roleId in entity.RoleIds.Select(r => r.Id)) {
+            foreach (var roleId in entity.RoleIds.Select(r => r.Value)) {
                 var dbAuthUserRole = new DbAuthUserRole {
                     UserId = dbAuthUser.Id,
                     RoleId = roleId

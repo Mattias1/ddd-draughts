@@ -29,7 +29,5 @@ namespace Draughts.Domain.AuthContext.Models {
                     + "a dash or an underscore.");
             }
         }
-
-        public static implicit operator string(Username? username) => username?.Value ?? "";
     }
 }

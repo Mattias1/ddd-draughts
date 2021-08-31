@@ -30,7 +30,7 @@ namespace Draughts.Domain.GameContext.Models {
         }
 
         public MoveResult AddMove(SquareId from, SquareId to, Color currentTurn, GameSettings settings) {
-            if (from > Board.NrOfPlayableSquares || to > Board.NrOfPlayableSquares) {
+            if (from.Value > Board.NrOfPlayableSquares || to.Value > Board.NrOfPlayableSquares) {
                 throw new ManualValidationException(ERROR_INVALID_SQUARES);
             }
             if (currentTurn != Board[from].Color) {

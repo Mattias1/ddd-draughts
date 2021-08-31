@@ -85,6 +85,7 @@ namespace Draughts.Domain.AuthContext.Models {
         }
 
         private static AdminLogId Next(IIdPool idPool) => new AdminLogId(idPool.Next());
-        private static IReadOnlyList<string> Params(params string[] parameters) => parameters.ToList().AsReadOnly();
+        private static IReadOnlyList<string> Params(params object[] parameters) => parameters
+            .Select(o => o.ToString() ?? "").ToList().AsReadOnly();
     }
 }

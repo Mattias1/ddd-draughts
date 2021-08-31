@@ -38,8 +38,8 @@ namespace Draughts.Domain.AuthContext.Models {
             ValidatePassword(plaintextPassword);
 
             byte[] passwordBytes = Encoding.UTF8.GetBytes(plaintextPassword!);
-            byte[] saltBytes = Encoding.UTF8.GetBytes(username);
-            byte[] userIdBytes = BitConverter.GetBytes(userId.Id);
+            byte[] saltBytes = Encoding.UTF8.GetBytes(username.Value);
+            byte[] userIdBytes = BitConverter.GetBytes(userId.Value);
 
             var argon2 = new Argon2id(passwordBytes) {
                 DegreeOfParallelism = 8,

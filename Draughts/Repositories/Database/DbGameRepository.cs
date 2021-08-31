@@ -68,7 +68,7 @@ namespace Draughts.Repositories.Database {
                 .ListLongs();
             foreach (var playerEntity in gameEntity.Players) {
                 var obj = DbPlayer.FromDomainModel(playerEntity, gameEntity.Id);
-                if (existingPlayerIds.Contains(playerEntity.Id)) {
+                if (existingPlayerIds.Contains(playerEntity.Id.Value)) {
                     GetBaseQuery().Update(PlayerTableName).SetWithoutIdFrom(obj).Where("id").Is(playerEntity.Id).Execute();
                 }
                 else {

@@ -45,7 +45,7 @@ namespace Draughts.Repositories.Database {
             var obj = DbRole.FromDomainModel(entity);
             if (FindByIdOrNull(entity.Id) is null) {
                 GetBaseQuery().InsertInto(TableName).InsertFrom(obj).Execute();
-                InsertPermissions(entity.Id, entity.Permissions.Select(p => p.Value));
+                InsertPermissions(entity.Id.Value, entity.Permissions.Select(p => p.Value));
             }
             else {
                 var oldPermissions = GetPermissionRoleQuery().Where("role_id").Is(entity.Id).List<DbPermissionRole>()
@@ -61,7 +61,7 @@ namespace Draughts.Repositories.Database {
                         .And("permission").In(toDelete)
                         .Execute();
                 }
-                InsertPermissions(entity.Id, toAdd);
+                InsertPermissions(entity.Id.Value, toAdd);
             }
         }
 
