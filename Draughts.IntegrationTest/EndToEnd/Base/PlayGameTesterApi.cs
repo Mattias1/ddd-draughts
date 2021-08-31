@@ -1,4 +1,5 @@
 using Draughts.Domain.GameContext.Models;
+using Draughts.Domain.UserContext.Models;
 using FluentAssertions;
 using System.Threading.Tasks;
 using static Draughts.Application.Lobby.LobbyController;
@@ -48,6 +49,18 @@ namespace Draughts.IntegrationTest.EndToEnd.Base {
         public async Task PostMove(int from, int to, string cookie) {
             var result = await ApiTester.As(cookie).PostJson($"/game/{GameId}/move", new MoveRequest(from, to));
             result.StatusCode.Should().Be(200);
+        }
+
+        // TODO: What to do here when events are handled in a different thread?
+        public void AssertUserStatisticsAreUpdatedCorrectly() {
+            ApiTester.UnitOfWork.WithUserTransaction(tran => {
+                var blackUser = ApiTester.UserRepository.FindByName("TestPlayerBlack");
+                var whiteUser = ApiTester.UserRepository.FindByName("TestPlayerWhite");
+                blackUser.Statistics.OtherTally.Won.Should().BeGreaterThan(0);
+                whiteUser.Statistics.OtherTally.Lost.Should().BeGreaterThan(0);
+
+                tran.Commit();
+            });
         }
     }
 }

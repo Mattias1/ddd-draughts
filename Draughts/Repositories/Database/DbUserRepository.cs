@@ -1,4 +1,5 @@
 using Draughts.Domain.UserContext.Models;
+using Draughts.Domain.UserContext.Specifications;
 using Draughts.Repositories.Transaction;
 using SqlQueryBuilder.Builder;
 
@@ -9,6 +10,8 @@ namespace Draughts.Repositories.Database {
         public DbUserRepository(IUnitOfWork unitOfWork) {
             _unitOfWork = unitOfWork;
         }
+
+        public User FindByName(string username) => Find(new UserUsernameSpecification(username));
 
         protected override string TableName => "user";
         protected override IInitialQueryBuilder GetBaseQuery() => _unitOfWork.Query(TransactionDomain.User);

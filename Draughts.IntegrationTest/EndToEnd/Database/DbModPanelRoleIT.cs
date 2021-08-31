@@ -25,8 +25,10 @@ namespace Draughts.IntegrationTest.EndToEnd.Database {
 
             await _modPanelApi.ViewRoleUsersPage();
             await _modPanelApi.PostAssignUserToRole();
-            await _modPanelApi.PostRemoveUserFromRole();
 
+            _modPanelApi.AssertRoleIsCorrect();
+
+            await _modPanelApi.PostRemoveUserFromRole();
             await _modPanelApi.PostDeleteRole();
         }
     }

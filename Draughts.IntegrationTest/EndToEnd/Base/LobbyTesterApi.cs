@@ -1,3 +1,4 @@
+using Draughts.Domain.AuthContext.Models;
 using Draughts.Domain.GameContext.Models;
 using FluentAssertions;
 using System.Threading.Tasks;
@@ -51,6 +52,18 @@ namespace Draughts.IntegrationTest.EndToEnd.Base {
             var result = await ApiTester.PostForm("/lobby/join", new GameJoinRequest(GameId!, null));
             result.StatusCode.Should().Be(302);
             result.RedirectLocation().Should().Match($"/game/{GameId}?success=*");
+        }
+
+        public void AssertGameIsStartedWithCorrectPlayers() {
+            ApiTester.UnitOfWork.WithGameTransaction(tran => {
+                var createdGame = ApiTester.GameRepository.FindById(GameId!);
+                createdGame.StartedAt.Should().NotBeNull();
+
+                createdGame.Players[0].Username.Should().Be(new Username("TestPlayerBlack"));
+                createdGame.Players[1].Username.Should().Be(new Username("TestPlayerWhite"));
+
+                tran.Commit();
+            });
         }
     }
 }

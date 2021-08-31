@@ -2,6 +2,8 @@ using Draughts.Application.Shared.Middleware;
 using Draughts.Common;
 using Draughts.Common.Utilities;
 using Draughts.Domain.AuthContext.Models;
+using Draughts.Repositories;
+using Draughts.Repositories.Transaction;
 using Flurl;
 using Flurl.Http;
 using Microsoft.AspNetCore.Hosting;
@@ -21,6 +23,12 @@ namespace Draughts.IntegrationTest.EndToEnd.Base {
         protected string? Cookie { get; private set; }
 
         public IClock Clock { get; }
+        public abstract IIdGenerator IdGenerator { get; }
+        public abstract IUnitOfWork UnitOfWork { get; }
+        public abstract IRoleRepository RoleRepository { get; }
+        public abstract IAuthUserRepository AuthUserRepository { get; }
+        public abstract IUserRepository UserRepository { get; }
+        public abstract IGameRepository GameRepository { get; }
 
         protected BaseApiTester() {
             Server = new TestServer(WebHostBuilder());

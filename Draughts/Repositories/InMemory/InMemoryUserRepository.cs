@@ -1,5 +1,5 @@
-using Draughts.Domain.AuthContext.Specifications;
 using Draughts.Domain.UserContext.Models;
+using Draughts.Domain.UserContext.Specifications;
 using Draughts.Repositories.Database;
 using Draughts.Repositories.Transaction;
 using System.Collections.Generic;
@@ -12,6 +12,8 @@ namespace Draughts.Repositories.InMemory {
         public InMemoryUserRepository(IUnitOfWork unitOfWork) {
             _unitOfWork = unitOfWork;
         }
+
+        public User FindByName(string username) => Find(new UserUsernameSpecification(username));
 
         protected override IList<User> GetBaseQuery() {
             return UserDatabase.Get.UsersTable.Select(u => u.ToDomainModel()).ToList();

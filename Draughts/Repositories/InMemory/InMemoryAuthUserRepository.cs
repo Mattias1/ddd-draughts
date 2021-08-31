@@ -1,4 +1,5 @@
 using Draughts.Domain.AuthContext.Models;
+using Draughts.Domain.AuthContext.Specifications;
 using Draughts.Domain.UserContext.Models;
 using Draughts.Repositories.Database;
 using Draughts.Repositories.Transaction;
@@ -14,6 +15,8 @@ namespace Draughts.Repositories.InMemory {
             _roleRepository = roleRepository;
             _unitOfWork = unitOfWork;
         }
+
+        public AuthUser FindByName(string username) => Find(new UsernameSpecification(username));
 
         protected override IList<AuthUser> GetBaseQuery() {
             var authUserRoles = AuthDatabase.Get.AuthUserRolesTable.ToLookup(ar => ar.UserId, ar => new RoleId(ar.RoleId));

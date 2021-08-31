@@ -1,5 +1,4 @@
 using Draughts.Common.OoConcepts;
-using Draughts.Common.Utilities;
 using Draughts.Domain.AuthContext.Models;
 using Draughts.Domain.AuthContext.Specifications;
 using Draughts.Domain.UserContext.Models;
@@ -18,6 +17,8 @@ namespace Draughts.Repositories.Database {
             _roleRepository = roleRepository;
             _unitOfWork = unitOfWork;
         }
+
+        public AuthUser FindByName(string username) => Find(new UsernameSpecification(username));
 
         protected override string TableName => "authuser";
         protected override IInitialQueryBuilder GetBaseQuery() => _unitOfWork.Query(TransactionDomain.Auth);

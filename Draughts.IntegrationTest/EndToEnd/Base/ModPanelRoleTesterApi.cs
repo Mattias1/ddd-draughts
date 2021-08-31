@@ -1,4 +1,5 @@
 using Draughts.Domain.AuthContext.Models;
+using Draughts.Domain.AuthContext.Specifications;
 using Draughts.Repositories.InMemory;
 using FluentAssertions;
 using System.Threading.Tasks;
@@ -6,6 +7,9 @@ using static Draughts.Application.ModPanel.ModPanelController;
 
 namespace Draughts.IntegrationTest.EndToEnd.Base {
     public class ModPanelRoleTesterApi<T> where T : BaseApiTester {
+        public const string EDITED_ROLENAME = "IT test role";
+        public const string ASSIGNED_USERNAME = "TestPlayerBlack";
+
         public T ApiTester { get; }
         public RoleId? RoleId { get; private set; }
 
@@ -41,7 +45,7 @@ namespace Draughts.IntegrationTest.EndToEnd.Base {
 
         public async Task PostEditRole() {
             var result = await ApiTester.PostForm($"/modpanel/role/{RoleId}/edit",
-                new EditRoleRequest("IT test role", new string[] { Permission.Permissions.PLAY_GAME }));
+                new EditRoleRequest(EDITED_ROLENAME, new string[] { Permission.Permissions.PLAY_GAME }));
             result.StatusCode.Should().Be(302);
             result.RedirectLocation().Should().Match("/modpanel/roles?success=*");
         }
@@ -53,7 +57,7 @@ namespace Draughts.IntegrationTest.EndToEnd.Base {
 
         public async Task PostAssignUserToRole() {
             var result = await ApiTester.PostForm($"/modpanel/role/{RoleId}/user",
-                new AssignUserToRoleRequest("TestPlayerBlack"));
+                new AssignUserToRoleRequest(ASSIGNED_USERNAME));
             result.StatusCode.Should().Be(302);
             result.RedirectLocation().Should().Match($"/modpanel/role/{RoleId}/users?success=*");
         }
@@ -69,6 +73,19 @@ namespace Draughts.IntegrationTest.EndToEnd.Base {
             var result = await ApiTester.Post($"/modpanel/role/{RoleId}/delete");
             result.StatusCode.Should().Be(302);
             result.RedirectLocation().Should().Match("/modpanel/roles?success=*");
+        }
+
+        public void AssertRoleIsCorrect() {
+            ApiTester.UnitOfWork.WithAuthTransaction(tran => {
+                var role = ApiTester.RoleRepository.FindById(RoleId!);
+                role.Rolename.Should().Be(EDITED_ROLENAME);
+                role.Permissions.Should().BeEquivalentTo(Permission.Permissions.PlayGame);
+
+                var authUser = ApiTester.AuthUserRepository.FindByName(ASSIGNED_USERNAME);
+                authUser.RoleIds.Should().Contain(role.Id);
+
+                tran.Commit();
+            });
         }
     }
 }

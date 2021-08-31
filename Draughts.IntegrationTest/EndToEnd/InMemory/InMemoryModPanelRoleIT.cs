@@ -25,6 +25,9 @@ namespace Draughts.IntegrationTest.EndToEnd.InMemory {
 
             await _modPanelApi.ViewRoleUsersPage();
             await _modPanelApi.PostAssignUserToRole();
+
+            _modPanelApi.AssertRoleIsCorrect();
+
             await _modPanelApi.PostRemoveUserFromRole();
         }
     }
