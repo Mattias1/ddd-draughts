@@ -1,4 +1,5 @@
 using Draughts.Domain.GameContext.Models;
+using Draughts.Test.TestHelpers;
 using FluentAssertions;
 using Xunit;
 
@@ -90,7 +91,7 @@ namespace Draughts.Test.Domain.GameContext {
         public void CopiedBoardDoesntModifyOriginal() {
             var board = Board.FromString("440 404 000 050 055 007");
             var copy = board.Copy();
-            copy.PerformNewMove(new SquareId(4), new SquareId(7), GameSettings.International, out bool canCaptureMore);
+            copy.PerformNewMove(4.AsSquare(), 7.AsSquare(), GameSettings.International, out bool canCaptureMore);
             board.ToLongString(" ", "").Should().Be("440 404 000 050 055 007");
             copy.ToLongString(" ", "").Should().Be("440 004 400 050 055 007");
         }

@@ -62,7 +62,7 @@ namespace Draughts.Test.Domain.GameContext {
             var gameState = GameState.FromStorage(game.Id, game.Settings, null, parsedMoves);
 
             gameState.Board.ToLongString(" ", "").Should().Be("044 400 004 000 055 540");
-            gameState.CaptureSequenceFrom.Should().Be(new SquareId(17));
+            gameState.CaptureSequenceFrom.Should().Be(17.AsSquare());
         }
     }
 }
