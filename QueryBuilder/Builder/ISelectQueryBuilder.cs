@@ -1,7 +1,7 @@
 namespace SqlQueryBuilder.Builder {
     public interface ISelectQueryBuilder : ISelectColumnsQueryBuilder, IFromQueryBuilder { }
 
-    public interface ISelectColumnsQueryBuilder : IQueryBuilderBase, IFromQueryBuilder {
+    public interface ISelectColumnsQueryBuilder : IQueryBuilderResult, IFromQueryBuilder {
         ISelectQueryBuilder ColumnAs(string column, string alias);
         ISelectQueryBuilder Column(string column);
 

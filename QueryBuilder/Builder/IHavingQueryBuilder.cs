@@ -1,7 +1,7 @@
 using static SqlQueryBuilder.Builder.QueryBuilder;
 
 namespace SqlQueryBuilder.Builder {
-    public interface IHavingQueryBuilder : IQueryBuilderBase {
+    public interface IHavingQueryBuilder : IQueryBuilderResult {
         IQueryBuilder Having(QueryFunction queryFunc);
         IQueryBuilder AndHaving(QueryFunction queryFunc);
 
