@@ -53,9 +53,9 @@ namespace SqlQueryBuilder.Test.Builder {
         }
 
         [Fact]
-        public void TestWhereNeqNull() {
+        public void TestWhereIsntRawNull() {
             string sql = Query().SelectAllFrom("user")
-                .Where("rank").Neq(null)
+                .Where("rank").Isnt(null)
                 .ToParameterizedSql();
             sql.Should().Be("select user.* from user where rank is not null");
         }
@@ -255,6 +255,14 @@ namespace SqlQueryBuilder.Test.Builder {
                 .And("is_two").Is(false)
                 .ToParameterizedSql();
             sql.Should().Be("select user.* from user where is_one = 1 and is_two = 0");
+        }
+
+        [Fact]
+        public void TestWhereInWithValues() {
+            string sql = Query().SelectAllFrom("user")
+                .Where("username").In("one", "two", "three")
+                .ToUnsafeSql();
+            sql.Should().Be("select user.* from user where username in ('one', 'two', 'three')");
         }
 
         [Fact]

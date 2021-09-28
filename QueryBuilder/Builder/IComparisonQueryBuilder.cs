@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using static SqlQueryBuilder.Builder.QueryBuilder;
 
 namespace SqlQueryBuilder.Builder {
     public interface IComparisonQueryBuilder {
@@ -6,7 +7,6 @@ namespace SqlQueryBuilder.Builder {
         IQueryBuilder Is(object? value);
         IQueryBuilder IsNull();
 
-        IQueryBuilder Neq(object? value);
         IQueryBuilder NotEq(object? value);
         IQueryBuilder Isnt(object? value);
         IQueryBuilder IsntNull();
@@ -26,8 +26,6 @@ namespace SqlQueryBuilder.Builder {
 
         IQueryBuilder EqColumn(string column);
         IQueryBuilder IsColumn(string column);
-
-        IQueryBuilder NeqColumn(string column);
         IQueryBuilder NotEqColumn(string column);
         IQueryBuilder IsntColumn(string column);
 
@@ -35,9 +33,23 @@ namespace SqlQueryBuilder.Builder {
         IQueryBuilder GtEqColumn(string column);
         IQueryBuilder LtColumn(string column);
         IQueryBuilder LtEqColumn(string column);
+
         IQueryBuilder In<T>(IEnumerable<T> enumerable);
         IQueryBuilder In(params object?[] array);
         IQueryBuilder NotIn<T>(IEnumerable<T> enumerable);
         IQueryBuilder NotIn(params object?[] array);
+
+        IQueryBuilder In(SubQueryFunc queryFunc);
+        IQueryBuilder NotIn(SubQueryFunc queryFunc);
+
+        IQueryBuilder Eq(SubQueryFunc? queryFunc);
+        IQueryBuilder Is(SubQueryFunc? queryFunc);
+        IQueryBuilder NotEq(SubQueryFunc? queryFunc);
+        IQueryBuilder Isnt(SubQueryFunc? queryFunc);
+
+        IQueryBuilder Gt(SubQueryFunc queryFunc);
+        IQueryBuilder GtEq(SubQueryFunc queryFunc);
+        IQueryBuilder Lt(SubQueryFunc queryFunc);
+        IQueryBuilder LtEq(SubQueryFunc queryFunc);
     }
 }

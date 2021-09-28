@@ -5,6 +5,7 @@ using System;
 using System.Linq;
 using System.Text;
 using SqlQueryBuilder.Exceptions;
+using SqlQueryBuilder.Builder;
 
 namespace SqlQueryBuilder.Model {
     internal class Query {
@@ -180,6 +181,15 @@ namespace SqlQueryBuilder.Model {
 
             if (parameterize) {
                 Parameters.Add(key, parameter);
+            }
+        }
+
+        public void AppendSubquery(QueryBuilder queryBuilder) {
+            var (resultString, parameters) = queryBuilder.ToParameterizedSqlWithParams();
+            Builder.Append(resultString);
+            foreach (var p in parameters) {
+                string key = $"@{Parameters.Count}";
+                Parameters.Add(key, p.Value);
             }
         }
 

@@ -7,7 +7,10 @@ using System.Linq;
 using System.Threading.Tasks;
 
 namespace SqlQueryBuilder.Builder {
-    public partial class QueryBuilder : IQueryBuilderResult {
+    public partial class QueryBuilder : IQueryBuilderBase {
+        public delegate IQueryBuilder SubQueryFunc(IInitialQueryBuilder builder);
+        public delegate IQueryBuilder SubWhereFunc(IQueryBuilder builder);
+
         private readonly QueryBuilderOptions _options;
         private readonly Query _query;
         private bool _explicitlyWithoutWhere;
@@ -88,6 +91,11 @@ namespace SqlQueryBuilder.Builder {
                 }
             }
             return query;
+        }
+
+        internal (string sql, Dictionary<string, object?> parameters) ToParameterizedSqlWithParams() {
+            string sql = ToParameterizedSql();
+            return (sql, _query.Parameters);
         }
 
         public string ToParameterizedSql() {

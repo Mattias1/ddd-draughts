@@ -10,7 +10,6 @@ namespace SqlQueryBuilder.Builder {
         public IQueryBuilder Is(object? value) => value is null ? IsNull() : OperatorParameter("=", value);
         public IQueryBuilder IsNull() => OperatorParameter("is", null);
 
-        public IQueryBuilder Neq(object? value) => Isnt(value);
         public IQueryBuilder NotEq(object? value) => Isnt(value);
         public IQueryBuilder Isnt(object? value) => value is null ? IsNotNull() : OperatorParameter("!=", value);
         public IQueryBuilder IsntNull() => IsNotNull();
@@ -40,7 +39,6 @@ namespace SqlQueryBuilder.Builder {
         public IQueryBuilder EqColumn(string column) => IsColumn(column);
         public IQueryBuilder IsColumn(string column) => OperatorColumn("=", column);
 
-        public IQueryBuilder NeqColumn(string column) => IsntColumn(column);
         public IQueryBuilder NotEqColumn(string column) => IsntColumn(column);
         public IQueryBuilder IsntColumn(string column) => OperatorColumn("!=", column);
 
@@ -88,6 +86,30 @@ namespace SqlQueryBuilder.Builder {
                 throw new InvalidOperationException("You can only add non-empty IN clauses.");
             }
             _preparedLeaf.Value.forest.Add(new WhereIn(_preparedLeaf.Value.type, _preparedLeaf.Value.column, @operator, array));
+            return this;
+        }
+
+        public IQueryBuilder In(SubQueryFunc queryFunc) => SubqueryComparison("in", queryFunc);
+        public IQueryBuilder NotIn(SubQueryFunc queryFunc) => SubqueryComparison("not in", queryFunc);
+
+        public IQueryBuilder Eq(SubQueryFunc? queryFunc) => Is(queryFunc);
+        public IQueryBuilder Is(SubQueryFunc? queryFunc) => queryFunc is null ? IsNull() : SubqueryComparison("=", queryFunc);
+        public IQueryBuilder NotEq(SubQueryFunc? queryFunc) => Isnt(queryFunc);
+        public IQueryBuilder Isnt(SubQueryFunc? queryFunc) =>  queryFunc is null ? IsNotNull() : SubqueryComparison("!=", queryFunc);
+
+        public IQueryBuilder Gt(SubQueryFunc queryFunc) => SubqueryComparison(">", queryFunc);
+        public IQueryBuilder GtEq(SubQueryFunc queryFunc) => SubqueryComparison(">=", queryFunc);
+        public IQueryBuilder Lt(SubQueryFunc queryFunc) => SubqueryComparison("<", queryFunc);
+        public IQueryBuilder LtEq(SubQueryFunc queryFunc) => SubqueryComparison("<=", queryFunc);
+
+        private IQueryBuilder SubqueryComparison(string @operator, SubQueryFunc queryFunc) {
+            if (_preparedLeaf is null) {
+                throw new InvalidOperationException("You can only add a comparison after you've initiated a where, and or or.");
+            }
+            var queryBuilder = new QueryBuilder(_options);
+            queryFunc(queryBuilder);
+            _preparedLeaf.Value.forest.Add(new WhereSubQuery(_preparedLeaf.Value.type,
+                _preparedLeaf.Value.column, @operator, queryBuilder));
             return this;
         }
     }
