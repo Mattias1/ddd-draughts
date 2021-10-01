@@ -2,11 +2,17 @@ using SqlQueryBuilder.Common;
 using SqlQueryBuilder.Model;
 using System.Collections.Generic;
 using System.Linq;
+using static SqlQueryBuilder.Model.SetColumn;
 
 namespace SqlQueryBuilder.Builder {
     public partial class QueryBuilder : IUpdateQueryBuilder {
         public IUpdateQueryBuilder SetColumn(string column, object? value) {
             _query.UpdateValues.Add(new SetColumn(column, value));
+            return this;
+        }
+
+        public IUpdateQueryBuilder SetColumnToColumn(string column, string columnValue) {
+            _query.UpdateValues.Add(new SetColumn(column, columnValue, ValueType.Column));
             return this;
         }
 

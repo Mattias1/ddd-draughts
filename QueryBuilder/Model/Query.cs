@@ -5,6 +5,7 @@ using System;
 using System.Linq;
 using System.Text;
 using SqlQueryBuilder.Exceptions;
+using SqlQueryBuilder.Builder;
 
 namespace SqlQueryBuilder.Model {
     internal class Query {
@@ -133,12 +134,17 @@ namespace SqlQueryBuilder.Model {
         }
 
         private void AppendSelectFromParts() {
-            if (SelectColumns.Count > 0 || SelectFrom.Count > 0) {
+            if (SelectColumns.Count > 0) {
+                if (Builder.Length > 0) {
+                    Builder.Append(' ');
+                }
                 Builder.Append("select ");
                 if (Distinct) {
                     Builder.Append("distinct ");
                 }
                 AppendQueryParts(SelectColumns);
+            }
+            if (SelectFrom.Count > 0) {
                 Builder.Append(" from ");
                 AppendQueryParts(SelectFrom);
             }
@@ -180,6 +186,15 @@ namespace SqlQueryBuilder.Model {
 
             if (parameterize) {
                 Parameters.Add(key, parameter);
+            }
+        }
+
+        public void AppendSubquery(QueryBuilder queryBuilder) {
+            var (resultString, parameters) = queryBuilder.ToParameterizedSqlWithParams();
+            Builder.Append(resultString);
+            foreach (var p in parameters) {
+                string key = $"@{Parameters.Count}";
+                Parameters.Add(key, p.Value);
             }
         }
 

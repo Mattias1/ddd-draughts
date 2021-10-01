@@ -1,7 +1,9 @@
+using static SqlQueryBuilder.Builder.QueryBuilder;
+
 namespace SqlQueryBuilder.Builder {
     public interface ISelectQueryBuilder : ISelectColumnsQueryBuilder, IFromQueryBuilder { }
 
-    public interface ISelectColumnsQueryBuilder : IQueryBuilderBase, IFromQueryBuilder {
+    public interface ISelectColumnsQueryBuilder : IQueryBuilderResult, IFromQueryBuilder {
         ISelectQueryBuilder ColumnAs(string column, string alias);
         ISelectQueryBuilder Column(string column);
 
@@ -24,11 +26,16 @@ namespace SqlQueryBuilder.Builder {
         ISelectQueryBuilder MaxAs(string column, string alias);
         ISelectQueryBuilder Max(string column);
 
+        ISelectQueryBuilder SelectSubquery(SubQueryFunc queryFunc);
+        ISelectQueryBuilder SelectSubqueryAs(string alias, SubQueryFunc queryFunc);
+
         ISelectQueryBuilder RawColumn(string queryPart, params object?[] parameters);
     }
 
     public interface IFromQueryBuilder {
         IQueryBuilder FromAs(string table, string alias);
         IQueryBuilder From(string table);
+        IQueryBuilder From(SubQueryFunc queryFunc);
+        IQueryBuilder FromAs(string alias, SubQueryFunc queryFunc);
     }
 }

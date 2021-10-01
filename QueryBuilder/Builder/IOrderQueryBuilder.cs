@@ -1,5 +1,5 @@
 namespace SqlQueryBuilder.Builder {
-    public interface IOrderQueryBuilder : IQueryBuilderBase {
+    public interface IOrderQueryBuilder : IQueryBuilderResult {
         IQueryBuilder OrderByAsc(params string[] columns);
         IQueryBuilder OrderByDesc(params string[] columns);
 

@@ -1,5 +1,5 @@
 namespace SqlQueryBuilder.Builder {
-    public interface IJoinQueryBuilder : IQueryBuilderBase {
+    public interface IJoinQueryBuilder : IQueryBuilderResult {
         IQueryBuilder Join(string table, string leftColumn, string rightColumn);
         IQueryBuilder JoinAs(string table, string alias, string leftColumn, string rightColumn);
         IQueryBuilder LeftJoin(string table, string leftColumn, string rightColumn);

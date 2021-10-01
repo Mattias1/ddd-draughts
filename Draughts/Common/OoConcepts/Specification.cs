@@ -41,7 +41,7 @@ namespace Draughts.Common.OoConcepts {
             }
         }
 
-        protected void ApplyFuncWhere(IQueryBuilder builder, QueryWhereType whereType, QueryBuilder.QueryFunction func) {
+        protected void ApplyFuncWhere(IQueryBuilder builder, QueryWhereType whereType, QueryBuilder.SubWhereFunc func) {
             if (whereType == QueryWhereType.And){
                 builder.And(func);
             }

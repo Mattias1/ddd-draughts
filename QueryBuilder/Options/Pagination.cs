@@ -30,7 +30,7 @@ namespace SqlQueryBuilder.Options {
             return new Pagination<TMap>(results, Count, PageIndex, PageSize);
         }
 
-        public static Pagination<T> Paginate(IQueryBuilderBase query, long page, int pageSize) {
+        public static Pagination<T> Paginate(IQueryBuilderResult query, long page, int pageSize) {
             long? count = query.CloneWithoutSelect().CountAll().SingleLong();
             if (count is null) {
                 throw new InvalidOperationException(INVALID_COUNT_ERROR);
@@ -45,7 +45,7 @@ namespace SqlQueryBuilder.Options {
             return new Pagination<T>(results, count.Value, pageIndex, pageSize);
         }
 
-        public static async Task<Pagination<T>> PaginateAsync(IQueryBuilderBase query, long page, int pageSize) {
+        public static async Task<Pagination<T>> PaginateAsync(IQueryBuilderResult query, long page, int pageSize) {
             long? count = await query.CloneWithoutSelect().CountAll().SingleLongAsync();
             if (count is null) {
                 throw new InvalidOperationException(INVALID_COUNT_ERROR);

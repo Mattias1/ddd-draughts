@@ -1,5 +1,5 @@
 namespace SqlQueryBuilder.Builder {
-    public interface ILimitQueryBuilder : IQueryBuilderBase {
+    public interface ILimitQueryBuilder : IQueryBuilderResult {
         IQueryBuilder Skip(long offset);
         IQueryBuilder Take(int limit);
 
