@@ -25,6 +25,20 @@ namespace SqlQueryBuilder.Builder {
         public ISelectQueryBuilder MaxAs(string column, string alias) => AddSelectColumn("max", column, alias);
         public ISelectQueryBuilder Max(string column) => AddSelectColumn("max", column);
 
+        private ISelectQueryBuilder AddSelectColumn(string? function, string column, string? alias = null) {
+            _query.SelectColumns.Add(new Column(function, column, alias));
+            return this;
+        }
+        public ISelectQueryBuilder SelectSubqueryAs(string alias, SubQueryFunc queryFunc) => SubquerySelect(alias, queryFunc);
+        public ISelectQueryBuilder SelectSubquery(SubQueryFunc queryFunc) => SubquerySelect(null, queryFunc);
+
+        private ISelectQueryBuilder SubquerySelect(string? alias, SubQueryFunc queryFunc) {
+            var queryBuilder = new QueryBuilder(_options);
+            queryFunc(queryBuilder);
+            _query.SelectColumns.Add(new ColumnSubquery(alias, queryBuilder));
+            return this;
+        }
+
         public IQueryBuilder FromAs(string table, string alias) {
             _query.SelectFrom.Add(new Table(table, alias));
             return this;
@@ -34,8 +48,13 @@ namespace SqlQueryBuilder.Builder {
             return this;
         }
 
-        private ISelectQueryBuilder AddSelectColumn(string? function, string column, string? alias = null) {
-            _query.SelectColumns.Add(new Column(function, column, alias));
+        public IQueryBuilder FromAs(string alias, SubQueryFunc queryFunc) => SubqueryFrom(alias, queryFunc);
+        public IQueryBuilder From(SubQueryFunc queryFunc) => SubqueryFrom(null, queryFunc);
+
+        private IQueryBuilder SubqueryFrom(string? alias, SubQueryFunc queryFunc) {
+            var queryBuilder = new QueryBuilder(_options);
+            queryFunc(queryBuilder);
+            _query.SelectFrom.Add(new TableSubquery(alias, queryBuilder));
             return this;
         }
 

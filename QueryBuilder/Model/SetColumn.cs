@@ -6,10 +6,12 @@ namespace SqlQueryBuilder.Model {
 
         public string ColumnName { get; }
         public object? Value { get; }
+        public ValueType Type { get; }
 
-        public SetColumn(string name, object? value) {
+        public SetColumn(string name, object? value, ValueType type = ValueType.Any) {
             ColumnName = name;
             Value = value;
+            Type = type;
         }
 
         public void AppendToQuery(Query query, bool isFirst) {
@@ -17,7 +19,12 @@ namespace SqlQueryBuilder.Model {
                 query.Builder.Append(", ");
             }
             query.Builder.Append(query.WrapField(ColumnName)).Append(" = ");
-            query.AppendParameter(Value);
+            if (Type == ValueType.Column && Value is string columnValue) {
+                query.Builder.Append(query.WrapField(columnValue));
+            }
+            else {
+                query.AppendParameter(Value);
+            }
         }
     }
 }

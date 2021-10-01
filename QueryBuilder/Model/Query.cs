@@ -134,12 +134,17 @@ namespace SqlQueryBuilder.Model {
         }
 
         private void AppendSelectFromParts() {
-            if (SelectColumns.Count > 0 || SelectFrom.Count > 0) {
+            if (SelectColumns.Count > 0) {
+                if (Builder.Length > 0) {
+                    Builder.Append(' ');
+                }
                 Builder.Append("select ");
                 if (Distinct) {
                     Builder.Append("distinct ");
                 }
                 AppendQueryParts(SelectColumns);
+            }
+            if (SelectFrom.Count > 0) {
                 Builder.Append(" from ");
                 AppendQueryParts(SelectFrom);
             }

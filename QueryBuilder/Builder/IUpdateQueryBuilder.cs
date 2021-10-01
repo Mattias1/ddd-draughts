@@ -3,6 +3,7 @@ using System.Collections.Generic;
 namespace SqlQueryBuilder.Builder {
     public interface IUpdateQueryBuilder : IQueryBuilder {
         IUpdateQueryBuilder SetColumn(string column, object? value);
+        IUpdateQueryBuilder SetColumnToColumn(string column, string columnValue);
 
         IUpdateQueryBuilder RawSet(string queryPart, params object?[] parameters);
 

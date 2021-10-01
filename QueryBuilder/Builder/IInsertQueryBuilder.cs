@@ -12,5 +12,7 @@ namespace SqlQueryBuilder.Builder {
         IQueryBuilderResult InsertFrom<T>(params T[] models) where T : notnull;
         IQueryBuilderResult InsertFrom<T>(IEnumerable<T> models) where T : notnull;
         IQueryBuilderResult InsertFromDictionary(IReadOnlyDictionary<string, object?> dictionary);
+
+        ISelectQueryBuilder Select();
     }
 }
