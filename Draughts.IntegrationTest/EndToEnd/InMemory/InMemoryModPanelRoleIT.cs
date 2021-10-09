@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Xunit;
 
 namespace Draughts.IntegrationTest.EndToEnd.InMemory {
+    [Collection("ModPanelRoleIT")]
     public class InMemoryModPanelRoleIT {
         private readonly InMemoryApiTester _apiTester;
         private readonly ModPanelRoleTesterApi<InMemoryApiTester> _modPanelApi;

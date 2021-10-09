@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Xunit;
 
 namespace Draughts.IntegrationTest.EndToEnd.InMemory {
+    [Collection("PlayGameIT")]
     public class InMemoryPlayGameIT {
         private readonly InMemoryApiTester _apiTester;
         private readonly PlayGameTesterApi<InMemoryApiTester> _gameApi;

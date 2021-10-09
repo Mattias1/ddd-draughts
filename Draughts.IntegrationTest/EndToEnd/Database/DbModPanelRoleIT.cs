@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Xunit;
 
 namespace Draughts.IntegrationTest.EndToEnd.Database {
+    [Collection("ModPanelRoleIT")]
     public class DbModPanelRoleIT {
         private readonly DbApiTester _apiTester;
         private readonly ModPanelRoleTesterApi<DbApiTester> _modPanelApi;
