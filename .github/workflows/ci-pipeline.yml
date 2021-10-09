@@ -1,0 +1,30 @@
+name: DDD Draughts CI pipeline
+
+on:
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 5.0.x
+    - name: Restore dependencies
+      run: dotnet restore
+    - name: Build
+      run: dotnet build --no-restore
+    - name: Start database
+      run: ./run-dev.sh start
+    - name: Init database
+      run: >
+        cd Draughts.Command/
+        && dotnet run --project Draughts.Command.csproj data:essential data:dummy
+        && cd ../
+    - name: Test
+      run: dotnet test --no-build --verbosity normal
