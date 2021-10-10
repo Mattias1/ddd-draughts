@@ -7,7 +7,10 @@ using System;
 
 namespace Draughts.Command {
     class Program {
-        static void Main(string[] args) {
+        private const int EXIT_CODE_SUCCESS = 0;
+        private const int EXIT_CODE_FAILURE = -1;
+
+        static int Main(string[] args) {
             var host = CreateHostBuilder(args).Build();
 
             using (var serviceScope = host.Services.CreateScope()) {
@@ -21,8 +24,12 @@ namespace Draughts.Command {
                     Console.WriteLine();
                     Console.WriteLine("Stacktrace:");
                     Console.WriteLine(e.StackTrace);
+
+                    return EXIT_CODE_FAILURE;
                 }
             }
+
+            return EXIT_CODE_SUCCESS;
         }
 
         public static IHostBuilder CreateHostBuilder(string[] args) {
