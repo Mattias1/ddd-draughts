@@ -1,7 +1,10 @@
 using Draughts.Command.Seeders;
 using Draughts.Repositories;
+using Draughts.Repositories.Database;
 using Draughts.Test.TestHelpers;
+using SqlQueryBuilder.Exceptions;
 using System;
+using System.Threading;
 
 namespace Draughts.Command {
     public class DraughtsConsole {
@@ -22,6 +25,8 @@ namespace Draughts.Command {
             foreach (string arg in args) {
                 switch (arg) {
                     case "data:essential":
+                        WaitForDatabaseConnection(5);
+
                         Console.WriteLine("Start seeding essential data...");
                         _essentialDataSeeder.SeedData();
                         Console.WriteLine("Successfully seeded the database with essential data.");
@@ -41,6 +46,25 @@ namespace Draughts.Command {
                 Console.Write("No argument given; ");
                 PrintHelp();
             }
+        }
+
+        public static void WaitForDatabaseConnection(int maxSeconds) {
+            for (int i = 1; i <= maxSeconds + 1; i++) {
+                try {
+                    using (var tranFlavor = DbContext.Get.BeginMiscTransaction()) {
+                        DbContext.Get.Query(tranFlavor).Select().CountAll().From("id_generation").SingleLong();
+                        tranFlavor.Commit();
+                        return;
+                    }
+                }
+                catch (SqlQueryBuilderException) {
+                    if (i <= maxSeconds) {
+                        Console.WriteLine($"Wait for database connection ({i}).");
+                        Thread.Sleep(1000);
+                    }
+                }
+            }
+            throw new InvalidOperationException("Database connection failed.");
         }
 
         // TODO: How to actually call this commandline utility from outside an IDE?

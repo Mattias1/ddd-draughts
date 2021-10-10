@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Xunit;
 
 namespace Draughts.IntegrationTest.EndToEnd.Database {
+    [Collection("PlayGameIT")]
     public class DbPlayGameIT {
         private readonly DbApiTester _apiTester;
         private readonly PlayGameTesterApi<DbApiTester> _gameApi;

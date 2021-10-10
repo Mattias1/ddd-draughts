@@ -1,4 +1,3 @@
-using Draughts.Domain.AuthContext.Specifications;
 using Draughts.IntegrationTest.EndToEnd.Base;
 using Draughts.Repositories;
 using Draughts.Repositories.Database;
