@@ -73,5 +73,19 @@ namespace Draughts.IntegrationTest.EndToEnd.InMemory {
 
             _gameApi.AssertUserStatisticsAreUpdatedCorrectly();
         }
+
+        [Fact]
+        public async Task DrawGame() {
+            string black = _apiTester.LoginAsTestPlayerBlack();
+            await _gameApi.PostCreateGame(black);
+
+            string white = _apiTester.LoginAsTestPlayerWhite();
+            await _gameApi.PostJoinGame(white);
+
+            await _gameApi.PostDrawVote(white);
+            await _gameApi.PostDrawVote(black);
+
+            _gameApi.AssertGameIsDraw();
+        }
     }
 }

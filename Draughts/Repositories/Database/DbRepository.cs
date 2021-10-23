@@ -27,34 +27,28 @@ namespace Draughts.Repositories.Database {
             var query = GetBaseSelectQuery();
             return Parse(query.List<TDb>());
         }
-        public IReadOnlyList<T> List<TKey>(Sort<T, TKey> sort) {
-            var query = GetBaseSelectQuery();
-            sort.ApplyQueryBuilder(query);
-            return Parse(query.List<TDb>());
-        }
         public IReadOnlyList<T> List(Specification<T> spec) {
             var query = GetBaseSelectQuery();
             ApplySpec(spec, query);
             return Parse(query.List<TDb>());
         }
+        public IReadOnlyList<T> List<TKey>(Sort<T, TKey> sort) {
+            return Parse(GetBaseSelectQuery().ApplySort(sort).List<TDb>());
+        }
         public IReadOnlyList<T> List<TKey>(Specification<T> spec, Sort<T, TKey> sort) {
             var query = GetBaseSelectQuery();
             ApplySpec(spec, query);
-            sort.ApplyQueryBuilder(query);
-            return Parse(query.List<TDb>());
+            return Parse(query.ApplySort(sort).List<TDb>());
         }
 
         public Pagination<T> Paginate<TKey>(long page, int pageSize, Sort<T, TKey> sort) {
-            var query = GetBaseSelectQuery();
-            sort.ApplyQueryBuilder(query);
-            var p = query.Paginate<TDb>(page, pageSize);
+            var p = GetBaseSelectQuery().ApplySort(sort).Paginate<TDb>(page, pageSize);
             return new Pagination<T>(Parse(p.Results), p.Count, p.PageIndex, p.PageSize);
         }
         public Pagination<T> Paginate<TKey>(long page, int pageSize, Specification<T> spec, Sort<T, TKey> sort) {
             var query = GetBaseSelectQuery();
             ApplySpec(spec, query);
-            sort.ApplyQueryBuilder(query);
-            var p = query.Paginate<TDb>(page, pageSize);
+            var p = query.ApplySort(sort).Paginate<TDb>(page, pageSize);
             return new Pagination<T>(Parse(p.Results), p.Count, p.PageIndex, p.PageSize);
         }
 

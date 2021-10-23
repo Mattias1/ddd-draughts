@@ -51,6 +51,12 @@ namespace Draughts.IntegrationTest.EndToEnd.Base {
             result.StatusCode.Should().Be(200);
         }
 
+        public async Task PostDrawVote(string cookie) {
+            var result = await ApiTester.As(cookie).Post($"/game/{GameId}/draw");
+            result.StatusCode.Should().Be(302);
+            result.RedirectLocation().Should().Match($"/game/{GameId}?success=*");
+        }
+
         // TODO: What to do here when events are handled in a different thread?
         public void AssertUserStatisticsAreUpdatedCorrectly() {
             ApiTester.UnitOfWork.WithUserTransaction(tran => {
@@ -58,6 +64,16 @@ namespace Draughts.IntegrationTest.EndToEnd.Base {
                 var whiteUser = ApiTester.UserRepository.FindByName("TestPlayerWhite");
                 blackUser.Statistics.OtherTally.Won.Should().BeGreaterThan(0);
                 whiteUser.Statistics.OtherTally.Lost.Should().BeGreaterThan(0);
+            });
+        }
+
+        public void AssertGameIsDraw() {
+            ApiTester.UnitOfWork.WithGameTransaction(tran => {
+                var game = ApiTester.GameRepository.FindById(GameId!);
+
+                game.FinishedAt.Should().NotBeNull();
+                game.Victor.Should().BeNull();
+                game.Turn.Should().BeNull();
             });
         }
     }

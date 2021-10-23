@@ -135,4 +135,10 @@ namespace Draughts.Common.OoConcepts {
 
         public override IEnumerable<PossibleJoins> RequiredJoins() => _specification.RequiredJoins();
     }
+
+    public static class QueryBuilderSpecificationExtension {
+        public static IQueryBuilder Specifically<T>(this IQueryBuilder builder, Specification<T> spec) {
+            return spec.ApplyQueryBuilder(builder);
+        }
+    }
 }

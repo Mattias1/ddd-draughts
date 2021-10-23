@@ -37,5 +37,9 @@ namespace Draughts.Common.OoConcepts {
         public static IEnumerable<T> Sort<T, TKey>(this IEnumerable<T> enumerable, Sort<T, TKey> sort) {
             return sort.SortDescending ? enumerable.OrderByDescending(sort.SortKey) : enumerable.OrderBy(sort.SortKey);
         }
+
+        public static IQueryBuilder ApplySort<T, TKey>(this IQueryBuilder builder, Sort<T, TKey> sort) {
+            return sort.ApplyQueryBuilder(builder);
+        }
     }
 }

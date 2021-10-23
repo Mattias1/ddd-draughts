@@ -10,11 +10,11 @@ using System.Linq;
 using Xunit;
 
 namespace Draughts.Test.Domain.GameContext {
-    public class PlayGameTest {
+    public class GameDoMoveTest {
         private const string INITIAL_BOARD = "444 444 000 000 555 555";
         private readonly IPlayGameDomainService _playGameService;
 
-        public PlayGameTest() {
+        public GameDoMoveTest() {
             var clock = FakeClock.FromUtc(2020, 02, 29);
             _playGameService = new PlayGameDomainService(clock);
         }

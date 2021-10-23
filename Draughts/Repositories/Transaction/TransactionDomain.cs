@@ -84,6 +84,7 @@ namespace Draughts.Repositories.Transaction {
             }
 
             public override void ApplyForAllTablePairs(ITransaction tran, IPairTableFunction func) {
+                func.Apply(GameDatabase.Temp(tran).VotesTable, GameDatabase.Get.VotesTable);
                 func.Apply(GameDatabase.Temp(tran).MovesTable, GameDatabase.Get.MovesTable);
                 func.Apply(GameDatabase.Temp(tran).GameStatesTable, GameDatabase.Get.GameStatesTable);
                 func.Apply(GameDatabase.Temp(tran).PlayersTable, GameDatabase.Get.PlayersTable);

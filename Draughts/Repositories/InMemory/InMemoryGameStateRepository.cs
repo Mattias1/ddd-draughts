@@ -24,7 +24,10 @@ namespace Draughts.Repositories.InMemory {
             var dbGameState = DbGameState.FromDomainModel(entity);
             _unitOfWork.Store(dbGameState, tran => GameDatabase.Temp(tran).GameStatesTable);
 
-            var maxDbIndex = GameDatabase.Get.MovesTable.Select(m => (int?)m.Index).Max() ?? -1;
+            var maxDbIndex = GameDatabase.Get.MovesTable
+                .Where(m => m.GameId == entity.Id.Value)
+                .Select(m => (int?)m.Index)
+                .Max() ?? -1;
             foreach (var dbMove in DbMove.ArrayFromDomainModels(entity, maxDbIndex)) {
                 _unitOfWork.Store(dbMove, tran => GameDatabase.Temp(tran).MovesTable);
             }

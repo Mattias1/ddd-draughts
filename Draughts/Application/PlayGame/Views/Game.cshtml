@@ -65,6 +65,14 @@
                 }
             </ul>
 
+            @if (Model.StartedAt is not null && Model.FinishedAt is null) {
+                <h3>Actions</h3>
+                <div class="p-like">
+                    Actions: @Utils.PostLink($"Resign", $"/game/{Model.Id}/resign"),
+                    @Utils.PostLink($"Vote for a draw", $"/game/{Model.Id}/draw")
+                </div>
+            }
+
             <h3>Game settings</h3>
             <ul class="p-like">
                 <li>Flying kings: <span>@Utils.YesNo(settings.FlyingKings)</span></li>

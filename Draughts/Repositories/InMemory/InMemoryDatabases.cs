@@ -190,6 +190,7 @@ namespace Draughts.Repositories.InMemory {
         public List<DbPlayer> PlayersTable { get; }
         public List<DbGameState> GameStatesTable { get; }
         public List<DbMove> MovesTable { get; }
+        public List<DbVote> VotesTable { get; }
         public List<DomainEvent> DomainEventsTable { get; }
 
         public static GameDatabase Initialize() {
@@ -213,6 +214,7 @@ namespace Draughts.Repositories.InMemory {
             PlayersTable = new List<DbPlayer>();
             GameStatesTable = new List<DbGameState>();
             MovesTable = new List<DbMove>();
+            VotesTable = new List<DbVote>();
             DomainEventsTable = new List<DomainEvent>();
         }
 

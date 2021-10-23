@@ -3,6 +3,7 @@ using Draughts.Domain.GameContext.Models;
 using Draughts.Domain.UserContext.Models;
 using NodaTime;
 using System;
+using static Draughts.Domain.GameContext.Models.Voting;
 
 namespace Draughts.Domain.GameContext.Services {
     public class PlayGameDomainService : IPlayGameDomainService {
@@ -28,6 +29,15 @@ namespace Draughts.Domain.GameContext.Services {
                     break;
                 default:
                     throw new InvalidOperationException("Unknown MoveResult");
+            }
+        }
+
+        public void VoteForDraw(Game game, Voting voting, UserId currentUserId) {
+            game.ValidateCanVote(currentUserId);
+            voting.VoteFor(currentUserId, VotingSubject.Draw, _clock.UtcNow());
+
+            if (voting.AreAllInFavor(VotingSubject.Draw)) {
+                game.Draw(_clock.UtcNow());
             }
         }
     }

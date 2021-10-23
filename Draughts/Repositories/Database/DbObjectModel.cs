@@ -1,3 +1,4 @@
+using Draughts.Common.Utilities;
 using Draughts.Domain.AuthContext.Models;
 using Draughts.Domain.GameContext.Models;
 using Draughts.Domain.UserContext.Models;
@@ -5,6 +6,7 @@ using NodaTime;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using static Draughts.Domain.GameContext.Models.Voting;
 using static Draughts.Domain.UserContext.Models.Rank;
 
 namespace Draughts.Repositories.Database {
@@ -340,6 +342,59 @@ namespace Draughts.Repositories.Database {
                 moves[i] = FromDomainModel(gameState, gameState.Moves[moveIndex], moveIndex);
             }
             return moves;
+        }
+    }
+
+    public class DbVote : IEquatable<DbVote> {
+        public long GameId { get; set; }
+        public long UserId { get; set; }
+        public string Subject { get; set; }
+        public bool InFavor { get; set; }
+        public ZonedDateTime CreatedAt { get; set; }
+
+        public static IReadOnlyList<Voting> ToDomainModels(IEnumerable<DbVote> dbVotes) {
+            var votesPerGame = dbVotes.GroupBy(v => v.GameId);
+            var results = new List<Voting>();
+            foreach (var gameVotes in votesPerGame) {
+                var votes = gameVotes
+                    .Select(v => new Vote(new UserId(v.UserId), VotingSubjectFromString(v.Subject), v.InFavor, v.CreatedAt))
+                    .ToList();
+                results.Add(new Voting(new GameId(gameVotes.Key), votes));
+            }
+            return results;
+        }
+
+        private static VotingSubject VotingSubjectFromString(string votingSubject) => votingSubject switch {
+            "draw" => VotingSubject.Draw,
+            _ => throw new InvalidOperationException("Unknown voting subject")
+        };
+
+        public static List<DbVote> FromDomainModel(Voting voting) {
+            return voting.Votes.Select(v => new DbVote {
+                GameId = voting.Id.Value,
+                UserId = v.UserId.Value,
+                Subject = VotingSubjectToString(v.Subject),
+                InFavor = v.InFavor,
+                CreatedAt = v.CreatedAt
+            }).ToList();
+        }
+
+        private static string VotingSubjectToString(VotingSubject votingSubject) => votingSubject switch {
+            VotingSubject.Draw => "draw",
+            _ => throw new InvalidOperationException("Unknown voting subject")
+        };
+
+        public override bool Equals(object? obj) => Equals(obj as DbVote);
+        public bool Equals(DbVote? other) {
+            return other?.GameId == GameId
+                && other?.UserId == UserId
+                && other?.Subject == Subject
+                && other?.InFavor == InFavor
+                && other?.CreatedAt == CreatedAt;
+        }
+
+        public override int GetHashCode() {
+            return ComparisonUtils.GetHashCode(new object[] { GameId, UserId, Subject, InFavor, CreatedAt });
         }
     }
 

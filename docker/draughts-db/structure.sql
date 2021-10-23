@@ -170,6 +170,19 @@ CREATE TABLE `move` (
         ON UPDATE RESTRICT ON DELETE CASCADE
 );
 
+CREATE TABLE `vote` (
+    `game_id` BIGINT NOT NULL,
+    `user_id` BIGINT NOT NULL,
+    `subject` VARCHAR(10) NOT NULL,
+    `in_favor` BIT NOT NULL,
+    `created_at` DATETIME NOT NULL,
+
+    PRIMARY KEY (`game_id`, `user_id`, `subject`),
+    CONSTRAINT fk_vote_g FOREIGN KEY (`game_id`)
+        REFERENCES `game` (`id`)
+        ON UPDATE RESTRICT ON DELETE CASCADE
+);
+
 CREATE TABLE `event` (
     `id` BIGINT NOT NULL,
     `type` VARCHAR(50) NOT NULL,

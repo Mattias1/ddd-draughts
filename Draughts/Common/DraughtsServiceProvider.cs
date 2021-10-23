@@ -58,6 +58,7 @@ namespace Draughts.Common {
                 services.AddSingleton<IUserRepository, InMemoryUserRepository>();
                 services.AddSingleton<IGameRepository, InMemoryGameRepository>();
                 services.AddSingleton<IGameStateRepository, InMemoryGameStateRepository>();
+                services.AddSingleton<IVotingRepository, InMemoryVotingRepository>();
             }
             else {
                 services.AddSingleton<IIdGenerator>(HiLoIdGenerator.DbHiloGIdGenerator(
@@ -70,6 +71,7 @@ namespace Draughts.Common {
                 services.AddSingleton<IUserRepository, DbUserRepository>();
                 services.AddSingleton<IGameRepository, DbGameRepository>();
                 services.AddSingleton<IGameStateRepository, DbGameStateRepository>();
+                services.AddSingleton<IVotingRepository, DbVotingRepository>();
             }
         }
 
