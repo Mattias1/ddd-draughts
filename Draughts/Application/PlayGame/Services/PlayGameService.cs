@@ -27,8 +27,8 @@ namespace Draughts.Application.PlayGame.Services {
             _votingRepository = votingRepository;
         }
 
-        public void DoMove(UserId currentUserId, GameId gameId, SquareId from, SquareId to) {
-            _unitOfWork.WithGameTransaction(tran => {
+        public (Game game, GameState gameState) DoMove(UserId currentUserId, GameId gameId, SquareId from, SquareId to) {
+            return _unitOfWork.WithGameTransaction(tran => {
                 var (game, gameState) = FindGameAndState(gameId);
                 _playGameDomainService.DoMove(game, gameState, currentUserId, from, to);
 
@@ -38,6 +38,8 @@ namespace Draughts.Application.PlayGame.Services {
                 if (game.IsFinished) {
                     _unitOfWork.Raise(GameFinished.Factory(game));
                 }
+
+                return (game, gameState);
             });
         }
 

@@ -1,12 +1,6 @@
-$(function () {
-    initializeShowHideLinks();
-});
+import * as $ from 'jquery'
 
-function initializeShowHideLinks(parentIdentifier) {
-    if (parentIdentifier == null) {
-        parentIdentifier = '';
-    }
-
+export function initializeShowHideLinks(parentIdentifier: string = ''): void {
     $(parentIdentifier + " .show-hide-link").off('click');
 
     $(parentIdentifier + " .show-hide-link").on('click', function () {

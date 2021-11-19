@@ -26,10 +26,13 @@ Backup*/
 UpgradeLog*.XML
 UpgradeLog*.htm
 
+**/node_modules/*
+
 # Others
 *.lnk
 *.swp
 
 # Application specific files
 logs/*
+Draughts/wwwroot/js/*
 appsettings.env.json

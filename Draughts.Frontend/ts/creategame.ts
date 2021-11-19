@@ -1,10 +1,13 @@
-$(function () {
-    $('#cgp-presets').on('change', function () {
-        applyPresets($(this).val());
-    });
-});
+import * as $ from 'jquery'
 
-function applyPresets(preset) {
+export function initCreateGame(): void {
+    $('#cgp-presets').on('change', function () {
+        let preset = $(this).val()?.toString() ?? '';
+        applyPresets(preset);
+    });
+}
+
+function applyPresets(preset: string): void {
     if (preset === 'international') {
         val('boardSize', 10);
         val('whiteHasFirstMove', true);
@@ -25,6 +28,6 @@ function applyPresets(preset) {
     }
 }
 
-function val(name, value) {
+function val(name: string, value: string|number|boolean): void {
     $('input[name="' + name + '"][value="' + value + '"]').prop('checked', 'checked');
 }

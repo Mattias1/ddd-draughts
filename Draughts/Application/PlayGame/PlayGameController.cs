@@ -32,15 +32,29 @@ namespace Draughts.Application.PlayGame {
             }
         }
 
+        [HttpGet("/game/{gameId:long}/json"), GuestRoute]
+        public IActionResult GameJson(long gameId) {
+            try {
+                var (game, gameState) = _unitOfWork.WithGameTransaction(tran => {
+                    return _playGameService.FindGameAndState(new GameId(gameId));
+                });
+
+                return Ok(new GameDto(game, gameState));
+            }
+            catch (ManualValidationException e) {
+                return NotFound(e.Message);
+            }
+        }
+
         [HttpPost("/game/{gameId:long}/move"), Requires(Permissions.PLAY_GAME)]
         public IActionResult Move(long gameId, [FromBody] MoveRequest? request) {
             try {
                 ValidateNotNull(request?.From, request?.To);
 
-                _playGameService.DoMove(AuthContext.UserId, new GameId(gameId),
+                var (game, gameState) = _playGameService.DoMove(AuthContext.UserId, new GameId(gameId),
                     new SquareId(request!.From), new SquareId(request.To));
 
-                return Ok();
+                return Ok(new GameDto(game, gameState));
             }
             catch (ManualValidationException e) {
                 return BadRequest(e.Message);

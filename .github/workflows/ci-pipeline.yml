@@ -11,14 +11,31 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
+
     - name: Setup .NET
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: 5.0.x
-    - name: Restore dependencies
+    - name: Restore backend dependencies
       run: dotnet restore
-    - name: Build
+    - name: Build backend
       run: dotnet build --no-restore
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: '16'
+    - name: Build frontend
+      run: >
+        cd Draughts.Frontend/
+        && npm ci
+        && cd ../
+    - name: Build frontend
+      run: >
+        cd Draughts.Frontend/
+        && npm run build:prod
+        && cd ../
+
     - name: Start database
       run: ./run-dev.sh start
     - name: Init database
@@ -26,5 +43,6 @@ jobs:
         cd Draughts.Command/
         && dotnet run --project Draughts.Command.csproj data:essential data:dummy
         && cd ../
-    - name: Test
+
+    - name: Run backend tests
       run: dotnet test --no-build --verbosity normal

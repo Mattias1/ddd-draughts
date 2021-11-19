@@ -19,8 +19,9 @@ look at the [source files](/Draughts/Application/Documentation/Views) of the doc
 Setup
 ------
 ### Dependencies
-- Docker desktop:
-  [docker.com/products/docker-desktop](https://www.docker.com/products/docker-desktop).
+- .NET 5 SDK
+- Docker and docker-compose
+- Node.js and npm
 
 ### Run Draughts
 To run the application without IDE, you need some patience `;)` __WIP__.
@@ -30,6 +31,7 @@ Optional: Create _appsettings.env.json_ files to override existing settings.
 The json files exist in the _Draughts_, _Draughts.IntegrationTest_ and _Draughts.Command_ projects.
 
 Start the develop dependencies with `sudo ./run-dev.sh start`.
+To build the frontend run `npm install && npm run build:dev`.
 To initialise the database, run
 ```
 cd Draughts.Command/ \
@@ -38,8 +40,8 @@ cd Draughts.Command/ \
   ;  cd ../
 ```
 
-You can then edit and run the application with your favourite IDE. It should open at
-<http://localhost:52588>.
+You can then run the application with something like `cd Draughts && dotnet run -v -m`. It should
+open at <http://localhost:52588>.
 
 If you need to, you can access the databases with adminer at
 [http://localhost:52580](http://localhost:52580/?server=draughts-db&username=root).

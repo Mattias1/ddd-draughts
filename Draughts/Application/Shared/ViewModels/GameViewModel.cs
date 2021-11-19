@@ -9,7 +9,7 @@ namespace Draughts.Application.Shared.ViewModels {
         public IReadOnlyList<PlayerViewModel> Players { get; }
         public Turn? Turn { get; }
         public GameSettings Settings { get; }
-        public Player? Victor { get; }
+        public PlayerViewModel? Victor { get; }
         public ZonedDateTime CreatedAt { get; }
         public ZonedDateTime? StartedAt { get; }
         public ZonedDateTime? FinishedAt { get; }
@@ -19,7 +19,7 @@ namespace Draughts.Application.Shared.ViewModels {
             Players = game.Players.Select(p => new PlayerViewModel(p)).ToList().AsReadOnly();
             Turn = game.Turn;
             Settings = game.Settings;
-            Victor = game.Victor;
+            Victor = game.Victor is null ? null : new PlayerViewModel(game.Victor);
             CreatedAt = game.CreatedAt;
             StartedAt = game.StartedAt;
             FinishedAt = game.FinishedAt;
@@ -27,10 +27,10 @@ namespace Draughts.Application.Shared.ViewModels {
     }
 
     public class PlayGameViewModel : GameViewModel {
-        public GameState CurrentGameState { get; }
+        public GameStateViewModel CurrentGameState { get; }
 
         public PlayGameViewModel(Game game, GameState gameState) : base(game) {
-            CurrentGameState = gameState;
+            CurrentGameState = new GameStateViewModel(gameState);
         }
     }
 }

@@ -1,0 +1,27 @@
+{
+  "name": "draughts.frontend",
+  "version": "1.0.0",
+  "description": "The frontend of DDD Draughts",
+  "main": "ts/index.ts",
+  "type": "module",
+  "scripts": {
+    "watch": "webpack --watch",
+    "build": "echo 'npm run build is not a valid command, did you mean build:dev or build:prod?'",
+    "build:dev": "webpack",
+    "build:prod": "webpack --env production"
+  },
+  "keywords": [
+    "ddd",
+    "draughts"
+  ],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/jquery": "^3.5.8",
+    "jquery": "^3.5.1",
+    "ts-loader": "^9.2.6",
+    "typescript": "^4.5.2",
+    "webpack": "^5.64.1",
+    "webpack-cli": "^4.9.1"
+  }
+}
