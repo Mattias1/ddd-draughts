@@ -39,8 +39,11 @@ namespace Draughts {
                 lock(_lock) {
                     if (!_logIsConfigured) {
                         var configurationBuilder = new LoggerConfiguration()
-                            .MinimumLevel.FromString(settings?.LogLevel)
+                            .MinimumLevel.Is(FromString(settings?.LogLevel))
                             .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
+                            // In order to see SignalR exceptions, you need to log at the debug loglevel.
+                            .MinimumLevel.Override("Microsoft.AspNetCore.SignalR", FromString(settings?.LogLevel))
+                            .MinimumLevel.Override("Microsoft.AspNetCore.Http.Connections", FromString(settings?.LogLevel))
                             .MinimumLevel.Override("System", LogEventLevel.Warning)
                             .WriteTo.RollingFile(pathFormat: pathFormat);
                         Log.Logger = configurationBuilder.CreateLogger();
@@ -67,19 +70,17 @@ namespace Draughts {
             }
             return dir;
         }
-    }
 
-    public static class LoggerMinimumLevelConfigurationExtensions {
-        public static LoggerConfiguration FromString(this LoggerMinimumLevelConfiguration minimumLevel, string? logLevel) {
+        public static LogEventLevel FromString(string? logLevel) {
             return logLevel?.ToLowerInvariant() switch
             {
-                "fatal" => minimumLevel.Fatal(),
-                "error" => minimumLevel.Error(),
-                "warning" => minimumLevel.Warning(),
-                "information" => minimumLevel.Information(),
-                "debug" => minimumLevel.Debug(),
-                "verbose" => minimumLevel.Verbose(),
-                null => minimumLevel.Information(),
+                "fatal" => LogEventLevel.Fatal,
+                "error" => LogEventLevel.Error,
+                "warning" => LogEventLevel.Warning,
+                "information" => LogEventLevel.Information,
+                "debug" => LogEventLevel.Debug,
+                "verbose" => LogEventLevel.Verbose,
+                null => LogEventLevel.Information,
                 _ => throw new ArgumentException("Unknown log level", nameof(logLevel))
             };
         }

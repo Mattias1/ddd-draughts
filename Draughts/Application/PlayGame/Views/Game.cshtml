@@ -36,7 +36,7 @@
         </div>
 
         <div id="game-sidebar">
-            <h1>@ViewBag.Title</h1>
+            <h1 id="game-id" data-game-id="@(Model.Id)">@ViewBag.Title</h1>
 
             <h3>Players</h3>
             <ul class="p-like">
@@ -45,19 +45,24 @@
                         ("gameId", Model.Id.ToString()), ("color", settings.FirstMove.ToString()))</li>
                 }
                 else {
-                    <li><span id="nr@(player1.Color)"></span> @player1.Color: @Utils.UserLinkWithRank(player1)</li>
+                    <li>
+                        <span id="turn-player-@(player1.Id)" class="turn-player" @Utils.HideIf(Model.Turn?.Player.Id != player1.Id)>&gt; </span>
+                        <span id="nr@(player1.Color)"></span>
+                        @player1.Color: @Utils.UserLinkWithRank(player1)
+                    </li>
                 }
                 @if (player2 is null) {
                     <li>@Utils.PostLink($"Join as {settings.FirstMove.Other}", "/lobby/join",
                         ("gameId", Model.Id.ToString()), ("color", settings.FirstMove.Other.ToString()))</li>
                 }
                 else {
-                    <li><span id="nr@(player2.Color)"></span> @player2.Color: @Utils.UserLinkWithRank(player2)</li>
+                    <li>
+                        <span id="turn-player-@(player2.Id)" class="turn-player" @Utils.HideIf(Model.Turn?.Player.Id != player2.Id)>&gt; </span>
+                        <span id="nr@(player2.Color)"></span>
+                        @player2.Color: @Utils.UserLinkWithRank(player2)
+                    </li>
                 }
 
-                @if (Model.Turn is not null) {
-                    <li>Turn: <span>@Model.Turn.Player.Color</span></li>
-                }
                 @if (Model.FinishedAt is not null) {
                     <li>
                         Victor: @if (Model.Victor is null) { <span>Draw</span> } else { <span>@Model.Victor.Username</span> }

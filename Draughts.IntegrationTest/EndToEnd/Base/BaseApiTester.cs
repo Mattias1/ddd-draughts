@@ -54,6 +54,7 @@ namespace Draughts.IntegrationTest.EndToEnd.Base {
         public void Logout() => Cookie = null;
 
         public async Task<string> GetString(Url url) => await RequestBuilder(url).GetStringAsync();
+        public async Task<T?> GetJson<T>(Url url) => await RequestBuilder(url).GetJsonAsync<T>();
 
         public async Task<HttpResponseMessage> Post(Url url) => await RequestBuilder(url).PostAsync(null);
         public async Task<HttpResponseMessage> PostJson<T>(Url url, T body) => await RequestBuilder(url).PostJsonAsync(body);

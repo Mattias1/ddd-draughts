@@ -2,13 +2,15 @@
   "name": "draughts.frontend",
   "version": "1.0.0",
   "description": "The frontend of DDD Draughts",
+  "private": true,
   "main": "ts/index.ts",
   "type": "module",
   "scripts": {
     "watch": "webpack --watch",
     "build": "echo 'npm run build is not a valid command, did you mean build:dev or build:prod?'",
     "build:dev": "webpack",
-    "build:prod": "webpack --env production"
+    "build:prod": "webpack --env production",
+    "test": "jest"
   },
   "keywords": [
     "ddd",
@@ -17,8 +19,13 @@
   "author": "",
   "license": "MIT",
   "devDependencies": {
+    "@types/jest": "^27.0.3",
     "@types/jquery": "^3.5.8",
+    "@microsoft/signalr": "^6.0.0",
+    "jest": "^27.4.2",
+    "jest-cli": "^27.4.2",
     "jquery": "^3.5.1",
+    "ts-jest": "^27.0.7",
     "ts-loader": "^9.2.6",
     "typescript": "^4.5.2",
     "webpack": "^5.64.1",

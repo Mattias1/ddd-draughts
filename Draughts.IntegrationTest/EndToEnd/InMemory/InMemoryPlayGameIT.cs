@@ -1,3 +1,4 @@
+using Draughts.Domain.GameContext.Models;
 using Draughts.IntegrationTest.EndToEnd.Base;
 using System.Threading.Tasks;
 using Xunit;
@@ -21,7 +22,7 @@ namespace Draughts.IntegrationTest.EndToEnd.InMemory {
             string white = _apiTester.LoginAsTestPlayerWhite();
             await _gameApi.PostJoinGame(white);
 
-            await _gameApi.ViewGamePageWithTurn("white");
+            await _gameApi.ViewGameJsonWithTurn(Color.White);
 
             // |_|4|_|4|_|4|        // |_|1|_|2|_|3|
             // |4|_|4|_|4|_|        // |4|_|5|_|6|_|

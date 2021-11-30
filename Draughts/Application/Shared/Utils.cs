@@ -14,6 +14,8 @@ namespace Draughts.Application.Shared {
     public static class Utils {
         public static string BaseUrl { get; set; } = "http://localhost:52588";
 
+        public static HtmlString HideIf(bool isHidden) => new HtmlString(isHidden ? "hidden" : "");
+
         public static HtmlString Href(string url, params (string key, object? value)[] queryParams) {
             string safeUrl = Url(url, queryParams);
             return new HtmlString($"href=\"{safeUrl}\"");

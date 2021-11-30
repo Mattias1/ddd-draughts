@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using Draughts.Repositories.Database;
 using Draughts.Application.Shared;
 using System;
+using SignalRWebPack.Hubs;
 
 namespace Draughts {
     public class Startup {
@@ -26,6 +27,7 @@ namespace Draughts {
             DraughtsServiceProvider.ConfigureServices(services, UseInMemoryDatabase);
 
             ConfigureRazorViewLocations(services);
+            services.AddSignalR();
         }
 
         private void ConfigureRazorViewLocations(IServiceCollection services) {
@@ -65,6 +67,7 @@ namespace Draughts {
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller=StaticPages}/{action=Home}/{id?}");
+                endpoints.MapHub<WebsocketHub>("/hub");
             });
         }
 

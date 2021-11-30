@@ -1,6 +1,7 @@
+using Draughts.Application.Shared.ViewModels;
 using Draughts.Domain.GameContext.Models;
-using Draughts.Domain.UserContext.Models;
 using FluentAssertions;
+using System.Linq;
 using System.Threading.Tasks;
 using static Draughts.Application.Lobby.LobbyController;
 using static Draughts.Application.PlayGame.PlayGameController;
@@ -32,9 +33,15 @@ namespace Draughts.IntegrationTest.EndToEnd.Base {
             result.RedirectLocation().Should().Match($"/game/{GameId}?success=*");
         }
 
-        public async Task ViewGamePageWithTurn(string turn) {
-            string page = await ViewGamePage();
-            page.Should().Match($"*Turn: *{turn}*");
+        public async Task ViewGameJsonWithTurn(Color expectedTurn) {
+            var json = await ViewGameJson();
+
+            ApiTester.UnitOfWork.WithGameTransaction(tran => {
+                var game = ApiTester.GameRepository.FindById(GameId!);
+
+                var playerWithColor = game.Players.SingleOrDefault(p => p.Color == expectedTurn);
+                json.Turn?.PlayerId.Should().Be(playerWithColor?.Id.Value);
+            });
         }
         public async Task ViewGamePageWithVictor(string victor) {
             string page = await ViewGamePage();
@@ -42,8 +49,13 @@ namespace Draughts.IntegrationTest.EndToEnd.Base {
         }
         public async Task<string> ViewGamePage() {
             string page = await ApiTester.GetString($"/game/{GameId}");
-            page.Should().Contain($"<h1>Game {GameId}</h1>");
+            page.Should().Contain($"Game {GameId}</h1>");
             return page;
+        }
+        public async Task<GameDto> ViewGameJson() {
+            var json = await ApiTester.GetJson<GameDto>($"/game/{GameId}/json");
+            json.Should().NotBeNull();
+            return json!;
         }
 
         public async Task PostMove(int from, int to, string cookie) {

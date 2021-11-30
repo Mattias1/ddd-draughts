@@ -6,16 +6,21 @@ using Draughts.Common;
 using Draughts.Domain.GameContext.Models;
 using Draughts.Repositories.Transaction;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
+using SignalRWebPack.Hubs;
+using System.Threading.Tasks;
 using static Draughts.Domain.AuthContext.Models.Permission;
 
 namespace Draughts.Application.PlayGame {
     public class PlayGameController : BaseController {
         private readonly PlayGameService _playGameService;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IHubContext<WebsocketHub> _websocketHub;
 
-        public PlayGameController(PlayGameService playGameService, IUnitOfWork unitOfWork) {
+        public PlayGameController(PlayGameService playGameService, IUnitOfWork unitOfWork, IHubContext<WebsocketHub> websocketHub) {
             _playGameService = playGameService;
             _unitOfWork = unitOfWork;
+            _websocketHub = websocketHub;
         }
 
         [HttpGet("/game/{gameId:long}"), GuestRoute]
@@ -47,14 +52,17 @@ namespace Draughts.Application.PlayGame {
         }
 
         [HttpPost("/game/{gameId:long}/move"), Requires(Permissions.PLAY_GAME)]
-        public IActionResult Move(long gameId, [FromBody] MoveRequest? request) {
+        public async Task<IActionResult> Move(long gameId, [FromBody] MoveRequest? request) {
             try {
                 ValidateNotNull(request?.From, request?.To);
 
                 var (game, gameState) = _playGameService.DoMove(AuthContext.UserId, new GameId(gameId),
                     new SquareId(request!.From), new SquareId(request.To));
+                var data = new GameDto(game, gameState);
 
-                return Ok(new GameDto(game, gameState));
+                await _websocketHub.PushGameUpdated(new GameId(gameId), data);
+
+                return Ok(data);
             }
             catch (ManualValidationException e) {
                 return BadRequest(e.Message);
