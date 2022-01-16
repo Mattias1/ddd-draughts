@@ -39,19 +39,19 @@ namespace Draughts.IntegrationTest.EndToEnd.Base {
         public async Task PostCreateGame() {
             var result = await ApiTester.PostForm("/lobby/create",
                 new GameCreationRequest(6, true, true, true, "max", "black"));
-            result.StatusCode.Should().Be(302);
-            if (!ApiTester.TryRegex(result.RedirectLocation(), @"/game/(\d+)", out string? value)) {
-                result.RedirectLocation().Should().Match("/game/<some-value>?success=*");
+            result.StatusCode.Should().Be(200);
+            if (!ApiTester.TryRegex(result.RequestUri(), @"/game/(\d+)", out string? value)) {
+                result.RequestUri().Should().Match("/game/<some-value>?success=*");
                 return;
             }
             GameId = new GameId(long.Parse(value));
-            result.RedirectLocation().Should().Match($"/game/{GameId}?success=*");
+            result.RequestUri().Should().Match($"/game/{GameId}?success=*");
         }
 
         public async Task PostJoinGame() {
             var result = await ApiTester.PostForm("/lobby/join", new GameJoinRequest(GameId?.Value, null));
-            result.StatusCode.Should().Be(302);
-            result.RedirectLocation().Should().Match($"/game/{GameId}?success=*");
+            result.StatusCode.Should().Be(200);
+            result.RequestUri().Should().Match($"/game/{GameId}?success=*");
         }
 
         public void AssertGameIsStartedWithCorrectPlayers() {

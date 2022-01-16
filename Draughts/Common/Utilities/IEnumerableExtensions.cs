@@ -15,25 +15,5 @@ namespace Draughts.Common.Utilities {
             }
             return source;
         }
-
-        public static IEnumerable<T> IntersectBy<T, TNeedle>(this IEnumerable<T> source, IEnumerable<TNeedle> needles,
-                Func<T, TNeedle> comparisonFunc) {
-            var set = new HashSet<TNeedle>(needles);
-            return source.Where(i => set.Contains(comparisonFunc(i)));
-        }
-
-        public static IEnumerable<IEnumerable<T>> Chunk<T>(this IEnumerable<T> source, int chunksize) {
-            var currentChunk = new List<T>(chunksize);
-            foreach (var item in source) {
-                currentChunk.Add(item);
-                if (currentChunk.Count == chunksize) {
-                    yield return currentChunk;
-                    currentChunk = new List<T>(chunksize);
-                }
-            }
-            if (currentChunk.Any()) {
-                yield return currentChunk;
-            }
-        }
     }
 }

@@ -24,7 +24,7 @@ namespace Draughts.Test.Domain.AuthContext {
             role.Edit("1337", new [] { Permissions.ViewModPanel });
 
             role.Rolename.Should().Be("1337");
-            role.Permissions.Should().BeEquivalentTo(Permissions.ViewModPanel);
+            role.Permissions.Should().BeEquivalentTo(new [] { Permissions.ViewModPanel });
         }
 
         [Fact]

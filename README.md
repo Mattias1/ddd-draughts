@@ -19,12 +19,12 @@ look at the [source files](/Draughts/Application/Documentation/Views) of the doc
 Setup
 ------
 ### Dependencies
-- .NET 5 SDK
+- .NET 6 SDK
 - Docker and docker-compose
 - Node.js and npm
 
 ### Run Draughts
-To run the application without IDE, you need some patience `;)` __WIP__.
+To run a production build of draughts, you need some patience `;)` __WIP__.
 
 ### Setup development environment
 Optional: Create _appsettings.env.json_ files to override existing settings.

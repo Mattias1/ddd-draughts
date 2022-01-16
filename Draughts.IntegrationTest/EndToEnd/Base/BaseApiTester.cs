@@ -32,7 +32,7 @@ namespace Draughts.IntegrationTest.EndToEnd.Base {
 
         protected BaseApiTester() {
             Server = new TestServer(WebHostBuilder());
-            Client = new FlurlClient(Server.CreateClient()).EnableCookies();
+            Client = new FlurlClient(Server.CreateClient());
 
             Clock = SystemClock.Instance;
         }
@@ -56,15 +56,16 @@ namespace Draughts.IntegrationTest.EndToEnd.Base {
         public async Task<string> GetString(Url url) => await RequestBuilder(url).GetStringAsync();
         public async Task<T?> GetJson<T>(Url url) => await RequestBuilder(url).GetJsonAsync<T>();
 
-        public async Task<HttpResponseMessage> Post(Url url) => await RequestBuilder(url).PostAsync(null);
-        public async Task<HttpResponseMessage> PostJson<T>(Url url, T body) => await RequestBuilder(url).PostJsonAsync(body);
-        public async Task<HttpResponseMessage> PostForm<T>(Url url, T body) => await RequestBuilder(url).PostUrlEncodedAsync(body);
+        public async Task<IFlurlResponse> Post(Url url) => await RequestBuilder(url).PostAsync(null);
+        public async Task<IFlurlResponse> PostJson<T>(Url url, T body) => await RequestBuilder(url).PostJsonAsync(body);
+        public async Task<IFlurlResponse> PostForm<T>(Url url, T body) => await RequestBuilder(url).PostUrlEncodedAsync(body);
 
         private IFlurlRequest RequestBuilder(Url url) {
             var requestBuilder = Client.Request(BASE_URL, url).AllowAnyHttpStatus();
             if (Cookie is not null) {
                 var expires = Clock.UtcNow().PlusSeconds(JsonWebToken.EXPIRATION_SECONDS).ToDateTimeUtc();
-                requestBuilder.WithCookie(AuthContext.AUTHORIZATION_HEADER, Cookie, expires);
+                var jar = new CookieJar().AddOrReplace(AuthContext.AUTHORIZATION_HEADER, Cookie, Client.BaseUrl, expires);
+                requestBuilder.WithCookies(jar);
             }
             return requestBuilder;
         }
@@ -88,6 +89,7 @@ namespace Draughts.IntegrationTest.EndToEnd.Base {
     }
 
     public static class HttpResponseMessageExtensions {
-        public static string? RedirectLocation(this HttpResponseMessage result) => result.Headers.Location?.ToString();
+        public static string? RequestUri(this IFlurlResponse result)
+            => result.ResponseMessage.RequestMessage?.RequestUri?.PathAndQuery;
     }
 }

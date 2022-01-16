@@ -1,11 +1,11 @@
-using SqlQueryBuilder.Common;
-using SqlQueryBuilder.Options;
-using System.Collections.Generic;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using SqlQueryBuilder.Exceptions;
 using SqlQueryBuilder.Builder;
+using SqlQueryBuilder.Common;
+using SqlQueryBuilder.Exceptions;
+using SqlQueryBuilder.Options;
 
 namespace SqlQueryBuilder.Model {
     internal class Query {
@@ -121,7 +121,7 @@ namespace SqlQueryBuilder.Model {
                     Builder.Append(')');
                 }
                 bool isFirst = true;
-                foreach (var chunk in InsertValues.Chunk(InsertColumns.Count)) {
+                foreach (var chunk in InsertValues.Chunk(InsertColumns.Count == 0 ? InsertValues.Count : InsertColumns.Count)) {
                     if (chunk.Count() != InsertColumns.Count && InsertColumns.Count != 0) {
                         throw new InvalidOperationException("Wrong number of insert values.");
                     }

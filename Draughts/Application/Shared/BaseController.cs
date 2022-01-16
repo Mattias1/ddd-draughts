@@ -72,7 +72,7 @@ namespace Draughts.Application.Shared {
             return ErrorRedirect(url, errorMessages);
         }
         public IActionResult ErrorRedirect(Url url, string error) {
-            if (url.QueryParams.ContainsKey(AuthContextActionFilter.ERROR_PARAM)) {
+            if (url.QueryParams.Contains(AuthContextActionFilter.ERROR_PARAM)) {
                 throw new InvalidOperationException($"You shouldn't set the {AuthContextActionFilter.ERROR_PARAM} param manually.");
             }
             url.SetQueryParam(AuthContextActionFilter.ERROR_PARAM, error);
@@ -80,7 +80,7 @@ namespace Draughts.Application.Shared {
         }
 
         public IActionResult SuccessRedirect(Url url, string successMessage) {
-            if (url.QueryParams.ContainsKey(AuthContextActionFilter.SUCCESS_PARAM)) {
+            if (url.QueryParams.Contains(AuthContextActionFilter.SUCCESS_PARAM)) {
                 throw new InvalidOperationException($"You shouldn't set the {AuthContextActionFilter.SUCCESS_PARAM} param manually.");
             }
             url.SetQueryParam(AuthContextActionFilter.SUCCESS_PARAM, successMessage);

@@ -84,7 +84,7 @@ namespace Draughts.Test.Common.OoConcepts {
 
             var joins = aSpec.And(bSpec).RequiredJoins();
 
-            joins.Should().BeEquivalentTo(PossibleJoins.AuthUserRole, PossibleJoins.Role);
+            joins.Should().BeEquivalentTo(new [] { PossibleJoins.AuthUserRole, PossibleJoins.Role });
         }
 
         [Fact]
@@ -94,7 +94,7 @@ namespace Draughts.Test.Common.OoConcepts {
 
             var joins = aSpec.Or(bSpec).RequiredJoins();
 
-            joins.Should().BeEquivalentTo(PossibleJoins.AuthUserRole, PossibleJoins.Role);
+            joins.Should().BeEquivalentTo(new [] { PossibleJoins.AuthUserRole, PossibleJoins.Role });
         }
 
         [Fact]
@@ -103,7 +103,7 @@ namespace Draughts.Test.Common.OoConcepts {
 
             var joins = spec.Not().RequiredJoins();
 
-            joins.Should().BeEquivalentTo(PossibleJoins.AuthUserRole);
+            joins.Should().BeEquivalentTo(new [] { PossibleJoins.AuthUserRole });
         }
 
         private class PositiveSignSpecification : Specification<int> {

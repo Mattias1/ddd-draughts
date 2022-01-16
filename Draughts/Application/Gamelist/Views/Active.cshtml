@@ -1,5 +1,8 @@
 @model GamelistAndMenuViewModel 
 @{
+    if (Model is null) {
+        throw new InvalidOperationException("Model not set.");
+    }
     ViewBag.Title = "Active games";
 }
 

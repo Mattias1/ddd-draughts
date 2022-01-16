@@ -1,6 +1,9 @@
 @using Draughts.Application.ModPanel.ViewModels
 @model AdminLogsViewModel
 @{
+    if (Model is null) {
+        throw new InvalidOperationException("Model not set.");
+    }
     ViewBag.Title = "Mod panel - Admin logs";
 }
 

@@ -1,18 +1,14 @@
 <Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>netcoreapp5.0</TargetFramework>
+    <TargetFramework>net6.0</TargetFramework>
     <Nullable>enable</Nullable>
   </PropertyGroup>
-
   <ItemGroup>
-    <PackageReference Include="Konscious.Security.Cryptography.Argon2" Version="1.2.1" />
-    <PackageReference Include="NodaTime" Version="3.0.0" />
+    <PackageReference Include="Konscious.Security.Cryptography.Argon2" Version="1.2.1"/>
+    <PackageReference Include="NodaTime" Version="3.0.9"/>
   </ItemGroup>
-
   <ItemGroup>
-    <ProjectReference Include="..\Draughts.Test\Draughts.Test.csproj" />
+    <ProjectReference Include="..\Draughts.Test\Draughts.Test.csproj"/>
   </ItemGroup>
-
 </Project>

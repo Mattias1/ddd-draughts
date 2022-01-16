@@ -1,6 +1,9 @@
 @using Draughts.Application.ModPanel.ViewModels
 @model ModPanelOverviewViewModel
 @{
+    if (Model is null) {
+        throw new InvalidOperationException("Model not set.");
+    }
     ViewBag.Title = "Mod panel - Overview";
 }
 

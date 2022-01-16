@@ -49,7 +49,7 @@ namespace Draughts.Common {
             var header = FromBase64Json<JwtHeader>(parts[0]);
             var data = FromBase64Json<JwtData>(parts[1]);
 
-            if (header.Alg != "HS256" || header.Typ != "JWT") {
+            if (header?.Alg != "HS256" || header.Typ != "JWT") {
                 jwt = null;
                 return false;
             }
@@ -57,7 +57,7 @@ namespace Draughts.Common {
             long unixNow = clock.GetCurrentInstant().ToUnixTimeSeconds();
             string expectedSignature = ComputeSignature(parts[0], parts[1]);
             // Note: This is not secure - it's home made crypto, what did you expect?
-            if (data.Aud != "Draughts" || data.Exp < unixNow || data.Usr == default || parts[2] != expectedSignature) {
+            if (data?.Aud != "Draughts" || data.Exp < unixNow || data.Usr == default || parts[2] != expectedSignature) {
                 jwt = null;
                 return false;
             }
@@ -78,7 +78,7 @@ namespace Draughts.Common {
             return Convert.ToBase64String(bytes).Replace('+', '-').Replace('/', '_').Replace("=", "");
         }
 
-        private static T FromBase64Json<T>(string raw) {
+        private static T? FromBase64Json<T>(string raw) {
             byte[] bytes = FromBase64(raw);
             string value = Encoding.UTF8.GetString(bytes);
             return JsonConvert.DeserializeObject<T>(value);

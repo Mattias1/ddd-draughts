@@ -1,6 +1,9 @@
 @using Draughts.Application.ModPanel.ViewModels;
 @model ModPanelViewModel
 @{
+    if (Model is null) {
+        throw new InvalidOperationException("Model not set.");
+    }
     ViewBag.Title = "Mod panel - Game tools";
 }
 

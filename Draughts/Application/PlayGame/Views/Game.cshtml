@@ -2,6 +2,9 @@
 
 @model PlayGameViewModel
 @{
+    if (Model is null) {
+        throw new InvalidOperationException("Model not set.");
+    }
     ViewBag.Title = "Game " + Model.Id;
     var settings = Model.Settings;
     var board = Model.CurrentGameState.Board;

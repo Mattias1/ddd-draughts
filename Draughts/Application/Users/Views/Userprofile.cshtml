@@ -1,5 +1,8 @@
 @model UserViewModel
 @{
+    if (Model is null) {
+        throw new InvalidOperationException("Model not set.");
+    }
     ViewBag.Title = "User: " + Model.Username;
 }
 
