@@ -10,6 +10,7 @@ using static Draughts.Domain.GameContext.Models.Voting;
 using static Draughts.Domain.UserContext.Models.Rank;
 
 namespace Draughts.Repositories.Database;
+
 #pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
 public class DbUser : IDbObject<DbUser, User> {
     public long Id { get; set; }
@@ -412,3 +413,5 @@ public class DbIdGeneration {
 
     public bool Equals(DbIdGeneration? other) => AvailableId.Equals(other?.Subject);
 }
+
+#pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
