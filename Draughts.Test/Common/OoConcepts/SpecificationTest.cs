@@ -44,7 +44,7 @@ namespace Draughts.Test.Common.OoConcepts {
         }
 
         [Fact]
-        public void TestAndSpecificationQuery(){
+        public void TestAndSpecificationQuery() {
             var aSpec = new PositiveSignSpecification(1);
             var bSpec = new PositiveSignSpecification(-1);
 
@@ -56,7 +56,7 @@ namespace Draughts.Test.Common.OoConcepts {
         }
 
         [Fact]
-        public void TestOrSpecificationQuery(){
+        public void TestOrSpecificationQuery() {
             var aSpec = new PositiveSignSpecification(1);
             var bSpec = new PositiveSignSpecification(-1);
 
@@ -68,7 +68,7 @@ namespace Draughts.Test.Common.OoConcepts {
         }
 
         [Fact]
-        public void TestNotSpecificationQuery(){
+        public void TestNotSpecificationQuery() {
             var spec = new PositiveSignSpecification(1);
             var q = Query().SelectAllFrom("test");
 
@@ -78,32 +78,32 @@ namespace Draughts.Test.Common.OoConcepts {
         }
 
         [Fact]
-        public void TestAndSpecificationJoins(){
+        public void TestAndSpecificationJoins() {
             var aSpec = new AuthUserRoleJoinSpecification();
             var bSpec = new RoleJoinSpecification();
 
             var joins = aSpec.And(bSpec).RequiredJoins();
 
-            joins.Should().BeEquivalentTo(new [] { PossibleJoins.AuthUserRole, PossibleJoins.Role });
+            joins.Should().BeEquivalentTo(new[] { PossibleJoins.AuthUserRole, PossibleJoins.Role });
         }
 
         [Fact]
-        public void TestOrSpecificationJoins(){
+        public void TestOrSpecificationJoins() {
             var aSpec = new AuthUserRoleJoinSpecification();
             var bSpec = new RoleJoinSpecification();
 
             var joins = aSpec.Or(bSpec).RequiredJoins();
 
-            joins.Should().BeEquivalentTo(new [] { PossibleJoins.AuthUserRole, PossibleJoins.Role });
+            joins.Should().BeEquivalentTo(new[] { PossibleJoins.AuthUserRole, PossibleJoins.Role });
         }
 
         [Fact]
-        public void TestNotSpecificationJoins(){
+        public void TestNotSpecificationJoins() {
             var spec = new AuthUserRoleJoinSpecification();
 
             var joins = spec.Not().RequiredJoins();
 
-            joins.Should().BeEquivalentTo(new [] { PossibleJoins.AuthUserRole });
+            joins.Should().BeEquivalentTo(new[] { PossibleJoins.AuthUserRole });
         }
 
         private class PositiveSignSpecification : Specification<int> {

@@ -1,18 +1,18 @@
 using Draughts.Application.Auth;
 using Draughts.Application.Auth.Services;
 using Draughts.Application.Lobby.Services;
+using Draughts.Application.ModPanel.Services;
 using Draughts.Application.PlayGame.Services;
 using Draughts.Application.Shared.Middleware;
+using Draughts.Domain.AuthContext.Services;
+using Draughts.Domain.GameContext.Services;
 using Draughts.Repositories;
 using Draughts.Repositories.Database;
-using Draughts.Repositories.Transaction;
 using Draughts.Repositories.InMemory;
+using Draughts.Repositories.Transaction;
 using Microsoft.Extensions.DependencyInjection;
 using NodaTime;
 using System;
-using Draughts.Application.ModPanel.Services;
-using Draughts.Domain.AuthContext.Services;
-using Draughts.Domain.GameContext.Services;
 
 namespace Draughts.Common {
     public static class DraughtsServiceProvider {

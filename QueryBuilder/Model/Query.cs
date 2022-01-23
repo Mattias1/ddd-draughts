@@ -1,11 +1,11 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using SqlQueryBuilder.Builder;
 using SqlQueryBuilder.Common;
 using SqlQueryBuilder.Exceptions;
 using SqlQueryBuilder.Options;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 
 namespace SqlQueryBuilder.Model {
     internal class Query {

@@ -36,7 +36,7 @@ namespace Draughts {
             string pathFormat = GetLogPathFormat(settings?.LogDir, $"{logName}-log-{{Date}}.log");
 
             if (!_logIsConfigured) {
-                lock(_lock) {
+                lock (_lock) {
                     if (!_logIsConfigured) {
                         var configurationBuilder = new LoggerConfiguration()
                             .MinimumLevel.Is(FromString(settings?.LogLevel))
@@ -72,8 +72,7 @@ namespace Draughts {
         }
 
         public static LogEventLevel FromString(string? logLevel) {
-            return logLevel?.ToLowerInvariant() switch
-            {
+            return logLevel?.ToLowerInvariant() switch {
                 "fatal" => LogEventLevel.Fatal,
                 "error" => LogEventLevel.Error,
                 "warning" => LogEventLevel.Warning,

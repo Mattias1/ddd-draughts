@@ -6,12 +6,9 @@ using Serilog;
 using System;
 using System.Threading.Tasks;
 
-namespace SignalRWebPack.Hubs
-{
-    public class WebsocketHub : Hub
-    {
-        public async Task AssociateGame(object? rawGameId)
-        {
+namespace SignalRWebPack.Hubs {
+    public class WebsocketHub : Hub {
+        public async Task AssociateGame(object? rawGameId) {
             try {
                 var gameId = rawGameId?.ToString();
                 if (!int.TryParse(gameId, out _)) {

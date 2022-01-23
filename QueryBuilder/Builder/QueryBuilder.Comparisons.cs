@@ -95,7 +95,7 @@ namespace SqlQueryBuilder.Builder {
         public IQueryBuilder Eq(SubQueryFunc? queryFunc) => Is(queryFunc);
         public IQueryBuilder Is(SubQueryFunc? queryFunc) => queryFunc is null ? IsNull() : SubqueryComparison("=", queryFunc);
         public IQueryBuilder NotEq(SubQueryFunc? queryFunc) => Isnt(queryFunc);
-        public IQueryBuilder Isnt(SubQueryFunc? queryFunc) =>  queryFunc is null ? IsNotNull() : SubqueryComparison("!=", queryFunc);
+        public IQueryBuilder Isnt(SubQueryFunc? queryFunc) => queryFunc is null ? IsNotNull() : SubqueryComparison("!=", queryFunc);
 
         public IQueryBuilder Gt(SubQueryFunc queryFunc) => SubqueryComparison(">", queryFunc);
         public IQueryBuilder GtEq(SubQueryFunc queryFunc) => SubqueryComparison(">=", queryFunc);

@@ -1,7 +1,3 @@
-using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
-using System.Text.Encodings.Web;
 using Draughts.Application.Shared.ViewModels;
 using Draughts.Domain.AuthContext.Models;
 using Draughts.Domain.GameContext.Models;
@@ -9,6 +5,10 @@ using Draughts.Domain.UserContext.Models;
 using Flurl;
 using Microsoft.AspNetCore.Html;
 using NodaTime;
+using System.Collections.Generic;
+using System.Globalization;
+using System.Linq;
+using System.Text.Encodings.Web;
 
 namespace Draughts.Application.Shared {
     public static class Utils {

@@ -11,7 +11,7 @@ namespace Draughts.Test.Common.OoConcepts {
         private IInitialQueryBuilder Query() => QueryBuilder.Init(new FakeSqlFlavor());
 
         [Fact]
-        public void TestSortQuery(){
+        public void TestSortQuery() {
             var sort = new SortTestSort();
             var q = Query().SelectAllFrom("test");
 

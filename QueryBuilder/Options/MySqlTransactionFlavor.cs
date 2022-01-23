@@ -59,10 +59,10 @@ namespace SqlQueryBuilder.Options {
 
         public Task<ISqlTransactionFlavor> BeginTransactionAsync() {
             throw new InvalidOperationException("The transaction is already started.");
-        } 
+        }
         public ISqlTransactionFlavor BeginTransaction() {
             throw new InvalidOperationException("The transaction is already started.");
-        } 
+        }
 
         public async Task CommitAsync() => await _transaction.CommitAsync();
         public void Commit() => _transaction.Commit();

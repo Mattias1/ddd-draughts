@@ -55,9 +55,9 @@ namespace Draughts.Repositories.Transaction {
 
         public ITransaction BeginTransaction(TransactionDomain domain) {
             lock (_lock) {
-               if (_currentTransaction.Value is not null) {
-                   throw new InvalidOperationException("You already have a transaction within this thread.");
-               }
+                if (_currentTransaction.Value is not null) {
+                    throw new InvalidOperationException("You already have a transaction within this thread.");
+                }
 
                 var transaction = new Transaction(domain);
                 transaction.OnClosed += (o, e) => OnClosedTransaction((Transaction)o, e);
@@ -190,7 +190,7 @@ namespace Draughts.Repositories.Transaction {
                     throw new InvalidOperationException("Cannot start a query unless the transaction is open.");
                 }
                 return DbContext.Get.Query(_transactionFlavor);
-            } 
+            }
         }
     }
 }

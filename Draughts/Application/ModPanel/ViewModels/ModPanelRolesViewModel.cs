@@ -8,7 +8,7 @@ namespace Draughts.Application.ModPanel.ViewModels {
         public IReadOnlyList<RoleViewModel> Roles { get; }
 
         public ModPanelRolesViewModel(IReadOnlyList<Role> roles, MenuViewModel menuViewModel)
-                : base (menuViewModel) {
+                : base(menuViewModel) {
             Roles = roles.Select(r => new RoleViewModel(r)).ToList().AsReadOnly();
         }
     }

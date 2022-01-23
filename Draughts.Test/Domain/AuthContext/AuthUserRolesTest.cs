@@ -33,7 +33,7 @@ namespace Draughts.Test.Domain.AuthContext {
 
             _userRoleService.AssignRole(authUser, AdminRole);
 
-            authUser.RoleIds.Should().BeEquivalentTo(new [] { RegisteredRole.Id, AdminRole.Id });
+            authUser.RoleIds.Should().BeEquivalentTo(new[] { RegisteredRole.Id, AdminRole.Id });
         }
 
         [Fact]
@@ -52,7 +52,7 @@ namespace Draughts.Test.Domain.AuthContext {
 
             _userRoleService.RemoveRole(authUser, AdminRole);
 
-            authUser.RoleIds.Should().BeEquivalentTo(new [] { RegisteredRole.Id });
+            authUser.RoleIds.Should().BeEquivalentTo(new[] { RegisteredRole.Id });
         }
 
         [Fact]

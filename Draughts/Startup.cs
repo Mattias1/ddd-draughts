@@ -1,5 +1,7 @@
-using Draughts.Common;
+using Draughts.Application.Shared;
 using Draughts.Application.Shared.Middleware;
+using Draughts.Common;
+using Draughts.Repositories.Database;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -7,11 +9,9 @@ using Microsoft.AspNetCore.Mvc.Razor;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using System.Threading.Tasks;
-using Draughts.Repositories.Database;
-using Draughts.Application.Shared;
-using System;
 using SignalRWebPack.Hubs;
+using System;
+using System.Threading.Tasks;
 
 namespace Draughts {
     public class Startup {

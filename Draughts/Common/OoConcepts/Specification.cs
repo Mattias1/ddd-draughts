@@ -1,8 +1,8 @@
+using SqlQueryBuilder.Builder;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using SqlQueryBuilder.Builder;
 using static Draughts.Repositories.Database.JoinEnum;
 
 namespace Draughts.Common.OoConcepts {
@@ -24,7 +24,7 @@ namespace Draughts.Common.OoConcepts {
 
         protected void ApplyColumnWhere(IQueryBuilder builder, QueryWhereType whereType, string column,
                 Func<IComparisonQueryBuilder, IQueryBuilder> func) {
-            if (whereType == QueryWhereType.And){
+            if (whereType == QueryWhereType.And) {
                 func(builder.And(column));
             }
             else if (whereType == QueryWhereType.Or) {
@@ -42,7 +42,7 @@ namespace Draughts.Common.OoConcepts {
         }
 
         protected void ApplyFuncWhere(IQueryBuilder builder, QueryWhereType whereType, QueryBuilder.SubWhereFunc func) {
-            if (whereType == QueryWhereType.And){
+            if (whereType == QueryWhereType.And) {
                 builder.And(func);
             }
             else if (whereType == QueryWhereType.Or) {

@@ -37,8 +37,7 @@ namespace SqlQueryBuilder.Model {
                 throw new InvalidOperationException("No 'Where' (or 'And') is added just yet, why are you adding an 'Or'?");
             }
 
-            return type switch
-            {
+            return type switch {
                 WhereType.And => isFirst ? "where" : "and",
                 WhereType.Or => "or",
                 WhereType.AndNot => isFirst ? "where not" : "and not",

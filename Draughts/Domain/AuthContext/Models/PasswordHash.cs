@@ -1,10 +1,10 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
 using Draughts.Common;
 using Draughts.Common.OoConcepts;
 using Draughts.Domain.UserContext.Models;
 using Konscious.Security.Cryptography;
+using System;
+using System.Collections.Generic;
+using System.Text;
 
 namespace Draughts.Domain.AuthContext.Models {
     public class PasswordHash : ValueObject<PasswordHash> {

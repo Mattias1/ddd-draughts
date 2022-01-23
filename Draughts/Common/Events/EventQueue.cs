@@ -47,7 +47,7 @@ namespace Draughts.Common.Events {
                     .ForEach(h => h.Handle(evt))
                     .Any();
             }
-            catch (Exception e) {
+            catch (Exception) {
                 _failedEventsQueue.Enqueue(evt);
                 throw;
                 // return false;

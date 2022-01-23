@@ -16,8 +16,7 @@ namespace Draughts.Domain.GameContext.Models {
 
         public Duration MaxTurnLength => Duration.FromHours(24);
 
-        public int PiecesPerSide => BoardSize switch
-        {
+        public int PiecesPerSide => BoardSize switch {
             12 => 30,
             10 => 20,
             8 => 12,

@@ -21,10 +21,10 @@ namespace Draughts.Test.Domain.AuthContext {
         public void EditRoleSuccessfully() {
             var role = RoleTestHelper.RegisteredUser().Build();
 
-            role.Edit("1337", new [] { Permissions.ViewModPanel });
+            role.Edit("1337", new[] { Permissions.ViewModPanel });
 
             role.Rolename.Should().Be("1337");
-            role.Permissions.Should().BeEquivalentTo(new [] { Permissions.ViewModPanel });
+            role.Permissions.Should().BeEquivalentTo(new[] { Permissions.ViewModPanel });
         }
 
         [Fact]
@@ -61,7 +61,7 @@ namespace Draughts.Test.Domain.AuthContext {
         [Fact]
         public void AllowAddingPermissionsToAdmin() {
             var role = RoleTestHelper.Admin().Build();
-            var newPermissions = role.Permissions.Concat(new [] { Permissions.PendingRegistration }).ToList();
+            var newPermissions = role.Permissions.Concat(new[] { Permissions.PendingRegistration }).ToList();
 
             role.Edit(role.Rolename, newPermissions);
 

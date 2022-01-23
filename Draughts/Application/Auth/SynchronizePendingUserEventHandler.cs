@@ -1,5 +1,5 @@
-using Draughts.Common.Events;
 using Draughts.Application.Auth.Services;
+using Draughts.Common.Events;
 using Draughts.Domain.AuthContext.Events;
 
 namespace Draughts.Application.Auth {

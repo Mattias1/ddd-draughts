@@ -1,7 +1,8 @@
-using Draughts.Common;
-using Draughts.Common.Utilities;
 using Draughts.Application.Auth.Services;
 using Draughts.Application.Shared.Attributes;
+using Draughts.Common;
+using Draughts.Common.Utilities;
+using Draughts.Repositories.Transaction;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
@@ -10,7 +11,6 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Net;
-using Draughts.Repositories.Transaction;
 
 namespace Draughts.Application.Shared.Middleware {
     public class JwtActionFilter : IAuthorizationFilter {

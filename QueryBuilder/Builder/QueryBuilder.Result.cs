@@ -73,7 +73,7 @@ namespace SqlQueryBuilder.Builder {
         public T FirstValue<T>(string column) => RowValue<T>(FirstResult(), column);
         public T? FirstOrDefaultValue<T>() where T : struct => RowStruct<T>(FirstOrDefaultResult());
         public T? FirstOrDefaultValue<T>(string column) where T : struct => RowStruct<T>(FirstOrDefaultResult(), column);
-        public T SingleValue<T>()  => RowValue<T>(SingleResult());
+        public T SingleValue<T>() => RowValue<T>(SingleResult());
         public T SingleValue<T>(string column) => RowValue<T>(SingleResult(), column);
         public T? SingleOrDefaultValue<T>() where T : struct => RowStruct<T>(SingleOrDefaultResult());
         public T? SingleOrDefaultValue<T>(string column) where T : struct => RowStruct<T>(SingleOrDefaultResult(), column);

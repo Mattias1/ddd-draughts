@@ -1,6 +1,6 @@
 using FluentAssertions;
-using Xunit;
 using SqlQueryBuilder.Common;
+using Xunit;
 
 namespace SqlQueryBuilder.Test.Common {
     public class IReadOnlyListExtensionsTest {

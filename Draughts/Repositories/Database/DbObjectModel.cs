@@ -60,7 +60,7 @@ namespace Draughts.Repositories.Database {
                 Username = entity.Username.Value,
                 Rating = entity.Rating.Value,
                 Rank = entity.Rank.Name,
-                TotalPlayed  = entity.Statistics.TotalTally.Played,
+                TotalPlayed = entity.Statistics.TotalTally.Played,
                 TotalWon = entity.Statistics.TotalTally.Won,
                 TotalTied = entity.Statistics.TotalTally.Tied,
                 TotalLost = entity.Statistics.TotalTally.Lost,
@@ -226,8 +226,7 @@ namespace Draughts.Repositories.Database {
 
         public GameSettings GetGameSettings() {
             Color firstMoveColor = FirstMoveColorIsWhite ? Color.White : Color.Black;
-            var capConstraints = CaptureConstraints switch
-            {
+            var capConstraints = CaptureConstraints switch {
                 "max" => GameSettings.DraughtsCaptureConstraints.MaximumPieces,
                 "seq" => GameSettings.DraughtsCaptureConstraints.AnyFinishedSequence,
                 _ => throw new InvalidOperationException("Unknown capture constraint.")
@@ -236,8 +235,7 @@ namespace Draughts.Repositories.Database {
         }
 
         public static DbGame FromDomainModel(Game entity) {
-            string captureConstraints = entity.Settings.CaptureConstraints switch
-            {
+            string captureConstraints = entity.Settings.CaptureConstraints switch {
                 GameSettings.DraughtsCaptureConstraints.AnyFinishedSequence => "seq",
                 GameSettings.DraughtsCaptureConstraints.MaximumPieces => "max",
                 _ => throw new InvalidOperationException("Unknown capture constraint")
@@ -406,7 +404,7 @@ namespace Draughts.Repositories.Database {
         public string Subject { get; set; }
         public long AvailableId { get; set; }
 
-        public DbIdGeneration() {}
+        public DbIdGeneration() { }
         public DbIdGeneration(string subject, long id) {
             Subject = subject;
             AvailableId = id;

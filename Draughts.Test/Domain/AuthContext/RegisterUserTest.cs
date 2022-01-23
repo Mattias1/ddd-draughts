@@ -65,7 +65,7 @@ namespace Draughts.Test.Domain.AuthContext {
 
             _userRegistrationService.Register(authUser, RegisteredRole, PendingRole);
 
-            authUser.RoleIds.Should().BeEquivalentTo(new [] { RegisteredRole.Id });
+            authUser.RoleIds.Should().BeEquivalentTo(new[] { RegisteredRole.Id });
         }
     }
 }

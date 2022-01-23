@@ -60,7 +60,7 @@ namespace Draughts.Application.ModPanel {
         }
 
         [HttpPost("/modpanel/role/create"), Requires(Permissions.EDIT_ROLES)]
-        public IActionResult CreateRole([FromForm]CreateRoleRequest? request) {
+        public IActionResult CreateRole([FromForm] CreateRoleRequest? request) {
             try {
                 ValidateNotNull(request?.Rolename);
 
@@ -74,7 +74,7 @@ namespace Draughts.Application.ModPanel {
         }
 
         [HttpPost("/modpanel/role/{roleId:long}/edit"), Requires(Permissions.EDIT_ROLES)]
-        public IActionResult EditRolePost(long roleId, [FromForm]EditRoleRequest? request) {
+        public IActionResult EditRolePost(long roleId, [FromForm] EditRoleRequest? request) {
             try {
                 ValidateNotNull(request?.Rolename, request?.Permissions);
 

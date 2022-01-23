@@ -112,7 +112,7 @@ namespace Draughts.Test.Domain.GameContext {
             var game = GameTestHelper.PendingMiniGame(whitePlayer).Build();
             var gameState = GameState.InitialState(game.Id, game.Settings.BoardSize);
 
-            Action doMove = () => _playGameService.DoMove( game, gameState, whitePlayer.UserId, 13.AsSquare(), 11.AsSquare());
+            Action doMove = () => _playGameService.DoMove(game, gameState, whitePlayer.UserId, 13.AsSquare(), 11.AsSquare());
 
             doMove.Should().Throw<ManualValidationException>().WithMessage(Game.ERROR_GAME_NOT_ACTIVE);
         }
@@ -123,7 +123,7 @@ namespace Draughts.Test.Domain.GameContext {
             var gameState = GameState.FromStorage(game.Id, game.Settings, "000 000 005 000 000 000", new Move[0]);
             var white = game.Players.Single(p => p.Color == Color.White).UserId;
 
-            Action doMove = () => _playGameService.DoMove( game, gameState, white, 9.AsSquare(), 6.AsSquare());
+            Action doMove = () => _playGameService.DoMove(game, gameState, white, 9.AsSquare(), 6.AsSquare());
 
             doMove.Should().Throw<ManualValidationException>().WithMessage(Game.ERROR_GAME_NOT_ACTIVE);
         }

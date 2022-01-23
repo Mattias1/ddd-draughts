@@ -80,7 +80,7 @@ namespace Draughts.Test.Domain.GameContext {
 
             game.JoinGame(whitePlayer, _fakeClock.UtcNow());
 
-            game.Players.Should().BeEquivalentTo(new [] { whitePlayer, blackPlayer });
+            game.Players.Should().BeEquivalentTo(new[] { whitePlayer, blackPlayer });
             game.HasStarted.Should().BeTrue();
             game.Turn.Should().NotBeNull();
             game.Turn!.Player.Color.Should().Be(Color.White);

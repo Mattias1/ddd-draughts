@@ -44,7 +44,7 @@ namespace Draughts.Application.Shared.ViewModels {
                 PlayerId = 0L;
                 ExpiresAt = "";
             }
-            public TurnDto (Turn turn) {
+            public TurnDto(Turn turn) {
                 PlayerId = turn.Player.Id.Value;
                 ExpiresAt = turn.ExpiresAt.ToIsoString();
             }

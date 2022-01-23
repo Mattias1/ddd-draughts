@@ -63,13 +63,26 @@ namespace Draughts.Repositories.InMemory {
             }
             var now = SystemClock.Instance.UtcNow();
             UsersTable.Add(new DbUser {
-                Id = id, Username = name, Rating = rating, Rank = rank.Name,
-                TotalPlayed = gamesPlayed, TotalWon = gamesPlayed, TotalTied = 0, TotalLost = 0,
-                InternationalPlayed = gamesPlayed, InternationalWon = gamesPlayed,
-                InternationalTied = 0, InternationalLost = 0,
-                EnglishAmericanPlayed = gamesPlayed, EnglishAmericanWon = gamesPlayed,
-                EnglishAmericanTied = 0, EnglishAmericanLost = 0,
-                OtherPlayed = gamesPlayed, OtherWon = gamesPlayed, OtherTied = 0, OtherLost = 0,
+                Id = id,
+                Username = name,
+                Rating = rating,
+                Rank = rank.Name,
+                TotalPlayed = gamesPlayed,
+                TotalWon = gamesPlayed,
+                TotalTied = 0,
+                TotalLost = 0,
+                InternationalPlayed = gamesPlayed,
+                InternationalWon = gamesPlayed,
+                InternationalTied = 0,
+                InternationalLost = 0,
+                EnglishAmericanPlayed = gamesPlayed,
+                EnglishAmericanWon = gamesPlayed,
+                EnglishAmericanTied = 0,
+                EnglishAmericanLost = 0,
+                OtherPlayed = gamesPlayed,
+                OtherWon = gamesPlayed,
+                OtherTied = 0,
+                OtherLost = 0,
                 CreatedAt = now
             });
         }
@@ -223,8 +236,7 @@ namespace Draughts.Repositories.InMemory {
                 throw new InvalidOperationException("START_FOR_NEXT_GAME_IDS too low!");
             }
             var now = SystemClock.Instance.UtcNow();
-            string capConstraints = settings.CaptureConstraints switch
-            {
+            string capConstraints = settings.CaptureConstraints switch {
                 GameSettings.DraughtsCaptureConstraints.AnyFinishedSequence => "seq",
                 GameSettings.DraughtsCaptureConstraints.MaximumPieces => "max",
                 _ => throw new InvalidOperationException("Unknown capture constraint")
@@ -237,8 +249,12 @@ namespace Draughts.Repositories.InMemory {
                 MenCaptureBackwards = settings.MenCaptureBackwards,
                 CaptureConstraints = capConstraints,
                 Victor = null,
-                CreatedAt = now, StartedAt = null, FinishedAt = null,
-                TurnPlayerId = null, TurnCreatedAt = null, TurnExpiresAt = null
+                CreatedAt = now,
+                StartedAt = null,
+                FinishedAt = null,
+                TurnPlayerId = null,
+                TurnCreatedAt = null,
+                TurnExpiresAt = null
             });
             GameStatesTable.Add(new DbGameState {
                 Id = id,

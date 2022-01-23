@@ -1,8 +1,8 @@
 using Draughts.Common.Utilities;
 using FluentAssertions;
-using Xunit;
 using System.Collections.Generic;
 using System.Linq;
+using Xunit;
 
 namespace Draughts.Test.Common.Utilities {
     public class IEnumerableExtensionsTest {

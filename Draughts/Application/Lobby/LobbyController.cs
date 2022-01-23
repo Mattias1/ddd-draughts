@@ -74,8 +74,7 @@ namespace Draughts.Application.Lobby {
             }
         }
 
-        private Color ColorFromRequest(string? color) => color switch
-        {
+        private Color ColorFromRequest(string? color) => color switch {
             "white" => Color.White,
             "black" => Color.Black,
             "random" => Color.Random,
@@ -86,8 +85,7 @@ namespace Draughts.Application.Lobby {
                 bool? FlyingKings, bool? MenCaptureBackwards, string? CaptureConstraints, string? JoinAs) {
             public GameSettings BuildGameSettings() {
                 var firstMove = WhiteHasFirstMove!.Value ? Color.White : Color.Black;
-                var capConstraints = CaptureConstraints switch
-                {
+                var capConstraints = CaptureConstraints switch {
                     "max" => GameSettings.DraughtsCaptureConstraints.MaximumPieces,
                     "seq" => GameSettings.DraughtsCaptureConstraints.AnyFinishedSequence,
                     _ => throw new ManualValidationException("Unknown capture constraint.")

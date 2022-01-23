@@ -1,8 +1,8 @@
 using Draughts.Common.Events;
 using Draughts.Domain.AuthContext.Events;
-using Draughts.Repositories.Transaction;
-using Draughts.Repositories;
 using Draughts.Domain.AuthContext.Models;
+using Draughts.Repositories;
+using Draughts.Repositories.Transaction;
 using NodaTime;
 using System;
 

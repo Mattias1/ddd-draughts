@@ -78,7 +78,7 @@ namespace Draughts.IntegrationTest.EndToEnd.Base {
             ApiTester.UnitOfWork.WithAuthTransaction(tran => {
                 var role = ApiTester.RoleRepository.FindById(RoleId!);
                 role.Rolename.Should().Be(EDITED_ROLENAME);
-                role.Permissions.Should().BeEquivalentTo(new [] { Permission.Permissions.PlayGame });
+                role.Permissions.Should().BeEquivalentTo(new[] { Permission.Permissions.PlayGame });
 
                 var authUser = ApiTester.AuthUserRepository.FindByName(ASSIGNED_USERNAME);
                 authUser.RoleIds.Should().Contain(role.Id);

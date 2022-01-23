@@ -1,12 +1,12 @@
 using Draughts.Common.Events;
 using Draughts.Common.Utilities;
 using Draughts.Domain.AuthContext.Events;
+using Draughts.Domain.UserContext.Models;
 using Draughts.Test.TestHelpers;
 using FluentAssertions;
-using Xunit;
 using NodaTime;
 using NodaTime.Testing;
-using Draughts.Domain.UserContext.Models;
+using Xunit;
 
 namespace Draughts.Test.Common.Events {
     public class DomainEventTest {

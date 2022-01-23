@@ -28,8 +28,7 @@ namespace Draughts.Common.OoConcepts {
             yield return Value;
         }
 
-        public override bool Equals(object? obj) => obj switch
-        {
+        public override bool Equals(object? obj) => obj switch {
             IdValueObject<T> v => Equals(v),
             long id => Equals(id),
             _ => false
@@ -54,8 +53,7 @@ namespace Draughts.Common.OoConcepts {
             yield return Value;
         }
 
-        public override bool Equals(object? obj) => obj switch
-        {
+        public override bool Equals(object? obj) => obj switch {
             IntValueObject<T> v => Equals(v),
             int value => Equals(value),
             _ => false
@@ -80,8 +78,7 @@ namespace Draughts.Common.OoConcepts {
             yield return Value.ToLower();
         }
 
-        public override bool Equals(object? obj) => obj switch
-        {
+        public override bool Equals(object? obj) => obj switch {
             StringValueObject<T> v => Equals(v),
             string value => Equals(value),
             _ => false
