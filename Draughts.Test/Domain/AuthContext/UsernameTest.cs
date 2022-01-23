@@ -4,51 +4,51 @@ using FluentAssertions;
 using System;
 using Xunit;
 
-namespace Draughts.Test.Domain.AuthContext {
-    public class UsernameTest {
-        [Fact]
-        public void NameCanBeAlphaDash() {
-            var name = new Username("Matty-_-1337");
-            name.Value.Should().Be("Matty-_-1337");
-        }
+namespace Draughts.Test.Domain.AuthContext;
 
-        [Fact]
-        public void NameCanBeJustNumbers() {
-            var name = new Username("1771");
-            name.Value.Should().Be("1771");
-        }
+public class UsernameTest {
+    [Fact]
+    public void NameCanBeAlphaDash() {
+        var name = new Username("Matty-_-1337");
+        name.Value.Should().Be("Matty-_-1337");
+    }
 
-        [Fact]
-        public void NameCannotBeNull() => ThrowWhenNameIs(null);
+    [Fact]
+    public void NameCanBeJustNumbers() {
+        var name = new Username("1771");
+        name.Value.Should().Be("1771");
+    }
 
-        [Fact]
-        public void NameCannotBeWhitespace() => ThrowWhenNameIs(" ");
+    [Fact]
+    public void NameCannotBeNull() => ThrowWhenNameIs(null);
 
-        [Fact]
-        public void NameCannotBeTooLong() => ThrowWhenNameIs(new string('a', Username.MAX_LENGTH + 1));
+    [Fact]
+    public void NameCannotBeWhitespace() => ThrowWhenNameIs(" ");
 
-        [Theory]
-        [InlineData("a@z")]
-        [InlineData("a$z")]
-        [InlineData("a!z")]
-        [InlineData("a<z")]
-        [InlineData("a>z")]
-        [InlineData("a=z")]
-        [InlineData("a.z")]
-        [InlineData("a,z")]
-        [InlineData("a|z")]
-        [InlineData("a/z")]
-        [InlineData("a\\z")]
-        [InlineData("a&z")]
-        [InlineData("a;z")]
-        [InlineData("a:z")]
-        [InlineData("a	z")]
-        [InlineData("a z")]
-        public void NameCannotContainSpecialCharacters(string name) => ThrowWhenNameIs(name);
+    [Fact]
+    public void NameCannotBeTooLong() => ThrowWhenNameIs(new string('a', Username.MAX_LENGTH + 1));
 
-        private void ThrowWhenNameIs(string? name) {
-            Action newName = () => new Username(name);
-            newName.Should().Throw<ManualValidationException>();
-        }
+    [Theory]
+    [InlineData("a@z")]
+    [InlineData("a$z")]
+    [InlineData("a!z")]
+    [InlineData("a<z")]
+    [InlineData("a>z")]
+    [InlineData("a=z")]
+    [InlineData("a.z")]
+    [InlineData("a,z")]
+    [InlineData("a|z")]
+    [InlineData("a/z")]
+    [InlineData("a\\z")]
+    [InlineData("a&z")]
+    [InlineData("a;z")]
+    [InlineData("a:z")]
+    [InlineData("a	z")]
+    [InlineData("a z")]
+    public void NameCannotContainSpecialCharacters(string name) => ThrowWhenNameIs(name);
+
+    private void ThrowWhenNameIs(string? name) {
+        Action newName = () => new Username(name);
+        newName.Should().Throw<ManualValidationException>();
     }
 }

@@ -4,12 +4,12 @@ using SqlQueryBuilder.Builder;
 using System;
 using System.Linq.Expressions;
 
-namespace Draughts.Domain.GameContext.Specifications {
-    public class FinishedGameSpecification : Specification<Game> {
-        public override Expression<Func<Game, bool>> ToExpression() => g => g.IsFinished;
+namespace Draughts.Domain.GameContext.Specifications;
 
-        public override void ApplyQueryBuilder(IQueryBuilder builder, QueryWhereType whereType) {
-            ApplyColumnWhere(builder, whereType, "finished_at", q => q.IsNotNull());
-        }
+public class FinishedGameSpecification : Specification<Game> {
+    public override Expression<Func<Game, bool>> ToExpression() => g => g.IsFinished;
+
+    public override void ApplyQueryBuilder(IQueryBuilder builder, QueryWhereType whereType) {
+        ApplyColumnWhere(builder, whereType, "finished_at", q => q.IsNotNull());
     }
 }

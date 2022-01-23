@@ -1,18 +1,18 @@
-namespace SqlQueryBuilder.Model {
-    internal interface IInsertValue : IQueryPart { }
+namespace SqlQueryBuilder.Model;
 
-    internal readonly struct InsertValue : IInsertValue {
-        public object? Value { get; }
+internal interface IInsertValue : IQueryPart { }
 
-        public InsertValue(object? value) {
-            Value = value;
+internal readonly struct InsertValue : IInsertValue {
+    public object? Value { get; }
+
+    public InsertValue(object? value) {
+        Value = value;
+    }
+
+    public void AppendToQuery(Query query, bool isFirst) {
+        if (!isFirst) {
+            query.Builder.Append(", ");
         }
-
-        public void AppendToQuery(Query query, bool isFirst) {
-            if (!isFirst) {
-                query.Builder.Append(", ");
-            }
-            query.AppendParameter(Value);
-        }
+        query.AppendParameter(Value);
     }
 }

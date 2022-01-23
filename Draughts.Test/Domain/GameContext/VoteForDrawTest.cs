@@ -10,57 +10,57 @@ using NodaTime.Testing;
 using System;
 using Xunit;
 
-namespace Draughts.Test.Domain.GameContext {
-    public class VoteForDrawTest {
-        private readonly IClock _fakeClock;
-        private readonly PlayGameDomainService _playGameDomainService;
+namespace Draughts.Test.Domain.GameContext;
 
-        public VoteForDrawTest() {
-            _fakeClock = FakeClock.FromUtc(2020, 01, 16, 12, 0, 0);
-            _playGameDomainService = new PlayGameDomainService(_fakeClock);
-        }
+public class VoteForDrawTest {
+    private readonly IClock _fakeClock;
+    private readonly PlayGameDomainService _playGameDomainService;
 
-        [Fact]
-        public void CanAddFirstVoteForDraw() {
-            var game = GameTestHelper.StartedMiniGame().Build();
-            var voting = VotingTestHelper.Draw().Build();
+    public VoteForDrawTest() {
+        _fakeClock = FakeClock.FromUtc(2020, 01, 16, 12, 0, 0);
+        _playGameDomainService = new PlayGameDomainService(_fakeClock);
+    }
 
-            _playGameDomainService.VoteForDraw(game, voting, game.Players[0].UserId);
+    [Fact]
+    public void CanAddFirstVoteForDraw() {
+        var game = GameTestHelper.StartedMiniGame().Build();
+        var voting = VotingTestHelper.Draw().Build();
 
-            voting.Votes.Count.Should().Be(1);
-        }
+        _playGameDomainService.VoteForDraw(game, voting, game.Players[0].UserId);
 
-        [Fact]
-        public void DrawGameWithSecondVote() {
-            var game = GameTestHelper.StartedMiniGame().Build();
-            var voting = VotingTestHelper.Draw()
-                .AddVoteForDraw(game.Players[0].UserId, _fakeClock.UtcNow())
-                .Build();
+        voting.Votes.Count.Should().Be(1);
+    }
 
-            _playGameDomainService.VoteForDraw(game, voting, game.Players[1].UserId);
+    [Fact]
+    public void DrawGameWithSecondVote() {
+        var game = GameTestHelper.StartedMiniGame().Build();
+        var voting = VotingTestHelper.Draw()
+            .AddVoteForDraw(game.Players[0].UserId, _fakeClock.UtcNow())
+            .Build();
 
-            game.FinishedAt.Should().Be(_fakeClock.UtcNow());
-            game.Victor.Should().BeNull();
-        }
+        _playGameDomainService.VoteForDraw(game, voting, game.Players[1].UserId);
 
-        [Fact]
-        public void DontVoteForFinishedGames() {
-            var game = GameTestHelper.FinishedMiniGame(Color.White).Build();
-            var voting = VotingTestHelper.Draw().Build();
+        game.FinishedAt.Should().Be(_fakeClock.UtcNow());
+        game.Victor.Should().BeNull();
+    }
 
-            Action voteFunc = () => _playGameDomainService.VoteForDraw(game, voting, game.Players[0].UserId);
+    [Fact]
+    public void DontVoteForFinishedGames() {
+        var game = GameTestHelper.FinishedMiniGame(Color.White).Build();
+        var voting = VotingTestHelper.Draw().Build();
 
-            voteFunc.Should().Throw<ManualValidationException>();
-        }
+        Action voteFunc = () => _playGameDomainService.VoteForDraw(game, voting, game.Players[0].UserId);
 
-        [Fact]
-        public void DontVoteForOtherPplsGames() {
-            var game = GameTestHelper.StartedMiniGame().Build();
-            var voting = VotingTestHelper.Draw().Build();
+        voteFunc.Should().Throw<ManualValidationException>();
+    }
 
-            Action voteFunc = () => _playGameDomainService.VoteForDraw(game, voting, new UserId(999));
+    [Fact]
+    public void DontVoteForOtherPplsGames() {
+        var game = GameTestHelper.StartedMiniGame().Build();
+        var voting = VotingTestHelper.Draw().Build();
 
-            voteFunc.Should().Throw<ManualValidationException>();
-        }
+        Action voteFunc = () => _playGameDomainService.VoteForDraw(game, voting, new UserId(999));
+
+        voteFunc.Should().Throw<ManualValidationException>();
     }
 }

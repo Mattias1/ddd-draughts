@@ -3,58 +3,58 @@ using FluentAssertions;
 using Xunit;
 using static Draughts.Domain.GameContext.Models.GameSettings;
 
-namespace Draughts.Test.Domain.UserContext {
-    public class UserStatisticsTest {
-        private UserId VictorId = new UserId(42);
-        private UserId LoserId = new UserId(37);
-        private UserId TiedPlayerId = new UserId(1);
+namespace Draughts.Test.Domain.UserContext;
 
-        [Fact]
-        public void UpdateStatisticsForInternationalVictory() {
-            var userStats = UserStatistics.BuildNew(VictorId);
+public class UserStatisticsTest {
+    private UserId VictorId = new UserId(42);
+    private UserId LoserId = new UserId(37);
+    private UserId TiedPlayerId = new UserId(1);
 
-            userStats.UpdateForFinishedGame(GameSettingsPreset.International, VictorId);
+    [Fact]
+    public void UpdateStatisticsForInternationalVictory() {
+        var userStats = UserStatistics.BuildNew(VictorId);
 
-            userStats.TotalTally.Should().Be(new GamesTally(1, 1, 0, 0));
-            userStats.InternationalTally.Should().Be(new GamesTally(1, 1, 0, 0));
-            userStats.EnglishAmericanTally.Should().Be(new GamesTally(0, 0, 0, 0));
-            userStats.OtherTally.Should().Be(new GamesTally(0, 0, 0, 0));
-        }
+        userStats.UpdateForFinishedGame(GameSettingsPreset.International, VictorId);
 
-        [Fact]
-        public void UpdateStatisticsForEnglishAmericanLoss() {
-            var userStats = UserStatistics.BuildNew(LoserId);
+        userStats.TotalTally.Should().Be(new GamesTally(1, 1, 0, 0));
+        userStats.InternationalTally.Should().Be(new GamesTally(1, 1, 0, 0));
+        userStats.EnglishAmericanTally.Should().Be(new GamesTally(0, 0, 0, 0));
+        userStats.OtherTally.Should().Be(new GamesTally(0, 0, 0, 0));
+    }
 
-            userStats.UpdateForFinishedGame(GameSettingsPreset.EnglishAmerican, VictorId);
+    [Fact]
+    public void UpdateStatisticsForEnglishAmericanLoss() {
+        var userStats = UserStatistics.BuildNew(LoserId);
 
-            userStats.TotalTally.Should().Be(new GamesTally(1, 0, 0, 1));
-            userStats.InternationalTally.Should().Be(new GamesTally(0, 0, 0, 0));
-            userStats.EnglishAmericanTally.Should().Be(new GamesTally(1, 0, 0, 1));
-            userStats.OtherTally.Should().Be(new GamesTally(0, 0, 0, 0));
-        }
+        userStats.UpdateForFinishedGame(GameSettingsPreset.EnglishAmerican, VictorId);
 
-        [Fact]
-        public void UpdateStatisticsForOtherDraw() {
-            var userStats = UserStatistics.BuildNew(TiedPlayerId);
+        userStats.TotalTally.Should().Be(new GamesTally(1, 0, 0, 1));
+        userStats.InternationalTally.Should().Be(new GamesTally(0, 0, 0, 0));
+        userStats.EnglishAmericanTally.Should().Be(new GamesTally(1, 0, 0, 1));
+        userStats.OtherTally.Should().Be(new GamesTally(0, 0, 0, 0));
+    }
 
-            userStats.UpdateForFinishedGame(GameSettingsPreset.Other, null);
+    [Fact]
+    public void UpdateStatisticsForOtherDraw() {
+        var userStats = UserStatistics.BuildNew(TiedPlayerId);
 
-            userStats.TotalTally.Should().Be(new GamesTally(1, 0, 1, 0));
-            userStats.InternationalTally.Should().Be(new GamesTally(0, 0, 0, 0));
-            userStats.EnglishAmericanTally.Should().Be(new GamesTally(0, 0, 0, 0));
-            userStats.OtherTally.Should().Be(new GamesTally(1, 0, 1, 0));
-        }
+        userStats.UpdateForFinishedGame(GameSettingsPreset.Other, null);
 
-        [Fact]
-        public void UpdateOtherStatisticsForMiniVictory() {
-            var userStats = UserStatistics.BuildNew(VictorId);
+        userStats.TotalTally.Should().Be(new GamesTally(1, 0, 1, 0));
+        userStats.InternationalTally.Should().Be(new GamesTally(0, 0, 0, 0));
+        userStats.EnglishAmericanTally.Should().Be(new GamesTally(0, 0, 0, 0));
+        userStats.OtherTally.Should().Be(new GamesTally(1, 0, 1, 0));
+    }
 
-            userStats.UpdateForFinishedGame(GameSettingsPreset.Mini, VictorId);
+    [Fact]
+    public void UpdateOtherStatisticsForMiniVictory() {
+        var userStats = UserStatistics.BuildNew(VictorId);
 
-            userStats.TotalTally.Should().Be(new GamesTally(1, 1, 0, 0));
-            userStats.InternationalTally.Should().Be(new GamesTally(0, 0, 0, 0));
-            userStats.EnglishAmericanTally.Should().Be(new GamesTally(0, 0, 0, 0));
-            userStats.OtherTally.Should().Be(new GamesTally(1, 1, 0, 0));
-        }
+        userStats.UpdateForFinishedGame(GameSettingsPreset.Mini, VictorId);
+
+        userStats.TotalTally.Should().Be(new GamesTally(1, 1, 0, 0));
+        userStats.InternationalTally.Should().Be(new GamesTally(0, 0, 0, 0));
+        userStats.EnglishAmericanTally.Should().Be(new GamesTally(0, 0, 0, 0));
+        userStats.OtherTally.Should().Be(new GamesTally(1, 1, 0, 0));
     }
 }

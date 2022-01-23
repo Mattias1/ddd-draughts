@@ -2,34 +2,34 @@ using Draughts.IntegrationTest.EndToEnd.Base;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace Draughts.IntegrationTest.EndToEnd.InMemory {
-    [Collection("ModPanelRoleIT")]
-    public class InMemoryModPanelRoleIT {
-        private readonly InMemoryApiTester _apiTester;
-        private readonly ModPanelRoleTesterApi<InMemoryApiTester> _modPanelApi;
+namespace Draughts.IntegrationTest.EndToEnd.InMemory;
 
-        public InMemoryModPanelRoleIT() {
-            _apiTester = new InMemoryApiTester();
-            _modPanelApi = new ModPanelRoleTesterApi<InMemoryApiTester>(_apiTester);
-        }
+[Collection("ModPanelRoleIT")]
+public class InMemoryModPanelRoleIT {
+    private readonly InMemoryApiTester _apiTester;
+    private readonly ModPanelRoleTesterApi<InMemoryApiTester> _modPanelApi;
 
-        [Fact]
-        public async Task MessWithRoles() {
-            _apiTester.LoginAsAdmin();
+    public InMemoryModPanelRoleIT() {
+        _apiTester = new InMemoryApiTester();
+        _modPanelApi = new ModPanelRoleTesterApi<InMemoryApiTester>(_apiTester);
+    }
 
-            await _modPanelApi.ViewModPanelOverviewPage();
-            await _modPanelApi.ViewManageRolesPage();
-            await _modPanelApi.PostCreateRole();
+    [Fact]
+    public async Task MessWithRoles() {
+        _apiTester.LoginAsAdmin();
 
-            await _modPanelApi.ViewEditRolePage();
-            await _modPanelApi.PostEditRole();
+        await _modPanelApi.ViewModPanelOverviewPage();
+        await _modPanelApi.ViewManageRolesPage();
+        await _modPanelApi.PostCreateRole();
 
-            await _modPanelApi.ViewRoleUsersPage();
-            await _modPanelApi.PostAssignUserToRole();
+        await _modPanelApi.ViewEditRolePage();
+        await _modPanelApi.PostEditRole();
 
-            _modPanelApi.AssertRoleIsCorrect();
+        await _modPanelApi.ViewRoleUsersPage();
+        await _modPanelApi.PostAssignUserToRole();
 
-            await _modPanelApi.PostRemoveUserFromRole();
-        }
+        _modPanelApi.AssertRoleIsCorrect();
+
+        await _modPanelApi.PostRemoveUserFromRole();
     }
 }

@@ -1,18 +1,18 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace SqlQueryBuilder.Options {
-    public interface ISqlFlavor {
-        Task<bool> ExecuteAsync(string query, IDictionary<string, object?> parameters);
-        bool Execute(string query, IDictionary<string, object?> parameters);
-        Task<IReadOnlyList<SqlBuilderResultRow>> ToResultsAsync(string query, IDictionary<string, object?> parameters);
-        IReadOnlyList<SqlBuilderResultRow> ToResults(string query, IDictionary<string, object?> parameters);
+namespace SqlQueryBuilder.Options;
 
-        Task<ISqlTransactionFlavor> BeginTransactionAsync();
-        ISqlTransactionFlavor BeginTransaction();
+public interface ISqlFlavor {
+    Task<bool> ExecuteAsync(string query, IDictionary<string, object?> parameters);
+    bool Execute(string query, IDictionary<string, object?> parameters);
+    Task<IReadOnlyList<SqlBuilderResultRow>> ToResultsAsync(string query, IDictionary<string, object?> parameters);
+    IReadOnlyList<SqlBuilderResultRow> ToResults(string query, IDictionary<string, object?> parameters);
 
-        string WrapFieldName(string fieldName);
-        (string queryPart, object?[] parameters) Skip(long skipOffset);
-        (string queryPart, object?[] parameters) Take(int takeLimit);
-    }
+    Task<ISqlTransactionFlavor> BeginTransactionAsync();
+    ISqlTransactionFlavor BeginTransaction();
+
+    string WrapFieldName(string fieldName);
+    (string queryPart, object?[] parameters) Skip(long skipOffset);
+    (string queryPart, object?[] parameters) Take(int takeLimit);
 }

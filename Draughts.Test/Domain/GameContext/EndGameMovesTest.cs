@@ -9,61 +9,61 @@ using System;
 using System.Linq;
 using Xunit;
 
-namespace Draughts.Test.Domain.GameContext {
-    public class EndGameMovesTest {
-        private readonly IClock _fakeClock;
+namespace Draughts.Test.Domain.GameContext;
 
-        public EndGameMovesTest() {
-            _fakeClock = FakeClock.FromUtc(2020, 01, 16, 12, 0, 0);
-        }
+public class EndGameMovesTest {
+    private readonly IClock _fakeClock;
 
-        [Fact]
-        public void WinAGame() {
-            var game = GameTestHelper.StartedMiniGame().Build();
-            var whitePlayer = game.Players.Single(p => p.Color == Color.White);
+    public EndGameMovesTest() {
+        _fakeClock = FakeClock.FromUtc(2020, 01, 16, 12, 0, 0);
+    }
 
-            game.WinGame(whitePlayer.UserId, _fakeClock.UtcNow());
+    [Fact]
+    public void WinAGame() {
+        var game = GameTestHelper.StartedMiniGame().Build();
+        var whitePlayer = game.Players.Single(p => p.Color == Color.White);
 
-            game.FinishedAt.Should().Be(_fakeClock.UtcNow());
-            game.Victor.Should().Be(whitePlayer);
-            game.Turn.Should().BeNull();
-        }
+        game.WinGame(whitePlayer.UserId, _fakeClock.UtcNow());
 
-        [Fact]
-        public void DontWinAGameWhenItsNotYourTurn() {
-            var game = GameTestHelper.StartedMiniGame().Build();
-            var blackPlayer = game.Players.Single(p => p.Color == Color.Black);
+        game.FinishedAt.Should().Be(_fakeClock.UtcNow());
+        game.Victor.Should().Be(whitePlayer);
+        game.Turn.Should().BeNull();
+    }
 
-            Action winFunc = () => game.WinGame(blackPlayer.UserId, _fakeClock.UtcNow());
-            winFunc.Should().Throw<ManualValidationException>();
+    [Fact]
+    public void DontWinAGameWhenItsNotYourTurn() {
+        var game = GameTestHelper.StartedMiniGame().Build();
+        var blackPlayer = game.Players.Single(p => p.Color == Color.Black);
 
-            game.FinishedAt.Should().BeNull();
-            game.Victor.Should().BeNull();
-            game.Turn.Should().NotBeNull();
-        }
+        Action winFunc = () => game.WinGame(blackPlayer.UserId, _fakeClock.UtcNow());
+        winFunc.Should().Throw<ManualValidationException>();
 
-        [Fact]
-        public void EndAGameInADraw() {
-            var game = GameTestHelper.StartedMiniGame().Build();
+        game.FinishedAt.Should().BeNull();
+        game.Victor.Should().BeNull();
+        game.Turn.Should().NotBeNull();
+    }
 
-            game.Draw(_fakeClock.UtcNow());
+    [Fact]
+    public void EndAGameInADraw() {
+        var game = GameTestHelper.StartedMiniGame().Build();
 
-            game.FinishedAt.Should().Be(_fakeClock.UtcNow());
-            game.Victor.Should().BeNull();
-            game.Turn.Should().BeNull();
-        }
+        game.Draw(_fakeClock.UtcNow());
 
-        [Fact]
-        public void ResignAGame() {
-            var game = GameTestHelper.StartedMiniGame().Build();
-            var blackPlayer = game.Players.Single(p => p.Color == Color.Black);
-            var whitePlayer = game.Players.Single(p => p.Color == Color.White);
+        game.FinishedAt.Should().Be(_fakeClock.UtcNow());
+        game.Victor.Should().BeNull();
+        game.Turn.Should().BeNull();
+    }
 
-            game.ResignGame(blackPlayer.UserId, _fakeClock.UtcNow());
+    [Fact]
+    public void ResignAGame() {
+        var game = GameTestHelper.StartedMiniGame().Build();
+        var blackPlayer = game.Players.Single(p => p.Color == Color.Black);
+        var whitePlayer = game.Players.Single(p => p.Color == Color.White);
 
-            game.FinishedAt.Should().Be(_fakeClock.UtcNow());
-            game.Victor.Should().Be(whitePlayer);
-            game.Turn.Should().BeNull();
-        }
+        game.ResignGame(blackPlayer.UserId, _fakeClock.UtcNow());
+
+        game.FinishedAt.Should().Be(_fakeClock.UtcNow());
+        game.Victor.Should().Be(whitePlayer);
+        game.Turn.Should().BeNull();
     }
 }

@@ -7,65 +7,65 @@ using NodaTime.Testing;
 using System;
 using Xunit;
 
-namespace Draughts.Test.Domain.AuthContext {
-    public class RegisterUserTest {
-        private static readonly Role PendingRole = RoleTestHelper.PendingRegistration().Build();
-        private static readonly Role RegisteredRole = RoleTestHelper.RegisteredUser().Build();
+namespace Draughts.Test.Domain.AuthContext;
 
-        private readonly IUserRegistrationDomainService _userRegistrationService;
+public class RegisterUserTest {
+    private static readonly Role PendingRole = RoleTestHelper.PendingRegistration().Build();
+    private static readonly Role RegisteredRole = RoleTestHelper.RegisteredUser().Build();
 
-        public RegisterUserTest() {
-            var clock = FakeClock.FromUtc(2020, 02, 29);
-            var userRoleService = new UserRoleDomainService();
-            _userRegistrationService = new UserRegistrationDomainService(clock, userRoleService);
-        }
+    private readonly IUserRegistrationDomainService _userRegistrationService;
 
-        [Fact]
-        public void ThrowWhenNotPassingRegisteredUserRole() {
-            var authUser = AuthUserTestHelper.User().WithRoles(PendingRole).Build();
-            var wrongRole = PendingRole;
+    public RegisterUserTest() {
+        var clock = FakeClock.FromUtc(2020, 02, 29);
+        var userRoleService = new UserRoleDomainService();
+        _userRegistrationService = new UserRegistrationDomainService(clock, userRoleService);
+    }
 
-            Action registration = () => _userRegistrationService.Register(authUser, wrongRole, PendingRole);
+    [Fact]
+    public void ThrowWhenNotPassingRegisteredUserRole() {
+        var authUser = AuthUserTestHelper.User().WithRoles(PendingRole).Build();
+        var wrongRole = PendingRole;
 
-            registration.Should().Throw<ArgumentException>();
-        }
+        Action registration = () => _userRegistrationService.Register(authUser, wrongRole, PendingRole);
 
-        [Fact]
-        public void ThrowWhenNotPassingPendingRole() {
-            var authUser = AuthUserTestHelper.User().WithRoles(PendingRole).Build();
-            var wrongRole = RegisteredRole;
+        registration.Should().Throw<ArgumentException>();
+    }
 
-            Action registration = () => _userRegistrationService.Register(authUser, RegisteredRole, wrongRole);
+    [Fact]
+    public void ThrowWhenNotPassingPendingRole() {
+        var authUser = AuthUserTestHelper.User().WithRoles(PendingRole).Build();
+        var wrongRole = RegisteredRole;
 
-            registration.Should().Throw<ArgumentException>();
-        }
+        Action registration = () => _userRegistrationService.Register(authUser, RegisteredRole, wrongRole);
 
-        [Fact]
-        public void ValidationErrorWhenUserHasNoRoles() {
-            var authUser = AuthUserTestHelper.User().WithRoles().Build();
+        registration.Should().Throw<ArgumentException>();
+    }
 
-            Action registration = () => _userRegistrationService.Register(authUser, RegisteredRole, PendingRole);
+    [Fact]
+    public void ValidationErrorWhenUserHasNoRoles() {
+        var authUser = AuthUserTestHelper.User().WithRoles().Build();
 
-            registration.Should().Throw<ManualValidationException>();
-        }
+        Action registration = () => _userRegistrationService.Register(authUser, RegisteredRole, PendingRole);
 
-        [Fact]
-        public void ValidationErrorWhenDoesntHavePendingRole() {
-            var wrongRole = RegisteredRole;
-            var authUser = AuthUserTestHelper.User().WithRoles(wrongRole).Build();
+        registration.Should().Throw<ManualValidationException>();
+    }
 
-            Action registration = () => _userRegistrationService.Register(authUser, RegisteredRole, PendingRole);
+    [Fact]
+    public void ValidationErrorWhenDoesntHavePendingRole() {
+        var wrongRole = RegisteredRole;
+        var authUser = AuthUserTestHelper.User().WithRoles(wrongRole).Build();
 
-            registration.Should().Throw<ManualValidationException>();
-        }
+        Action registration = () => _userRegistrationService.Register(authUser, RegisteredRole, PendingRole);
 
-        [Fact]
-        public void SwapOutRolesWhenAllIsWell() {
-            var authUser = AuthUserTestHelper.User().WithRoles(PendingRole).Build();
+        registration.Should().Throw<ManualValidationException>();
+    }
 
-            _userRegistrationService.Register(authUser, RegisteredRole, PendingRole);
+    [Fact]
+    public void SwapOutRolesWhenAllIsWell() {
+        var authUser = AuthUserTestHelper.User().WithRoles(PendingRole).Build();
 
-            authUser.RoleIds.Should().BeEquivalentTo(new[] { RegisteredRole.Id });
-        }
+        _userRegistrationService.Register(authUser, RegisteredRole, PendingRole);
+
+        authUser.RoleIds.Should().BeEquivalentTo(new[] { RegisteredRole.Id });
     }
 }

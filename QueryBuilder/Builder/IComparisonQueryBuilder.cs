@@ -1,55 +1,55 @@
 using System.Collections.Generic;
 using static SqlQueryBuilder.Builder.QueryBuilder;
 
-namespace SqlQueryBuilder.Builder {
-    public interface IComparisonQueryBuilder {
-        IQueryBuilder Eq(object? value);
-        IQueryBuilder Is(object? value);
-        IQueryBuilder IsNull();
+namespace SqlQueryBuilder.Builder;
 
-        IQueryBuilder NotEq(object? value);
-        IQueryBuilder Isnt(object? value);
-        IQueryBuilder IsntNull();
-        IQueryBuilder IsNotNull();
+public interface IComparisonQueryBuilder {
+    IQueryBuilder Eq(object? value);
+    IQueryBuilder Is(object? value);
+    IQueryBuilder IsNull();
 
-        IQueryBuilder Gt(object? value);
-        IQueryBuilder GtEq(object? value);
+    IQueryBuilder NotEq(object? value);
+    IQueryBuilder Isnt(object? value);
+    IQueryBuilder IsntNull();
+    IQueryBuilder IsNotNull();
 
-        IQueryBuilder Lt(object? value);
-        IQueryBuilder LtEq(object? value);
+    IQueryBuilder Gt(object? value);
+    IQueryBuilder GtEq(object? value);
 
-        IQueryBuilder Between(object? lower, object? upper);
-        IQueryBuilder NotBetween(object? lower, object? upper);
+    IQueryBuilder Lt(object? value);
+    IQueryBuilder LtEq(object? value);
 
-        IQueryBuilder Like(string value);
-        IQueryBuilder NotLike(string value);
+    IQueryBuilder Between(object? lower, object? upper);
+    IQueryBuilder NotBetween(object? lower, object? upper);
 
-        IQueryBuilder EqColumn(string column);
-        IQueryBuilder IsColumn(string column);
-        IQueryBuilder NotEqColumn(string column);
-        IQueryBuilder IsntColumn(string column);
+    IQueryBuilder Like(string value);
+    IQueryBuilder NotLike(string value);
 
-        IQueryBuilder GtColumn(string column);
-        IQueryBuilder GtEqColumn(string column);
-        IQueryBuilder LtColumn(string column);
-        IQueryBuilder LtEqColumn(string column);
+    IQueryBuilder EqColumn(string column);
+    IQueryBuilder IsColumn(string column);
+    IQueryBuilder NotEqColumn(string column);
+    IQueryBuilder IsntColumn(string column);
 
-        IQueryBuilder In<T>(IEnumerable<T> enumerable);
-        IQueryBuilder In(params object?[] array);
-        IQueryBuilder NotIn<T>(IEnumerable<T> enumerable);
-        IQueryBuilder NotIn(params object?[] array);
+    IQueryBuilder GtColumn(string column);
+    IQueryBuilder GtEqColumn(string column);
+    IQueryBuilder LtColumn(string column);
+    IQueryBuilder LtEqColumn(string column);
 
-        IQueryBuilder In(SubQueryFunc queryFunc);
-        IQueryBuilder NotIn(SubQueryFunc queryFunc);
+    IQueryBuilder In<T>(IEnumerable<T> enumerable);
+    IQueryBuilder In(params object?[] array);
+    IQueryBuilder NotIn<T>(IEnumerable<T> enumerable);
+    IQueryBuilder NotIn(params object?[] array);
 
-        IQueryBuilder Eq(SubQueryFunc? queryFunc);
-        IQueryBuilder Is(SubQueryFunc? queryFunc);
-        IQueryBuilder NotEq(SubQueryFunc? queryFunc);
-        IQueryBuilder Isnt(SubQueryFunc? queryFunc);
+    IQueryBuilder In(SubQueryFunc queryFunc);
+    IQueryBuilder NotIn(SubQueryFunc queryFunc);
 
-        IQueryBuilder Gt(SubQueryFunc queryFunc);
-        IQueryBuilder GtEq(SubQueryFunc queryFunc);
-        IQueryBuilder Lt(SubQueryFunc queryFunc);
-        IQueryBuilder LtEq(SubQueryFunc queryFunc);
-    }
+    IQueryBuilder Eq(SubQueryFunc? queryFunc);
+    IQueryBuilder Is(SubQueryFunc? queryFunc);
+    IQueryBuilder NotEq(SubQueryFunc? queryFunc);
+    IQueryBuilder Isnt(SubQueryFunc? queryFunc);
+
+    IQueryBuilder Gt(SubQueryFunc queryFunc);
+    IQueryBuilder GtEq(SubQueryFunc queryFunc);
+    IQueryBuilder Lt(SubQueryFunc queryFunc);
+    IQueryBuilder LtEq(SubQueryFunc queryFunc);
 }

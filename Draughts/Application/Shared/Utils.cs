@@ -10,151 +10,151 @@ using System.Globalization;
 using System.Linq;
 using System.Text.Encodings.Web;
 
-namespace Draughts.Application.Shared {
-    public static class Utils {
-        public static string BaseUrl { get; set; } = "http://localhost:52588";
+namespace Draughts.Application.Shared;
 
-        public static HtmlString HideIf(bool isHidden) => new HtmlString(isHidden ? "hidden" : "");
+public static class Utils {
+    public static string BaseUrl { get; set; } = "http://localhost:52588";
 
-        public static HtmlString Href(string url, params (string key, object? value)[] queryParams) {
-            string safeUrl = Url(url, queryParams);
-            return new HtmlString($"href=\"{safeUrl}\"");
+    public static HtmlString HideIf(bool isHidden) => new HtmlString(isHidden ? "hidden" : "");
+
+    public static HtmlString Href(string url, params (string key, object? value)[] queryParams) {
+        string safeUrl = Url(url, queryParams);
+        return new HtmlString($"href=\"{safeUrl}\"");
+    }
+
+    public static HtmlString Src(string url, params (string key, object? value)[] queryParams) {
+        string safeUrl = Url(url, queryParams);
+        return new HtmlString($"src=\"{safeUrl}\"");
+    }
+
+    public static Url Url(string url, params (string key, object? value)[] queryParams) {
+        Url fullUrl = url.StartsWith('/') ? Flurl.Url.Combine(BaseUrl, url) : new Url(url);
+        foreach ((string key, object? value) in queryParams) {
+            fullUrl.QueryParams.Add(key, value?.ToString() ?? "");
+        }
+        return fullUrl;
+    }
+    public static string E(string text) => HtmlEncoder.Default.Encode(text);
+
+    public static HtmlString PostLink(string text, string url, params (string key, string value)[] parameters) {
+        string s = $"<form class=\"post-link-form\" action=\"{Url(url)}\" method=\"post\">";
+        foreach (var (key, value) in parameters) {
+            s += $"<input type=\"hidden\" name=\"{E(key)}\" value=\"{E(value)}\">";
+        }
+        s += $"<input class=\"link\" type=\"submit\" value=\"{E(text)}\">";
+        s += "</form>";
+        return new HtmlString(s);
+    }
+
+    public static HtmlString GameLinkU(GameViewModel game) => GameLinkU(game.Id);
+    public static HtmlString GameLinkU(GameId id) {
+        return new HtmlString($"<a {Href("/game/" + id)}>Game {id}</a>");
+    }
+
+    public static HtmlString GameLinkL(GameViewModel game) => GameLinkL(game.Id);
+    public static HtmlString GameLinkL(GameId id) {
+        return new HtmlString($"<a {Href("/game/" + id)}>game {id}</a>");
+    }
+
+    public static HtmlString UserLink(PlayerViewModel player) => RawUserLink(player.UserId.Value, player.Username.Value);
+    public static HtmlString UserLink(BasicUserViewModel user) => RawUserLink(user.Id.Value, user.Username.Value);
+    public static HtmlString UserLink(UserId id, Username name) => RawUserLink(id.Value, name.Value);
+    public static HtmlString UserLinkWithRank(PlayerViewModel player) => RawUserLink(player.UserId.Value, $"{player.Rank.Name} {player.Username}");
+    public static HtmlString UserLinkWithRank(UserViewModel user) => RawUserLink(user.Id.Value, $"{user.Rank.Name} {user.Username}");
+    private static HtmlString RawUserLink(long id, string name) {
+        return new HtmlString($"<a class=\"user-a\" {Href("/user/" + id)}>{E(name)}</a>");
+    }
+
+    public static HtmlString SideMenu(MenuViewModel menuViewModel) {
+        string s = $"<h4>{menuViewModel.Title}</h4><ul>";
+        foreach (var (name, url) in menuViewModel.Menu) {
+            s += $"<li><a {Href(url)}>{E(name)}</a></li>";
+        }
+        s += "</ul>";
+        return new HtmlString(s);
+    }
+
+    public static bool Can(IReadOnlyList<Permission> permissions, Permission permission) => permissions.Contains(permission);
+
+    public static string DateTime(ZonedDateTime? datetime) {
+        return datetime?.ToString("dd MMM yyyy, HH:mm", CultureInfo.InvariantCulture) ?? "";
+    }
+
+    public static string YesNo(bool b) => b ? "Yes" : "No";
+
+    public static HtmlString PaginationRangeOfTotal<T>(IPaginationViewModel<T> model) {
+        return new HtmlString(PaginationRange(model).Value + " of " + model.Pagination.Count);
+    }
+    public static HtmlString PaginationRange<T>(IPaginationViewModel<T> model) {
+        return new HtmlString($"{model.Pagination.BeginInclusive}-{model.Pagination.EndInclusive}");
+    }
+
+    public static HtmlString PaginationNav<T>(IPaginationViewModel<T> model, string url,
+            int maxInitial = 2, int minAround = 3, int maxClosing = 2) {
+        if (model.Pagination.PageCount <= 1) {
+            return new HtmlString("");
         }
 
-        public static HtmlString Src(string url, params (string key, object? value)[] queryParams) {
-            string safeUrl = Url(url, queryParams);
-            return new HtmlString($"src=\"{safeUrl}\"");
+        long page = model.Pagination.Page;
+        long pageCount = model.Pagination.PageCount;
+
+        string s = "<nav class=\"pagination-nav\"><ul>";
+        if (page == 1) {
+            s += EmptyPaginationListItem("<");
+        }
+        else {
+            s += PaginationListItem(url, page - 1, "<");
         }
 
-        public static Url Url(string url, params (string key, object? value)[] queryParams) {
-            Url fullUrl = url.StartsWith('/') ? Flurl.Url.Combine(BaseUrl, url) : new Url(url);
-            foreach ((string key, object? value) in queryParams) {
-                fullUrl.QueryParams.Add(key, value?.ToString() ?? "");
-            }
-            return fullUrl;
+        if (pageCount <= maxInitial + minAround * 2 + maxClosing + 3) {
+            s += PaginationListItems(url, page, 1, pageCount);
         }
-        public static string E(string text) => HtmlEncoder.Default.Encode(text);
-
-        public static HtmlString PostLink(string text, string url, params (string key, string value)[] parameters) {
-            string s = $"<form class=\"post-link-form\" action=\"{Url(url)}\" method=\"post\">";
-            foreach (var (key, value) in parameters) {
-                s += $"<input type=\"hidden\" name=\"{E(key)}\" value=\"{E(value)}\">";
-            }
-            s += $"<input class=\"link\" type=\"submit\" value=\"{E(text)}\">";
-            s += "</form>";
-            return new HtmlString(s);
+        else if (page <= maxInitial + minAround + 2) {
+            s += PaginationListItems(url, page, 1, maxInitial + minAround * 2 + 2);
+            s += EmptyPaginationListItem("...");
+            s += PaginationListItems(url, page, pageCount - maxClosing + 1, pageCount);
         }
-
-        public static HtmlString GameLinkU(GameViewModel game) => GameLinkU(game.Id);
-        public static HtmlString GameLinkU(GameId id) {
-            return new HtmlString($"<a {Href("/game/" + id)}>Game {id}</a>");
+        else if (page > pageCount - maxClosing - minAround - 2) {
+            s += PaginationListItems(url, page, 1, maxInitial);
+            s += EmptyPaginationListItem("...");
+            s += PaginationListItems(url, page, pageCount - maxClosing - minAround * 2 - 1, pageCount);
+        }
+        else {
+            s += PaginationListItems(url, page, 1, maxInitial);
+            s += EmptyPaginationListItem("...");
+            s += PaginationListItems(url, page, page - minAround, page + minAround);
+            s += EmptyPaginationListItem("...");
+            s += PaginationListItems(url, page, pageCount - maxClosing + 1, pageCount);
         }
 
-        public static HtmlString GameLinkL(GameViewModel game) => GameLinkL(game.Id);
-        public static HtmlString GameLinkL(GameId id) {
-            return new HtmlString($"<a {Href("/game/" + id)}>game {id}</a>");
+        if (page == pageCount) {
+            s += EmptyPaginationListItem(">");
         }
-
-        public static HtmlString UserLink(PlayerViewModel player) => RawUserLink(player.UserId.Value, player.Username.Value);
-        public static HtmlString UserLink(BasicUserViewModel user) => RawUserLink(user.Id.Value, user.Username.Value);
-        public static HtmlString UserLink(UserId id, Username name) => RawUserLink(id.Value, name.Value);
-        public static HtmlString UserLinkWithRank(PlayerViewModel player) => RawUserLink(player.UserId.Value, $"{player.Rank.Name} {player.Username}");
-        public static HtmlString UserLinkWithRank(UserViewModel user) => RawUserLink(user.Id.Value, $"{user.Rank.Name} {user.Username}");
-        private static HtmlString RawUserLink(long id, string name) {
-            return new HtmlString($"<a class=\"user-a\" {Href("/user/" + id)}>{E(name)}</a>");
+        else {
+            s += PaginationListItem(url, page + 1, ">");
         }
+        s += "</ul></nav>";
+        return new HtmlString(s);
+    }
 
-        public static HtmlString SideMenu(MenuViewModel menuViewModel) {
-            string s = $"<h4>{menuViewModel.Title}</h4><ul>";
-            foreach (var (name, url) in menuViewModel.Menu) {
-                s += $"<li><a {Href(url)}>{E(name)}</a></li>";
-            }
-            s += "</ul>";
-            return new HtmlString(s);
-        }
-
-        public static bool Can(IReadOnlyList<Permission> permissions, Permission permission) => permissions.Contains(permission);
-
-        public static string DateTime(ZonedDateTime? datetime) {
-            return datetime?.ToString("dd MMM yyyy, HH:mm", CultureInfo.InvariantCulture) ?? "";
-        }
-
-        public static string YesNo(bool b) => b ? "Yes" : "No";
-
-        public static HtmlString PaginationRangeOfTotal<T>(IPaginationViewModel<T> model) {
-            return new HtmlString(PaginationRange(model).Value + " of " + model.Pagination.Count);
-        }
-        public static HtmlString PaginationRange<T>(IPaginationViewModel<T> model) {
-            return new HtmlString($"{model.Pagination.BeginInclusive}-{model.Pagination.EndInclusive}");
-        }
-
-        public static HtmlString PaginationNav<T>(IPaginationViewModel<T> model, string url,
-                int maxInitial = 2, int minAround = 3, int maxClosing = 2) {
-            if (model.Pagination.PageCount <= 1) {
-                return new HtmlString("");
-            }
-
-            long page = model.Pagination.Page;
-            long pageCount = model.Pagination.PageCount;
-
-            string s = "<nav class=\"pagination-nav\"><ul>";
-            if (page == 1) {
-                s += EmptyPaginationListItem("<");
+    private static string PaginationListItems(string url, long page, long startInclusive, long endInclusive) {
+        string s = "";
+        for (long i = startInclusive; i <= endInclusive; i++) {
+            if (i == page) {
+                s += EmptyPaginationListItem(i.ToString(), "active");
             }
             else {
-                s += PaginationListItem(url, page - 1, "<");
+                s += PaginationListItem(url, i, i.ToString());
             }
-
-            if (pageCount <= maxInitial + minAround * 2 + maxClosing + 3) {
-                s += PaginationListItems(url, page, 1, pageCount);
-            }
-            else if (page <= maxInitial + minAround + 2) {
-                s += PaginationListItems(url, page, 1, maxInitial + minAround * 2 + 2);
-                s += EmptyPaginationListItem("...");
-                s += PaginationListItems(url, page, pageCount - maxClosing + 1, pageCount);
-            }
-            else if (page > pageCount - maxClosing - minAround - 2) {
-                s += PaginationListItems(url, page, 1, maxInitial);
-                s += EmptyPaginationListItem("...");
-                s += PaginationListItems(url, page, pageCount - maxClosing - minAround * 2 - 1, pageCount);
-            }
-            else {
-                s += PaginationListItems(url, page, 1, maxInitial);
-                s += EmptyPaginationListItem("...");
-                s += PaginationListItems(url, page, page - minAround, page + minAround);
-                s += EmptyPaginationListItem("...");
-                s += PaginationListItems(url, page, pageCount - maxClosing + 1, pageCount);
-            }
-
-            if (page == pageCount) {
-                s += EmptyPaginationListItem(">");
-            }
-            else {
-                s += PaginationListItem(url, page + 1, ">");
-            }
-            s += "</ul></nav>";
-            return new HtmlString(s);
         }
+        return s;
+    }
 
-        private static string PaginationListItems(string url, long page, long startInclusive, long endInclusive) {
-            string s = "";
-            for (long i = startInclusive; i <= endInclusive; i++) {
-                if (i == page) {
-                    s += EmptyPaginationListItem(i.ToString(), "active");
-                }
-                else {
-                    s += PaginationListItem(url, i, i.ToString());
-                }
-            }
-            return s;
-        }
+    private static string PaginationListItem(string url, long page, string display) {
+        return $"<li><a {Href(url, ("page", page))}>{E(display)}</a></li>";
+    }
 
-        private static string PaginationListItem(string url, long page, string display) {
-            return $"<li><a {Href(url, ("page", page))}>{E(display)}</a></li>";
-        }
-
-        private static string EmptyPaginationListItem(string display, string cssClass = "disabled") {
-            return $"<li class=\"{cssClass}\"><span>{E(display)}</span></li>";
-        }
+    private static string EmptyPaginationListItem(string display, string cssClass = "disabled") {
+        return $"<li class=\"{cssClass}\"><span>{E(display)}</span></li>";
     }
 }

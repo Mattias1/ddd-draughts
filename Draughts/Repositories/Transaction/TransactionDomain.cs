@@ -7,106 +7,106 @@ using System;
 using System.Collections.Generic;
 using static Draughts.Repositories.Transaction.PairTableFunctions;
 
-namespace Draughts.Repositories.Transaction {
-    public abstract class TransactionDomain : IEquatable<TransactionDomain> {
-        public static TransactionDomain Auth => new AuthTransactionDomain();
-        public static TransactionDomain User => new UserTransactionDomain();
-        public static TransactionDomain Game => new GameTransactionDomain();
+namespace Draughts.Repositories.Transaction;
 
-        public abstract string Key { get; }
-        public abstract List<DomainEvent> TempDomainEventsTable(ITransaction transaction);
+public abstract class TransactionDomain : IEquatable<TransactionDomain> {
+    public static TransactionDomain Auth => new AuthTransactionDomain();
+    public static TransactionDomain User => new UserTransactionDomain();
+    public static TransactionDomain Game => new GameTransactionDomain();
 
-        private TransactionDomain() { }
+    public abstract string Key { get; }
+    public abstract List<DomainEvent> TempDomainEventsTable(ITransaction transaction);
 
-        public abstract void ApplyForAllTablePairs(ITransaction tran, IPairTableFunction func);
+    private TransactionDomain() { }
 
-        public abstract void CreateTempDatabase(ITransaction tran);
-        public abstract void RemoveTempDatabase(ITransaction tran);
+    public abstract void ApplyForAllTablePairs(ITransaction tran, IPairTableFunction func);
 
-        public abstract ISqlTransactionFlavor BeginTransaction();
+    public abstract void CreateTempDatabase(ITransaction tran);
+    public abstract void RemoveTempDatabase(ITransaction tran);
 
-        public override bool Equals(object? obj) => obj is TransactionDomain tdObj && tdObj.Key.Equals(Key);
-        public bool Equals(TransactionDomain? other) => other?.Key == Key;
+    public abstract ISqlTransactionFlavor BeginTransaction();
 
-        public override int GetHashCode() => Key.GetHashCode();
+    public override bool Equals(object? obj) => obj is TransactionDomain tdObj && tdObj.Key.Equals(Key);
+    public bool Equals(TransactionDomain? other) => other?.Key == Key;
 
-        public static bool operator ==(TransactionDomain? left, TransactionDomain? right) => ComparisonUtils.NullSafeEquals(left, right);
-        public static bool operator !=(TransactionDomain? left, TransactionDomain? right) => ComparisonUtils.NullSafeNotEquals(left, right);
+    public override int GetHashCode() => Key.GetHashCode();
 
-        public class AuthTransactionDomain : TransactionDomain {
-            public const string KEY = "Auth";
-            public override string Key => KEY;
+    public static bool operator ==(TransactionDomain? left, TransactionDomain? right) => ComparisonUtils.NullSafeEquals(left, right);
+    public static bool operator !=(TransactionDomain? left, TransactionDomain? right) => ComparisonUtils.NullSafeNotEquals(left, right);
 
-            public override List<DomainEvent> TempDomainEventsTable(ITransaction transaction) {
-                return AuthDatabase.Temp(transaction).DomainEventsTable;
-            }
+    public class AuthTransactionDomain : TransactionDomain {
+        public const string KEY = "Auth";
+        public override string Key => KEY;
 
-            public override void ApplyForAllTablePairs(ITransaction tran, IPairTableFunction func) {
-                func.Apply(AuthDatabase.Temp(tran).RolesTable, AuthDatabase.Get.RolesTable);
-                func.Apply(AuthDatabase.Temp(tran).PermissionRolesTable, AuthDatabase.Get.PermissionRolesTable);
-                func.Apply(AuthDatabase.Temp(tran).AuthUsersTable, AuthDatabase.Get.AuthUsersTable);
-                func.Apply(AuthDatabase.Temp(tran).AuthUserRolesTable, AuthDatabase.Get.AuthUserRolesTable);
-                func.Apply(AuthDatabase.Temp(tran).AdminLogsTable, AuthDatabase.Get.AdminLogsTable);
-                func.Apply(AuthDatabase.Temp(tran).DomainEventsTable, AuthDatabase.Get.DomainEventsTable);
-            }
-
-            public override void CreateTempDatabase(ITransaction tran) => AuthDatabase.CreateTempDatabase(tran);
-            public override void RemoveTempDatabase(ITransaction tran) => AuthDatabase.RemoveTempDatabase(tran);
-
-            public override ISqlTransactionFlavor BeginTransaction() => DbContext.Get.BeginAuthTransaction();
+        public override List<DomainEvent> TempDomainEventsTable(ITransaction transaction) {
+            return AuthDatabase.Temp(transaction).DomainEventsTable;
         }
 
-        public class UserTransactionDomain : TransactionDomain {
-            public const string KEY = "User";
-            public override string Key => KEY;
-
-            public override List<DomainEvent> TempDomainEventsTable(ITransaction transaction) {
-                return UserDatabase.Temp(transaction).DomainEventsTable;
-            }
-
-            public override void ApplyForAllTablePairs(ITransaction tran, IPairTableFunction func) {
-                func.Apply(UserDatabase.Temp(tran).UsersTable, UserDatabase.Get.UsersTable);
-                func.Apply(UserDatabase.Temp(tran).DomainEventsTable, UserDatabase.Get.DomainEventsTable);
-            }
-
-            public override void CreateTempDatabase(ITransaction tran) => UserDatabase.CreateTempDatabase(tran);
-            public override void RemoveTempDatabase(ITransaction tran) => UserDatabase.RemoveTempDatabase(tran);
-
-            public override ISqlTransactionFlavor BeginTransaction() => DbContext.Get.BeginUserTransaction();
+        public override void ApplyForAllTablePairs(ITransaction tran, IPairTableFunction func) {
+            func.Apply(AuthDatabase.Temp(tran).RolesTable, AuthDatabase.Get.RolesTable);
+            func.Apply(AuthDatabase.Temp(tran).PermissionRolesTable, AuthDatabase.Get.PermissionRolesTable);
+            func.Apply(AuthDatabase.Temp(tran).AuthUsersTable, AuthDatabase.Get.AuthUsersTable);
+            func.Apply(AuthDatabase.Temp(tran).AuthUserRolesTable, AuthDatabase.Get.AuthUserRolesTable);
+            func.Apply(AuthDatabase.Temp(tran).AdminLogsTable, AuthDatabase.Get.AdminLogsTable);
+            func.Apply(AuthDatabase.Temp(tran).DomainEventsTable, AuthDatabase.Get.DomainEventsTable);
         }
 
-        public class GameTransactionDomain : TransactionDomain {
-            public const string KEY = "Game";
-            public override string Key => KEY;
+        public override void CreateTempDatabase(ITransaction tran) => AuthDatabase.CreateTempDatabase(tran);
+        public override void RemoveTempDatabase(ITransaction tran) => AuthDatabase.RemoveTempDatabase(tran);
 
-            public override List<DomainEvent> TempDomainEventsTable(ITransaction transaction) {
-                return GameDatabase.Temp(transaction).DomainEventsTable;
-            }
+        public override ISqlTransactionFlavor BeginTransaction() => DbContext.Get.BeginAuthTransaction();
+    }
 
-            public override void ApplyForAllTablePairs(ITransaction tran, IPairTableFunction func) {
-                func.Apply(GameDatabase.Temp(tran).VotesTable, GameDatabase.Get.VotesTable);
-                func.Apply(GameDatabase.Temp(tran).MovesTable, GameDatabase.Get.MovesTable);
-                func.Apply(GameDatabase.Temp(tran).GameStatesTable, GameDatabase.Get.GameStatesTable);
-                func.Apply(GameDatabase.Temp(tran).PlayersTable, GameDatabase.Get.PlayersTable);
-                func.Apply(GameDatabase.Temp(tran).GamesTable, GameDatabase.Get.GamesTable);
-                func.Apply(GameDatabase.Temp(tran).DomainEventsTable, GameDatabase.Get.DomainEventsTable);
-            }
+    public class UserTransactionDomain : TransactionDomain {
+        public const string KEY = "User";
+        public override string Key => KEY;
 
-            public override void CreateTempDatabase(ITransaction tran) => GameDatabase.CreateTempDatabase(tran);
-            public override void RemoveTempDatabase(ITransaction tran) => GameDatabase.RemoveTempDatabase(tran);
-
-            public override ISqlTransactionFlavor BeginTransaction() => DbContext.Get.BeginGameTransaction();
+        public override List<DomainEvent> TempDomainEventsTable(ITransaction transaction) {
+            return UserDatabase.Temp(transaction).DomainEventsTable;
         }
 
-        public static class InMemoryDatabaseUtils {
-            public static void StoreInto<T>(T obj, List<T> table) where T : IEquatable<T> {
-                int index = table.FindIndex(u => u.Equals(obj));
-                if (index == -1) {
-                    table.Add(obj);
-                }
-                else {
-                    table[index] = obj;
-                }
+        public override void ApplyForAllTablePairs(ITransaction tran, IPairTableFunction func) {
+            func.Apply(UserDatabase.Temp(tran).UsersTable, UserDatabase.Get.UsersTable);
+            func.Apply(UserDatabase.Temp(tran).DomainEventsTable, UserDatabase.Get.DomainEventsTable);
+        }
+
+        public override void CreateTempDatabase(ITransaction tran) => UserDatabase.CreateTempDatabase(tran);
+        public override void RemoveTempDatabase(ITransaction tran) => UserDatabase.RemoveTempDatabase(tran);
+
+        public override ISqlTransactionFlavor BeginTransaction() => DbContext.Get.BeginUserTransaction();
+    }
+
+    public class GameTransactionDomain : TransactionDomain {
+        public const string KEY = "Game";
+        public override string Key => KEY;
+
+        public override List<DomainEvent> TempDomainEventsTable(ITransaction transaction) {
+            return GameDatabase.Temp(transaction).DomainEventsTable;
+        }
+
+        public override void ApplyForAllTablePairs(ITransaction tran, IPairTableFunction func) {
+            func.Apply(GameDatabase.Temp(tran).VotesTable, GameDatabase.Get.VotesTable);
+            func.Apply(GameDatabase.Temp(tran).MovesTable, GameDatabase.Get.MovesTable);
+            func.Apply(GameDatabase.Temp(tran).GameStatesTable, GameDatabase.Get.GameStatesTable);
+            func.Apply(GameDatabase.Temp(tran).PlayersTable, GameDatabase.Get.PlayersTable);
+            func.Apply(GameDatabase.Temp(tran).GamesTable, GameDatabase.Get.GamesTable);
+            func.Apply(GameDatabase.Temp(tran).DomainEventsTable, GameDatabase.Get.DomainEventsTable);
+        }
+
+        public override void CreateTempDatabase(ITransaction tran) => GameDatabase.CreateTempDatabase(tran);
+        public override void RemoveTempDatabase(ITransaction tran) => GameDatabase.RemoveTempDatabase(tran);
+
+        public override ISqlTransactionFlavor BeginTransaction() => DbContext.Get.BeginGameTransaction();
+    }
+
+    public static class InMemoryDatabaseUtils {
+        public static void StoreInto<T>(T obj, List<T> table) where T : IEquatable<T> {
+            int index = table.FindIndex(u => u.Equals(obj));
+            if (index == -1) {
+                table.Add(obj);
+            }
+            else {
+                table[index] = obj;
             }
         }
     }

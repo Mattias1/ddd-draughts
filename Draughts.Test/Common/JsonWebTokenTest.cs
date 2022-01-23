@@ -7,59 +7,59 @@ using NodaTime;
 using NodaTime.Testing;
 using Xunit;
 
-namespace Draughts.Test.Common {
-    public class JsonWebTokenTest {
-        public static readonly UserId UserId = new UserId(1);
-        public static readonly string JWT_STRING = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJEcmF1Z2h0cyIsImV" +
-            "4cCI6MTU3OTI2MjQwMCwidXNyIjoxLCJ1bmEiOiJVc2VyIiwicm9sIjpbMl19.EifVPA51buvZt8mveaQ9lTWAPawk0qdGz6LIM1nolhM";
+namespace Draughts.Test.Common;
 
-        [Fact]
-        public void TestGenerateJwtString() {
-            var registeredUser = RoleTestHelper.RegisteredUser().WithId(2).Build();
-            var authUser = BuildAuthUser(UserId, "User", registeredUser);
+public class JsonWebTokenTest {
+    public static readonly UserId UserId = new UserId(1);
+    public static readonly string JWT_STRING = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJEcmF1Z2h0cyIsImV" +
+        "4cCI6MTU3OTI2MjQwMCwidXNyIjoxLCJ1bmEiOiJVc2VyIiwicm9sIjpbMl19.EifVPA51buvZt8mveaQ9lTWAPawk0qdGz6LIM1nolhM";
 
-            var clock = FakeClock.FromUtc(2020, 01, 16, 12, 0, 0);
+    [Fact]
+    public void TestGenerateJwtString() {
+        var registeredUser = RoleTestHelper.RegisteredUser().WithId(2).Build();
+        var authUser = BuildAuthUser(UserId, "User", registeredUser);
 
-            var token = JsonWebToken.Generate(authUser, clock);
-            string jwtString = token.ToJwtString();
+        var clock = FakeClock.FromUtc(2020, 01, 16, 12, 0, 0);
 
-            jwtString.Should().Be(JWT_STRING);
-        }
+        var token = JsonWebToken.Generate(authUser, clock);
+        string jwtString = token.ToJwtString();
 
-        [Fact]
-        public void ParseValidJwtString() {
-            var clock = FakeClock.FromUtc(2020, 01, 16, 12, 0, 0);
+        jwtString.Should().Be(JWT_STRING);
+    }
 
-            bool success = JsonWebToken.TryParseFromJwtString(JWT_STRING, clock, out var jwt);
+    [Fact]
+    public void ParseValidJwtString() {
+        var clock = FakeClock.FromUtc(2020, 01, 16, 12, 0, 0);
 
-            success.Should().BeTrue();
-            jwt.Should().NotBeNull();
-            jwt!.UserId.Should().Be(UserId);
-        }
+        bool success = JsonWebToken.TryParseFromJwtString(JWT_STRING, clock, out var jwt);
 
-        [Fact]
-        public void AbortParsingJwtStringWhenExpired() {
-            var clock = FakeClock.FromUtc(2020, 12, 31);
+        success.Should().BeTrue();
+        jwt.Should().NotBeNull();
+        jwt!.UserId.Should().Be(UserId);
+    }
 
-            bool success = JsonWebToken.TryParseFromJwtString(JWT_STRING, clock, out var jwt);
+    [Fact]
+    public void AbortParsingJwtStringWhenExpired() {
+        var clock = FakeClock.FromUtc(2020, 12, 31);
 
-            success.Should().BeFalse();
-            jwt.Should().BeNull();
-        }
+        bool success = JsonWebToken.TryParseFromJwtString(JWT_STRING, clock, out var jwt);
 
-        [Fact]
-        public void AbortParsingJwtStringWhenInvalidHash() {
-            var clock = FakeClock.FromUtc(2020, 01, 16, 12, 0, 0);
+        success.Should().BeFalse();
+        jwt.Should().BeNull();
+    }
 
-            string invalidJwtString = JWT_STRING.Substring(0, JWT_STRING.Length - 1) + 'A';
-            bool success = JsonWebToken.TryParseFromJwtString(invalidJwtString, clock, out var jwt);
+    [Fact]
+    public void AbortParsingJwtStringWhenInvalidHash() {
+        var clock = FakeClock.FromUtc(2020, 01, 16, 12, 0, 0);
 
-            success.Should().BeFalse();
-            jwt.Should().BeNull();
-        }
+        string invalidJwtString = JWT_STRING.Substring(0, JWT_STRING.Length - 1) + 'A';
+        bool success = JsonWebToken.TryParseFromJwtString(invalidJwtString, clock, out var jwt);
 
-        private static AuthUser BuildAuthUser(UserId id, string name, params Role[] roles) {
-            return AuthUserTestHelper.User(name).WithId(id).WithRoles(roles).Build();
-        }
+        success.Should().BeFalse();
+        jwt.Should().BeNull();
+    }
+
+    private static AuthUser BuildAuthUser(UserId id, string name, params Role[] roles) {
+        return AuthUserTestHelper.User(name).WithId(id).WithRoles(roles).Build();
     }
 }

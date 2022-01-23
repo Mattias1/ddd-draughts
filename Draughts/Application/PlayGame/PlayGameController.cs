@@ -11,86 +11,86 @@ using SignalRWebPack.Hubs;
 using System.Threading.Tasks;
 using static Draughts.Domain.AuthContext.Models.Permission;
 
-namespace Draughts.Application.PlayGame {
-    public class PlayGameController : BaseController {
-        private readonly PlayGameService _playGameService;
-        private readonly IUnitOfWork _unitOfWork;
-        private readonly IHubContext<WebsocketHub> _websocketHub;
+namespace Draughts.Application.PlayGame;
 
-        public PlayGameController(PlayGameService playGameService, IUnitOfWork unitOfWork, IHubContext<WebsocketHub> websocketHub) {
-            _playGameService = playGameService;
-            _unitOfWork = unitOfWork;
-            _websocketHub = websocketHub;
-        }
+public class PlayGameController : BaseController {
+    private readonly PlayGameService _playGameService;
+    private readonly IUnitOfWork _unitOfWork;
+    private readonly IHubContext<WebsocketHub> _websocketHub;
 
-        [HttpGet("/game/{gameId:long}"), GuestRoute]
-        public IActionResult Game(long gameId) {
-            try {
-                var (game, gameState) = _unitOfWork.WithGameTransaction(tran => {
-                    return _playGameService.FindGameAndState(new GameId(gameId));
-                });
-
-                return View(new PlayGameViewModel(game, gameState));
-            }
-            catch (ManualValidationException e) {
-                return NotFound(e.Message);
-            }
-        }
-
-        [HttpGet("/game/{gameId:long}/json"), GuestRoute]
-        public IActionResult GameJson(long gameId) {
-            try {
-                var (game, gameState) = _unitOfWork.WithGameTransaction(tran => {
-                    return _playGameService.FindGameAndState(new GameId(gameId));
-                });
-
-                return Ok(new GameDto(game, gameState));
-            }
-            catch (ManualValidationException e) {
-                return NotFound(e.Message);
-            }
-        }
-
-        [HttpPost("/game/{gameId:long}/move"), Requires(Permissions.PLAY_GAME)]
-        public async Task<IActionResult> Move(long gameId, [FromBody] MoveRequest? request) {
-            try {
-                ValidateNotNull(request?.From, request?.To);
-
-                var (game, gameState) = _playGameService.DoMove(AuthContext.UserId, new GameId(gameId),
-                    new SquareId(request!.From), new SquareId(request.To));
-                var data = new GameDto(game, gameState);
-
-                await _websocketHub.PushGameUpdated(new GameId(gameId), data);
-
-                return Ok(data);
-            }
-            catch (ManualValidationException e) {
-                return BadRequest(e.Message);
-            }
-        }
-
-        [HttpPost("/game/{gameId:long}/draw"), Requires(Permissions.PLAY_GAME)]
-        public IActionResult Draw(long gameId) {
-            try {
-                _playGameService.VoteForDraw(AuthContext.UserId, new GameId(gameId));
-                return SuccessRedirect($"/game/{gameId}", $"You've voted for a draw in game {gameId}");
-            }
-            catch (ManualValidationException e) {
-                return BadRequest(e.Message);
-            }
-        }
-
-        [HttpPost("/game/{gameId:long}/resign"), Requires(Permissions.PLAY_GAME)]
-        public IActionResult Resign(long gameId) {
-            try {
-                _playGameService.Resign(AuthContext.UserId, new GameId(gameId));
-                return SuccessRedirect($"/game/{gameId}", $"You've resigned from game {gameId}");
-            }
-            catch (ManualValidationException e) {
-                return BadRequest(e.Message);
-            }
-        }
-
-        public record MoveRequest(int? From, int? To);
+    public PlayGameController(PlayGameService playGameService, IUnitOfWork unitOfWork, IHubContext<WebsocketHub> websocketHub) {
+        _playGameService = playGameService;
+        _unitOfWork = unitOfWork;
+        _websocketHub = websocketHub;
     }
+
+    [HttpGet("/game/{gameId:long}"), GuestRoute]
+    public IActionResult Game(long gameId) {
+        try {
+            var (game, gameState) = _unitOfWork.WithGameTransaction(tran => {
+                return _playGameService.FindGameAndState(new GameId(gameId));
+            });
+
+            return View(new PlayGameViewModel(game, gameState));
+        }
+        catch (ManualValidationException e) {
+            return NotFound(e.Message);
+        }
+    }
+
+    [HttpGet("/game/{gameId:long}/json"), GuestRoute]
+    public IActionResult GameJson(long gameId) {
+        try {
+            var (game, gameState) = _unitOfWork.WithGameTransaction(tran => {
+                return _playGameService.FindGameAndState(new GameId(gameId));
+            });
+
+            return Ok(new GameDto(game, gameState));
+        }
+        catch (ManualValidationException e) {
+            return NotFound(e.Message);
+        }
+    }
+
+    [HttpPost("/game/{gameId:long}/move"), Requires(Permissions.PLAY_GAME)]
+    public async Task<IActionResult> Move(long gameId, [FromBody] MoveRequest? request) {
+        try {
+            ValidateNotNull(request?.From, request?.To);
+
+            var (game, gameState) = _playGameService.DoMove(AuthContext.UserId, new GameId(gameId),
+                new SquareId(request!.From), new SquareId(request.To));
+            var data = new GameDto(game, gameState);
+
+            await _websocketHub.PushGameUpdated(new GameId(gameId), data);
+
+            return Ok(data);
+        }
+        catch (ManualValidationException e) {
+            return BadRequest(e.Message);
+        }
+    }
+
+    [HttpPost("/game/{gameId:long}/draw"), Requires(Permissions.PLAY_GAME)]
+    public IActionResult Draw(long gameId) {
+        try {
+            _playGameService.VoteForDraw(AuthContext.UserId, new GameId(gameId));
+            return SuccessRedirect($"/game/{gameId}", $"You've voted for a draw in game {gameId}");
+        }
+        catch (ManualValidationException e) {
+            return BadRequest(e.Message);
+        }
+    }
+
+    [HttpPost("/game/{gameId:long}/resign"), Requires(Permissions.PLAY_GAME)]
+    public IActionResult Resign(long gameId) {
+        try {
+            _playGameService.Resign(AuthContext.UserId, new GameId(gameId));
+            return SuccessRedirect($"/game/{gameId}", $"You've resigned from game {gameId}");
+        }
+        catch (ManualValidationException e) {
+            return BadRequest(e.Message);
+        }
+    }
+
+    public record MoveRequest(int? From, int? To);
 }

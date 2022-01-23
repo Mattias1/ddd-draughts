@@ -4,20 +4,20 @@ using Draughts.Domain.UserContext.Models;
 using NodaTime;
 using System;
 
-namespace Draughts.Domain.AuthContext.Events {
-    public class AuthUserCreated : DomainEvent {
-        public const string TYPE = "authuser.created";
+namespace Draughts.Domain.AuthContext.Events;
 
-        public UserId UserId { get; }
-        public Username Username { get; }
+public class AuthUserCreated : DomainEvent {
+    public const string TYPE = "authuser.created";
 
-        public AuthUserCreated(AuthUser authUser, DomainEventId id, ZonedDateTime created) : base(id, TYPE, created) {
-            UserId = authUser.Id;
-            Username = authUser.Username;
-        }
+    public UserId UserId { get; }
+    public Username Username { get; }
 
-        public static Func<DomainEventId, ZonedDateTime, AuthUserCreated> Factory(AuthUser authUser) {
-            return (id, now) => new AuthUserCreated(authUser, id, now);
-        }
+    public AuthUserCreated(AuthUser authUser, DomainEventId id, ZonedDateTime created) : base(id, TYPE, created) {
+        UserId = authUser.Id;
+        Username = authUser.Username;
+    }
+
+    public static Func<DomainEventId, ZonedDateTime, AuthUserCreated> Factory(AuthUser authUser) {
+        return (id, now) => new AuthUserCreated(authUser, id, now);
     }
 }

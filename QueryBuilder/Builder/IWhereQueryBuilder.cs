@@ -1,30 +1,30 @@
 using static SqlQueryBuilder.Builder.QueryBuilder;
 
-namespace SqlQueryBuilder.Builder {
-    public interface IWhereQueryBuilder : IQueryBuilderResult {
-        IQueryBuilder Where(SubWhereFunc queryFunc);
-        IQueryBuilder And(SubWhereFunc queryFunc);
+namespace SqlQueryBuilder.Builder;
 
-        IComparisonQueryBuilder Where(string column);
-        IComparisonQueryBuilder And(string column);
+public interface IWhereQueryBuilder : IQueryBuilderResult {
+    IQueryBuilder Where(SubWhereFunc queryFunc);
+    IQueryBuilder And(SubWhereFunc queryFunc);
 
-        IQueryBuilder OrWhere(SubWhereFunc queryFunc);
-        IQueryBuilder Or(SubWhereFunc queryFunc);
+    IComparisonQueryBuilder Where(string column);
+    IComparisonQueryBuilder And(string column);
 
-        IComparisonQueryBuilder OrWhere(string column);
-        IComparisonQueryBuilder Or(string column);
+    IQueryBuilder OrWhere(SubWhereFunc queryFunc);
+    IQueryBuilder Or(SubWhereFunc queryFunc);
 
-        IQueryBuilder WhereNot(SubWhereFunc queryFunc);
-        IQueryBuilder AndNot(SubWhereFunc queryFunc);
+    IComparisonQueryBuilder OrWhere(string column);
+    IComparisonQueryBuilder Or(string column);
 
-        IQueryBuilder OrWhereNot(SubWhereFunc queryFunc);
-        IQueryBuilder OrNot(SubWhereFunc queryFunc);
+    IQueryBuilder WhereNot(SubWhereFunc queryFunc);
+    IQueryBuilder AndNot(SubWhereFunc queryFunc);
 
-        IQueryBuilder WhereExists(SubQueryFunc queryFunc);
-        IQueryBuilder WhereNotExists(SubQueryFunc queryFunc);
+    IQueryBuilder OrWhereNot(SubWhereFunc queryFunc);
+    IQueryBuilder OrNot(SubWhereFunc queryFunc);
 
-        IQueryBuilder RawWhere(string queryPart, params object?[] parameters);
+    IQueryBuilder WhereExists(SubQueryFunc queryFunc);
+    IQueryBuilder WhereNotExists(SubQueryFunc queryFunc);
 
-        IQueryBuilder WithoutWhere();
-    }
+    IQueryBuilder RawWhere(string queryPart, params object?[] parameters);
+
+    IQueryBuilder WithoutWhere();
 }

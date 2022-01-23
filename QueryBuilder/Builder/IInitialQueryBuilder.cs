@@ -1,20 +1,20 @@
-namespace SqlQueryBuilder.Builder {
-    public interface IInitialQueryBuilder : IQueryBuilderResult {
-        IQueryBuilder SelectAllFrom(string table);
-        IQueryBuilder SelectAllFromAs(string table, string alias);
-        ISelectQueryBuilder SelectAll();
-        ISelectQueryBuilder SelectAll(string table);
-        ISelectQueryBuilder SelectDistinct();
-        ISelectQueryBuilder Select(params string[] columns);
-        ISelectQueryBuilder Select();
+namespace SqlQueryBuilder.Builder;
 
-        IInsertQueryBuilder InsertInto(string table);
+public interface IInitialQueryBuilder : IQueryBuilderResult {
+    IQueryBuilder SelectAllFrom(string table);
+    IQueryBuilder SelectAllFromAs(string table, string alias);
+    ISelectQueryBuilder SelectAll();
+    ISelectQueryBuilder SelectAll(string table);
+    ISelectQueryBuilder SelectDistinct();
+    ISelectQueryBuilder Select(params string[] columns);
+    ISelectQueryBuilder Select();
 
-        IUpdateQueryBuilder Update(string table);
+    IInsertQueryBuilder InsertInto(string table);
 
-        IQueryBuilder DeleteFrom(string table);
-        IQueryBuilder DeleteFromAs(string table, string alias);
+    IUpdateQueryBuilder Update(string table);
 
-        ICompleteQueryBuilder Raw(string query, params object?[] parameters);
-    }
+    IQueryBuilder DeleteFrom(string table);
+    IQueryBuilder DeleteFromAs(string table, string alias);
+
+    ICompleteQueryBuilder Raw(string query, params object?[] parameters);
 }

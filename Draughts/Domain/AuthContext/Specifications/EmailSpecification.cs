@@ -4,16 +4,16 @@ using SqlQueryBuilder.Builder;
 using System;
 using System.Linq.Expressions;
 
-namespace Draughts.Domain.AuthContext.Specifications {
-    public class EmailSpecification : Specification<AuthUser> {
-        private readonly string? _email;
+namespace Draughts.Domain.AuthContext.Specifications;
 
-        public EmailSpecification(string? email) => _email = email;
+public class EmailSpecification : Specification<AuthUser> {
+    private readonly string? _email;
 
-        public override Expression<Func<AuthUser, bool>> ToExpression() => u => u.Email == _email;
+    public EmailSpecification(string? email) => _email = email;
 
-        public override void ApplyQueryBuilder(IQueryBuilder builder, QueryWhereType whereType) {
-            ApplyColumnWhere(builder, whereType, "email", q => q.Is(_email));
-        }
+    public override Expression<Func<AuthUser, bool>> ToExpression() => u => u.Email == _email;
+
+    public override void ApplyQueryBuilder(IQueryBuilder builder, QueryWhereType whereType) {
+        ApplyColumnWhere(builder, whereType, "email", q => q.Is(_email));
     }
 }

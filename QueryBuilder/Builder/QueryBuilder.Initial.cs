@@ -1,47 +1,47 @@
 using SqlQueryBuilder.Model;
 
-namespace SqlQueryBuilder.Builder {
-    public partial class QueryBuilder : IInitialQueryBuilder {
-        public IQueryBuilder SelectAllFrom(string table) => SelectAll(table).From(table);
-        public IQueryBuilder SelectAllFromAs(string table, string alias) => SelectAll(alias).FromAs(table, alias);
-        public ISelectQueryBuilder SelectAll(string table) => Select(table + ".*");
-        public ISelectQueryBuilder SelectAll() => Select("*");
+namespace SqlQueryBuilder.Builder;
 
-        public ISelectQueryBuilder SelectDistinct() {
-            _query.Distinct = true;
-            return Select();
-        }
+public partial class QueryBuilder : IInitialQueryBuilder {
+    public IQueryBuilder SelectAllFrom(string table) => SelectAll(table).From(table);
+    public IQueryBuilder SelectAllFromAs(string table, string alias) => SelectAll(alias).FromAs(table, alias);
+    public ISelectQueryBuilder SelectAll(string table) => Select(table + ".*");
+    public ISelectQueryBuilder SelectAll() => Select("*");
 
-        public ISelectQueryBuilder Select(params string[] columns) {
-            foreach (string c in columns) {
-                _query.SelectColumns.Add(new Column(c));
-            }
-            return Select();
-        }
-        public ISelectQueryBuilder Select() => this;
+    public ISelectQueryBuilder SelectDistinct() {
+        _query.Distinct = true;
+        return Select();
+    }
 
-        public IInsertQueryBuilder InsertInto(string table) {
-            _query.InsertTable = new Table(table);
-            return this;
+    public ISelectQueryBuilder Select(params string[] columns) {
+        foreach (string c in columns) {
+            _query.SelectColumns.Add(new Column(c));
         }
+        return Select();
+    }
+    public ISelectQueryBuilder Select() => this;
 
-        public IUpdateQueryBuilder Update(string table) {
-            _query.UpdateTable = new Table(table);
-            return this;
-        }
+    public IInsertQueryBuilder InsertInto(string table) {
+        _query.InsertTable = new Table(table);
+        return this;
+    }
 
-        public IQueryBuilder DeleteFrom(string table) {
-            _query.DeleteTable = new Table(table);
-            return this;
-        }
-        public IQueryBuilder DeleteFromAs(string table, string alias) {
-            _query.DeleteTable = new Table(table, alias);
-            return this;
-        }
+    public IUpdateQueryBuilder Update(string table) {
+        _query.UpdateTable = new Table(table);
+        return this;
+    }
 
-        public ICompleteQueryBuilder Raw(string query, params object?[] parameters) {
-            _query.RawQueryParts.Add(new RawQueryPart(query, parameters));
-            return this;
-        }
+    public IQueryBuilder DeleteFrom(string table) {
+        _query.DeleteTable = new Table(table);
+        return this;
+    }
+    public IQueryBuilder DeleteFromAs(string table, string alias) {
+        _query.DeleteTable = new Table(table, alias);
+        return this;
+    }
+
+    public ICompleteQueryBuilder Raw(string query, params object?[] parameters) {
+        _query.RawQueryParts.Add(new RawQueryPart(query, parameters));
+        return this;
     }
 }

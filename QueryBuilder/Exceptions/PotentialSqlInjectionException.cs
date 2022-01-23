@@ -1,15 +1,15 @@
-namespace SqlQueryBuilder.Exceptions {
-    public class PotentialSqlInjectionException : SqlQueryBuilderException {
-        public const string ERROR_CHARACTERS = "Potentially dangerous sql detected, is someone trying SQL-injection?";
+namespace SqlQueryBuilder.Exceptions;
 
-        public PotentialSqlInjectionException() : this("") { }
-        public PotentialSqlInjectionException(string characters) : base(CharacterErrorMessage(characters)) { }
+public class PotentialSqlInjectionException : SqlQueryBuilderException {
+    public const string ERROR_CHARACTERS = "Potentially dangerous sql detected, is someone trying SQL-injection?";
 
-        private static string CharacterErrorMessage(string characters) {
-            if (string.IsNullOrEmpty(characters)) {
-                return ERROR_CHARACTERS;
-            }
-            return $"{ERROR_CHARACTERS} Characters: {characters}.";
+    public PotentialSqlInjectionException() : this("") { }
+    public PotentialSqlInjectionException(string characters) : base(CharacterErrorMessage(characters)) { }
+
+    private static string CharacterErrorMessage(string characters) {
+        if (string.IsNullOrEmpty(characters)) {
+            return ERROR_CHARACTERS;
         }
+        return $"{ERROR_CHARACTERS} Characters: {characters}.";
     }
 }

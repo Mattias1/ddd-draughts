@@ -7,72 +7,72 @@ using Draughts.Repositories.Transaction;
 using System.Linq;
 using static Draughts.Domain.GameContext.Services.GameFactory;
 
-namespace Draughts.Application.Lobby.Services {
-    // Note: This name is way to generic. In the future I'll put everything in here. So I'll rename it then :)
-    public class GameService {
-        private readonly IGameFactory _gameFactory;
-        private readonly IGameRepository _gameRepository;
-        private readonly IGameStateRepository _gameStateRepository;
-        private readonly IIdGenerator _idGenerator;
-        private readonly IUnitOfWork _unitOfWork;
-        private readonly IUserRepository _userRepository;
+namespace Draughts.Application.Lobby.Services;
 
-        public GameService(IGameFactory gameFactory, IGameRepository gameRepository,
-                IGameStateRepository gameStateRepository, IIdGenerator idGenerator,
-                IUnitOfWork unitOfWork, IUserRepository userRepository) {
-            _gameFactory = gameFactory;
-            _gameRepository = gameRepository;
-            _gameStateRepository = gameStateRepository;
-            _idGenerator = idGenerator;
-            _unitOfWork = unitOfWork;
-            _userRepository = userRepository;
-        }
+// Note: This name is way to generic. In the future I'll put everything in here. So I'll rename it then :)
+public class GameService {
+    private readonly IGameFactory _gameFactory;
+    private readonly IGameRepository _gameRepository;
+    private readonly IGameStateRepository _gameStateRepository;
+    private readonly IIdGenerator _idGenerator;
+    private readonly IUnitOfWork _unitOfWork;
+    private readonly IUserRepository _userRepository;
 
-        public Game CreateGame(UserId userId, GameSettings gameSettings, Color joinColor) {
-            var user = _unitOfWork.WithUserTransaction(tran => {
-                return _userRepository.FindById(userId);
-            });
+    public GameService(IGameFactory gameFactory, IGameRepository gameRepository,
+            IGameStateRepository gameStateRepository, IIdGenerator idGenerator,
+            IUnitOfWork unitOfWork, IUserRepository userRepository) {
+        _gameFactory = gameFactory;
+        _gameRepository = gameRepository;
+        _gameStateRepository = gameStateRepository;
+        _idGenerator = idGenerator;
+        _unitOfWork = unitOfWork;
+        _userRepository = userRepository;
+    }
 
-            return _unitOfWork.WithGameTransaction(tran => {
-                var idPool = _idGenerator.ReservePool();
-                var userInfo = new UserInfo(user.Id, user.Username, user.Rank);
-                var (game, gameState) = _gameFactory.BuildGame(idPool, gameSettings, userInfo, joinColor);
+    public Game CreateGame(UserId userId, GameSettings gameSettings, Color joinColor) {
+        var user = _unitOfWork.WithUserTransaction(tran => {
+            return _userRepository.FindById(userId);
+        });
 
-                _gameRepository.Save(game);
-                _gameStateRepository.Save(gameState);
+        return _unitOfWork.WithGameTransaction(tran => {
+            var idPool = _idGenerator.ReservePool();
+            var userInfo = new UserInfo(user.Id, user.Username, user.Rank);
+            var (game, gameState) = _gameFactory.BuildGame(idPool, gameSettings, userInfo, joinColor);
 
-                return game;
-            });
-        }
+            _gameRepository.Save(game);
+            _gameStateRepository.Save(gameState);
 
-        public void JoinGame(UserId userId, GameId gameId, Color? color) {
-            var user = _unitOfWork.WithUserTransaction(tran => {
-                return _userRepository.FindById(userId);
-            });
+            return game;
+        });
+    }
 
-            _unitOfWork.WithGameTransaction(tran => {
-                var game = _gameRepository.FindByIdOrNull(gameId);
+    public void JoinGame(UserId userId, GameId gameId, Color? color) {
+        var user = _unitOfWork.WithUserTransaction(tran => {
+            return _userRepository.FindById(userId);
+        });
 
-                if (game is null) {
-                    throw new ManualValidationException("Game not found");
-                }
+        _unitOfWork.WithGameTransaction(tran => {
+            var game = _gameRepository.FindByIdOrNull(gameId);
 
-                var idPool = _idGenerator.ReservePool();
-                var userInfo = new UserInfo(user.Id, user.Username, user.Rank);
-                var player = _gameFactory.BuildPlayer(idPool, userInfo, color ?? GetRemainingColor(game));
-                game.JoinGame(player, player.CreatedAt);
-
-                _gameRepository.Save(game);
-            });
-        }
-
-        private Color GetRemainingColor(Game game) {
-            var player = game.Players.FirstOrDefault();
-            if (player is null) {
-                throw new ManualValidationException("This game has no players");
+            if (game is null) {
+                throw new ManualValidationException("Game not found");
             }
 
-            return player.Color.Other;
+            var idPool = _idGenerator.ReservePool();
+            var userInfo = new UserInfo(user.Id, user.Username, user.Rank);
+            var player = _gameFactory.BuildPlayer(idPool, userInfo, color ?? GetRemainingColor(game));
+            game.JoinGame(player, player.CreatedAt);
+
+            _gameRepository.Save(game);
+        });
+    }
+
+    private Color GetRemainingColor(Game game) {
+        var player = game.Players.FirstOrDefault();
+        if (player is null) {
+            throw new ManualValidationException("This game has no players");
         }
+
+        return player.Color.Other;
     }
 }

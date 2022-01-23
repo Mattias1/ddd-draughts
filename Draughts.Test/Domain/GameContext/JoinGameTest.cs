@@ -7,83 +7,83 @@ using NodaTime.Testing;
 using System;
 using Xunit;
 
-namespace Draughts.Test.Domain.GameContext {
-    public class JoinGameTest {
-        FakeClock _fakeClock = FakeClock.FromUtc(2020, 02, 29);
+namespace Draughts.Test.Domain.GameContext;
 
-        [Fact]
-        public void JoiningWhenStartedThrowsValidationError() {
-            var game = GameTestHelper.StartedInternationalGame().Build();
+public class JoinGameTest {
+    FakeClock _fakeClock = FakeClock.FromUtc(2020, 02, 29);
 
-            var thirdPlayer = PlayerTestHelper.White()
-                .WithId(IdTestHelper.Next())
-                .WithUsername("Ender")
-                .Build();
+    [Fact]
+    public void JoiningWhenStartedThrowsValidationError() {
+        var game = GameTestHelper.StartedInternationalGame().Build();
 
-            Action joinGame = () => game.JoinGame(thirdPlayer, _fakeClock.UtcNow());
+        var thirdPlayer = PlayerTestHelper.White()
+            .WithId(IdTestHelper.Next())
+            .WithUsername("Ender")
+            .Build();
 
-            joinGame.Should().Throw<ManualValidationException>();
-        }
+        Action joinGame = () => game.JoinGame(thirdPlayer, _fakeClock.UtcNow());
 
-        [Fact]
-        public void JoiningWhenAlreadyInGameThrowsValidationError() {
-            var whitePlayer = PlayerTestHelper.White().Build();
-            var game = GameTestHelper.PendingInternationalGame(whitePlayer).Build();
+        joinGame.Should().Throw<ManualValidationException>();
+    }
 
-            Action joinGame = () => game.JoinGame(whitePlayer, _fakeClock.UtcNow());
+    [Fact]
+    public void JoiningWhenAlreadyInGameThrowsValidationError() {
+        var whitePlayer = PlayerTestHelper.White().Build();
+        var game = GameTestHelper.PendingInternationalGame(whitePlayer).Build();
 
-            joinGame.Should().Throw<ManualValidationException>();
-        }
+        Action joinGame = () => game.JoinGame(whitePlayer, _fakeClock.UtcNow());
 
-        [Fact]
-        public void JoiningWhenUserIdOccupiedThrowsValidationError() {
-            var whitePlayer = PlayerTestHelper.White().WithUserId(9999).Build();
-            var game = GameTestHelper.PendingInternationalGame(whitePlayer).Build();
+        joinGame.Should().Throw<ManualValidationException>();
+    }
 
-            var blackPlayer = PlayerTestHelper.Black().WithUserId(9999).Build();
+    [Fact]
+    public void JoiningWhenUserIdOccupiedThrowsValidationError() {
+        var whitePlayer = PlayerTestHelper.White().WithUserId(9999).Build();
+        var game = GameTestHelper.PendingInternationalGame(whitePlayer).Build();
 
-            Action joinGame = () => game.JoinGame(blackPlayer, _fakeClock.UtcNow());
+        var blackPlayer = PlayerTestHelper.Black().WithUserId(9999).Build();
 
-            joinGame.Should().Throw<ManualValidationException>();
-        }
+        Action joinGame = () => game.JoinGame(blackPlayer, _fakeClock.UtcNow());
 
-        [Fact]
-        public void JoiningWhenColorOccupiedThrowsValidationError() {
-            var whitePlayer = PlayerTestHelper.White().Build();
-            var game = GameTestHelper.PendingInternationalGame(whitePlayer).Build();
+        joinGame.Should().Throw<ManualValidationException>();
+    }
 
-            var otherWhitePlayer = PlayerTestHelper.White().Build();
+    [Fact]
+    public void JoiningWhenColorOccupiedThrowsValidationError() {
+        var whitePlayer = PlayerTestHelper.White().Build();
+        var game = GameTestHelper.PendingInternationalGame(whitePlayer).Build();
 
-            Action joinGame = () => game.JoinGame(whitePlayer, _fakeClock.UtcNow());
+        var otherWhitePlayer = PlayerTestHelper.White().Build();
 
-            joinGame.Should().Throw<ManualValidationException>();
-        }
+        Action joinGame = () => game.JoinGame(whitePlayer, _fakeClock.UtcNow());
 
-        [Fact]
-        public void JoiningAsFirstPlayerJustJoins() {
-            var game = GameTestHelper.PendingInternationalGame().Build();
-            var whitePlayer = PlayerTestHelper.White().Build();
+        joinGame.Should().Throw<ManualValidationException>();
+    }
 
-            game.JoinGame(whitePlayer, _fakeClock.UtcNow());
+    [Fact]
+    public void JoiningAsFirstPlayerJustJoins() {
+        var game = GameTestHelper.PendingInternationalGame().Build();
+        var whitePlayer = PlayerTestHelper.White().Build();
 
-            game.Players.Should().OnlyContain(p => p == whitePlayer);
-            game.HasStarted.Should().BeFalse();
-            game.Turn.Should().BeNull();
-        }
+        game.JoinGame(whitePlayer, _fakeClock.UtcNow());
 
-        [Fact]
-        public void JoiningAsSecondPlayerStartsGame() {
-            var blackPlayer = PlayerTestHelper.Black().Build();
-            var game = GameTestHelper.PendingInternationalGame(blackPlayer).Build();
+        game.Players.Should().OnlyContain(p => p == whitePlayer);
+        game.HasStarted.Should().BeFalse();
+        game.Turn.Should().BeNull();
+    }
 
-            var whitePlayer = PlayerTestHelper.White().Build();
+    [Fact]
+    public void JoiningAsSecondPlayerStartsGame() {
+        var blackPlayer = PlayerTestHelper.Black().Build();
+        var game = GameTestHelper.PendingInternationalGame(blackPlayer).Build();
 
-            game.JoinGame(whitePlayer, _fakeClock.UtcNow());
+        var whitePlayer = PlayerTestHelper.White().Build();
 
-            game.Players.Should().BeEquivalentTo(new[] { whitePlayer, blackPlayer });
-            game.HasStarted.Should().BeTrue();
-            game.Turn.Should().NotBeNull();
-            game.Turn!.Player.Color.Should().Be(Color.White);
-        }
+        game.JoinGame(whitePlayer, _fakeClock.UtcNow());
+
+        game.Players.Should().BeEquivalentTo(new[] { whitePlayer, blackPlayer });
+        game.HasStarted.Should().BeTrue();
+        game.Turn.Should().NotBeNull();
+        game.Turn!.Player.Color.Should().Be(Color.White);
     }
 }

@@ -6,62 +6,62 @@ using FluentAssertions;
 using System;
 using Xunit;
 
-namespace Draughts.Test.Domain.AuthContext {
-    public class AuthUserRolesTest {
-        private static readonly Role RegisteredRole = RoleTestHelper.RegisteredUser().Build();
-        private static readonly Role AdminRole = RoleTestHelper.Admin().Build();
+namespace Draughts.Test.Domain.AuthContext;
 
-        private readonly IUserRoleDomainService _userRoleService;
+public class AuthUserRolesTest {
+    private static readonly Role RegisteredRole = RoleTestHelper.RegisteredUser().Build();
+    private static readonly Role AdminRole = RoleTestHelper.Admin().Build();
 
-        public AuthUserRolesTest() {
-            _userRoleService = new UserRoleDomainService();
-        }
+    private readonly IUserRoleDomainService _userRoleService;
 
-        [Fact]
-        public void ThrowWhenAssigningDuplicateRoles() {
-            var authUser = AuthUserTestHelper.User().WithRoles(RegisteredRole).Build();
-            var duplicateRole = RegisteredRole;
+    public AuthUserRolesTest() {
+        _userRoleService = new UserRoleDomainService();
+    }
 
-            Action assigning = () => _userRoleService.AssignRole(authUser, duplicateRole);
+    [Fact]
+    public void ThrowWhenAssigningDuplicateRoles() {
+        var authUser = AuthUserTestHelper.User().WithRoles(RegisteredRole).Build();
+        var duplicateRole = RegisteredRole;
 
-            assigning.Should().Throw<ManualValidationException>();
-        }
+        Action assigning = () => _userRoleService.AssignRole(authUser, duplicateRole);
 
-        [Fact]
-        public void AddRoleWhenAllIsWell() {
-            var authUser = AuthUserTestHelper.User().WithRoles(RegisteredRole).Build();
+        assigning.Should().Throw<ManualValidationException>();
+    }
 
-            _userRoleService.AssignRole(authUser, AdminRole);
+    [Fact]
+    public void AddRoleWhenAllIsWell() {
+        var authUser = AuthUserTestHelper.User().WithRoles(RegisteredRole).Build();
 
-            authUser.RoleIds.Should().BeEquivalentTo(new[] { RegisteredRole.Id, AdminRole.Id });
-        }
+        _userRoleService.AssignRole(authUser, AdminRole);
 
-        [Fact]
-        public void ThrowWhenRemovingNonAssignedRole() {
-            var authUser = AuthUserTestHelper.User().WithRoles(RegisteredRole).Build();
-            var nonAssignedRole = AdminRole;
+        authUser.RoleIds.Should().BeEquivalentTo(new[] { RegisteredRole.Id, AdminRole.Id });
+    }
 
-            Action removing = () => _userRoleService.RemoveRole(authUser, nonAssignedRole);
+    [Fact]
+    public void ThrowWhenRemovingNonAssignedRole() {
+        var authUser = AuthUserTestHelper.User().WithRoles(RegisteredRole).Build();
+        var nonAssignedRole = AdminRole;
 
-            removing.Should().Throw<ManualValidationException>();
-        }
+        Action removing = () => _userRoleService.RemoveRole(authUser, nonAssignedRole);
 
-        [Fact]
-        public void RemoveRoleWhenAllIsWell() {
-            var authUser = AuthUserTestHelper.User().WithRoles(RegisteredRole, AdminRole).Build();
+        removing.Should().Throw<ManualValidationException>();
+    }
 
-            _userRoleService.RemoveRole(authUser, AdminRole);
+    [Fact]
+    public void RemoveRoleWhenAllIsWell() {
+        var authUser = AuthUserTestHelper.User().WithRoles(RegisteredRole, AdminRole).Build();
 
-            authUser.RoleIds.Should().BeEquivalentTo(new[] { RegisteredRole.Id });
-        }
+        _userRoleService.RemoveRole(authUser, AdminRole);
 
-        [Fact]
-        public void ThrowWhenRemovingAdminRoleFromAdmin() {
-            var admin = AuthUserTestHelper.User(Username.ADMIN).WithRoles(RegisteredRole, AdminRole).Build();
+        authUser.RoleIds.Should().BeEquivalentTo(new[] { RegisteredRole.Id });
+    }
 
-            Action removing = () => _userRoleService.RemoveRole(admin, AdminRole);
+    [Fact]
+    public void ThrowWhenRemovingAdminRoleFromAdmin() {
+        var admin = AuthUserTestHelper.User(Username.ADMIN).WithRoles(RegisteredRole, AdminRole).Build();
 
-            removing.Should().Throw<ManualValidationException>();
-        }
+        Action removing = () => _userRoleService.RemoveRole(admin, AdminRole);
+
+        removing.Should().Throw<ManualValidationException>();
     }
 }

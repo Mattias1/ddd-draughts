@@ -1,23 +1,23 @@
-namespace SqlQueryBuilder.Model {
-    internal interface ITable : IQueryPart { }
+namespace SqlQueryBuilder.Model;
 
-    internal readonly struct Table : ITable {
-        public string TableName { get; }
-        public string? Alias { get; }
+internal interface ITable : IQueryPart { }
 
-        public Table(string name, string? alias = null) {
-            TableName = name;
-            Alias = alias;
+internal readonly struct Table : ITable {
+    public string TableName { get; }
+    public string? Alias { get; }
+
+    public Table(string name, string? alias = null) {
+        TableName = name;
+        Alias = alias;
+    }
+
+    public void AppendToQuery(Query query, bool isFirst) {
+        if (!isFirst) {
+            query.Builder.Append(", ");
         }
-
-        public void AppendToQuery(Query query, bool isFirst) {
-            if (!isFirst) {
-                query.Builder.Append(", ");
-            }
-            query.Builder.Append(query.WrapField(TableName));
-            if (Alias is not null) {
-                query.Builder.Append(" as ").Append(query.WrapField(Alias));
-            }
+        query.Builder.Append(query.WrapField(TableName));
+        if (Alias is not null) {
+            query.Builder.Append(" as ").Append(query.WrapField(Alias));
         }
     }
 }

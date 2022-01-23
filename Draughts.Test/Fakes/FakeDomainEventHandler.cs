@@ -1,12 +1,12 @@
 using Draughts.Common.Events;
 using System.Collections.Generic;
 
-namespace Draughts.Test.Fakes {
-    public class FakeDomainEventHandler : IDomainEventHandler {
-        public List<DomainEvent> HandledEvents { get; } = new List<DomainEvent>();
+namespace Draughts.Test.Fakes;
 
-        public bool CanHandle(DomainEvent evt) => true;
+public class FakeDomainEventHandler : IDomainEventHandler {
+    public List<DomainEvent> HandledEvents { get; } = new List<DomainEvent>();
 
-        public void Handle(DomainEvent evt) => HandledEvents.Add(evt);
-    }
+    public bool CanHandle(DomainEvent evt) => true;
+
+    public void Handle(DomainEvent evt) => HandledEvents.Add(evt);
 }

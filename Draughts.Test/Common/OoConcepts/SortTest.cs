@@ -6,28 +6,28 @@ using System;
 using System.Linq.Expressions;
 using Xunit;
 
-namespace Draughts.Test.Common.OoConcepts {
-    public class SortTest {
-        private IInitialQueryBuilder Query() => QueryBuilder.Init(new FakeSqlFlavor());
+namespace Draughts.Test.Common.OoConcepts;
 
-        [Fact]
-        public void TestSortQuery() {
-            var sort = new SortTestSort();
-            var q = Query().SelectAllFrom("test");
+public class SortTest {
+    private IInitialQueryBuilder Query() => QueryBuilder.Init(new FakeSqlFlavor());
 
-            sort.ApplyQueryBuilder(q);
+    [Fact]
+    public void TestSortQuery() {
+        var sort = new SortTestSort();
+        var q = Query().SelectAllFrom("test");
 
-            q.ToUnsafeSql().Should().Be("select `test`.* from `test` order by `value` desc");
-        }
+        sort.ApplyQueryBuilder(q);
 
-        private class SortTestSort : Sort<SortTestNumber, int> {
-            public SortTestSort() : base(defaultDescending: true) { }
-            public override Expression<Func<SortTestNumber, int>> ToExpression() => n => n.Value;
-            public override IQueryBuilder ApplyQueryBuilder(IQueryBuilder builder) => ApplyColumnSort(builder, "value");
-        }
+        q.ToUnsafeSql().Should().Be("select `test`.* from `test` order by `value` desc");
+    }
 
-        private class SortTestNumber {
-            public int Value { get; set; }
-        }
+    private class SortTestSort : Sort<SortTestNumber, int> {
+        public SortTestSort() : base(defaultDescending: true) { }
+        public override Expression<Func<SortTestNumber, int>> ToExpression() => n => n.Value;
+        public override IQueryBuilder ApplyQueryBuilder(IQueryBuilder builder) => ApplyColumnSort(builder, "value");
+    }
+
+    private class SortTestNumber {
+        public int Value { get; set; }
     }
 }

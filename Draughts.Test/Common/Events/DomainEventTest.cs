@@ -8,75 +8,75 @@ using NodaTime;
 using NodaTime.Testing;
 using Xunit;
 
-namespace Draughts.Test.Common.Events {
-    public class DomainEventTest {
-        private readonly IClock _clock;
+namespace Draughts.Test.Common.Events;
 
-        public DomainEventTest() {
-            _clock = FakeClock.FromUtc(2020, 02, 29);
-        }
+public class DomainEventTest {
+    private readonly IClock _clock;
 
-        [Fact]
-        public void EqualWhenIdsAreEqual() {
-            var pendingRole = RoleTestHelper.PendingRegistration().WithId(11).Build();
-            var left = new RoleCreated(pendingRole, new UserId(1), new DomainEventId(1), _clock.UtcNow());
+    public DomainEventTest() {
+        _clock = FakeClock.FromUtc(2020, 02, 29);
+    }
 
-            var registeredRole = RoleTestHelper.RegisteredUser().WithId(12).Build();
-            var right = new RoleCreated(registeredRole, new UserId(2), new DomainEventId(1), _clock.UtcNow());
+    [Fact]
+    public void EqualWhenIdsAreEqual() {
+        var pendingRole = RoleTestHelper.PendingRegistration().WithId(11).Build();
+        var left = new RoleCreated(pendingRole, new UserId(1), new DomainEventId(1), _clock.UtcNow());
 
-            left.Equals((object)right).Should().BeTrue();
-            left.Equals(right).Should().BeTrue();
-            (left == right).Should().BeTrue();
-            (left != right).Should().BeFalse();
-            left.GetHashCode().Should().Be(right.GetHashCode());
-        }
+        var registeredRole = RoleTestHelper.RegisteredUser().WithId(12).Build();
+        var right = new RoleCreated(registeredRole, new UserId(2), new DomainEventId(1), _clock.UtcNow());
 
-        [Fact]
-        public void NotEqualWhenIdsAreDifferent() {
-            var role = RoleTestHelper.PendingRegistration().WithId(11).Build();
-            var left = new RoleCreated(role, new UserId(3), new DomainEventId(1), _clock.UtcNow());
-            var right = new RoleCreated(role, new UserId(3), new DomainEventId(2), _clock.UtcNow());
+        left.Equals((object)right).Should().BeTrue();
+        left.Equals(right).Should().BeTrue();
+        (left == right).Should().BeTrue();
+        (left != right).Should().BeFalse();
+        left.GetHashCode().Should().Be(right.GetHashCode());
+    }
 
-            left.Equals((object)right).Should().BeFalse();
-            left.Equals(right).Should().BeFalse();
-            (left == right).Should().BeFalse();
-            (left != right).Should().BeTrue();
-        }
+    [Fact]
+    public void NotEqualWhenIdsAreDifferent() {
+        var role = RoleTestHelper.PendingRegistration().WithId(11).Build();
+        var left = new RoleCreated(role, new UserId(3), new DomainEventId(1), _clock.UtcNow());
+        var right = new RoleCreated(role, new UserId(3), new DomainEventId(2), _clock.UtcNow());
 
-        [Fact]
-        public void NotEqualWhenTheOtherIsNull() {
-            var role = RoleTestHelper.PendingRegistration().WithId(11).Build();
-            var left = new RoleCreated(role, new UserId(4), new DomainEventId(1), _clock.UtcNow());
-            RoleCreated? right = null;
+        left.Equals((object)right).Should().BeFalse();
+        left.Equals(right).Should().BeFalse();
+        (left == right).Should().BeFalse();
+        (left != right).Should().BeTrue();
+    }
 
-            left.Equals(right as object).Should().BeFalse();
-            left.Equals(right).Should().BeFalse();
-            (left == right).Should().BeFalse();
-            (left != right).Should().BeTrue();
+    [Fact]
+    public void NotEqualWhenTheOtherIsNull() {
+        var role = RoleTestHelper.PendingRegistration().WithId(11).Build();
+        var left = new RoleCreated(role, new UserId(4), new DomainEventId(1), _clock.UtcNow());
+        RoleCreated? right = null;
 
-            (right == left).Should().BeFalse();
-            (right != left).Should().BeTrue();
-        }
+        left.Equals(right as object).Should().BeFalse();
+        left.Equals(right).Should().BeFalse();
+        (left == right).Should().BeFalse();
+        (left != right).Should().BeTrue();
 
-        [Fact]
-        public void EqualWhenBothAreNull() {
-            RoleCreated? left = null;
-            RoleCreated? right = null;
+        (right == left).Should().BeFalse();
+        (right != left).Should().BeTrue();
+    }
 
-            (left == right).Should().BeTrue();
-            (left != right).Should().BeFalse();
-        }
+    [Fact]
+    public void EqualWhenBothAreNull() {
+        RoleCreated? left = null;
+        RoleCreated? right = null;
 
-        [Fact]
-        public void RegisterFailedAttemptShouldUpdateDateAndNrOfAttempts() {
-            var role = RoleTestHelper.PendingRegistration().Build();
-            var evt = new RoleCreated(role, new UserId(5),
-                new DomainEventId(IdTestHelper.Next()), _clock.UtcNow().PlusHours(-1));
+        (left == right).Should().BeTrue();
+        (left != right).Should().BeFalse();
+    }
 
-            evt.RegisterFailedAttempt(_clock.UtcNow());
+    [Fact]
+    public void RegisterFailedAttemptShouldUpdateDateAndNrOfAttempts() {
+        var role = RoleTestHelper.PendingRegistration().Build();
+        var evt = new RoleCreated(role, new UserId(5),
+            new DomainEventId(IdTestHelper.Next()), _clock.UtcNow().PlusHours(-1));
 
-            evt.LastAttemptedAt.Should().Be(_clock.UtcNow());
-            evt.NrOfAttempts.Should().Be(1);
-        }
+        evt.RegisterFailedAttempt(_clock.UtcNow());
+
+        evt.LastAttemptedAt.Should().Be(_clock.UtcNow());
+        evt.NrOfAttempts.Should().Be(1);
     }
 }

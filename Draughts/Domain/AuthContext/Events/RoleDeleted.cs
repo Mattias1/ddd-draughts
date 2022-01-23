@@ -4,22 +4,22 @@ using Draughts.Domain.UserContext.Models;
 using NodaTime;
 using System;
 
-namespace Draughts.Domain.AuthContext.Events {
-    public class RoleDeleted : DomainEvent {
-        public const string TYPE = "role.deleted";
+namespace Draughts.Domain.AuthContext.Events;
 
-        public RoleId RoleId { get; }
-        public string Rolename { get; }
-        public UserId DeletedBy { get; }
+public class RoleDeleted : DomainEvent {
+    public const string TYPE = "role.deleted";
 
-        public RoleDeleted(Role role, UserId deletedBy, DomainEventId id, ZonedDateTime created) : base(id, TYPE, created) {
-            RoleId = role.Id;
-            Rolename = role.Rolename;
-            DeletedBy = deletedBy;
-        }
+    public RoleId RoleId { get; }
+    public string Rolename { get; }
+    public UserId DeletedBy { get; }
 
-        public static Func<DomainEventId, ZonedDateTime, RoleDeleted> Factory(Role role, UserId createdBy) {
-            return (id, now) => new RoleDeleted(role, createdBy, id, now);
-        }
+    public RoleDeleted(Role role, UserId deletedBy, DomainEventId id, ZonedDateTime created) : base(id, TYPE, created) {
+        RoleId = role.Id;
+        Rolename = role.Rolename;
+        DeletedBy = deletedBy;
+    }
+
+    public static Func<DomainEventId, ZonedDateTime, RoleDeleted> Factory(Role role, UserId createdBy) {
+        return (id, now) => new RoleDeleted(role, createdBy, id, now);
     }
 }

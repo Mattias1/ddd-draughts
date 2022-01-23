@@ -5,28 +5,28 @@ using Microsoft.Extensions.Logging;
 using System.Net;
 using System.Text.RegularExpressions;
 
-namespace Draughts.Application.StaticPages {
-    public class StaticPagesController : BaseController {
-        private readonly ILogger<StaticPagesController> _logger;
+namespace Draughts.Application.StaticPages;
 
-        public StaticPagesController(ILogger<StaticPagesController> logger) => _logger = logger;
+public class StaticPagesController : BaseController {
+    private readonly ILogger<StaticPagesController> _logger;
 
-        [HttpGet, GuestRoute]
-        public IActionResult Home() => View();
+    public StaticPagesController(ILogger<StaticPagesController> logger) => _logger = logger;
 
-        [HttpGet("/privacy"), GuestRoute]
-        public IActionResult Privacy() => View();
+    [HttpGet, GuestRoute]
+    public IActionResult Home() => View();
 
-        [HttpGet("/license"), GuestRoute]
-        public IActionResult License() => View();
+    [HttpGet("/privacy"), GuestRoute]
+    public IActionResult Privacy() => View();
 
-        [HttpGet("/error"), GuestRoute]
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error(HttpStatusCode? status) {
-            ViewBag.StatusString = Regex.Replace(status?.ToString() ?? "Error", "(?<=[a-z])([A-Z])", " $1");
-            ViewBag.StatusCode = (int)(status ?? HttpStatusCode.InternalServerError);
+    [HttpGet("/license"), GuestRoute]
+    public IActionResult License() => View();
 
-            return View();
-        }
+    [HttpGet("/error"), GuestRoute]
+    [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+    public IActionResult Error(HttpStatusCode? status) {
+        ViewBag.StatusString = Regex.Replace(status?.ToString() ?? "Error", "(?<=[a-z])([A-Z])", " $1");
+        ViewBag.StatusCode = (int)(status ?? HttpStatusCode.InternalServerError);
+
+        return View();
     }
 }

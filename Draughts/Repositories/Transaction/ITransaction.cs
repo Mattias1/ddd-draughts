@@ -3,24 +3,24 @@ using Draughts.Common.Events;
 using System;
 using System.Collections.Generic;
 
-namespace Draughts.Repositories.Transaction {
-    public interface ITransaction : IDisposable {
-        bool IsOpen { get; }
-        bool Succeeded { get; }
-        IReadOnlyList<DomainEvent> RaisedEvents { get; }
+namespace Draughts.Repositories.Transaction;
 
-        event TransactionEventHandler? OnOpened;
-        event TransactionEventHandler? OnClosed;
+public interface ITransaction : IDisposable {
+    bool IsOpen { get; }
+    bool Succeeded { get; }
+    IReadOnlyList<DomainEvent> RaisedEvents { get; }
 
-        void Commit();
-        void Rollback();
-        void Start();
-    }
+    event TransactionEventHandler? OnOpened;
+    event TransactionEventHandler? OnClosed;
 
-    public delegate void TransactionEventHandler(ITransaction transaction, TransactionEventArgs e);
+    void Commit();
+    void Rollback();
+    void Start();
+}
 
-    public class TransactionEventArgs : EventArgs {
-        public TransactionDomain TransactionDomain { get; }
-        public TransactionEventArgs(TransactionDomain domain) => TransactionDomain = domain;
-    }
+public delegate void TransactionEventHandler(ITransaction transaction, TransactionEventArgs e);
+
+public class TransactionEventArgs : EventArgs {
+    public TransactionDomain TransactionDomain { get; }
+    public TransactionEventArgs(TransactionDomain domain) => TransactionDomain = domain;
 }

@@ -2,31 +2,31 @@ using Draughts.IntegrationTest.EndToEnd.Base;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace Draughts.IntegrationTest.EndToEnd.Database {
-    [Collection("LobbyIT")]
-    public class DbLobbyIT {
-        private readonly DbApiTester _apiTester;
-        private readonly LobbyTesterApi<DbApiTester> _lobbyApi;
+namespace Draughts.IntegrationTest.EndToEnd.Database;
 
-        public DbLobbyIT() {
-            _apiTester = new DbApiTester();
-            _lobbyApi = new LobbyTesterApi<DbApiTester>(_apiTester);
-        }
+[Collection("LobbyIT")]
+public class DbLobbyIT {
+    private readonly DbApiTester _apiTester;
+    private readonly LobbyTesterApi<DbApiTester> _lobbyApi;
 
-        [Fact]
-        public async Task CreateAndJoinGame() {
-            await _lobbyApi.VisitLobbyPageAsGuest();
-            await _lobbyApi.VisitSpectatorPageAsGuest();
+    public DbLobbyIT() {
+        _apiTester = new DbApiTester();
+        _lobbyApi = new LobbyTesterApi<DbApiTester>(_apiTester);
+    }
 
-            _apiTester.LoginAsTestPlayerBlack();
-            await _lobbyApi.VisitLobbyPage();
-            await _lobbyApi.VisitCreateGamePage();
-            await _lobbyApi.PostCreateGame();
+    [Fact]
+    public async Task CreateAndJoinGame() {
+        await _lobbyApi.VisitLobbyPageAsGuest();
+        await _lobbyApi.VisitSpectatorPageAsGuest();
 
-            _apiTester.LoginAsTestPlayerWhite();
-            await _lobbyApi.PostJoinGame();
+        _apiTester.LoginAsTestPlayerBlack();
+        await _lobbyApi.VisitLobbyPage();
+        await _lobbyApi.VisitCreateGamePage();
+        await _lobbyApi.PostCreateGame();
 
-            _lobbyApi.AssertGameIsStartedWithCorrectPlayers();
-        }
+        _apiTester.LoginAsTestPlayerWhite();
+        await _lobbyApi.PostJoinGame();
+
+        _lobbyApi.AssertGameIsStartedWithCorrectPlayers();
     }
 }

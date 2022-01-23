@@ -6,90 +6,90 @@ using Draughts.Repositories.Transaction;
 using Draughts.Test.TestHelpers;
 using System;
 
-namespace Draughts.Command.Seeders {
-    public class EssentialDataSeeder {
-        private readonly IAuthUserRepository _authUserRepository;
-        private readonly IRoleRepository _roleRepository;
-        private readonly IUnitOfWork _unitOfWork;
-        private readonly IUserRepository _userRepository;
+namespace Draughts.Command.Seeders;
 
-        public EssentialDataSeeder(IAuthUserRepository authUserRepository, IRoleRepository roleRepository,
-            IUnitOfWork unitOfWork, IUserRepository userRepository
-        ) {
-            _authUserRepository = authUserRepository;
-            _roleRepository = roleRepository;
-            _unitOfWork = unitOfWork;
-            _userRepository = userRepository;
-        }
+public class EssentialDataSeeder {
+    private readonly IAuthUserRepository _authUserRepository;
+    private readonly IRoleRepository _roleRepository;
+    private readonly IUnitOfWork _unitOfWork;
+    private readonly IUserRepository _userRepository;
 
-        public void SeedData() {
-            EnsureDatabasesAreEmpty();
+    public EssentialDataSeeder(IAuthUserRepository authUserRepository, IRoleRepository roleRepository,
+        IUnitOfWork unitOfWork, IUserRepository userRepository
+    ) {
+        _authUserRepository = authUserRepository;
+        _roleRepository = roleRepository;
+        _unitOfWork = unitOfWork;
+        _userRepository = userRepository;
+    }
 
-            SeedAvailableIds();
-            var admin = SeedUserDomain();
-            SeedAuthUserDomain(admin);
-        }
+    public void SeedData() {
+        EnsureDatabasesAreEmpty();
 
-        private void EnsureDatabasesAreEmpty() {
-            _unitOfWork.WithUserTransaction(tran => {
-                if (_userRepository.Count() > 0) {
-                    throw new InvalidOperationException("User table is not empty.");
-                }
-            });
-            _unitOfWork.WithAuthTransaction(tran => {
-                if (_authUserRepository.Count() > 0) {
-                    throw new InvalidOperationException("Auth user table is not empty.");
-                }
-                if (_roleRepository.Count() > 0) {
-                    throw new InvalidOperationException("Role table is not empty.");
-                }
-            });
-            using (var tranFlavor = DbContext.Get.BeginMiscTransaction()) {
-                if (DbContext.Get.Query(tranFlavor).Select().CountAll().From("id_generation").SingleLong() != 0) {
-                    throw new InvalidOperationException("Id generation table is not empty.");
-                }
-                tranFlavor.Commit();
+        SeedAvailableIds();
+        var admin = SeedUserDomain();
+        SeedAuthUserDomain(admin);
+    }
+
+    private void EnsureDatabasesAreEmpty() {
+        _unitOfWork.WithUserTransaction(tran => {
+            if (_userRepository.Count() > 0) {
+                throw new InvalidOperationException("User table is not empty.");
             }
-        }
-
-        private void SeedAvailableIds() {
-            using (var tranFlavor = DbContext.Get.BeginMiscTransaction()) {
-                DbContext.Get.Query(tranFlavor)
-                    .InsertInto("id_generation")
-                    .Columns("subject", "available_id")
-                    .Values(DbIdGeneration.SUBJECT_MISC, 1)
-                    .Values(DbIdGeneration.SUBJECT_GAME, 1)
-                    .Values(DbIdGeneration.SUBJECT_USER, 1)
-                    .Execute();
-
-                tranFlavor.Commit();
+        });
+        _unitOfWork.WithAuthTransaction(tran => {
+            if (_authUserRepository.Count() > 0) {
+                throw new InvalidOperationException("Auth user table is not empty.");
             }
+            if (_roleRepository.Count() > 0) {
+                throw new InvalidOperationException("Role table is not empty.");
+            }
+        });
+        using (var tranFlavor = DbContext.Get.BeginMiscTransaction()) {
+            if (DbContext.Get.Query(tranFlavor).Select().CountAll().From("id_generation").SingleLong() != 0) {
+                throw new InvalidOperationException("Id generation table is not empty.");
+            }
+            tranFlavor.Commit();
         }
+    }
 
-        private User SeedUserDomain() {
-            var adminUser = UserTestHelper.User(Username.ADMIN).Build();
+    private void SeedAvailableIds() {
+        using (var tranFlavor = DbContext.Get.BeginMiscTransaction()) {
+            DbContext.Get.Query(tranFlavor)
+                .InsertInto("id_generation")
+                .Columns("subject", "available_id")
+                .Values(DbIdGeneration.SUBJECT_MISC, 1)
+                .Values(DbIdGeneration.SUBJECT_GAME, 1)
+                .Values(DbIdGeneration.SUBJECT_USER, 1)
+                .Execute();
 
-            _unitOfWork.WithUserTransaction(tran => {
-                _userRepository.Save(adminUser);
-            });
-
-            return adminUser;
+            tranFlavor.Commit();
         }
+    }
 
-        private void SeedAuthUserDomain(User admin) {
-            var pendingRegistrationRole = RoleTestHelper.PendingRegistration().Build();
-            var registeredUserRole = RoleTestHelper.RegisteredUser().Build();
-            var adminRole = RoleTestHelper.Admin().Build();
+    private User SeedUserDomain() {
+        var adminUser = UserTestHelper.User(Username.ADMIN).Build();
 
-            var adminAuthUser = AuthUserTestHelper.FromUserAndRoles(admin, registeredUserRole, adminRole).Build();
+        _unitOfWork.WithUserTransaction(tran => {
+            _userRepository.Save(adminUser);
+        });
 
-            _unitOfWork.WithAuthTransaction(tran => {
-                _roleRepository.Save(pendingRegistrationRole);
-                _roleRepository.Save(registeredUserRole);
-                _roleRepository.Save(adminRole);
+        return adminUser;
+    }
 
-                _authUserRepository.Save(adminAuthUser);
-            });
-        }
+    private void SeedAuthUserDomain(User admin) {
+        var pendingRegistrationRole = RoleTestHelper.PendingRegistration().Build();
+        var registeredUserRole = RoleTestHelper.RegisteredUser().Build();
+        var adminRole = RoleTestHelper.Admin().Build();
+
+        var adminAuthUser = AuthUserTestHelper.FromUserAndRoles(admin, registeredUserRole, adminRole).Build();
+
+        _unitOfWork.WithAuthTransaction(tran => {
+            _roleRepository.Save(pendingRegistrationRole);
+            _roleRepository.Save(registeredUserRole);
+            _roleRepository.Save(adminRole);
+
+            _authUserRepository.Save(adminAuthUser);
+        });
     }
 }

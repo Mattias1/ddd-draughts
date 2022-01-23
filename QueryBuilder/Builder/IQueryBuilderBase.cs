@@ -2,30 +2,30 @@ using SqlQueryBuilder.Options;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace SqlQueryBuilder.Builder {
-    public interface IQueryBuilderBase {
-        ICompleteQueryBuilder Cast();
+namespace SqlQueryBuilder.Builder;
 
-        SqlBuilderResultRow FirstResult();
-        SqlBuilderResultRow? FirstOrDefaultResult();
-        SqlBuilderResultRow SingleResult();
-        SqlBuilderResultRow? SingleOrDefaultResult();
-        IReadOnlyList<SqlBuilderResultRow> Results();
+public interface IQueryBuilderBase {
+    ICompleteQueryBuilder Cast();
 
-        Task<SqlBuilderResultRow> FirstResultAsync();
-        Task<SqlBuilderResultRow?> FirstOrDefaultResultAsync();
-        Task<SqlBuilderResultRow> SingleResultAsync();
-        Task<SqlBuilderResultRow?> SingleOrDefaultResultAsync();
-        Task<IReadOnlyList<SqlBuilderResultRow>> ResultsAsync();
+    SqlBuilderResultRow FirstResult();
+    SqlBuilderResultRow? FirstOrDefaultResult();
+    SqlBuilderResultRow SingleResult();
+    SqlBuilderResultRow? SingleOrDefaultResult();
+    IReadOnlyList<SqlBuilderResultRow> Results();
 
-        bool Execute();
-        Task<bool> ExecuteAsync();
+    Task<SqlBuilderResultRow> FirstResultAsync();
+    Task<SqlBuilderResultRow?> FirstOrDefaultResultAsync();
+    Task<SqlBuilderResultRow> SingleResultAsync();
+    Task<SqlBuilderResultRow?> SingleOrDefaultResultAsync();
+    Task<IReadOnlyList<SqlBuilderResultRow>> ResultsAsync();
 
-        string ToString();
-        string ToUnsafeSql();
-        string ToParameterizedSql();
+    bool Execute();
+    Task<bool> ExecuteAsync();
 
-        ICompleteQueryBuilder Clone();
-        ICompleteQueryBuilder CloneWithoutSelect();
-    }
+    string ToString();
+    string ToUnsafeSql();
+    string ToParameterizedSql();
+
+    ICompleteQueryBuilder Clone();
+    ICompleteQueryBuilder CloneWithoutSelect();
 }

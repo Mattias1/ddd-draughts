@@ -1,15 +1,15 @@
 using Draughts.Common;
 using Draughts.Common.OoConcepts;
 
-namespace Draughts.Domain.GameContext.Models {
-    public class PlayerId : IdValueObject<PlayerId> {
-        public override long Value { get; }
+namespace Draughts.Domain.GameContext.Models;
 
-        public PlayerId(long id) {
-            if (id <= 0) {
-                throw new ManualValidationException("Invalid game id.");
-            }
-            Value = id;
+public class PlayerId : IdValueObject<PlayerId> {
+    public override long Value { get; }
+
+    public PlayerId(long id) {
+        if (id <= 0) {
+            throw new ManualValidationException("Invalid game id.");
         }
+        Value = id;
     }
 }
