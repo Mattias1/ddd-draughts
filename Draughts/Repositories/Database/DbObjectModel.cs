@@ -194,6 +194,7 @@ public class DbGame : IDbObject<DbGame, Game> {
     public bool FlyingKings { get; set; }
     public bool MenCaptureBackwards { get; set; }
     public string CaptureConstraints { get; set; }
+    public int TurnTime { get; set; }
     public long? Victor { get; set; }
     public ZonedDateTime CreatedAt { get; set; }
     public ZonedDateTime? StartedAt { get; set; }
@@ -232,7 +233,8 @@ public class DbGame : IDbObject<DbGame, Game> {
             "seq" => GameSettings.DraughtsCaptureConstraints.AnyFinishedSequence,
             _ => throw new InvalidOperationException("Unknown capture constraint.")
         };
-        return new GameSettings(BoardSize, firstMoveColor, FlyingKings, MenCaptureBackwards, capConstraints);
+        return new GameSettings(BoardSize, firstMoveColor, FlyingKings, MenCaptureBackwards,
+            capConstraints, Duration.FromSeconds(TurnTime));
     }
 
     public static DbGame FromDomainModel(Game entity) {
@@ -248,6 +250,7 @@ public class DbGame : IDbObject<DbGame, Game> {
             FlyingKings = entity.Settings.FlyingKings,
             MenCaptureBackwards = entity.Settings.MenCaptureBackwards,
             CaptureConstraints = captureConstraints,
+            TurnTime = (int)entity.Settings.MaxTurnLength.TotalSeconds,
             Victor = entity.Victor?.UserId.Value,
             CreatedAt = entity.CreatedAt,
             StartedAt = entity.StartedAt,

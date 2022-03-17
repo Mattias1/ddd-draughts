@@ -14,6 +14,29 @@
 <div class="text-side-menu-container">
     <h1>@ViewBag.Title</h1>
     <p>
-        TODO.
+        Some game tools.
     </p>
+
+    <div>
+        <form class="form-horizontal" action="/modpanel/game-tools/turn-time" method="post">
+            <h3>Change the turn time</h3>
+            <label>
+                <span>Game id:</span>
+                <input type="number" name="gameId" placeholder="Game id" />
+            </label>
+            <label>
+                <span>Turn time (sec):</span>
+                <input type="number" name="turnTimeInSeconds" placeholder="Turn time in seconds" value="86400">
+            </label>
+            <label>
+                <span></span>
+                <input type="checkbox" name="forAllFutureTurns" value="true" checked="checked" />
+                Change for all future turns
+            </label>
+            <div class="form-group">
+                <span></span>
+                <input type="submit" value="Change turn time" />
+            </div>
+        </form>
+    </div>
 </div>

@@ -11,6 +11,7 @@ namespace Draughts.Test.TestHelpers;
 public class GameTestHelper {
     private static readonly ZonedDateTime Feb29 = FakeClock.FromUtc(2020, 02, 29).UtcNow();
 
+    public static GameBuilder FinishedMiniGame() => FinishedMiniGame(Color.Black);
     public static GameBuilder FinishedMiniGame(Color victor) {
         char c = victor == Color.Black ? '4' : '5';
         return StartedMiniGame()

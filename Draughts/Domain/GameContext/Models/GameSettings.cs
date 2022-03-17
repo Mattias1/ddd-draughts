@@ -15,7 +15,7 @@ public class GameSettings : ValueObject<GameSettings> {
     public bool MenCaptureBackwards { get; }
     public DraughtsCaptureConstraints CaptureConstraints { get; }
 
-    public Duration MaxTurnLength => Duration.FromHours(24);
+    public Duration MaxTurnLength { get; private set; }
 
     public int PiecesPerSide => BoardSize switch {
         12 => 30,
@@ -25,15 +25,19 @@ public class GameSettings : ValueObject<GameSettings> {
         _ => throw new InvalidOperationException("Unknown board size: " + BoardSize)
     };
 
-    public GameSettings(
-        int boardSize, Color firstMove,
-        bool flyingKings, bool menCaptureBackwards, DraughtsCaptureConstraints captureConstraints
-    ) {
+    public GameSettings(int boardSize, Color firstMove, bool flyingKings, bool menCaptureBackwards,
+            DraughtsCaptureConstraints captureConstraints)
+            : this(boardSize, firstMove, flyingKings, menCaptureBackwards,
+            captureConstraints, Duration.FromHours(24)) { }
+
+    public GameSettings(int boardSize, Color firstMove, bool flyingKings, bool menCaptureBackwards,
+            DraughtsCaptureConstraints captureConstraints, Duration turnLength) {
         BoardSize = boardSize;
         FirstMove = firstMove;
         FlyingKings = flyingKings;
         MenCaptureBackwards = menCaptureBackwards;
         CaptureConstraints = captureConstraints;
+        MaxTurnLength = turnLength;
     }
 
     public string Description {
@@ -56,6 +60,10 @@ public class GameSettings : ValueObject<GameSettings> {
         yield return FlyingKings;
         yield return MenCaptureBackwards;
         yield return CaptureConstraints;
+    }
+
+    public GameSettings WithTurnTime(Duration newDuration) {
+        return new GameSettings(BoardSize, FirstMove, FlyingKings, MenCaptureBackwards, CaptureConstraints, newDuration);
     }
 
     public static GameSettings International {

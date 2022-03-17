@@ -4,26 +4,33 @@ using Draughts.Application.Shared;
 using Draughts.Application.Shared.Attributes;
 using Draughts.Application.Shared.ViewModels;
 using Draughts.Common;
+using Draughts.Common.Utilities;
 using Draughts.Domain.AuthContext.Models;
 using Draughts.Domain.AuthContext.Specifications;
+using Draughts.Domain.GameContext.Models;
 using Draughts.Domain.UserContext.Models;
 using Draughts.Repositories;
 using Draughts.Repositories.Transaction;
 using Microsoft.AspNetCore.Mvc;
+using NodaTime;
 using static Draughts.Domain.AuthContext.Models.Permission;
 
 namespace Draughts.Application.ModPanel;
 
 public class ModPanelController : BaseController {
     private readonly IAdminLogRepository _adminLogRepository;
+    private readonly IClock _clock;
     private readonly EditRoleService _editRoleService;
+    private readonly IGameRepository _gameRepository;
     private readonly RoleUsersService _roleUserService;
     private readonly IUnitOfWork _unitOfWork;
 
-    public ModPanelController(IAdminLogRepository adminLogRepository, EditRoleService editRoleService,
-            RoleUsersService roleUsersService, IUnitOfWork unitOfWork) {
+    public ModPanelController(IAdminLogRepository adminLogRepository, IClock clock, EditRoleService editRoleService,
+            IGameRepository gameRepository, RoleUsersService roleUsersService, IUnitOfWork unitOfWork) {
         _adminLogRepository = adminLogRepository;
+        _clock = clock;
         _editRoleService = editRoleService;
+        _gameRepository = gameRepository;
         _roleUserService = roleUsersService;
         _unitOfWork = unitOfWork;
     }
@@ -39,6 +46,24 @@ public class ModPanelController : BaseController {
     [HttpGet("/modpanel/game-tools"), Requires(Permissions.EDIT_GAMES)]
     public IActionResult GameTools() {
         return View(new ModPanelViewModel(BuildMenu()));
+    }
+
+    [HttpPost("/modpanel/game-tools/turn-time"), Requires(Permissions.EDIT_GAMES)]
+    public IActionResult ChangeTurnTime([FromForm] ChangeTurnTimeRequest? request) {
+        try {
+            ValidateNotNull(request?.GameId, request?.TurnTimeInSeconds);
+
+            _unitOfWork.WithGameTransaction(tran => {
+                var game = _gameRepository.FindById(new GameId(request?.GameId));
+                game.ChangeTurnTime(_clock.UtcNow(), request!.TurnTimeInSeconds!.Value, request.ForAllFutureTurns ?? false);
+                _gameRepository.Save(game);
+            });
+
+            return SuccessRedirect($"/modpanel/game-tools", $"Turn time for game {request?.GameId} is changed.");
+        }
+        catch (ManualValidationException e) {
+            return ErrorRedirect($"/modpanel/game-tools", e.Message);
+        }
     }
 
     // --- Manage roles ---
@@ -158,6 +183,7 @@ public class ModPanelController : BaseController {
         );
     }
 
+    public record ChangeTurnTimeRequest(long? GameId, int? TurnTimeInSeconds, bool? ForAllFutureTurns);
     public record EditRoleRequest(string? Rolename, string[]? Permissions);
     public record CreateRoleRequest(string? Rolename);
     public record AssignUserToRoleRequest(string? Username);

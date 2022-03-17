@@ -17,7 +17,7 @@ public class Game : Entity<Game, GameId> {
     public override GameId Id { get; }
     public IReadOnlyList<Player> Players => _players.AsReadOnly();
     public Turn? Turn { get; private set; }
-    public GameSettings Settings { get; }
+    public GameSettings Settings { get; private set; }
     public Player? Victor { get; private set; }
     public ZonedDateTime CreatedAt { get; }
     public ZonedDateTime? StartedAt { get; private set; }
@@ -80,6 +80,16 @@ public class Game : Entity<Game, GameId> {
     private void SwitchTurn(ZonedDateTime switchedAt) {
         var player = Turn is null ? GetPlayerForColor(Settings.FirstMove) : Players.Single(p => p != Turn.Player);
         Turn = new Turn(player, switchedAt, Settings.MaxTurnLength);
+    }
+
+    public void ChangeTurnTime(ZonedDateTime now, int turnTimeInSeconds, bool forAllTurns) {
+        ValidateGameIsActive();
+        var test = now.PlusSeconds(turnTimeInSeconds);
+        var test2 = now.PlusHours(48);
+        Turn = Turn!.WithExpiry(now.PlusSeconds(turnTimeInSeconds));
+        if (forAllTurns) {
+            Settings = Settings.WithTurnTime(Duration.FromSeconds(turnTimeInSeconds));
+        }
     }
 
     private Player GetPlayerForColor(Color color) => _players.Single(p => p.Color == color);
