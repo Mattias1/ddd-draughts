@@ -15,10 +15,10 @@ public class GameViewModel {
     public ZonedDateTime? StartedAt { get; }
     public ZonedDateTime? FinishedAt { get; }
 
-    public GameViewModel(Game game) {
+    public GameViewModel(Game game, IClock clock) {
         Id = game.Id;
         Players = game.Players.Select(p => new PlayerViewModel(p)).ToList().AsReadOnly();
-        Turn = game.Turn is null ? null : new TurnViewModel(game.Turn);
+        Turn = game.Turn is null ? null : new TurnViewModel(game.Turn, clock);
         Settings = game.Settings;
         Victor = game.Victor is null ? null : new PlayerViewModel(game.Victor);
         CreatedAt = game.CreatedAt;
@@ -30,7 +30,7 @@ public class GameViewModel {
 public class PlayGameViewModel : GameViewModel {
     public GameStateViewModel CurrentGameState { get; }
 
-    public PlayGameViewModel(Game game, GameState gameState) : base(game) {
+    public PlayGameViewModel(Game game, GameState gameState, IClock clock) : base(game, clock) {
         CurrentGameState = new GameStateViewModel(gameState);
     }
 }

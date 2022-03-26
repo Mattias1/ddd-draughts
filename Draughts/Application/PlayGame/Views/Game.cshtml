@@ -41,7 +41,7 @@
         <div id="game-sidebar">
             <h1 id="game-id" data-game-id="@(Model.Id)">@ViewBag.Title</h1>
 
-            <h3>Players</h3>
+            <h3>Turn</h3>
             <ul class="p-like">
                 @if (player1 is null) {
                     <li>@Utils.PostLink($"Join as {settings.FirstMove}", "/lobby/join",
@@ -71,13 +71,16 @@
                         Victor: @if (Model.Victor is null) { <span>Draw</span> } else { <span>@Model.Victor.Username</span> }
                     </li>
                 }
+                else if (Model.Turn is not null) {
+                    <li>Time left: <span id="turn-time-left">88:88:88</span> <span id="turn-time-left-offset"></span></li>
+                }
             </ul>
 
             @if (Model.StartedAt is not null && Model.FinishedAt is null) {
                 <h3>Actions</h3>
                 <div class="p-like">
-                    Actions: @Utils.PostLink($"Resign", $"/game/{Model.Id}/resign"),
-                    @Utils.PostLink($"Vote for a draw", $"/game/{Model.Id}/draw")
+                    Actions: @Utils.PostLink("Resign", $"/game/{Model.Id}/resign"),
+                    @Utils.PostLink("Vote for a draw", $"/game/{Model.Id}/draw")
                 </div>
             }
 
@@ -100,3 +103,5 @@
 </div>
 
 <div id="captureSequenceFrom" class="hidden" data-val="@captureSequenceFrom"></div>
+<div id="turnExpiryTime" class="hidden" data-val="@Utils.DateTimeIso(Model.Turn?.ExpiresAt)"></div>
+<div id="currentTime" class="hidden" data-val="@Utils.DateTimeIso(Model.Turn?.CurrentTime)"></div>

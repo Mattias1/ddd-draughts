@@ -5,6 +5,7 @@ using Draughts.Domain.UserContext.Models;
 using Flurl;
 using Microsoft.AspNetCore.Html;
 using NodaTime;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -78,6 +79,15 @@ public static class Utils {
 
     public static string DateTime(ZonedDateTime? datetime) {
         return datetime?.ToString("dd MMM yyyy, HH:mm", CultureInfo.InvariantCulture) ?? "";
+    }
+    /// <summary>
+    /// DateTime in ISO format, for example '2021-02-29T07:13:37Z'
+    /// </summary>
+    public static HtmlString DateTimeIso(ZonedDateTime? datetime) {
+        if (datetime is not null && datetime.Value.Zone != DateTimeZone.Utc) {
+            throw new NotImplementedException("Currenlty only UTC times are supported.");
+        }
+        return new HtmlString(datetime?.ToString("yyyy-MM-ddTHH:mm:ss'Z'", CultureInfo.InvariantCulture) ?? "");
     }
 
     public static string YesNo(bool b) => b ? "Yes" : "No";

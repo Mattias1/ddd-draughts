@@ -1,10 +1,12 @@
-import * as $ from 'jquery'
-import * as signalR from "@microsoft/signalr";
+import * as $ from 'jquery';
+import * as dayjs from 'dayjs';
+import * as signalR from '@microsoft/signalr';
 import { Board } from './board';
 
 let selectedSquare: number|null = null;
 let isCaptureSequenceSquare: boolean = false;
 let websocketConnection: signalR.HubConnection|null = null;
+let timerIntervalId: number|null = null;
 
 export function initPlaygame(): void {
     let gameId = $('#game-id').data('gameId');
@@ -12,6 +14,8 @@ export function initPlaygame(): void {
     if (captureSequenceFrom) {
         selectSquare(captureSequenceFrom);
     }
+
+    updateTimer($('#currentTime').data('val'), $('#turnExpiryTime').data('val'));
 
     $('#game-board div.square').on('click', function () {
         onSquareClick($(this));
@@ -90,7 +94,57 @@ function updateSidebar(data: GameDto): void {
     $('.turn-player').hide();
     if (data.turn !== null) {
         $(`#turn-player-${data.turn?.playerId}`).css('display', 'inline');
+
+        updateTimer(data.turn.currentTime, data.turn.expiresAt);
     }
+}
+
+function updateTimer(currentTimeStr: string, expiresAtStr: string): void {
+    if (expiresAtStr === null || currentTimeStr === null) {
+        $('#turn-time-left').text('88:88:88');
+        return;
+    }
+
+    const now = dayjs();
+    const currentTime = dayjs(currentTimeStr);
+    const expiresAt = dayjs(expiresAtStr);
+    if (expiresAt.isBefore(currentTime)) {
+        $('#turn-time-left').text('88:88:88');
+        return;
+    }
+
+    const offsetWithLocalTimeInMs = now.diff(currentTime);
+    if (offsetWithLocalTimeInMs > 2000) {
+        $('#turn-time-left-offset').text('±' + Math.ceil(Math.abs(offsetWithLocalTimeInMs) / 1000).toString() + 's');
+    }
+    else {
+        $('#turn-time-left-offset').text('');
+    }
+
+    updateTimeLeftHtml(currentTime, expiresAt);
+
+    if (timerIntervalId !== null) {
+        window.clearInterval(timerIntervalId);
+    }
+    timerIntervalId = window.setInterval(() => {
+        const now = dayjs().subtract(offsetWithLocalTimeInMs, 'milliseconds');
+        updateTimeLeftHtml(now, expiresAt);
+    }, 1000);
+}
+
+function updateTimeLeftHtml(currentTime: dayjs.Dayjs, expiresAt: dayjs.Dayjs): void {
+    // Subtract a second, because it's better to guess too low than too high.
+    let diffInSeconds = Math.floor(expiresAt.diff(currentTime, 'seconds')) - 1;
+    let diffInMinutes = Math.floor(diffInSeconds / 60);
+    const diffInHours = Math.floor(diffInMinutes / 60);
+    diffInSeconds -= diffInMinutes * 60;
+    diffInMinutes -= diffInHours * 60;
+
+    $('#turn-time-left').text(
+        diffInHours.toString().padStart(2, '0') + ':'
+        + diffInMinutes.toString().padStart(2, '0') + ':'
+        + diffInSeconds.toString().padStart(2, '0')
+    );
 }
 
 function selectSquare(square: number|null, squareEl: JQuery<HTMLElement>|null = null): void {
@@ -114,5 +168,6 @@ interface GameDto {
 
 interface TurnDto {
     playerId: number;
+    currentTime: string;
     expiresAt: string;
 }

@@ -66,10 +66,22 @@ public class UtilsTest {
 
     [Theory]
     [InlineData(2020, 02, 29, 13, 37, "29 Feb 2020, 13:37")]
-    public void DateTimeParsing(int year, int month, int day, int hour, int min, string expected) {
+    [InlineData(2020, 01, 02, 03, 04, "02 Jan 2020, 03:04")]
+    public void DateTimeFormatting(int year, int month, int day, int hour, int min, string expected) {
         var clock = FakeClock.FromUtc(year, month, day, hour, min, 0);
 
         string result = Utils.DateTime(clock.UtcNow());
+
+        result.Should().Be(expected);
+    }
+
+    [Theory]
+    [InlineData(2020, 02, 29, 13, 37, 0, "2020-02-29T13:37:00Z")]
+    [InlineData(2020, 1, 2, 3, 4, 5, "2020-01-02T03:04:05Z")]
+    public void UtcDateTimeIsoFormatting(int year, int month, int day, int hour, int min, int sec, string expected) {
+        var clock = FakeClock.FromUtc(year, month, day, hour, min, sec);
+
+        string result = Utils.DateTimeIso(clock.UtcNow()).ToString();
 
         result.Should().Be(expected);
     }

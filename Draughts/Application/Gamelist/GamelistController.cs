@@ -7,6 +7,7 @@ using Draughts.Domain.GameContext.Specifications;
 using Draughts.Repositories;
 using Draughts.Repositories.Transaction;
 using Microsoft.AspNetCore.Mvc;
+using NodaTime;
 using static Draughts.Domain.AuthContext.Models.Permission;
 
 namespace Draughts.Application;
@@ -15,10 +16,12 @@ namespace Draughts.Application;
 public class GamelistController : BaseController {
     private const int PAGE_SIZE = 20;
 
+    private readonly IClock _clock;
     private readonly IGameRepository _gameRepository;
     private readonly IUnitOfWork _unitOfWork;
 
-    public GamelistController(IGameRepository gameRepository, IUnitOfWork unitOfWork) {
+    public GamelistController(IClock clock, IGameRepository gameRepository, IUnitOfWork unitOfWork) {
+        _clock = clock;
         _gameRepository = gameRepository;
         _unitOfWork = unitOfWork;
     }
@@ -28,7 +31,7 @@ public class GamelistController : BaseController {
         var games = _unitOfWork.WithGameTransaction(tran => {
             return MyGameList(page, new PendingGameSpecification());
         });
-        return View(new GamelistAndMenuViewModel(games, BuildMenu()));
+        return View(new GamelistAndMenuViewModel(games, BuildMenu(), _clock));
     }
 
     [HttpGet]
@@ -36,7 +39,7 @@ public class GamelistController : BaseController {
         var games = _unitOfWork.WithGameTransaction(tran => {
             return MyGameList(page, new ActiveGameSpecification());
         });
-        return View(new GamelistAndMenuViewModel(games, BuildMenu()));
+        return View(new GamelistAndMenuViewModel(games, BuildMenu(), _clock));
     }
 
     [HttpGet]
@@ -44,7 +47,7 @@ public class GamelistController : BaseController {
         var games = _unitOfWork.WithGameTransaction(tran => {
             return MyGameList(page, new FinishedGameSpecification());
         });
-        return View(new GamelistAndMenuViewModel(games, BuildMenu()));
+        return View(new GamelistAndMenuViewModel(games, BuildMenu(), _clock));
     }
 
     private Pagination<Game> MyGameList(int page, Specification<Game> statusSpec) {

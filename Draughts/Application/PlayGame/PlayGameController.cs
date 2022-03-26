@@ -7,6 +7,7 @@ using Draughts.Domain.GameContext.Models;
 using Draughts.Repositories.Transaction;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
+using NodaTime;
 using SignalRWebPack.Hubs;
 using System.Threading.Tasks;
 using static Draughts.Domain.AuthContext.Models.Permission;
@@ -14,11 +15,14 @@ using static Draughts.Domain.AuthContext.Models.Permission;
 namespace Draughts.Application.PlayGame;
 
 public class PlayGameController : BaseController {
+    private readonly IClock _clock;
     private readonly PlayGameService _playGameService;
     private readonly IUnitOfWork _unitOfWork;
     private readonly IHubContext<WebsocketHub> _websocketHub;
 
-    public PlayGameController(PlayGameService playGameService, IUnitOfWork unitOfWork, IHubContext<WebsocketHub> websocketHub) {
+    public PlayGameController(IClock clock, PlayGameService playGameService,
+            IUnitOfWork unitOfWork, IHubContext<WebsocketHub> websocketHub) {
+        _clock = clock;
         _playGameService = playGameService;
         _unitOfWork = unitOfWork;
         _websocketHub = websocketHub;
@@ -31,7 +35,7 @@ public class PlayGameController : BaseController {
                 return _playGameService.FindGameAndState(new GameId(gameId));
             });
 
-            return View(new PlayGameViewModel(game, gameState));
+            return View(new PlayGameViewModel(game, gameState, _clock));
         }
         catch (ManualValidationException e) {
             return NotFound(e.Message);

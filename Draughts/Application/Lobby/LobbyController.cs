@@ -8,16 +8,19 @@ using Draughts.Domain.GameContext.Specifications;
 using Draughts.Repositories;
 using Draughts.Repositories.Transaction;
 using Microsoft.AspNetCore.Mvc;
+using NodaTime;
 using static Draughts.Domain.AuthContext.Models.Permission;
 
 namespace Draughts.Application.Lobby;
 
 public class LobbyController : BaseController {
+    private readonly IClock _clock;
     private readonly IGameRepository _gameRepository;
     private readonly GameService _gameService;
     private readonly IUnitOfWork _unitOfWork;
 
-    public LobbyController(IGameRepository gameRepository, GameService gameService, IUnitOfWork unitOfWork) {
+    public LobbyController(IClock clock, IGameRepository gameRepository, GameService gameService, IUnitOfWork unitOfWork) {
+        _clock = clock;
         _gameRepository = gameRepository;
         _gameService = gameService;
         _unitOfWork = unitOfWork;
@@ -28,7 +31,7 @@ public class LobbyController : BaseController {
         var pendingGames = _unitOfWork.WithGameTransaction(tran => {
             return _gameRepository.List(new PendingGameSpecification());
         });
-        return View(new GamelistViewModel(pendingGames));
+        return View(new GamelistViewModel(pendingGames, _clock));
     }
 
     [HttpGet("/lobby/spectate"), GuestRoute]
@@ -36,7 +39,7 @@ public class LobbyController : BaseController {
         var activeGames = _unitOfWork.WithGameTransaction(tran => {
             return _gameRepository.List(new ActiveGameSpecification());
         });
-        return View(new GamelistViewModel(activeGames));
+        return View(new GamelistViewModel(activeGames, _clock));
     }
 
     [HttpGet("lobby/create"), Requires(Permissions.PLAY_GAME)]
