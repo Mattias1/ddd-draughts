@@ -25,6 +25,9 @@ export function initPlaygame(): void {
         .withUrl("/hub")
         .configureLogging(signalR.LogLevel.Information)
         .build();
+    websocketConnection.on("gameUpdateReady", (gameId: string) => {
+        fetchAndUpdateGameData(gameId);
+    });
     websocketConnection.on("gameUpdated", (data: GameDto) => {
         updateGameData(data);
     });
@@ -41,7 +44,7 @@ function onSquareClick(squareEl: JQuery<HTMLElement>): void {
         $.ajax({
             type: 'POST',
             contentType: 'application/json',
-            dataType: 'json', // It's not returning anything.
+            dataType: 'json',
             url: '/game/' + gameId + '/move',
             data: JSON.stringify({
                 from: selectedSquare,
@@ -61,6 +64,21 @@ function onSquareClick(squareEl: JQuery<HTMLElement>): void {
     else {
         selectSquare(square, squareEl);
     }
+}
+
+function fetchAndUpdateGameData(gameId: string): void {
+    $.ajax({
+        type: 'GET',
+        contentType: 'application/json',
+        dataType: 'json',
+        url: '/game/' + gameId + '/json',
+        success: function (data: GameDto) {
+            updateGameData(data);
+        },
+        error: function (jqXHR, errorText, textStatus) {
+            console.error('Error fetching game data for game ' + gameId, jqXHR, textStatus, errorText);
+        }
+    });
 }
 
 function updateGameData(data: GameDto): void {
@@ -109,7 +127,7 @@ function updateTimer(currentTimeStr: string, expiresAtStr: string): void {
     const currentTime = dayjs(currentTimeStr);
     const expiresAt = dayjs(expiresAtStr);
     if (expiresAt.isBefore(currentTime)) {
-        $('#turn-time-left').text('88:88:88');
+        $('#turn-time-left').text('00:00:00');
         return;
     }
 
@@ -135,6 +153,10 @@ function updateTimer(currentTimeStr: string, expiresAtStr: string): void {
 function updateTimeLeftHtml(currentTime: dayjs.Dayjs, expiresAt: dayjs.Dayjs): void {
     // Subtract a second, because it's better to guess too low than too high.
     let diffInSeconds = Math.floor(expiresAt.diff(currentTime, 'seconds')) - 1;
+    if (diffInSeconds < 0) {
+        $('#turn-time-left').text('00:00:00');
+        return;
+    }
     let diffInMinutes = Math.floor(diffInSeconds / 60);
     const diffInHours = Math.floor(diffInMinutes / 60);
     diffInSeconds -= diffInMinutes * 60;

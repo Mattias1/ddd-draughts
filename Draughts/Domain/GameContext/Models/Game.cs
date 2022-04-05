@@ -77,6 +77,14 @@ public class Game : Entity<Game, GameId> {
         SwitchTurn(switchedAt);
     }
 
+    public void MissTurn(ZonedDateTime expiredAt) {
+        ValidateGameIsActive();
+        if (Turn is null || Turn.ExpiresAt.ToInstant() > expiredAt.ToInstant()) {
+            throw new ManualValidationException("You cannot miss a turn unless the turn exists and is expired.");
+        }
+        SwitchTurn(expiredAt);
+    }
+
     private void SwitchTurn(ZonedDateTime switchedAt) {
         var player = Turn is null ? GetPlayerForColor(Settings.FirstMove) : Players.Single(p => p != Turn.Player);
         Turn = new Turn(player, switchedAt, Settings.MaxTurnLength);

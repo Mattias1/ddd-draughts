@@ -133,6 +133,8 @@ CREATE TABLE `game` (
     PRIMARY KEY (`id`)
 );
 
+CREATE INDEX idx_g_status ON `game` (`finished_at`);
+
 CREATE TABLE `player` (
     `id` BIGINT NOT NULL,
     `user_id` BIGINT NOT NULL,
@@ -147,6 +149,8 @@ CREATE TABLE `player` (
         REFERENCES `game` (`id`)
         ON UPDATE RESTRICT ON DELETE CASCADE
 );
+
+CREATE INDEX idx_p_user ON `player` (`user_id`);
 
 CREATE TABLE `gamestate` (
     `id` BIGINT NOT NULL,

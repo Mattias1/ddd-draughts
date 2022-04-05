@@ -61,6 +61,7 @@ public class Startup {
         DraughtsServiceProvider.RegisterEventHandlers(app.ApplicationServices);
 
         app.UseMiddleware<SecurityHeadersMiddleware>();
+        app.UseMiddleware<HeartBeatMiddleware>();
         app.UseStaticFiles();
         app.UseRouting();
 

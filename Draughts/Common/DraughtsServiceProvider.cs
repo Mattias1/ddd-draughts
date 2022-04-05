@@ -1,3 +1,4 @@
+using DalSoft.Hosting.BackgroundQueue.DependencyInjection;
 using Draughts.Application.Auth;
 using Draughts.Application.Auth.Services;
 using Draughts.Application.Lobby.Services;
@@ -12,6 +13,7 @@ using Draughts.Repositories.InMemory;
 using Draughts.Repositories.Transaction;
 using Microsoft.Extensions.DependencyInjection;
 using NodaTime;
+using Serilog;
 using System;
 
 namespace Draughts.Common;
@@ -34,6 +36,7 @@ public static class DraughtsServiceProvider {
 
     private static void ConfigureApplicationMiddleware(IServiceCollection services) {
         services.AddSingleton<IClock>(SystemClock.Instance);
+        services.AddBackgroundQueue(e => Log.Logger.Error("Error in background task", e));
 
         services.AddScoped<JwtActionFilter>();
         services.AddScoped<AuthContextActionFilter>();

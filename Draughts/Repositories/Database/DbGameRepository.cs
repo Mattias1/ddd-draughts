@@ -1,7 +1,9 @@
 using Draughts.Common.OoConcepts;
 using Draughts.Domain.GameContext.Models;
 using Draughts.Repositories.Transaction;
+using NodaTime;
 using SqlQueryBuilder.Builder;
+using SqlQueryBuilder.Common;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,6 +16,15 @@ public class DbGameRepository : DbRepository<Game, GameId, DbGame>, IGameReposit
 
     public DbGameRepository(IUnitOfWork unitOfWork) {
         _unitOfWork = unitOfWork;
+    }
+
+    public IReadOnlyList<GameId> ListGameIdsForExpiredTurns(ZonedDateTime datetime) {
+        return GetBaseQuery()
+            .Select("id").From("game")
+            .Where("finished_at").IsNull() // For optimization purposes
+            .Where("turn_expires_at").Lt(datetime)
+            .ListLongs()
+            .MapReadOnly(l => new GameId(l));
     }
 
     protected override string TableName => "game";

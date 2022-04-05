@@ -7,9 +7,12 @@ using System.Linq.Expressions;
 namespace Draughts.Domain.GameContext.Specifications;
 
 public class PendingGameSpecification : Specification<Game> {
-    public override Expression<Func<Game, bool>> ToExpression() => g => !g.HasStarted;
+    public override Expression<Func<Game, bool>> ToExpression() => g => !g.HasStarted && !g.IsFinished;
 
     public override void ApplyQueryBuilder(IQueryBuilder builder, QueryWhereType whereType) {
-        ApplyColumnWhere(builder, whereType, "started_at", q => q.IsNull());
+        ApplyFuncWhere(builder, whereType, q => q
+            .Where("started_at").IsNull()
+            .And("finished_at").IsNull()
+        );
     }
 }

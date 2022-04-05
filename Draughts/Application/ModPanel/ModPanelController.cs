@@ -12,7 +12,10 @@ using Draughts.Domain.UserContext.Models;
 using Draughts.Repositories;
 using Draughts.Repositories.Transaction;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using NodaTime;
+using SignalRWebPack.Hubs;
+using System.Threading.Tasks;
 using static Draughts.Domain.AuthContext.Models.Permission;
 
 namespace Draughts.Application.ModPanel;
@@ -24,15 +27,18 @@ public class ModPanelController : BaseController {
     private readonly IGameRepository _gameRepository;
     private readonly RoleUsersService _roleUserService;
     private readonly IUnitOfWork _unitOfWork;
+    private readonly IHubContext<WebsocketHub> _websocketHub;
 
     public ModPanelController(IAdminLogRepository adminLogRepository, IClock clock, EditRoleService editRoleService,
-            IGameRepository gameRepository, RoleUsersService roleUsersService, IUnitOfWork unitOfWork) {
+            IGameRepository gameRepository, RoleUsersService roleUsersService, IUnitOfWork unitOfWork,
+            IHubContext<WebsocketHub> websocketHub) {
         _adminLogRepository = adminLogRepository;
         _clock = clock;
         _editRoleService = editRoleService;
         _gameRepository = gameRepository;
         _roleUserService = roleUsersService;
         _unitOfWork = unitOfWork;
+        _websocketHub = websocketHub;
     }
 
     // --- Overview ---
@@ -49,17 +55,20 @@ public class ModPanelController : BaseController {
     }
 
     [HttpPost("/modpanel/game-tools/turn-time"), Requires(Permissions.EDIT_GAMES)]
-    public IActionResult ChangeTurnTime([FromForm] ChangeTurnTimeRequest? request) {
+    public async Task<IActionResult> ChangeTurnTime([FromForm] ChangeTurnTimeRequest? request) {
         try {
             ValidateNotNull(request?.GameId, request?.TurnTimeInSeconds);
 
+            var gameId = new GameId(request?.GameId);
             _unitOfWork.WithGameTransaction(tran => {
-                var game = _gameRepository.FindById(new GameId(request?.GameId));
+                var game = _gameRepository.FindById(gameId);
                 game.ChangeTurnTime(_clock.UtcNow(), request!.TurnTimeInSeconds!.Value, request.ForAllFutureTurns ?? false);
                 _gameRepository.Save(game);
             });
 
-            return SuccessRedirect($"/modpanel/game-tools", $"Turn time for game {request?.GameId} is changed.");
+            await _websocketHub.PushGameUpdateReady(gameId);
+
+            return SuccessRedirect($"/modpanel/game-tools", $"Turn time for game {gameId} is changed.");
         }
         catch (ManualValidationException e) {
             return ErrorRedirect($"/modpanel/game-tools", e.Message);

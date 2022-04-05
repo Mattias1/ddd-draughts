@@ -16,7 +16,7 @@ public class WebsocketHub : Hub {
                 throw new ManualValidationException("Invalid connection attempt while associating for game " + rawGameId);
             }
             await Groups.AddToGroupAsync(Context.ConnectionId, GameGroup(gameId?.ToString()));
-            Log.Debug("Websocket connection associated with game id " + gameId);
+            Log.Debug("Websocket connection associated with game " + gameId);
         }
         catch (Exception e) {
             Log.Error(e.Message);
@@ -29,10 +29,21 @@ public class WebsocketHub : Hub {
 }
 
 public static class WebsocketHubExtensions {
+    public static async Task PushGameUpdateReady(this IHubContext<WebsocketHub> websocketHubContext, GameId gameId) {
+        try {
+            await websocketHubContext.Clients.Group(WebsocketHub.GameGroup(gameId)).SendAsync("gameUpdateReady", gameId.ToString());
+            Log.Debug($"Pushed websocket game update ready notification for game {gameId}");
+        }
+        catch (Exception e) {
+            Log.Error(e.Message);
+            throw;
+        }
+    }
+
     public static async Task PushGameUpdated(this IHubContext<WebsocketHub> websocketHubContext, GameId gameId, GameDto data) {
         try {
             await websocketHubContext.Clients.Group(WebsocketHub.GameGroup(gameId)).SendAsync("gameUpdated", data);
-            Log.Debug("Pushed websocket game update for game id " + gameId.ToString());
+            Log.Debug($"Pushed websocket game update with data for game {gameId}");
         }
         catch (Exception e) {
             Log.Error(e.Message);

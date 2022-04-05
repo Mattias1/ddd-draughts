@@ -49,7 +49,7 @@ public class PlayGameController : BaseController {
                 return _playGameService.FindGameAndState(new GameId(gameId));
             });
 
-            return Ok(new GameDto(game, gameState));
+            return Ok(new GameDto(game, gameState, _clock));
         }
         catch (ManualValidationException e) {
             return NotFound(e.Message);
@@ -63,7 +63,7 @@ public class PlayGameController : BaseController {
 
             var (game, gameState) = _playGameService.DoMove(AuthContext.UserId, new GameId(gameId),
                 new SquareId(request!.From), new SquareId(request.To));
-            var data = new GameDto(game, gameState);
+            var data = new GameDto(game, gameState, _clock);
 
             await _websocketHub.PushGameUpdated(new GameId(gameId), data);
 

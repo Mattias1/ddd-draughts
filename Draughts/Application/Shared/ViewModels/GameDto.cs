@@ -1,5 +1,6 @@
 using Draughts.Common.Utilities;
 using Draughts.Domain.GameContext.Models;
+using NodaTime;
 
 namespace Draughts.Application.Shared.ViewModels;
 
@@ -18,9 +19,9 @@ public class GameDto {
         CaptureSequenceFrom = null;
         BoardString = "";
     }
-    public GameDto(Game game, GameState gameState) {
+    public GameDto(Game game, GameState gameState, IClock clock) {
         Id = game.Id.Value;
-        Turn = game.Turn is null ? null : new TurnDto(game.Turn);
+        Turn = game.Turn is null ? null : new TurnDto(game.Turn, clock);
         GameEndedMessage = BuildGameEndedMessage(game);
         CaptureSequenceFrom = gameState.CaptureSequenceFrom?.Value;
         BoardString = gameState.Board.ToString();
@@ -38,15 +39,18 @@ public class GameDto {
 
     public class TurnDto {
         public long PlayerId { get; }
+        public string CurrentTime { get; }
         public string ExpiresAt { get; }
 
         // The empty constructor is here to create a DTO from JSON deserialisation.
         public TurnDto() {
             PlayerId = 0L;
+            CurrentTime = "";
             ExpiresAt = "";
         }
-        public TurnDto(Turn turn) {
+        public TurnDto(Turn turn, IClock clock) {
             PlayerId = turn.Player.Id.Value;
+            CurrentTime = clock.UtcNow().ToIsoString();
             ExpiresAt = turn.ExpiresAt.ToIsoString();
         }
     }
