@@ -14,6 +14,8 @@ using static Draughts.Domain.AuthContext.Models.Permission;
 namespace Draughts.Application.Lobby;
 
 public class LobbyController : BaseController {
+    private const int PAGE_SIZE = 10;
+
     private readonly IClock _clock;
     private readonly IGameRepository _gameRepository;
     private readonly GameService _gameService;
@@ -27,17 +29,17 @@ public class LobbyController : BaseController {
     }
 
     [HttpGet("/lobby"), GuestRoute]
-    public IActionResult Lobby() {
+    public IActionResult Lobby(int page = 1) {
         var pendingGames = _unitOfWork.WithGameTransaction(tran => {
-            return _gameRepository.List(new PendingGameSpecification());
+            return _gameRepository.Paginate(page, PAGE_SIZE, new PendingGameSpecification(), new GameIdSort().Asc());
         });
         return View(new GamelistViewModel(pendingGames, _clock));
     }
 
     [HttpGet("/lobby/spectate"), GuestRoute]
-    public IActionResult Spectate() {
+    public IActionResult Spectate(int page = 1) {
         var activeGames = _unitOfWork.WithGameTransaction(tran => {
-            return _gameRepository.List(new ActiveGameSpecification());
+            return _gameRepository.Paginate(page, PAGE_SIZE, new ActiveGameSpecification(), new GameIdSort().Asc());
         });
         return View(new GamelistViewModel(activeGames, _clock));
     }

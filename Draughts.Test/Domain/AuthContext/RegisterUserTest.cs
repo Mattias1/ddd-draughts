@@ -13,7 +13,7 @@ public class RegisterUserTest {
     private static readonly Role PendingRole = RoleTestHelper.PendingRegistration().Build();
     private static readonly Role RegisteredRole = RoleTestHelper.RegisteredUser().Build();
 
-    private readonly IUserRegistrationDomainService _userRegistrationService;
+    private readonly UserRegistrationDomainService _userRegistrationService;
 
     public RegisterUserTest() {
         var clock = FakeClock.FromUtc(2020, 02, 29);

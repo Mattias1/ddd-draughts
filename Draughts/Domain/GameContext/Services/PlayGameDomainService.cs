@@ -7,7 +7,7 @@ using static Draughts.Domain.GameContext.Models.Voting;
 
 namespace Draughts.Domain.GameContext.Services;
 
-public class PlayGameDomainService : IPlayGameDomainService {
+public class PlayGameDomainService {
     private readonly IClock _clock;
 
     public PlayGameDomainService(IClock clock) {

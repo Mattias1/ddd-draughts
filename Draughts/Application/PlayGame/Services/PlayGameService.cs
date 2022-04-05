@@ -14,12 +14,12 @@ public class PlayGameService {
     private readonly IClock _clock;
     private readonly IGameRepository _gameRepository;
     private readonly IGameStateRepository _gameStateRepository;
-    private readonly IPlayGameDomainService _playGameDomainService;
+    private readonly PlayGameDomainService _playGameDomainService;
     private readonly IUnitOfWork _unitOfWork;
     private readonly IVotingRepository _votingRepository;
 
     public PlayGameService(IClock clock, IGameRepository gameRepository, IGameStateRepository gameStateRepository,
-            IPlayGameDomainService playGameDomainService, IUnitOfWork unitOfWork, IVotingRepository votingRepository) {
+            PlayGameDomainService playGameDomainService, IUnitOfWork unitOfWork, IVotingRepository votingRepository) {
         _clock = clock;
         _gameRepository = gameRepository;
         _gameStateRepository = gameStateRepository;

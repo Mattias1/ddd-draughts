@@ -7,7 +7,7 @@ using NodaTime;
 
 namespace Draughts.Domain.GameContext.Services;
 
-public class GameFactory : IGameFactory {
+public class GameFactory {
     private readonly IClock _clock;
 
     public GameFactory(IClock clock) {

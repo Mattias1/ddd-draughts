@@ -14,7 +14,7 @@ namespace Draughts.Application;
 
 [Requires(Permissions.PLAY_GAME)]
 public class GamelistController : BaseController {
-    private const int PAGE_SIZE = 20;
+    private const int PAGE_SIZE = 10;
 
     private readonly IClock _clock;
     private readonly IGameRepository _gameRepository;
@@ -51,11 +51,8 @@ public class GamelistController : BaseController {
     }
 
     private Pagination<Game> MyGameList(int page, Specification<Game> statusSpec) {
-        return _gameRepository.Paginate(
-            page, PAGE_SIZE,
-            statusSpec.And(new ContainsPlayerSpecification(AuthContext.UserId)),
-            new GameIdSort()
-        );
+        var gamelistSpec = statusSpec.And(new ContainsPlayerSpecification(AuthContext.UserId));
+        return _gameRepository.Paginate(page, PAGE_SIZE, gamelistSpec, new GameIdSort());
     }
 
     private MenuViewModel BuildMenu() {
@@ -63,7 +60,6 @@ public class GamelistController : BaseController {
             ("Pending games", "/gamelist/pending"),
             ("Active games", "/gamelist/active"),
             ("Finished games", "/gamelist/finished"),
-            ("Create a new game", "/lobby/create")
-        );
+            ("Create a new game", "/lobby/create"));
     }
 }

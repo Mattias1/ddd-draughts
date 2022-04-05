@@ -1,6 +1,8 @@
 using Draughts.Domain.GameContext.Models;
 using Draughts.Repositories.Database;
 using Draughts.Repositories.Transaction;
+using NodaTime;
+using SqlQueryBuilder.Common;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -11,6 +13,12 @@ public class InMemoryGameRepository : InMemoryRepository<Game, GameId>, IGameRep
 
     public InMemoryGameRepository(IUnitOfWork unitOfWork) {
         _unitOfWork = unitOfWork;
+    }
+
+    public IReadOnlyList<GameId> ListGameIdsForExpiredTurns(ZonedDateTime datetime) {
+        return GetBaseQuery()
+            .Where(g => g.Turn is not null && g.Turn.ExpiresAt.ToInstant() < datetime.ToInstant())
+            .MapReadOnly(g => g.Id);
     }
 
     protected override IList<Game> GetBaseQuery() {

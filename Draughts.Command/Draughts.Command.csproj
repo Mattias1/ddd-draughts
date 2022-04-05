@@ -6,7 +6,7 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Konscious.Security.Cryptography.Argon2" Version="1.2.1"/>
-    <PackageReference Include="NodaTime" Version="3.0.9"/>
+    <PackageReference Include="NodaTime" Version="3.0.10"/>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Draughts.Test\Draughts.Test.csproj"/>

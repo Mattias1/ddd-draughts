@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace Draughts.Application.Users;
 
 public class UsersController : BaseController {
-    private const int PAGE_SIZE = 20;
+    private const int PAGE_SIZE = 10;
 
     private readonly IUnitOfWork _unitOfWork;
     private readonly IUserRepository _userRepository;

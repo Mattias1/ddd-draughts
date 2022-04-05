@@ -11,14 +11,14 @@ namespace Draughts.Application.Lobby.Services;
 
 // Note: This name is way to generic. In the future I'll put everything in here. So I'll rename it then :)
 public class GameService {
-    private readonly IGameFactory _gameFactory;
+    private readonly GameFactory _gameFactory;
     private readonly IGameRepository _gameRepository;
     private readonly IGameStateRepository _gameStateRepository;
     private readonly IIdGenerator _idGenerator;
     private readonly IUnitOfWork _unitOfWork;
     private readonly IUserRepository _userRepository;
 
-    public GameService(IGameFactory gameFactory, IGameRepository gameRepository,
+    public GameService(GameFactory gameFactory, IGameRepository gameRepository,
             IGameStateRepository gameStateRepository, IIdGenerator idGenerator,
             IUnitOfWork unitOfWork, IUserRepository userRepository) {
         _gameFactory = gameFactory;

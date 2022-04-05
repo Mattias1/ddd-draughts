@@ -40,7 +40,7 @@ cd Draughts.Command/ \
   ;  cd ../
 ```
 
-You can then run the application with something like `cd Draughts && dotnet run -v -m`. It should
+You can then run the application with something like `cd Draughts && dotnet run -v n`. It should
 open at <http://localhost:52588>.
 
 If you need to, you can access the databases with adminer at

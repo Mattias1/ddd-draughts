@@ -12,7 +12,7 @@ public class AuthUserRolesTest {
     private static readonly Role RegisteredRole = RoleTestHelper.RegisteredUser().Build();
     private static readonly Role AdminRole = RoleTestHelper.Admin().Build();
 
-    private readonly IUserRoleDomainService _userRoleService;
+    private readonly UserRoleDomainService _userRoleService;
 
     public AuthUserRolesTest() {
         _userRoleService = new UserRoleDomainService();

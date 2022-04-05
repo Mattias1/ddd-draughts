@@ -13,7 +13,7 @@ namespace Draughts.Test.Domain.GameContext;
 
 public class GameDoMoveTest {
     private const string INITIAL_BOARD = "444 444 000 000 555 555";
-    private readonly IPlayGameDomainService _playGameService;
+    private readonly PlayGameDomainService _playGameService;
 
     public GameDoMoveTest() {
         var clock = FakeClock.FromUtc(2020, 02, 29);

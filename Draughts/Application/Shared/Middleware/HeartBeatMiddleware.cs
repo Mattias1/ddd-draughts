@@ -71,7 +71,6 @@ public class HeartBeatMiddleware {
                 _unitOfWork.WithGameTransaction(tran => {
                     var game = _gameRepository.FindById(gameId);
                     game.MissTurn(now);
-                    // TODO: Add a missed turn event to the event list?
                     _gameRepository.Save(game);
                 });
 

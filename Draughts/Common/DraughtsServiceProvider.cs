@@ -89,10 +89,10 @@ public static class DraughtsServiceProvider {
     }
 
     private static void ConfigureDomainServices(IServiceCollection services) {
-        services.AddSingleton<IUserRegistrationDomainService, UserRegistrationDomainService>();
-        services.AddSingleton<IUserRoleDomainService, UserRoleDomainService>();
-        services.AddSingleton<IPlayGameDomainService, PlayGameDomainService>();
-        services.AddSingleton<IGameFactory, GameFactory>();
+        services.AddSingleton<UserRegistrationDomainService>();
+        services.AddSingleton<UserRoleDomainService>();
+        services.AddSingleton<PlayGameDomainService>();
+        services.AddSingleton<GameFactory>();
     }
 
     public static void RegisterEventHandlers(IServiceProvider serviceProvider) {

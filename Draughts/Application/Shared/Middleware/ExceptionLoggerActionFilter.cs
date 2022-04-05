@@ -4,7 +4,7 @@ using Microsoft.Extensions.Logging;
 namespace Draughts.Application.Shared.Middleware;
 
 public class ExceptionLoggerActionFilter : IExceptionFilter {
-    private readonly ILogger _log;
+    private readonly ILogger<ExceptionLoggerActionFilter> _log;
 
     public ExceptionLoggerActionFilter(ILogger<ExceptionLoggerActionFilter> log) {
         _log = log;

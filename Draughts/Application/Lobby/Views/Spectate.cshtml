@@ -11,6 +11,7 @@
     <p>Watch one of the games currently being played.</p>
 
     <table class="page-table">
+        <caption>Displaying @Utils.PaginationRangeOfTotal(Model) games.</caption>
         <thead>
             <tr>
                 <th class="left normal">Game id</th>
@@ -33,6 +34,9 @@
             }
         </tbody>
     </table>
+    <div class="paginate">
+        @Utils.PaginationNav(Model, "/lobby/spectate")
+    </div>
 
     <p>Go back to the <a @Utils.Href("/lobby")>game lobby</a>.</p>
 </div>

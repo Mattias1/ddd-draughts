@@ -9,11 +9,11 @@ using System.Linq;
 
 namespace Draughts.Domain.AuthContext.Services;
 
-public class UserRegistrationDomainService : IUserRegistrationDomainService {
+public class UserRegistrationDomainService {
     private readonly IClock _clock;
-    private readonly IUserRoleDomainService _userRoleService;
+    private readonly UserRoleDomainService _userRoleService;
 
-    public UserRegistrationDomainService(IClock clock, IUserRoleDomainService userRoleService) {
+    public UserRegistrationDomainService(IClock clock, UserRoleDomainService userRoleService) {
         _clock = clock;
         _userRoleService = userRoleService;
     }

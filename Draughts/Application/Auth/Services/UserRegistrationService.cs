@@ -15,7 +15,7 @@ public class UserRegistrationService {
     private readonly IAuthUserRepository _authUserRepository;
     private readonly IClock _clock;
     private readonly IUserRepository _userRepository;
-    private readonly IUserRegistrationDomainService _userRegistrationDomainService;
+    private readonly UserRegistrationDomainService _userRegistrationDomainService;
     private readonly IIdGenerator _idGenerator;
     private readonly IRoleRepository _roleRepository;
     private readonly IUnitOfWork _unitOfWork;
@@ -23,7 +23,7 @@ public class UserRegistrationService {
     public UserRegistrationService(
             IAuthUserRepository authUserRepository, IClock clock, IIdGenerator idGenerator,
             IRoleRepository roleRepository, IUnitOfWork unitOfWork, IUserRepository userRepository,
-            IUserRegistrationDomainService userRegistrationDomainService) {
+            UserRegistrationDomainService userRegistrationDomainService) {
         _authUserRepository = authUserRepository;
         _clock = clock;
         _idGenerator = idGenerator;

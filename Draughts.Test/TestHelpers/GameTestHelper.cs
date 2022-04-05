@@ -31,9 +31,6 @@ public class GameTestHelper {
             .WithStartedAt(Feb29);
     }
 
-    public static GameBuilder PendingMiniGame(Player creator) => PendingMiniGame().WithPlayers(creator);
-    public static GameBuilder PendingMiniGame() => PendingGame(GameSettings.Mini);
-
     public static GameBuilder StartedInternationalGame() {
         var whitePlayer = PlayerTestHelper.White().Build();
         var blackPlayer = PlayerTestHelper.Black().Build();
@@ -44,6 +41,9 @@ public class GameTestHelper {
             .WithTurn(turn)
             .WithStartedAt(Feb29);
     }
+
+    public static GameBuilder PendingMiniGame(Player creator) => PendingMiniGame().WithPlayers(creator);
+    public static GameBuilder PendingMiniGame() => PendingGame(GameSettings.Mini);
 
     public static GameBuilder PendingInternationalGame(Player creator) => PendingInternationalGame().WithPlayers(creator);
     public static GameBuilder PendingInternationalGame() => PendingGame(GameSettings.International);

@@ -1,14 +1,15 @@
 using Draughts.Domain.GameContext.Models;
+using Draughts.Repositories;
 using NodaTime;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Draughts.Application.Shared.ViewModels;
 
-public class GamelistViewModel {
-    public IReadOnlyList<GameViewModel> Games { get; set; }
+public class GamelistViewModel : IPaginationViewModel<GameViewModel> {
+    public Pagination<GameViewModel> Pagination { get; }
+    public IReadOnlyList<GameViewModel> Games => Pagination.Results;
 
-    public GamelistViewModel(IReadOnlyList<Game> games, IClock clock) {
-        Games = games.Select(u => new GameViewModel(u, clock)).ToList().AsReadOnly();
+    public GamelistViewModel(Pagination<Game> games, IClock clock) {
+        Pagination = games.Map(u => new GameViewModel(u, clock));
     }
 }

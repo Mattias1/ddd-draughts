@@ -16,11 +16,11 @@ public class RoleUsersService {
     private readonly IClock _clock;
     private readonly IIdGenerator _idGenerator;
     private readonly IRoleRepository _roleRepository;
-    private readonly IUserRoleDomainService _userRoleDomainService;
+    private readonly UserRoleDomainService _userRoleDomainService;
     private readonly IUnitOfWork _unitOfWork;
 
     public RoleUsersService(IAuthUserRepository authUserRepository, IClock clock, IIdGenerator idGenerator,
-            IRoleRepository roleRepository, IUserRoleDomainService userRoleDomainService, IUnitOfWork unitOfWork) {
+            IRoleRepository roleRepository, UserRoleDomainService userRoleDomainService, IUnitOfWork unitOfWork) {
         _authUserRepository = authUserRepository;
         _clock = clock;
         _idGenerator = idGenerator;
