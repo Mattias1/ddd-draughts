@@ -10,7 +10,7 @@ using static Draughts.Repositories.Database.JoinEnum;
 
 namespace Draughts.Domain.GameContext.Specifications;
 
-public class ContainsPlayerSpecification : Specification<Game> {
+public sealed class ContainsPlayerSpecification : Specification<Game> {
     private readonly UserId _userId;
 
     public ContainsPlayerSpecification(UserId userId) => _userId = userId;

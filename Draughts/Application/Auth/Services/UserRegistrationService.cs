@@ -11,7 +11,7 @@ using NodaTime;
 
 namespace Draughts.Application.Auth.Services;
 
-public class UserRegistrationService {
+public sealed class UserRegistrationService {
     private readonly IAuthUserRepository _authUserRepository;
     private readonly IClock _clock;
     private readonly IUserRepository _userRepository;

@@ -67,7 +67,7 @@ public abstract class Specification<T> {
     public Specification<T> Not() => new NotSpecification<T>(this);
 }
 
-public class AndSpecification<T> : Specification<T> {
+public sealed class AndSpecification<T> : Specification<T> {
     private readonly Specification<T> _left, _right;
 
     public AndSpecification(Specification<T> left, Specification<T> right) => (_left, _right) = (left, right);
@@ -89,7 +89,7 @@ public class AndSpecification<T> : Specification<T> {
     public override IEnumerable<PossibleJoins> RequiredJoins() => _left.RequiredJoins().Concat(_right.RequiredJoins());
 }
 
-public class OrSpecification<T> : Specification<T> {
+public sealed class OrSpecification<T> : Specification<T> {
     private readonly Specification<T> _left, _right;
 
     public OrSpecification(Specification<T> left, Specification<T> right) => (_left, _right) = (left, right);
@@ -111,7 +111,7 @@ public class OrSpecification<T> : Specification<T> {
     public override IEnumerable<PossibleJoins> RequiredJoins() => _left.RequiredJoins().Concat(_right.RequiredJoins());
 }
 
-public class NotSpecification<T> : Specification<T> {
+public sealed class NotSpecification<T> : Specification<T> {
     private readonly Specification<T> _specification;
 
     public NotSpecification(Specification<T> specification) => _specification = specification;

@@ -5,7 +5,7 @@ using static Draughts.Domain.GameContext.Models.GameSettings;
 
 namespace Draughts.Domain.GameContext.Models;
 
-public class PossibleMoveCalculator {
+public sealed class PossibleMoveCalculator {
     private Board _board;
     private GameSettings _settings;
     private Color _currentTurn;

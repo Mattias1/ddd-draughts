@@ -2,7 +2,7 @@ using Draughts.Common.OoConcepts;
 
 namespace Draughts.Common.Events;
 
-public class DomainEventId : IdValueObject<DomainEventId> {
+public sealed class DomainEventId : IdValueObject<DomainEventId> {
     public override long Value { get; }
 
     public DomainEventId(long id) {

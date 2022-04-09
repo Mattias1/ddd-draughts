@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace Draughts.Domain.GameContext.Models;
 
-public class Piece : ValueObject<Piece> {
+public sealed class Piece : ValueObject<Piece> {
     public byte RawValue { get; }
 
     public Piece(byte raw) {

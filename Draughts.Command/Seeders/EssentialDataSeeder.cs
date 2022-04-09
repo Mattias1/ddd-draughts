@@ -8,7 +8,7 @@ using System;
 
 namespace Draughts.Command.Seeders;
 
-public class EssentialDataSeeder {
+public sealed class EssentialDataSeeder {
     private readonly IAuthUserRepository _authUserRepository;
     private readonly IRoleRepository _roleRepository;
     private readonly IUnitOfWork _unitOfWork;

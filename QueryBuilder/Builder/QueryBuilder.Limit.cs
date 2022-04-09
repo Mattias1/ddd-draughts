@@ -2,7 +2,7 @@ using SqlQueryBuilder.Model;
 
 namespace SqlQueryBuilder.Builder;
 
-public partial class QueryBuilder : ILimitQueryBuilder {
+public sealed partial class QueryBuilder : ILimitQueryBuilder {
     public IQueryBuilder Skip(long offset) {
         var (queryPart, parameters) = _options.SqlFlavor.Skip(offset);
         _query.Limits.Add(new RawQueryPart(' ' + queryPart, parameters));

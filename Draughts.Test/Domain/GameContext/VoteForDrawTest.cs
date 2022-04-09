@@ -12,7 +12,7 @@ using Xunit;
 
 namespace Draughts.Test.Domain.GameContext;
 
-public class VoteForDrawTest {
+public sealed class VoteForDrawTest {
     private readonly IClock _fakeClock;
     private readonly PlayGameDomainService _playGameDomainService;
 

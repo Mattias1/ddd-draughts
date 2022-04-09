@@ -4,13 +4,12 @@ using Draughts.Domain.AuthContext.Specifications;
 using FluentAssertions;
 using NodaTime;
 using System.Globalization;
-using System.Net;
 using System.Threading.Tasks;
 using static Draughts.Application.Auth.AuthController;
 
 namespace Draughts.IntegrationTest.EndToEnd.Base;
 
-public class AuthenticationTesterApi<T> where T : BaseApiTester {
+public sealed class AuthenticationTesterApi<T> where T : BaseApiTester {
     private readonly IClock _clock;
     public T ApiTester { get; }
     public Username? CreatedUsername { get; private set; }

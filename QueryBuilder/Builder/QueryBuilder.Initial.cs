@@ -2,7 +2,7 @@ using SqlQueryBuilder.Model;
 
 namespace SqlQueryBuilder.Builder;
 
-public partial class QueryBuilder : IInitialQueryBuilder {
+public sealed partial class QueryBuilder : IInitialQueryBuilder {
     public IQueryBuilder SelectAllFrom(string table) => SelectAll(table).From(table);
     public IQueryBuilder SelectAllFromAs(string table, string alias) => SelectAll(alias).FromAs(table, alias);
     public ISelectQueryBuilder SelectAll(string table) => Select(table + ".*");

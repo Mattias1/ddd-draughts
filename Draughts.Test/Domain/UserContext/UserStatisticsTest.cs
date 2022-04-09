@@ -5,7 +5,7 @@ using static Draughts.Domain.GameContext.Models.GameSettings;
 
 namespace Draughts.Test.Domain.UserContext;
 
-public class UserStatisticsTest {
+public sealed class UserStatisticsTest {
     private UserId VictorId = new UserId(42);
     private UserId LoserId = new UserId(37);
     private UserId TiedPlayerId = new UserId(1);

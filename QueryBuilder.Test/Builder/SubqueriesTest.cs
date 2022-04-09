@@ -6,7 +6,7 @@ using Xunit;
 
 namespace SqlQueryBuilder.Test.Builder;
 
-public class SubqueriesTest {
+public sealed class SubqueriesTest {
     private IInitialQueryBuilder Query() => QueryBuilder.Init(new FakeSqlFlavor());
 
     [Fact]

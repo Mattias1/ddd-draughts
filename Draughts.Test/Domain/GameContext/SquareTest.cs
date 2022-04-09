@@ -7,7 +7,7 @@ using Xunit;
 
 namespace Draughts.Test.Domain.GameContext;
 
-public class SquareTest {
+public sealed class SquareTest {
     [Theory]
     [InlineData(1, 0, 1)]
     [InlineData(3, 0, 2)]

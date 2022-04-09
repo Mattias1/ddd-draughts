@@ -6,7 +6,7 @@ using Xunit;
 
 namespace SqlQueryBuilder.Test.Builder;
 
-public class QueriesWithAdvancedSelect {
+public sealed class QueriesWithAdvancedSelect {
     private IInitialQueryBuilder Query() => QueryBuilder.Init(new QueryBuilderOptions(new FakeSqlFlavor()) {
         DontParameterizeNumbers = false
     });

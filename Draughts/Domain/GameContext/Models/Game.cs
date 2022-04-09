@@ -7,7 +7,7 @@ using System.Linq;
 
 namespace Draughts.Domain.GameContext.Models;
 
-public class Game : Entity<Game, GameId> {
+public sealed class Game : Entity<Game, GameId> {
     public const string ERROR_GAME_NOT_ACTIVE = "This game is not active.";
     public const string ERROR_NOT_YOUR_TURN = "It's not your turn.";
     public const string ERROR_NOT_IN_GAME = "You're not in the game.";

@@ -84,10 +84,10 @@ public class Startup {
     }
 }
 
-public class DbStartup : Startup {
+public sealed class DbStartup : Startup {
     protected override bool UseInMemoryDatabase => false;
 }
 
-public class InMemoryStartup : Startup {
+public sealed class InMemoryStartup : Startup {
     protected override bool UseInMemoryDatabase => true;
 }

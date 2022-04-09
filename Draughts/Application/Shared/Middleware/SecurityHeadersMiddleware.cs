@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 
 namespace Draughts.Application.Shared.Middleware;
 
-public class SecurityHeadersMiddleware {
+public sealed class SecurityHeadersMiddleware {
     private readonly RequestDelegate _next;
 
     public SecurityHeadersMiddleware(RequestDelegate next) {

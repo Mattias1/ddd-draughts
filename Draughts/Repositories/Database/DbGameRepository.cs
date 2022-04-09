@@ -11,7 +11,7 @@ using static Draughts.Repositories.Database.JoinEnum;
 
 namespace Draughts.Repositories.Database;
 
-public class DbGameRepository : DbRepository<Game, GameId, DbGame>, IGameRepository {
+public sealed class DbGameRepository : DbRepository<Game, GameId, DbGame>, IGameRepository {
     private readonly IUnitOfWork _unitOfWork;
 
     public DbGameRepository(IUnitOfWork unitOfWork) {

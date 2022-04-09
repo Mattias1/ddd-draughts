@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Draughts.Application.Auth;
 
-public class AuthController : BaseController {
+public sealed class AuthController : BaseController {
     private const string ALREADY_LOGGED_IN_ERROR = "You're already logged in.";
 
     private readonly AuthService _authService;

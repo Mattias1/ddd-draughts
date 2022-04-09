@@ -12,7 +12,7 @@ using System.Linq;
 
 namespace Draughts.Application.ModPanel.Services;
 
-public class EditRoleService {
+public sealed class EditRoleService {
     private readonly IAuthUserRepository _authUserRepository;
     private readonly IClock _clock;
     private readonly IIdGenerator _idGenerator;

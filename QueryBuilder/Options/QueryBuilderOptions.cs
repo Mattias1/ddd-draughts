@@ -1,6 +1,6 @@
 namespace SqlQueryBuilder.Options;
 
-public class QueryBuilderOptions {
+public sealed class QueryBuilderOptions {
     public ISqlFlavor SqlFlavor { get; set; }
     public IColumnFormat ColumnFormat { get; set; }
     public bool SmartDate { get; set; }

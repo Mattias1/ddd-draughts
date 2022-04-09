@@ -8,7 +8,7 @@ using static Draughts.Domain.AuthContext.Models.Permission;
 
 namespace Draughts.Test.Domain.AuthContext;
 
-public class RoleTest {
+public sealed class RoleTest {
     [Fact]
     public void ThrowWhenRoleNameIsTooShort() {
         var role = RoleTestHelper.RegisteredUser().Build();

@@ -5,7 +5,7 @@ using NodaTime;
 
 namespace Draughts.Domain.UserContext.Models;
 
-public class User : Entity<User, UserId> {
+public sealed class User : Entity<User, UserId> {
     public override UserId Id { get; }
     public Username Username { get; }
     public Rating Rating { get; private set; }

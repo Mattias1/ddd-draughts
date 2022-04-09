@@ -11,7 +11,7 @@ using Xunit;
 
 namespace Draughts.Test.Domain.GameContext;
 
-public class GameDoMoveTest {
+public sealed class GameDoMoveTest {
     private const string INITIAL_BOARD = "444 444 000 000 555 555";
     private readonly PlayGameDomainService _playGameService;
 

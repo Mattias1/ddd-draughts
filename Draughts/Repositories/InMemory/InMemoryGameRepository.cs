@@ -8,7 +8,7 @@ using System.Linq;
 
 namespace Draughts.Repositories.InMemory;
 
-public class InMemoryGameRepository : InMemoryRepository<Game, GameId>, IGameRepository {
+public sealed class InMemoryGameRepository : InMemoryRepository<Game, GameId>, IGameRepository {
     private readonly IUnitOfWork _unitOfWork;
 
     public InMemoryGameRepository(IUnitOfWork unitOfWork) {

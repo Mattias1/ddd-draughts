@@ -5,7 +5,7 @@ using SqlQueryBuilder.Builder;
 
 namespace Draughts.Repositories.Database;
 
-public class DbUserRepository : DbRepository<User, UserId, DbUser>, IUserRepository {
+public sealed class DbUserRepository : DbRepository<User, UserId, DbUser>, IUserRepository {
     private readonly IUnitOfWork _unitOfWork;
 
     public DbUserRepository(IUnitOfWork unitOfWork) {

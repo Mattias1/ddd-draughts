@@ -11,7 +11,7 @@ using Xunit;
 
 namespace Draughts.Test.Domain.GameContext;
 
-public class EndGameMovesTest {
+public sealed class EndGameMovesTest {
     private readonly IClock _fakeClock;
 
     public EndGameMovesTest() {

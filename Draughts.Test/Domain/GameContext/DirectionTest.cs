@@ -5,7 +5,7 @@ using Xunit;
 
 namespace Draughts.Test.Domain.GameContext;
 
-public class DirectionTest {
+public sealed class DirectionTest {
     [Theory]
     [InlineData("black", "nw", false)]
     [InlineData("black", "ne", false)]

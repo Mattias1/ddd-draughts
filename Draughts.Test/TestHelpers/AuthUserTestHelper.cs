@@ -9,7 +9,7 @@ using System.Linq;
 
 namespace Draughts.Test.TestHelpers;
 
-public class AuthUserTestHelper {
+public sealed class AuthUserTestHelper {
     private static readonly ZonedDateTime Feb29 = FakeClock.FromUtc(2020, 02, 29).UtcNow();
 
     public static AuthUserBuilder FromUser(User user) {
@@ -40,7 +40,7 @@ public class AuthUserTestHelper {
     }
 
 
-    public class AuthUserBuilder {
+    public sealed class AuthUserBuilder {
         private UserId? _id;
         private Username? _username;
         private PasswordHash? _passwordHash;

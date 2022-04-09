@@ -8,7 +8,7 @@ using Xunit;
 
 namespace Draughts.Test.Common.OoConcepts;
 
-public class SortTest {
+public sealed class SortTest {
     private IInitialQueryBuilder Query() => QueryBuilder.Init(new FakeSqlFlavor());
 
     [Fact]
@@ -21,13 +21,13 @@ public class SortTest {
         q.ToUnsafeSql().Should().Be("select `test`.* from `test` order by `value` desc");
     }
 
-    private class SortTestSort : Sort<SortTestNumber, int> {
+    private sealed class SortTestSort : Sort<SortTestNumber, int> {
         public SortTestSort() : base(defaultDescending: true) { }
         public override Expression<Func<SortTestNumber, int>> ToExpression() => n => n.Value;
         public override IQueryBuilder ApplyQueryBuilder(IQueryBuilder builder) => ApplyColumnSort(builder, "value");
     }
 
-    private class SortTestNumber {
+    private sealed class SortTestNumber {
         public int Value { get; set; }
     }
 }

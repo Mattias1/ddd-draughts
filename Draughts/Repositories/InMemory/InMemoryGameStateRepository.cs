@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace Draughts.Repositories.InMemory;
 
-public class InMemoryGameStateRepository : InMemoryRepository<GameState, GameId>, IGameStateRepository {
+public sealed class InMemoryGameStateRepository : InMemoryRepository<GameState, GameId>, IGameStateRepository {
     private readonly IUnitOfWork _unitOfWork;
 
     public InMemoryGameStateRepository(IUnitOfWork unitOfWork) {

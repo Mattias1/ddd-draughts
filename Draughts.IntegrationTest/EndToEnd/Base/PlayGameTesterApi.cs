@@ -8,7 +8,7 @@ using static Draughts.Application.PlayGame.PlayGameController;
 
 namespace Draughts.IntegrationTest.EndToEnd.Base;
 
-public class PlayGameTesterApi<T> where T : BaseApiTester {
+public sealed class PlayGameTesterApi<T> where T : BaseApiTester {
     public T ApiTester { get; }
     public GameId? GameId { get; private set; }
 

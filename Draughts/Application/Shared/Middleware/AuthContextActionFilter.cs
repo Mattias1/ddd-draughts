@@ -3,7 +3,7 @@ using System;
 
 namespace Draughts.Application.Shared.Middleware;
 
-public class AuthContextActionFilter : IActionFilter {
+public sealed class AuthContextActionFilter : IActionFilter {
     public const string SUCCESS_PARAM = "success";
     public const string ERROR_PARAM = "error";
     public const char ERROR_SEPARATOR = '|';

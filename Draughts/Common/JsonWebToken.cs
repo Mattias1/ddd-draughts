@@ -12,7 +12,7 @@ using System.Text;
 
 namespace Draughts.Common;
 
-public class JsonWebToken {
+public sealed class JsonWebToken {
     private static readonly JsonSerializerSettings jsonSettings = new JsonSerializerSettings {
         ContractResolver = new CamelCasePropertyNamesContractResolver()
     };
@@ -96,12 +96,12 @@ public class JsonWebToken {
         return new JsonWebToken(new JwtData(authUser, expires));
     }
 
-    public class JwtHeader {
+    public sealed class JwtHeader {
         public string Alg { get; set; } = "HS256";
         public string Typ { get; set; } = "JWT";
     }
 
-    private class JwtData {
+    private sealed class JwtData {
         public string Aud { get; set; }
         public long Exp { get; set; }
         public long Usr { get; set; }

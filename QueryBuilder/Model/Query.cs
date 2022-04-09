@@ -9,7 +9,7 @@ using System.Text;
 
 namespace SqlQueryBuilder.Model;
 
-internal class Query {
+internal sealed class Query {
     public QueryBuilderOptions Options { get; }
 
     public List<IQueryPart> RawQueryParts { get; } = new List<IQueryPart>();

@@ -9,7 +9,7 @@ using Xunit;
 
 namespace SqlQueryBuilder.Test.Builder;
 
-public class QueriesWithDateTimeTest {
+public sealed class QueriesWithDateTimeTest {
     private IInitialQueryBuilder Query() => QueryBuilder.Init(
         new QueryBuilderOptions(new FakeSqlFlavor()) { SmartDate = true, WrapFieldNames = false });
     private IInitialQueryBuilder WithoutSmartDateQuery() => QueryBuilder.Init(

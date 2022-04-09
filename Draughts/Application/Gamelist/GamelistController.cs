@@ -13,7 +13,7 @@ using static Draughts.Domain.AuthContext.Models.Permission;
 namespace Draughts.Application;
 
 [Requires(Permissions.PLAY_GAME)]
-public class GamelistController : BaseController {
+public sealed class GamelistController : BaseController {
     private const int PAGE_SIZE = 10;
 
     private readonly IClock _clock;

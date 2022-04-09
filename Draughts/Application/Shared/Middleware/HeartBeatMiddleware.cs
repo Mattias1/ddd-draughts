@@ -4,18 +4,16 @@ using Draughts.Repositories;
 using Draughts.Repositories.Transaction;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.SignalR;
-using Microsoft.Extensions.Hosting.Internal;
 using Microsoft.Extensions.Logging;
 using NodaTime;
 using SignalRWebPack.Hubs;
 using System;
 using System.Collections.Generic;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace Draughts.Application.Shared.Middleware;
 
-public class HeartBeatMiddleware {
+public sealed class HeartBeatMiddleware {
     private const int TURN_CHECK_SECONDS = 2;
     private static readonly object _lock = new object();
     private static Instant? _nextTurnExpiryCheck;

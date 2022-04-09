@@ -8,7 +8,7 @@ using Xunit;
 
 namespace Draughts.Test.Domain.AuthContext;
 
-public class AuthUserRolesTest {
+public sealed class AuthUserRolesTest {
     private static readonly Role RegisteredRole = RoleTestHelper.RegisteredUser().Build();
     private static readonly Role AdminRole = RoleTestHelper.Admin().Build();
 

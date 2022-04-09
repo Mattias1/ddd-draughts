@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace SqlQueryBuilder.Builder;
 
-public partial class QueryBuilder : IComparisonQueryBuilder {
+public sealed partial class QueryBuilder : IComparisonQueryBuilder {
     public IQueryBuilder Eq(object? value) => Is(value);
     public IQueryBuilder Is(object? value) => value is null ? IsNull() : OperatorParameter("=", value);
     public IQueryBuilder IsNull() => OperatorParameter("is", null);

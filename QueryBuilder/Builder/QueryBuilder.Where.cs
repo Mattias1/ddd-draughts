@@ -4,7 +4,7 @@ using static SqlQueryBuilder.Model.Where;
 
 namespace SqlQueryBuilder.Builder;
 
-public partial class QueryBuilder : IWhereQueryBuilder {
+public sealed partial class QueryBuilder : IWhereQueryBuilder {
     private (WhereType type, string column, List<IWhere> forest)? _preparedLeaf;
 
     public IQueryBuilder Where(SubWhereFunc queryFunc) => And(queryFunc);

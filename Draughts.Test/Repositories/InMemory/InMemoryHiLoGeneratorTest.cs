@@ -5,7 +5,7 @@ using Xunit;
 
 namespace Draughts.Test.Repositories.InMemory;
 
-public class InMemoryHiLoGeneratorTest {
+public sealed class InMemoryHiLoGeneratorTest {
     [Fact]
     public void IdGeneratorTest() {
         var idGenerator = HiLoIdGenerator.InMemoryHiloGIdGenerator(3, 3, 3);

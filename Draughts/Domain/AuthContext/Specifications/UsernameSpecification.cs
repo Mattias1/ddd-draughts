@@ -6,7 +6,7 @@ using System.Linq.Expressions;
 
 namespace Draughts.Domain.AuthContext.Specifications;
 
-public class UsernameSpecification : Specification<AuthUser> {
+public sealed class UsernameSpecification : Specification<AuthUser> {
     private readonly string? _username;
 
     public UsernameSpecification(Username? username) : this(username?.Value) { }

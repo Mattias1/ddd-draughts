@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace Draughts.Domain.UserContext.Models;
 
-public class Rank : ValueObject<Rank>, IComparable<Rank> {
+public sealed class Rank : ValueObject<Rank>, IComparable<Rank> {
     public int Order { get; }
     public string Name { get; }
     public Rating RequiredRating { get; }

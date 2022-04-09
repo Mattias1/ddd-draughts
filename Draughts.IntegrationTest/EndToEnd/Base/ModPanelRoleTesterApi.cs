@@ -6,7 +6,7 @@ using static Draughts.Application.ModPanel.ModPanelController;
 
 namespace Draughts.IntegrationTest.EndToEnd.Base;
 
-public class ModPanelRoleTesterApi<T> where T : BaseApiTester {
+public sealed class ModPanelRoleTesterApi<T> where T : BaseApiTester {
     public const string EDITED_ROLENAME = "IT test role";
     public const string ASSIGNED_USERNAME = "TestPlayerBlack";
 

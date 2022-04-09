@@ -8,7 +8,7 @@ using Xunit;
 
 namespace SqlQueryBuilder.Test.Builder;
 
-public class RawQueriesTest {
+public sealed class RawQueriesTest {
     private IInitialQueryBuilder Query() => QueryBuilder.Init(new QueryBuilderOptions(new FakeSqlFlavor()) {
         DontParameterizeNumbers = false,
         GuardForForgottenWhere = false

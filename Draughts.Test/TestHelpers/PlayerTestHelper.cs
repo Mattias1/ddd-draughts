@@ -8,7 +8,7 @@ using System;
 
 namespace Draughts.Test.TestHelpers;
 
-public class PlayerTestHelper {
+public sealed class PlayerTestHelper {
     private static readonly ZonedDateTime Feb29 = FakeClock.FromUtc(2020, 02, 29).UtcNow();
 
     public static PlayerBuilder White() {
@@ -42,7 +42,7 @@ public class PlayerTestHelper {
     }
 
 
-    public class PlayerBuilder {
+    public sealed class PlayerBuilder {
         private PlayerId? _id;
         private UserId? _userId;
         private Username? _username;

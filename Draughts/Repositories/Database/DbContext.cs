@@ -4,7 +4,7 @@ using System;
 
 namespace Draughts.Repositories.Database;
 
-public class DbContext {
+public sealed class DbContext {
     private const string SERVER = "localhost";
     private const int PORT = 52506;
     private static DbContext? _instance = null;

@@ -6,7 +6,7 @@ using static Draughts.Application.Lobby.LobbyController;
 
 namespace Draughts.IntegrationTest.EndToEnd.Base;
 
-public class LobbyTesterApi<T> where T : BaseApiTester {
+public sealed class LobbyTesterApi<T> where T : BaseApiTester {
     public T ApiTester { get; }
     public GameId? GameId { get; private set; }
 

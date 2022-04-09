@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace Draughts.Domain.GameContext.Models;
 
-public class GameSettings : ValueObject<GameSettings> {
+public sealed class GameSettings : ValueObject<GameSettings> {
     public enum GameSettingsPreset { International, EnglishAmerican, Mini, Other };
     public enum DraughtsCaptureConstraints { MaximumPieces, AnyFinishedSequence };
 

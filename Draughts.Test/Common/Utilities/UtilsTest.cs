@@ -13,7 +13,7 @@ using Xunit;
 
 namespace Draughts.Test.Common.Utilities;
 
-public class UtilsTest {
+public sealed class UtilsTest {
     private const int PAGE_SIZE = 5;
     private const string BASE_URL = "http://localhost:52588";
 
@@ -140,7 +140,7 @@ public class UtilsTest {
         return new TestPaginationViewModel(pagination);
     }
 
-    private class TestPaginationViewModel : IPaginationViewModel<int> {
+    private sealed class TestPaginationViewModel : IPaginationViewModel<int> {
         public Pagination<int> Pagination { get; }
         public TestPaginationViewModel(Pagination<int> pagination) => Pagination = pagination;
     }

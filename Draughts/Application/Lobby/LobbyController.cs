@@ -13,7 +13,7 @@ using static Draughts.Domain.AuthContext.Models.Permission;
 
 namespace Draughts.Application.Lobby;
 
-public class LobbyController : BaseController {
+public sealed class LobbyController : BaseController {
     private const int PAGE_SIZE = 10;
 
     private readonly IClock _clock;

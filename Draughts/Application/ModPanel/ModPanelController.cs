@@ -20,7 +20,7 @@ using static Draughts.Domain.AuthContext.Models.Permission;
 
 namespace Draughts.Application.ModPanel;
 
-public class ModPanelController : BaseController {
+public sealed class ModPanelController : BaseController {
     private readonly IAdminLogRepository _adminLogRepository;
     private readonly IClock _clock;
     private readonly EditRoleService _editRoleService;

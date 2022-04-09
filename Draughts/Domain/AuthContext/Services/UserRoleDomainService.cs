@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace Draughts.Domain.AuthContext.Services;
 
-public class UserRoleDomainService {
+public sealed class UserRoleDomainService {
     public void AssignRole(AuthUser authUser, Role role) {
         authUser.AssignRole(role.Id);
     }

@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace Draughts.Repositories.InMemory;
 
-public class InMemoryAdminLogRepository : InMemoryRepository<AdminLog, AdminLogId>, IAdminLogRepository {
+public sealed class InMemoryAdminLogRepository : InMemoryRepository<AdminLog, AdminLogId>, IAdminLogRepository {
     private readonly IUnitOfWork _unitOfWork;
 
     public InMemoryAdminLogRepository(IUnitOfWork unitOfWork) {

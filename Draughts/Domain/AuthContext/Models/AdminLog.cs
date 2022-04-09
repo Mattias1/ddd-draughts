@@ -11,7 +11,7 @@ using static Draughts.Domain.AuthContext.Models.Permission;
 
 namespace Draughts.Domain.AuthContext.Models;
 
-public class AdminLog : Entity<AdminLog, AdminLogId> {
+public sealed class AdminLog : Entity<AdminLog, AdminLogId> {
     public override AdminLogId Id { get; }
     public string Type { get; }
     public IReadOnlyList<string> Parameters { get; }

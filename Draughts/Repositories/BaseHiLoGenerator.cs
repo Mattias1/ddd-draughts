@@ -57,7 +57,7 @@ public abstract class BaseHiLoGenerator {
 
     protected abstract HiLoInterval ReserveNewInterval();
 
-    protected class HiLoInterval {
+    protected sealed class HiLoInterval {
         public long Lo { get; private set; } // The lowest available id (inclusive).
         public long Hi { get; } // The maximum reserved id (exclusive).
 

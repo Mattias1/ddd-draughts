@@ -1,12 +1,11 @@
 using Draughts.Common.Utilities;
 using FluentAssertions;
 using System.Collections.Generic;
-using System.Linq;
 using Xunit;
 
 namespace Draughts.Test.Common.Utilities;
 
-public class IEnumerableExtensionsTest {
+public sealed class IEnumerableExtensionsTest {
     [Theory]
     [InlineData(new[] { 1, 1, 2, 3, 5, 8 }, new[] { 3, 8 }, true)]
     [InlineData(new[] { 1, 1, 2, 3, 5, 8 }, new[] { 4, 6 }, false)]
@@ -28,7 +27,7 @@ public class IEnumerableExtensionsTest {
         list.Should().OnlyContain(item => item.Value >= 10);
     }
 
-    public class TestItem {
+    public sealed class TestItem {
         public TestItem(int value) => Value = value;
         public int Value { get; set; }
     }

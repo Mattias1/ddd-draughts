@@ -3,7 +3,7 @@ using static SqlQueryBuilder.Model.Where;
 
 namespace SqlQueryBuilder.Builder;
 
-public partial class QueryBuilder : IHavingQueryBuilder {
+public sealed partial class QueryBuilder : IHavingQueryBuilder {
     public IQueryBuilder Having(SubWhereFunc queryFunc) => AndHaving(queryFunc);
     public IQueryBuilder AndHaving(SubWhereFunc queryFunc) => RecursiveHaving(WhereType.AndHaving, queryFunc);
 

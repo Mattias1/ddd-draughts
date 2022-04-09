@@ -7,7 +7,7 @@ using System;
 
 namespace Draughts.Test.TestHelpers;
 
-public class UserTestHelper {
+public sealed class UserTestHelper {
     private static readonly ZonedDateTime Feb29 = FakeClock.FromUtc(2020, 02, 29).UtcNow();
 
     public static UserBuilder User(string name = "user") {
@@ -22,7 +22,7 @@ public class UserTestHelper {
     }
 
 
-    public class UserBuilder {
+    public sealed class UserBuilder {
         private UserId? _id;
         private Username? _username;
         private Rating? _rating;

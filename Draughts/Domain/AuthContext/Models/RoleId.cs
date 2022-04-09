@@ -3,7 +3,7 @@ using Draughts.Common.OoConcepts;
 
 namespace Draughts.Domain.AuthContext.Models;
 
-public class RoleId : IdValueObject<RoleId> {
+public sealed class RoleId : IdValueObject<RoleId> {
     public override long Value { get; }
 
     public RoleId(long id) {

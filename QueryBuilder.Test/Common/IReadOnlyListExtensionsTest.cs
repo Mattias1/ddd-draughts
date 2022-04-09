@@ -4,7 +4,7 @@ using Xunit;
 
 namespace SqlQueryBuilder.Test.Common;
 
-public class IReadOnlyListExtensionsTest {
+public sealed class IReadOnlyListExtensionsTest {
     [Fact]
     public void TestUnpackDuo() {
         var numbers = new int[] { 42, 1337 };

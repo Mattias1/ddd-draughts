@@ -3,7 +3,7 @@ using static Draughts.Domain.GameContext.Models.GameSettings;
 
 namespace Draughts.Domain.UserContext.Models;
 
-public class UserStatistics : Entity<UserStatistics, UserId> {
+public sealed class UserStatistics : Entity<UserStatistics, UserId> {
     public override UserId Id { get; }
     public GamesTally TotalTally { get; private set; }
     public GamesTally InternationalTally { get; private set; }
@@ -39,7 +39,7 @@ public class UserStatistics : Entity<UserStatistics, UserId> {
     }
 }
 
-public record GamesTally(int Played, int Won, int Tied, int Lost) {
+public sealed record GamesTally(int Played, int Won, int Tied, int Lost) {
     public GamesTally WithFinishedGame(bool? isWin) {
         return new GamesTally(
             Played + 1,

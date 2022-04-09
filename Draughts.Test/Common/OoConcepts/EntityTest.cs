@@ -4,7 +4,7 @@ using Xunit;
 
 namespace Draughts.Test.Common.OoConcepts;
 
-public class EntityTest {
+public sealed class EntityTest {
     [Fact]
     public void EqualWhenIdsAreEqual() {
         var left = new TestEntity(new TestId(1), "left");
@@ -51,13 +51,13 @@ public class EntityTest {
         (left != right).Should().BeFalse();
     }
 
-    public class TestId : IdValueObject<TestId> {
+    public sealed class TestId : IdValueObject<TestId> {
         public override long Value { get; }
 
         public TestId(long id) => Value = id;
     }
 
-    public class TestEntity : Entity<TestEntity, TestId> {
+    public sealed class TestEntity : Entity<TestEntity, TestId> {
         public override TestId Id { get; }
         public string Whatever { get; }
 

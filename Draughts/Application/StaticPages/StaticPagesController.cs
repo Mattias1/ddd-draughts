@@ -7,7 +7,7 @@ using System.Text.RegularExpressions;
 
 namespace Draughts.Application.StaticPages;
 
-public class StaticPagesController : BaseController {
+public sealed class StaticPagesController : BaseController {
     private readonly ILogger<StaticPagesController> _logger;
 
     public StaticPagesController(ILogger<StaticPagesController> logger) => _logger = logger;

@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace Draughts.Repositories;
 
-public class Pagination<T> {
+public sealed class Pagination<T> {
     public IReadOnlyList<T> Results { get; }
     public long Count { get; }
     public long PageIndex { get; }

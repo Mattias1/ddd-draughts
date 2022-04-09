@@ -34,7 +34,7 @@ public abstract class TransactionDomain : IEquatable<TransactionDomain> {
     public static bool operator ==(TransactionDomain? left, TransactionDomain? right) => ComparisonUtils.NullSafeEquals(left, right);
     public static bool operator !=(TransactionDomain? left, TransactionDomain? right) => ComparisonUtils.NullSafeNotEquals(left, right);
 
-    public class AuthTransactionDomain : TransactionDomain {
+    public sealed class AuthTransactionDomain : TransactionDomain {
         public const string KEY = "Auth";
         public override string Key => KEY;
 
@@ -57,7 +57,7 @@ public abstract class TransactionDomain : IEquatable<TransactionDomain> {
         public override ISqlTransactionFlavor BeginTransaction() => DbContext.Get.BeginAuthTransaction();
     }
 
-    public class UserTransactionDomain : TransactionDomain {
+    public sealed class UserTransactionDomain : TransactionDomain {
         public const string KEY = "User";
         public override string Key => KEY;
 
@@ -76,7 +76,7 @@ public abstract class TransactionDomain : IEquatable<TransactionDomain> {
         public override ISqlTransactionFlavor BeginTransaction() => DbContext.Get.BeginUserTransaction();
     }
 
-    public class GameTransactionDomain : TransactionDomain {
+    public sealed class GameTransactionDomain : TransactionDomain {
         public const string KEY = "Game";
         public override string Key => KEY;
 

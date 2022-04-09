@@ -6,7 +6,7 @@ using Xunit;
 
 namespace SqlQueryBuilder.Test.Builder;
 
-public class ReadmeExampleQueriesTest {
+public sealed class ReadmeExampleQueriesTest {
     private IInitialQueryBuilder Query() => QueryBuilder.Init(new FakeSqlFlavor());
 
     [Fact]
@@ -81,7 +81,7 @@ public class ReadmeExampleQueriesTest {
         );
     }
 
-    public class TestUserModel {
+    public sealed class TestUserModel {
         public long? Id { get; set; }
         public string? Username { get; set; }
         public string? Email { get; set; }

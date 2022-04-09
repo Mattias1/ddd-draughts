@@ -7,7 +7,7 @@ using System.Linq;
 
 namespace Draughts.Repositories.InMemory;
 
-public class InMemoryUserRepository : InMemoryRepository<User, UserId>, IUserRepository {
+public sealed class InMemoryUserRepository : InMemoryRepository<User, UserId>, IUserRepository {
     private readonly IUnitOfWork _unitOfWork;
 
     public InMemoryUserRepository(IUnitOfWork unitOfWork) {

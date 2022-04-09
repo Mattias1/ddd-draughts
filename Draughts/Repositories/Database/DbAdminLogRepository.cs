@@ -5,7 +5,7 @@ using System;
 
 namespace Draughts.Repositories.Database;
 
-public class DbAdminLogRepository : DbRepository<AdminLog, AdminLogId, DbAdminLog>, IAdminLogRepository {
+public sealed class DbAdminLogRepository : DbRepository<AdminLog, AdminLogId, DbAdminLog>, IAdminLogRepository {
     private readonly IUnitOfWork _unitOfWork;
 
     public DbAdminLogRepository(IUnitOfWork unitOfWork) {

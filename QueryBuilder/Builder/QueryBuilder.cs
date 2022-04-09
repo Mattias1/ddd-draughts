@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace SqlQueryBuilder.Builder;
 
-public partial class QueryBuilder : IQueryBuilderBase {
+public sealed partial class QueryBuilder : IQueryBuilderBase {
     public delegate IQueryBuilder SubQueryFunc(IInitialQueryBuilder builder);
     public delegate IQueryBuilder SubWhereFunc(IQueryBuilder builder);
 
@@ -128,4 +128,4 @@ public partial class QueryBuilder : IQueryBuilderBase {
     }
 }
 
-public partial class QueryBuilder : ICompleteQueryBuilder { }
+public sealed partial class QueryBuilder : ICompleteQueryBuilder { }

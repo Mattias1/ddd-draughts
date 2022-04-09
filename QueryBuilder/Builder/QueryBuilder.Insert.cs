@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace SqlQueryBuilder.Builder;
 
-public partial class QueryBuilder : IInsertQueryBuilder {
+public sealed partial class QueryBuilder : IInsertQueryBuilder {
     public IInsertQueryBuilder Columns(params string[] columns) {
         foreach (string c in columns) {
             _query.InsertColumns.Add(new Column(c));

@@ -1,11 +1,10 @@
 using MySql.Data.MySqlClient;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace SqlQueryBuilder.Options;
 
-public class MySqlFlavor : ISqlFlavor {
+public sealed class MySqlFlavor : ISqlFlavor {
     private readonly MySqlConnection _connection;
 
     public MySqlFlavor(string server, string user, string password, string database)

@@ -6,7 +6,7 @@ using static SqlQueryBuilder.Model.SetColumn;
 
 namespace SqlQueryBuilder.Builder;
 
-public partial class QueryBuilder : IUpdateQueryBuilder {
+public sealed partial class QueryBuilder : IUpdateQueryBuilder {
     public IUpdateQueryBuilder SetColumn(string column, object? value) {
         _query.UpdateValues.Add(new SetColumn(column, value));
         return this;

@@ -3,7 +3,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Draughts.Application.Shared.Middleware;
 
-public class ExceptionLoggerActionFilter : IExceptionFilter {
+public sealed class ExceptionLoggerActionFilter : IExceptionFilter {
     private readonly ILogger<ExceptionLoggerActionFilter> _log;
 
     public ExceptionLoggerActionFilter(ILogger<ExceptionLoggerActionFilter> log) {

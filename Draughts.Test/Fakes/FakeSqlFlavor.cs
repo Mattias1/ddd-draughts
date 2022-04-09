@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace Draughts.Test.Fakes;
 
-public class FakeSqlFlavor : ISqlFlavor {
+public sealed class FakeSqlFlavor : ISqlFlavor {
     // --- Implementation of the fake ---
     public List<string> ExecutedQueries { get; } = new List<string>();
 

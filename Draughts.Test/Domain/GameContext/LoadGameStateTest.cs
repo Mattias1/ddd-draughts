@@ -6,7 +6,7 @@ using Xunit;
 
 namespace Draughts.Test.Domain.GameContext;
 
-public class LoadGameStateTest {
+public sealed class LoadGameStateTest {
     [Fact]
     public void LoadGameFromMoves() {
         // |_|4|_|4|_|4|

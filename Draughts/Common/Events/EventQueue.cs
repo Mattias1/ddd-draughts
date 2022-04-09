@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace Draughts.Common.Events;
 
-public class EventQueue {
+public sealed class EventQueue {
     private readonly IClock _clock;
     private readonly IReadOnlyList<IDomainEventHandler> _eventHandlers;
     private readonly Queue<DomainEvent> _queue;

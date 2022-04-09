@@ -8,7 +8,7 @@ using System.Linq.Expressions;
 
 namespace Draughts.Domain.AuthContext.Specifications;
 
-public class RoleIdsSpecification : Specification<Role> {
+public sealed class RoleIdsSpecification : Specification<Role> {
     private readonly RoleId[] _ids;
 
     public RoleIdsSpecification(IEnumerable<long> ids) : this(ids.Select(id => new RoleId(id)).ToArray()) { }

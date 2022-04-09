@@ -8,7 +8,7 @@ using System;
 
 namespace Draughts.Application.Auth;
 
-public class ModPanelRoleEventHandler : DomainEventHandler {
+public sealed class ModPanelRoleEventHandler : DomainEventHandler {
     private readonly IAdminLogRepository _adminLogRepository;
     private readonly IAuthUserRepository _authUserRepository;
     private readonly IClock _clock;

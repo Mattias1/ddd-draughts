@@ -3,7 +3,7 @@ using System.Diagnostics.CodeAnalysis;
 namespace Draughts.Domain.GameContext.Models;
 
 // Right now this class is mutuable because the BoardPosition is.
-public class Square {
+public sealed class Square {
     private Board _board;
     public SquareId Id { get; }
     public Piece Piece { get; internal set; }

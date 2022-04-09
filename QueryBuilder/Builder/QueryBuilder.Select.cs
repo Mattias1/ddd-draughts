@@ -2,7 +2,7 @@ using SqlQueryBuilder.Model;
 
 namespace SqlQueryBuilder.Builder;
 
-public partial class QueryBuilder : ISelectQueryBuilder, IGroupByQueryBuilder {
+public sealed partial class QueryBuilder : ISelectQueryBuilder, IGroupByQueryBuilder {
     public ISelectQueryBuilder ColumnAs(string column, string alias) => AddSelectColumn(null, column, alias);
     public ISelectQueryBuilder Column(string column) => AddSelectColumn(null, column);
 

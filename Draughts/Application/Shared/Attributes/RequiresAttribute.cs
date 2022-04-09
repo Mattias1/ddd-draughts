@@ -10,7 +10,7 @@ namespace Draughts.Application.Shared.Attributes;
 /// Marks the permissions that are required for this route.
 /// </summary>
 [AttributeUsage(AttributeTargets.Method | AttributeTargets.Class)]
-public class RequiresAttribute : ActionFilterAttribute {
+public sealed class RequiresAttribute : ActionFilterAttribute {
     public IReadOnlyList<Permission> Permissions { get; }
 
     public RequiresAttribute(params string[] permissions) {

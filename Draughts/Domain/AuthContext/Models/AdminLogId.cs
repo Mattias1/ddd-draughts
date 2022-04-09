@@ -3,7 +3,7 @@ using Draughts.Common.OoConcepts;
 
 namespace Draughts.Domain.AuthContext.Models;
 
-public class AdminLogId : IdValueObject<AdminLogId> {
+public sealed class AdminLogId : IdValueObject<AdminLogId> {
     public override long Value { get; }
 
     public AdminLogId(long id) {

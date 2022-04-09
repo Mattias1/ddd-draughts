@@ -7,7 +7,7 @@ using System.Linq;
 
 namespace Draughts.Repositories.InMemory;
 
-public class InMemoryVotingRepository : IVotingRepository {
+public sealed class InMemoryVotingRepository : IVotingRepository {
     private readonly IUnitOfWork _unitOfWork;
 
     public InMemoryVotingRepository(IUnitOfWork unitOfWork) {
@@ -34,7 +34,7 @@ public class InMemoryVotingRepository : IVotingRepository {
         votes.ForEach(v => _unitOfWork.Store<DbVote>(v, tran => GameDatabase.Temp(tran).VotesTable));
     }
 
-    protected IList<Voting> GetBaseQuery() {
+    private IList<Voting> GetBaseQuery() {
         return DbVote.ToDomainModels(GameDatabase.Get.VotesTable).ToList();
     }
 }

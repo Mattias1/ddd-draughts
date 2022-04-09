@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace Draughts.Domain.AuthContext.Models;
 
-public class Role : Entity<Role, RoleId> {
+public sealed class Role : Entity<Role, RoleId> {
     public const string ADMIN_ROLENAME = "Admin";
     public const string PENDING_REGISTRATION_ROLENAME = "Pending registration";
     public const string REGISTERED_USER_ROLENAME = "Registered user";

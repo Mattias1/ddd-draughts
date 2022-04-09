@@ -1,6 +1,5 @@
 using Draughts.Repositories.Database;
 using Draughts.Repositories.InMemory;
-using System;
 using System.Collections.Generic;
 
 namespace Draughts.Repositories;
@@ -9,7 +8,7 @@ namespace Draughts.Repositories;
 /// A thread safe id generator that doesn't need a database connection most of the time.
 /// Should be injected as singleton.
 /// </summary>
-public class HiLoIdGenerator : IIdGenerator {
+public sealed class HiLoIdGenerator : IIdGenerator {
     private readonly Dictionary<string, BaseHiLoGenerator> _generators;
 
     private HiLoIdGenerator(BaseHiLoGenerator miscGenerator,

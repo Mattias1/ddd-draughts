@@ -2,13 +2,12 @@ using FluentAssertions;
 using NodaTime;
 using SqlQueryBuilder.Common;
 using SqlQueryBuilder.Options;
-using System;
 using System.Collections.Generic;
 using Xunit;
 
 namespace SqlQueryBuilder.Test.Common;
 
-public class ComponentModelHelperTest {
+public sealed class ComponentModelHelperTest {
     private LocalDateTime TestDateTime => new LocalDateTime(2020, 02, 29, 12, 42, 11);
     private string TestDateTimeString => "2020-02-29 12:42:11";
 
@@ -138,7 +137,7 @@ public class ComponentModelHelperTest {
         obj.DateTime.Should().Be(TestDateTime);
     }
 
-    public class TestObject {
+    public sealed class TestObject {
         public long Id { get; set; }
         public string? Name { get; set; }
         public int? Number { get; set; }

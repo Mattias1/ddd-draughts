@@ -3,13 +3,12 @@ using Draughts.Domain.AuthContext.Models;
 using Draughts.Domain.UserContext.Models;
 using Draughts.Test.TestHelpers;
 using FluentAssertions;
-using NodaTime;
 using NodaTime.Testing;
 using Xunit;
 
 namespace Draughts.Test.Common;
 
-public class JsonWebTokenTest {
+public sealed class JsonWebTokenTest {
     public static readonly UserId UserId = new UserId(1);
     public static readonly string JWT_STRING = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJEcmF1Z2h0cyIsImV" +
         "4cCI6MTU3OTI2MjQwMCwidXNyIjoxLCJ1bmEiOiJVc2VyIiwicm9sIjpbMl19.EifVPA51buvZt8mveaQ9lTWAPawk0qdGz6LIM1nolhM";

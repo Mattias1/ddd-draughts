@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace Draughts.Domain.GameContext.Models;
 
-public class Turn : ValueObject<Turn> {
+public sealed class Turn : ValueObject<Turn> {
     public Player Player { get; }
     public ZonedDateTime CreatedAt { get; }
     public ZonedDateTime ExpiresAt { get; }

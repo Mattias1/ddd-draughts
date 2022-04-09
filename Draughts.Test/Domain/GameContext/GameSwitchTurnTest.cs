@@ -11,7 +11,7 @@ using Xunit;
 
 namespace Draughts.Test.Domain.GameContext;
 
-public class GameSwitchTurnTest {
+public sealed class GameSwitchTurnTest {
     private readonly IClock _fakeClock;
 
     public GameSwitchTurnTest() {

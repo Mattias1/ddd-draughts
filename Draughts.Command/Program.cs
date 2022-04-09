@@ -7,7 +7,7 @@ using System;
 
 namespace Draughts.Command;
 
-class Program {
+sealed class Program {
     private const int EXIT_CODE_SUCCESS = 0;
     private const int EXIT_CODE_FAILURE = -1;
 

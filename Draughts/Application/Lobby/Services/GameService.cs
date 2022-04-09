@@ -10,7 +10,7 @@ using static Draughts.Domain.GameContext.Services.GameFactory;
 namespace Draughts.Application.Lobby.Services;
 
 // Note: This name is way to generic. In the future I'll put everything in here. So I'll rename it then :)
-public class GameService {
+public sealed class GameService {
     private readonly GameFactory _gameFactory;
     private readonly IGameRepository _gameRepository;
     private readonly IGameStateRepository _gameStateRepository;

@@ -9,7 +9,7 @@ using Xunit;
 
 namespace SqlQueryBuilder.Test.Builder;
 
-public class BasicQueriesTest {
+public sealed class BasicQueriesTest {
     private IInitialQueryBuilder Query() => QueryBuilder.Init(new QueryBuilderOptions(new FakeSqlFlavor()) {
         DontParameterizeNumbers = false
     });
@@ -221,7 +221,7 @@ public class BasicQueriesTest {
         func.Should().Throw<PotentialSqlInjectionException>();
     }
 
-    public class TestUserTable {
+    public sealed class TestUserTable {
         public string? Username { get; set; }
         public int? Rating { get; set; }
     }

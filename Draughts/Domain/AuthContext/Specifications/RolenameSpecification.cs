@@ -6,7 +6,7 @@ using System.Linq.Expressions;
 
 namespace Draughts.Domain.AuthContext.Specifications;
 
-public class RolenameSpecification : Specification<Role> {
+public sealed class RolenameSpecification : Specification<Role> {
     private readonly string _rolename;
 
     public RolenameSpecification(string rolename) => _rolename = rolename;

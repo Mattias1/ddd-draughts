@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Draughts.Application.Documentation;
 
-public class DocumentationController : BaseController {
+public sealed class DocumentationController : BaseController {
     [HttpGet("/docs"), GuestRoute]
     public IActionResult DocsShortcut() => RedirectPermanent("/documentation");
 

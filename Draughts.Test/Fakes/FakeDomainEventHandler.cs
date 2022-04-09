@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Draughts.Test.Fakes;
 
-public class FakeDomainEventHandler : IDomainEventHandler {
+public sealed class FakeDomainEventHandler : IDomainEventHandler {
     public List<DomainEvent> HandledEvents { get; } = new List<DomainEvent>();
 
     public bool CanHandle(DomainEvent evt) => true;

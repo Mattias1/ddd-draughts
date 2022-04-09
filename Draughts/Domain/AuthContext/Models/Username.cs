@@ -5,7 +5,7 @@ using System.Text.RegularExpressions;
 
 namespace Draughts.Domain.AuthContext.Models;
 
-public class Username : StringValueObject<Username> {
+public sealed class Username : StringValueObject<Username> {
     public const string ADMIN = "admin";
     public const string MATTY = "Matty";
     public const int MAX_LENGTH = 25;

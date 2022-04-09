@@ -10,7 +10,7 @@ using System.IO;
 
 namespace Draughts;
 
-public class Program {
+public sealed class Program {
     private static readonly object _lock = new object();
     private volatile static bool _logIsConfigured = false;
 

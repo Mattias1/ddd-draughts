@@ -5,7 +5,7 @@ using Draughts.Repositories.Transaction;
 
 namespace Draughts.Application.Auth;
 
-public class FinishedGameEventHandler : DomainEventHandler<GameFinished> {
+public sealed class FinishedGameEventHandler : DomainEventHandler<GameFinished> {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IUserRepository _userRepository;
 

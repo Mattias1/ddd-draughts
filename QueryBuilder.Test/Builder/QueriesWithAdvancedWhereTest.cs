@@ -7,7 +7,7 @@ using Xunit;
 
 namespace SqlQueryBuilder.Test.Builder;
 
-public class QueriesWithAdvancedWhereTest {
+public sealed class QueriesWithAdvancedWhereTest {
     private IInitialQueryBuilder Query() => QueryBuilder.Init(new QueryBuilderOptions(new FakeSqlFlavor()) {
         DontParameterizeNumbers = false,
         WrapFieldNames = false

@@ -6,7 +6,7 @@ using System;
 
 namespace Draughts.Domain.AuthContext.Events;
 
-public class RoleCreated : DomainEvent {
+public sealed class RoleCreated : DomainEvent {
     public const string TYPE = "role.created";
 
     public RoleId RoleId { get; }

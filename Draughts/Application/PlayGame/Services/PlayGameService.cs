@@ -10,7 +10,7 @@ using NodaTime;
 
 namespace Draughts.Application.PlayGame.Services;
 
-public class PlayGameService {
+public sealed class PlayGameService {
     private readonly IClock _clock;
     private readonly IGameRepository _gameRepository;
     private readonly IGameStateRepository _gameStateRepository;

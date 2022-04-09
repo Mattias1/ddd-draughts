@@ -8,7 +8,7 @@ using System.Linq;
 
 namespace Draughts.Test.TestHelpers;
 
-public class GameTestHelper {
+public sealed class GameTestHelper {
     private static readonly ZonedDateTime Feb29 = FakeClock.FromUtc(2020, 02, 29).UtcNow();
 
     public static GameBuilder FinishedMiniGame() => FinishedMiniGame(Color.Black);
@@ -58,7 +58,7 @@ public class GameTestHelper {
     }
 
 
-    public class GameBuilder {
+    public sealed class GameBuilder {
         private GameId? _id;
         private List<Player> _players = new List<Player>(2);
         private Turn? _turn;

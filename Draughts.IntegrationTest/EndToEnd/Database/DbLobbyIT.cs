@@ -5,7 +5,7 @@ using Xunit;
 namespace Draughts.IntegrationTest.EndToEnd.Database;
 
 [Collection("LobbyIT")]
-public class DbLobbyIT {
+public sealed class DbLobbyIT {
     private readonly DbApiTester _apiTester;
     private readonly LobbyTesterApi<DbApiTester> _lobbyApi;
 

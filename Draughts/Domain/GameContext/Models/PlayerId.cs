@@ -3,7 +3,7 @@ using Draughts.Common.OoConcepts;
 
 namespace Draughts.Domain.GameContext.Models;
 
-public class PlayerId : IdValueObject<PlayerId> {
+public sealed class PlayerId : IdValueObject<PlayerId> {
     public override long Value { get; }
 
     public PlayerId(long id) {

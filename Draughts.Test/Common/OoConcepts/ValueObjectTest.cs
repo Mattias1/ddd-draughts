@@ -5,7 +5,7 @@ using Xunit;
 
 namespace Draughts.Test.Common.OoConcepts;
 
-public class ValueObjectTest {
+public sealed class ValueObjectTest {
     [Fact]
     public void EqualWhenComponentsAreEqual() {
         var left = new TestValueObject(1, "caseless", "ABcd");
@@ -58,7 +58,7 @@ public class ValueObjectTest {
         (left != right).Should().BeFalse();
     }
 
-    public class TestValueObject : ValueObject<TestValueObject> {
+    public sealed class TestValueObject : ValueObject<TestValueObject> {
         public int Number { get; }
         public string CaseInsensitiveString { get; }
         public string CaseSensitiveString { get; }
@@ -76,7 +76,7 @@ public class ValueObjectTest {
         }
     }
 
-    public class TestId : IdValueObject<TestId> {
+    public sealed class TestId : IdValueObject<TestId> {
         public override long Value { get; }
 
         public TestId(long id) => Value = id;

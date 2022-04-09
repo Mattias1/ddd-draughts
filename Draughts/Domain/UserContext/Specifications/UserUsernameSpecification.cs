@@ -6,7 +6,7 @@ using System.Linq.Expressions;
 
 namespace Draughts.Domain.UserContext.Specifications;
 
-public class UserUsernameSpecification : Specification<User> {
+public sealed class UserUsernameSpecification : Specification<User> {
     private readonly string? _username;
 
     public UserUsernameSpecification(string? username) => _username = username;

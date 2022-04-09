@@ -2,7 +2,7 @@ using SqlQueryBuilder.Model;
 
 namespace SqlQueryBuilder.Builder;
 
-public partial class QueryBuilder : IJoinQueryBuilder {
+public sealed partial class QueryBuilder : IJoinQueryBuilder {
     public IQueryBuilder Join(string table, string leftColumn, string rightColumn) {
         return JoinBase("join", table, leftColumn, rightColumn);
     }

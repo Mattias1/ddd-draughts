@@ -8,7 +8,7 @@ using System.Linq;
 
 namespace SqlQueryBuilder.Options;
 
-public class SqlBuilderResultRow : IReadOnlyDictionary<string, object?> {
+public sealed class SqlBuilderResultRow : IReadOnlyDictionary<string, object?> {
     private Dictionary<string, Dictionary<string, object?>> _results;
 
     protected SqlBuilderResultRow() {

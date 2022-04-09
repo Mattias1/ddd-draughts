@@ -6,7 +6,7 @@ using System;
 
 namespace Draughts.Domain.AuthContext.Events;
 
-public class UserLostRole : DomainEvent {
+public sealed class UserLostRole : DomainEvent {
     public const string TYPE = "role.lost";
 
     public RoleId RoleId { get; }

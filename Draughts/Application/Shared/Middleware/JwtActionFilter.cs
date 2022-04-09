@@ -14,7 +14,7 @@ using System.Net;
 
 namespace Draughts.Application.Shared.Middleware;
 
-public class JwtActionFilter : IAuthorizationFilter {
+public sealed class JwtActionFilter : IAuthorizationFilter {
     private readonly IClock _clock;
     private readonly AuthService _authService;
     private readonly IUnitOfWork _unitOfWork;

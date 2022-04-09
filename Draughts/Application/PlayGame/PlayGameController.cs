@@ -14,7 +14,7 @@ using static Draughts.Domain.AuthContext.Models.Permission;
 
 namespace Draughts.Application.PlayGame;
 
-public class PlayGameController : BaseController {
+public sealed class PlayGameController : BaseController {
     private readonly IClock _clock;
     private readonly PlayGameService _playGameService;
     private readonly IUnitOfWork _unitOfWork;

@@ -8,7 +8,7 @@ using System.Linq;
 
 namespace Draughts.Repositories.InMemory;
 
-public class InMemoryAuthUserRepository : InMemoryRepository<AuthUser, UserId>, IAuthUserRepository {
+public sealed class InMemoryAuthUserRepository : InMemoryRepository<AuthUser, UserId>, IAuthUserRepository {
     private readonly IRoleRepository _roleRepository;
     private readonly IUnitOfWork _unitOfWork;
 

@@ -4,7 +4,7 @@ using Xunit;
 
 namespace Draughts.Test.Common.OoConcepts;
 
-public class StringValueObjectTest {
+public sealed class StringValueObjectTest {
     [Fact]
     public void EqualWhenValuesAreEqual() {
         var left = new TestString("Howdy?");
@@ -75,7 +75,7 @@ public class StringValueObjectTest {
         (left != right).Should().BeFalse();
     }
 
-    public class TestString : StringValueObject<TestString> {
+    public sealed class TestString : StringValueObject<TestString> {
         public override string Value { get; }
 
         public TestString(string value) => Value = value;

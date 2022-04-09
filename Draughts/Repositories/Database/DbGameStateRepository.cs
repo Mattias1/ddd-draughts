@@ -4,7 +4,7 @@ using SqlQueryBuilder.Builder;
 
 namespace Draughts.Repositories.Database;
 
-public class DbGameStateRepository : DbRepository<GameState, GameId, DbGameState>, IGameStateRepository {
+public sealed class DbGameStateRepository : DbRepository<GameState, GameId, DbGameState>, IGameStateRepository {
     private readonly IUnitOfWork _unitOfWork;
 
     public DbGameStateRepository(IUnitOfWork unitOfWork) {

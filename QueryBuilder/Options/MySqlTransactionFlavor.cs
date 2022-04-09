@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace SqlQueryBuilder.Options;
 
-public class MySqlTransactionFlavor : ISqlTransactionFlavor {
+public sealed class MySqlTransactionFlavor : ISqlTransactionFlavor {
     private readonly MySqlConnection _connection;
     private readonly MySqlTransaction _transaction;
 

@@ -9,7 +9,7 @@ using static Draughts.Domain.AuthContext.Models.Permission;
 
 namespace Draughts.Test.TestHelpers;
 
-public class RoleTestHelper {
+public sealed class RoleTestHelper {
     private static readonly ZonedDateTime Feb29 = FakeClock.FromUtc(2020, 02, 29).UtcNow();
 
     public static RoleBuilder PendingRegistration() {
@@ -37,7 +37,7 @@ public class RoleTestHelper {
     }
 
 
-    public class RoleBuilder {
+    public sealed class RoleBuilder {
         private RoleId? _id;
         private string? _rolename;
         private ZonedDateTime? _createdAt;

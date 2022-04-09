@@ -7,7 +7,7 @@ using System.Linq;
 
 namespace Draughts.Domain.AuthContext.Models;
 
-public class AuthUser : Entity<AuthUser, UserId> {
+public sealed class AuthUser : Entity<AuthUser, UserId> {
     public static IReadOnlyList<string> PROTECTED_USERS => new[] { Username.ADMIN, Username.MATTY };
 
     private readonly List<RoleId> _rolesIds;

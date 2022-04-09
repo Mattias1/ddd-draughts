@@ -10,7 +10,7 @@ using System.Threading;
 
 namespace Draughts.Repositories.Transaction;
 
-public class DbUnitOfWork : IUnitOfWork {
+public sealed class DbUnitOfWork : IUnitOfWork {
     private readonly IClock _clock;
     private readonly IIdGenerator _idGenerator;
 
@@ -108,7 +108,7 @@ public class DbUnitOfWork : IUnitOfWork {
         return _currentTransaction.Value.Query(domain);
     }
 
-    public class Transaction : ITransaction {
+    public sealed class Transaction : ITransaction {
         private List<DomainEvent> _raisedEvents;
         private readonly TransactionDomain _transactionDomain;
         private ISqlTransactionFlavor? _transactionFlavor;

@@ -6,7 +6,7 @@ using System.Linq.Expressions;
 
 namespace Draughts.Domain.AuthContext.Specifications;
 
-public class EmailSpecification : Specification<AuthUser> {
+public sealed class EmailSpecification : Specification<AuthUser> {
     private readonly string? _email;
 
     public EmailSpecification(string? email) => _email = email;

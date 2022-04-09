@@ -4,7 +4,7 @@ using System.Collections.Generic;
 namespace Draughts.Repositories.Transaction;
 
 // Sort of inverted visitor pattern?
-public class PairTableFunctions {
+public sealed class PairTableFunctions {
     private static readonly object _lock = new object();
 
     public interface IPairTableFunction {

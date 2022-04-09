@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Draughts.Domain.AuthContext.Models;
 
-public class Permission : StringValueObject<Permission> {
+public sealed class Permission : StringValueObject<Permission> {
     public override string Value { get; }
 
     public Permission(string permissionname) => Value = permissionname.ToLower();

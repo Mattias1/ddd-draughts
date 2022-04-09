@@ -10,7 +10,7 @@ using System.Linq;
 
 namespace Draughts.Command.Seeders;
 
-public class DummyDataSeeder {
+public sealed class DummyDataSeeder {
     private readonly IAuthUserRepository _authUserRepository;
     private readonly IGameRepository _gameRepository;
     private readonly IGameStateRepository _gameStateRepository;

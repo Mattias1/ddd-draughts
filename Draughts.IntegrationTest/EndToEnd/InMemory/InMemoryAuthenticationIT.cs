@@ -5,7 +5,7 @@ using Xunit;
 namespace Draughts.IntegrationTest.EndToEnd.InMemory;
 
 [Collection("AuthenticationIT")]
-public class InMemoryAuthenticationIT {
+public sealed class InMemoryAuthenticationIT {
     private readonly InMemoryApiTester _apiTester;
     private readonly AuthenticationTesterApi<InMemoryApiTester> _authenticationApi;
 

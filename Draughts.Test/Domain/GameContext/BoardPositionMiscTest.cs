@@ -5,7 +5,7 @@ using Xunit;
 
 namespace Draughts.Test.Domain.GameContext;
 
-public class BoardPositionMiscTest {
+public sealed class BoardPositionMiscTest {
     [Fact]
     public void InitialBoard4x4() {
         // |_|4|_|4|

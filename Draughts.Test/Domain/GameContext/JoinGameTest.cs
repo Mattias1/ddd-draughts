@@ -9,7 +9,7 @@ using Xunit;
 
 namespace Draughts.Test.Domain.GameContext;
 
-public class JoinGameTest {
+public sealed class JoinGameTest {
     FakeClock _fakeClock = FakeClock.FromUtc(2020, 02, 29);
 
     [Fact]

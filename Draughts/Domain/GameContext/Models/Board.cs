@@ -8,7 +8,7 @@ using System.Text;
 namespace Draughts.Domain.GameContext.Models;
 
 // This class is like a mutuable value object. It could be immutable, but that'd be not very performant. Maybe. Hmmm. :/
-public class Board : IEquatable<Board> {
+public sealed class Board : IEquatable<Board> {
     private readonly Square[] _squares;
     public int Size { get; }
 

@@ -1,5 +1,4 @@
 using Draughts.Domain.AuthContext.Models;
-using Draughts.Domain.AuthContext.Specifications;
 using Draughts.Repositories.Database;
 using Draughts.Repositories.Transaction;
 using System;
@@ -8,7 +7,7 @@ using System.Linq;
 
 namespace Draughts.Repositories.InMemory;
 
-public class InMemoryRoleRepository : InMemoryRepository<Role, RoleId>, IRoleRepository {
+public sealed class InMemoryRoleRepository : InMemoryRepository<Role, RoleId>, IRoleRepository {
     private readonly IUnitOfWork _unitOfWork;
 
     public InMemoryRoleRepository(IUnitOfWork unitOfWork) {

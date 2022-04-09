@@ -16,7 +16,7 @@ namespace Draughts.Repositories.InMemory;
 
 public interface IInMemoryDatabase { }
 
-public class UserDatabase : IInMemoryDatabase {
+public sealed class UserDatabase : IInMemoryDatabase {
     public const long AdminId = 1;
     public const long UserId = 2;
     public const long TheColonelId = 3;
@@ -99,7 +99,7 @@ public class UserDatabase : IInMemoryDatabase {
     }
 }
 
-public class AuthDatabase : IInMemoryDatabase {
+public sealed class AuthDatabase : IInMemoryDatabase {
     private static AuthDatabase? _instance;
     public static AuthDatabase Get => _instance ??= Initialize();
 
@@ -196,7 +196,7 @@ public class AuthDatabase : IInMemoryDatabase {
     }
 }
 
-public class GameDatabase : IInMemoryDatabase {
+public sealed class GameDatabase : IInMemoryDatabase {
     private static GameDatabase? _instance;
     public static GameDatabase Get => _instance ??= Initialize();
 
@@ -290,7 +290,7 @@ public class GameDatabase : IInMemoryDatabase {
     }
 }
 
-public class MiscDatabase : IInMemoryDatabase {
+public sealed class MiscDatabase : IInMemoryDatabase {
     private static MiscDatabase? _instance;
     public static MiscDatabase Get => _instance ??= Initialize();
 

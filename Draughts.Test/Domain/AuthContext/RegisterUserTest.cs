@@ -9,7 +9,7 @@ using Xunit;
 
 namespace Draughts.Test.Domain.AuthContext;
 
-public class RegisterUserTest {
+public sealed class RegisterUserTest {
     private static readonly Role PendingRole = RoleTestHelper.PendingRegistration().Build();
     private static readonly Role RegisteredRole = RoleTestHelper.RegisteredUser().Build();
 

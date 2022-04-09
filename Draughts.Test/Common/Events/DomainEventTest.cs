@@ -10,7 +10,7 @@ using Xunit;
 
 namespace Draughts.Test.Common.Events;
 
-public class DomainEventTest {
+public sealed class DomainEventTest {
     private readonly IClock _clock;
 
     public DomainEventTest() {

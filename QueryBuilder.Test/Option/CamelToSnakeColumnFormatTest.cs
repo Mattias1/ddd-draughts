@@ -4,7 +4,7 @@ using Xunit;
 
 namespace SqlQueryBuilder.Test.Option;
 
-public class CamelToSnakeColumnFormatTest {
+public sealed class CamelToSnakeColumnFormatTest {
     private readonly IColumnFormat _columnFormat = new CamelToSnakeColumnFormat();
 
     [Theory]

@@ -5,7 +5,7 @@ using Xunit;
 namespace Draughts.IntegrationTest.EndToEnd.InMemory;
 
 [Collection("LobbyIT")]
-public class InMemoryLobbyIT {
+public sealed class InMemoryLobbyIT {
     private readonly InMemoryApiTester _apiTester;
     private readonly LobbyTesterApi<InMemoryApiTester> _lobbyApi;
 

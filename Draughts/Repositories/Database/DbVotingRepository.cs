@@ -7,7 +7,7 @@ using System.Linq;
 
 namespace Draughts.Repositories.Database;
 
-public class DbVotingRepository : IVotingRepository {
+public sealed class DbVotingRepository : IVotingRepository {
     private readonly IUnitOfWork _unitOfWork;
 
     private string TableName => "vote";

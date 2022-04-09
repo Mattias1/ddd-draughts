@@ -3,7 +3,7 @@ using Draughts.Common.OoConcepts;
 
 namespace Draughts.Domain.GameContext.Models;
 
-public class SquareId : IntValueObject<SquareId> {
+public sealed class SquareId : IntValueObject<SquareId> {
     public override int Value { get; }
 
     public SquareId(int? value) {

@@ -34,7 +34,7 @@ public class Move : ValueObject<Move> {
     }
 }
 
-public class PossibleMove : Move {
+public sealed class PossibleMove : Move {
     public bool MoreCapturesAvailable;
     public SquareId? Victim { get; }
 

@@ -8,7 +8,7 @@ using System.Text;
 
 namespace Draughts.Domain.AuthContext.Models;
 
-public class PasswordHash : ValueObject<PasswordHash> {
+public sealed class PasswordHash : ValueObject<PasswordHash> {
 #if DEBUG
     private const int MINIMUM_LENGTH = 1;
 #else

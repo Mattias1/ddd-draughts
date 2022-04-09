@@ -6,12 +6,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using Xunit;
-using static Draughts.Common.OoConcepts.Specification<int>;
 using static Draughts.Repositories.Database.JoinEnum;
 
 namespace Draughts.Test.Common.OoConcepts;
 
-public class SpecificationTest {
+public sealed class SpecificationTest {
     private IInitialQueryBuilder Query() => QueryBuilder.Init(new FakeSqlFlavor());
 
     [Theory]
@@ -107,7 +106,7 @@ public class SpecificationTest {
         joins.Should().BeEquivalentTo(new[] { PossibleJoins.AuthUserRole });
     }
 
-    private class PositiveSignSpecification : Specification<int> {
+    private sealed class PositiveSignSpecification : Specification<int> {
         private readonly int _sign;
         public PositiveSignSpecification(int sign) => _sign = sign;
         public override Expression<Func<int, bool>> ToExpression() => i => i * _sign > 0;
@@ -121,7 +120,7 @@ public class SpecificationTest {
         }
     }
 
-    private class AuthUserRoleJoinSpecification : Specification<int> {
+    private sealed class AuthUserRoleJoinSpecification : Specification<int> {
         public override Expression<Func<int, bool>> ToExpression() => i => i == 0;
         public override void ApplyQueryBuilder(IQueryBuilder builder, QueryWhereType whereType) {
             ApplyColumnWhere(builder, whereType, "column-aur", q => q.Is(0));
@@ -131,7 +130,7 @@ public class SpecificationTest {
         }
     }
 
-    private class RoleJoinSpecification : Specification<int> {
+    private sealed class RoleJoinSpecification : Specification<int> {
         public override Expression<Func<int, bool>> ToExpression() => i => i == 0;
         public override void ApplyQueryBuilder(IQueryBuilder builder, QueryWhereType whereType) {
             ApplyColumnWhere(builder, whereType, "column-r", q => q.Is(0));

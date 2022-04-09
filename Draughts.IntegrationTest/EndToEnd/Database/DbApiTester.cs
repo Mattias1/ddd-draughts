@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Hosting;
 
 namespace Draughts.IntegrationTest.EndToEnd.Database;
 
-public class DbApiTester : BaseApiTester {
+public sealed class DbApiTester : BaseApiTester {
     public override IIdGenerator IdGenerator { get; }
     public override IUnitOfWork UnitOfWork { get; }
     public override IRoleRepository RoleRepository { get; }

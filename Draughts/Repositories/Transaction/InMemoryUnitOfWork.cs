@@ -10,7 +10,7 @@ using static Draughts.Repositories.Transaction.TransactionDomain;
 
 namespace Draughts.Repositories.Transaction;
 
-public class InMemoryUnitOfWork : IUnitOfWork {
+public sealed class InMemoryUnitOfWork : IUnitOfWork {
     private readonly IClock _clock;
     private readonly IIdGenerator _idGenerator;
 
@@ -119,7 +119,7 @@ public class InMemoryUnitOfWork : IUnitOfWork {
         throw new InvalidOperationException("Use the Store method, not queries.");
     }
 
-    public class Transaction : ITransaction {
+    public sealed class Transaction : ITransaction {
         private List<DomainEvent> _committedEvents;
         private readonly TransactionDomain _transactionDomain;
 

@@ -8,7 +8,7 @@ using System.Linq;
 
 namespace Draughts.Domain.AuthContext.Events;
 
-public class GameFinished : DomainEvent {
+public sealed class GameFinished : DomainEvent {
     public const string TYPE = "game.finished";
 
     public GameId GameId { get; }

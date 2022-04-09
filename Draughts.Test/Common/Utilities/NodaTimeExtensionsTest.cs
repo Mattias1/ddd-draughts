@@ -6,7 +6,7 @@ using Xunit;
 
 namespace Draughts.Test.Common.Utilities;
 
-public class NodaTimeExtensionsTest {
+public sealed class NodaTimeExtensionsTest {
     [Fact]
     public void TestUtcNow() {
         var clock = FakeClock.FromUtc(2020, 02, 29, 23, 59, 18);

@@ -9,7 +9,7 @@ using Xunit;
 
 namespace Draughts.Test.Domain.GameContext;
 
-public class GameModToolsTest {
+public sealed class GameModToolsTest {
     private const int TWO_DAYS = 2 * 24 * 60 * 60;
     private FakeClock _fakeClock = FakeClock.FromUtc(2020, 02, 29);
 

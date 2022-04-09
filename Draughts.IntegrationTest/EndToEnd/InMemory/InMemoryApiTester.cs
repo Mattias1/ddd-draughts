@@ -11,7 +11,7 @@ using static Draughts.Domain.AuthContext.Models.Permission;
 
 namespace Draughts.IntegrationTest.EndToEnd.InMemory;
 
-public class InMemoryApiTester : BaseApiTester {
+public sealed class InMemoryApiTester : BaseApiTester {
     public override IIdGenerator IdGenerator { get; }
     public override IUnitOfWork UnitOfWork { get; }
     public override IRoleRepository RoleRepository { get; }

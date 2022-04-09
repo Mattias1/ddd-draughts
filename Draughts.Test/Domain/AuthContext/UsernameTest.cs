@@ -6,7 +6,7 @@ using Xunit;
 
 namespace Draughts.Test.Domain.AuthContext;
 
-public class UsernameTest {
+public sealed class UsernameTest {
     [Fact]
     public void NameCanBeAlphaDash() {
         var name = new Username("Matty-_-1337");

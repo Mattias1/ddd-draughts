@@ -7,7 +7,7 @@ using Xunit;
 
 namespace Draughts.Test.Domain.GameContext;
 
-public class BoardPositionMoveTest {
+public sealed class BoardPositionMoveTest {
     private readonly GameSettings _settings = GameSettings.International;
 
     [Fact]

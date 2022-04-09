@@ -9,7 +9,7 @@ using static Draughts.Repositories.Database.JoinEnum;
 
 namespace Draughts.Domain.AuthContext.Specifications;
 
-public class UsersWithRoleSpecification : Specification<AuthUser> {
+public sealed class UsersWithRoleSpecification : Specification<AuthUser> {
     private readonly RoleId _roleId;
 
     public UsersWithRoleSpecification(RoleId roleId) => _roleId = roleId;

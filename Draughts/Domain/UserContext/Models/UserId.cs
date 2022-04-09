@@ -3,7 +3,7 @@ using Draughts.Common.OoConcepts;
 
 namespace Draughts.Domain.UserContext.Models;
 
-public class UserId : IdValueObject<UserId> {
+public sealed class UserId : IdValueObject<UserId> {
     public override long Value { get; }
 
     public UserId(long id) {

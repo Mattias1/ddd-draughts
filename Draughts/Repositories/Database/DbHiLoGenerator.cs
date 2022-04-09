@@ -4,7 +4,7 @@ namespace Draughts.Repositories.Database;
 /// A thread safe id generator that doesn't need a database connection most of the time.
 /// Should be injected as singleton.
 /// </summary>
-public class DbHiLoGenerator : BaseHiLoGenerator {
+public sealed class DbHiLoGenerator : BaseHiLoGenerator {
     public DbHiLoGenerator(int intervalSize, string subject) : base(intervalSize, subject) { }
 
     protected override HiLoInterval ReserveNewInterval() {

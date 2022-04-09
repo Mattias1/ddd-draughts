@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace Draughts.Domain.GameContext.Models;
 
-public class Color : ValueObject<Color> {
+public sealed class Color : ValueObject<Color> {
     private bool _isWhite;
 
     private Color(bool isWhite) {

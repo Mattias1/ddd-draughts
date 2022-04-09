@@ -7,7 +7,7 @@ using Xunit;
 
 namespace SqlQueryBuilder.Test.Common;
 
-public class DateTimeParserTest {
+public sealed class DateTimeParserTest {
     private LocalDateTime TestDateTime => new LocalDateTime(2020, 02, 29, 12, 42, 11);
     private DateTime TestSystemDateTime => new DateTime(2020, 02, 29, 12, 42, 11);
     private const string TestDateString = "2020-02-29";

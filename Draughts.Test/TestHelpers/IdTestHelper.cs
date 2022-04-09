@@ -13,13 +13,13 @@ public static class IdTestHelper {
 
     public static FakeIdGenerator BuildFakeGenerator() => new FakeIdGenerator();
 
-    public class FakeIdGenerator : IIdGenerator {
+    public sealed class FakeIdGenerator : IIdGenerator {
         private FakePool _pool = new FakePool();
         public IIdPool ReservePool() => _pool;
         public IIdPool ReservePool(int minimumSizeMisc, int minimumSizeGame, int minimumSizeUser) => ReservePool();
     }
 
-    public class FakePool : IIdPool {
+    public sealed class FakePool : IIdPool {
         private Dictionary<string, long> _availableIds = new Dictionary<string, long>(3) {
                 { DbIdGeneration.SUBJECT_MISC, 1 }, { DbIdGeneration.SUBJECT_GAME, 1 }, { DbIdGeneration.SUBJECT_USER, 1 }
             };

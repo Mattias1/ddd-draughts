@@ -14,7 +14,7 @@ using Xunit;
 
 namespace Draughts.Test.Repositories.InMemory;
 
-public class InMemoryUnitOfWorkTest {
+public sealed class InMemoryUnitOfWorkTest {
     private readonly FakeClock _clock;
     private readonly FakeDomainEventHandler _fakeDomainEventHandler;
     private readonly IUnitOfWork _unitOfWork;

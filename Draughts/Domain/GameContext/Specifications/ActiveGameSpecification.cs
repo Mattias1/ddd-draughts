@@ -6,7 +6,7 @@ using System.Linq.Expressions;
 
 namespace Draughts.Domain.GameContext.Specifications;
 
-public class ActiveGameSpecification : Specification<Game> {
+public sealed class ActiveGameSpecification : Specification<Game> {
     public override Expression<Func<Game, bool>> ToExpression() => g => g.HasStarted && !g.IsFinished;
 
     public override void ApplyQueryBuilder(IQueryBuilder builder, QueryWhereType whereType) {

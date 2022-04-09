@@ -4,7 +4,7 @@ using Draughts.Domain.AuthContext.Events;
 
 namespace Draughts.Application.Auth;
 
-public class SynchronizePendingUserEventHandler : DomainEventHandler<AuthUserCreated> {
+public sealed class SynchronizePendingUserEventHandler : DomainEventHandler<AuthUserCreated> {
     private readonly UserRegistrationService _userRegistrationService;
 
     public SynchronizePendingUserEventHandler(UserRegistrationService userRegistrationService) {

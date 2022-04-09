@@ -5,7 +5,7 @@ using Xunit;
 namespace Draughts.IntegrationTest.EndToEnd.Database;
 
 [Collection("AuthenticationIT")]
-public class DbAuthenticationIT {
+public sealed class DbAuthenticationIT {
     private readonly DbApiTester _apiTest;
     private readonly AuthenticationTesterApi<DbApiTester> _authenticationApi;
 

@@ -10,7 +10,7 @@ using static Draughts.Domain.GameContext.Models.Voting;
 
 namespace Draughts.Test.TestHelpers;
 
-public class VotingTestHelper {
+public sealed class VotingTestHelper {
     private static readonly ZonedDateTime Feb29 = FakeClock.FromUtc(2020, 02, 29).UtcNow();
 
     public static VotingBuilder Draw() {
@@ -19,7 +19,7 @@ public class VotingTestHelper {
     }
 
 
-    public class VotingBuilder {
+    public sealed class VotingBuilder {
         private GameId? _id;
         private List<Vote> _votes = new List<Vote>();
 

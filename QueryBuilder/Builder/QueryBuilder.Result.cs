@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace SqlQueryBuilder.Builder;
 
-public partial class QueryBuilder : IQueryBuilderResult {
+public sealed partial class QueryBuilder : IQueryBuilderResult {
     public int FirstInt() => FirstValue<int>();
     public int FirstInt(string column) => FirstValue<int>(column);
     public int SingleInt() => SingleValue<int>();

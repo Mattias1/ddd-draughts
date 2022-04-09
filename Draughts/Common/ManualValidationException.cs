@@ -2,7 +2,7 @@ using System;
 
 namespace Draughts.Common;
 
-public class ManualValidationException : Exception {
+public sealed class ManualValidationException : Exception {
     public string Field { get; }
 
     public ManualValidationException(string message) : this("", message) { }

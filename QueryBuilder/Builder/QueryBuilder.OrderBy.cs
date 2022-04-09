@@ -2,7 +2,7 @@ using SqlQueryBuilder.Model;
 
 namespace SqlQueryBuilder.Builder;
 
-public partial class QueryBuilder : IOrderQueryBuilder {
+public sealed partial class QueryBuilder : IOrderQueryBuilder {
     public IQueryBuilder OrderByAsc(params string[] columns) {
         for (int i = 0; i < columns.Length - 1; i++) {
             _query.OrderByList.Add(new OrderBy(columns[i], OrderBy.OrderDirection.None));

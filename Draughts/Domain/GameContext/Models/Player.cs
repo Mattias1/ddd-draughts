@@ -5,7 +5,7 @@ using NodaTime;
 
 namespace Draughts.Domain.GameContext.Models;
 
-public class Player : Entity<Player, PlayerId> {
+public sealed class Player : Entity<Player, PlayerId> {
     public override PlayerId Id { get; }
     public UserId UserId { get; }
     public Username Username { get; }

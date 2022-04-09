@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace Draughts.Repositories.Database;
 
-public class DbRoleRepository : DbRepository<Role, RoleId, DbRole>, IRoleRepository {
+public sealed class DbRoleRepository : DbRepository<Role, RoleId, DbRole>, IRoleRepository {
     private readonly IUnitOfWork _unitOfWork;
 
     public DbRoleRepository(IUnitOfWork unitOfWork) {

@@ -8,7 +8,7 @@ using System.Threading;
 
 namespace Draughts.Command;
 
-public class DraughtsConsole {
+public sealed class DraughtsConsole {
     private readonly EssentialDataSeeder _essentialDataSeeder;
     private readonly DummyDataSeeder _dummyDataSeeder;
     private readonly IIdGenerator _idGenerator;

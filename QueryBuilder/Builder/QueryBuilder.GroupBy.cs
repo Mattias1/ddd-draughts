@@ -2,7 +2,7 @@ using SqlQueryBuilder.Model;
 
 namespace SqlQueryBuilder.Builder;
 
-public partial class QueryBuilder : IGroupByQueryBuilder {
+public sealed partial class QueryBuilder : IGroupByQueryBuilder {
     public IQueryBuilder GroupBy(params string[] columns) {
         foreach (string c in columns) {
             _query.GroupByColumns.Add(new Column(c));

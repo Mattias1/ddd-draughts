@@ -10,7 +10,7 @@ using static Draughts.Repositories.Database.JoinEnum;
 
 namespace Draughts.Repositories.Database;
 
-public class DbAuthUserRepository : DbRepository<AuthUser, UserId, DbAuthUser>, IAuthUserRepository {
+public sealed class DbAuthUserRepository : DbRepository<AuthUser, UserId, DbAuthUser>, IAuthUserRepository {
     private readonly IRoleRepository _roleRepository;
     private readonly IUnitOfWork _unitOfWork;
 

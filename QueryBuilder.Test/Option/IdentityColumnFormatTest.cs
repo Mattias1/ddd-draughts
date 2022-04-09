@@ -4,7 +4,7 @@ using Xunit;
 
 namespace SqlQueryBuilder.Test.Option;
 
-public class IdentityColumnFormatTest {
+public sealed class IdentityColumnFormatTest {
     private readonly IColumnFormat _columnFormat = new IdentityColumnFormat();
 
     [Theory]

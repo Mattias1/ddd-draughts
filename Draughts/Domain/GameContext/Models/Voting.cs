@@ -8,7 +8,7 @@ using static Draughts.Domain.GameContext.Models.Voting;
 
 namespace Draughts.Domain.GameContext.Models;
 
-public class Voting : Entity<Voting, GameId> {
+public sealed class Voting : Entity<Voting, GameId> {
     public enum VotingSubject { Draw }
 
     private readonly List<Vote> _votes;
@@ -35,7 +35,7 @@ public class Voting : Entity<Voting, GameId> {
     public static Voting StartNew(GameId gameId) => new Voting(gameId, new List<Vote>());
 }
 
-public class Vote : ValueObject<Vote> {
+public sealed class Vote : ValueObject<Vote> {
     public UserId UserId { get; }
     public VotingSubject Subject { get; }
     public bool InFavor { get; }

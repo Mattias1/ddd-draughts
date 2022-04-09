@@ -12,7 +12,7 @@ using static Draughts.Domain.UserContext.Models.Rank;
 namespace Draughts.Repositories.Database;
 
 #pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
-public class DbUser : IDbObject<DbUser, User> {
+public sealed class DbUser : IDbObject<DbUser, User> {
     public long Id { get; set; }
     public string Username { get; set; }
     public int Rating { get; set; }
@@ -82,7 +82,7 @@ public class DbUser : IDbObject<DbUser, User> {
     }
 }
 
-public class DbAuthUser : IDbObject<DbAuthUser, AuthUser> {
+public sealed class DbAuthUser : IDbObject<DbAuthUser, AuthUser> {
     public long Id { get; set; }
     public string Username { get; set; }
     public string PasswordHash { get; set; }
@@ -113,7 +113,7 @@ public class DbAuthUser : IDbObject<DbAuthUser, AuthUser> {
     }
 }
 
-public class DbAuthUserRole : IEquatable<DbAuthUserRole> {
+public sealed class DbAuthUserRole : IEquatable<DbAuthUserRole> {
     public long UserId { get; set; }
     public long RoleId { get; set; }
 
@@ -122,7 +122,7 @@ public class DbAuthUserRole : IEquatable<DbAuthUserRole> {
     }
 }
 
-public class DbRole : IDbObject<DbRole, Role> {
+public sealed class DbRole : IDbObject<DbRole, Role> {
     public long Id { get; set; }
     public string Rolename { get; set; }
     public ZonedDateTime CreatedAt { get; set; }
@@ -142,7 +142,7 @@ public class DbRole : IDbObject<DbRole, Role> {
     }
 }
 
-public class DbPermissionRole : IEquatable<DbPermissionRole> {
+public sealed class DbPermissionRole : IEquatable<DbPermissionRole> {
     public long RoleId { get; set; }
     public string Permission { get; set; }
 
@@ -151,7 +151,7 @@ public class DbPermissionRole : IEquatable<DbPermissionRole> {
     }
 }
 
-public class DbAdminLog : IDbObject<DbAdminLog, AdminLog> {
+public sealed class DbAdminLog : IDbObject<DbAdminLog, AdminLog> {
     public long Id { get; set; }
     public string Type { get; set; }
     public string Parameters { get; set; }
@@ -187,7 +187,7 @@ public class DbAdminLog : IDbObject<DbAdminLog, AdminLog> {
     }
 }
 
-public class DbGame : IDbObject<DbGame, Game> {
+public sealed class DbGame : IDbObject<DbGame, Game> {
     public long Id { get; set; }
     public int BoardSize { get; set; }
     public bool FirstMoveColorIsWhite { get; set; }
@@ -262,7 +262,7 @@ public class DbGame : IDbObject<DbGame, Game> {
     }
 }
 
-public class DbPlayer : IDbObject<DbPlayer, Player> {
+public sealed class DbPlayer : IDbObject<DbPlayer, Player> {
     public long Id { get; set; }
     public long UserId { get; set; }
     public long GameId { get; set; }
@@ -297,7 +297,7 @@ public class DbPlayer : IDbObject<DbPlayer, Player> {
     }
 }
 
-public class DbGameState : IDbObject<DbGameState, GameState> {
+public sealed class DbGameState : IDbObject<DbGameState, GameState> {
     public long Id { get; set; }
     public string? InitialGameState { get; set; }
 
@@ -316,7 +316,7 @@ public class DbGameState : IDbObject<DbGameState, GameState> {
     }
 }
 
-public class DbMove : IDbObject<DbMove, Move> {
+public sealed class DbMove : IDbObject<DbMove, Move> {
     public long GameId { get; set; }
     public short Index { get; set; }
     public byte From { get; set; }
@@ -347,7 +347,7 @@ public class DbMove : IDbObject<DbMove, Move> {
     }
 }
 
-public class DbVote : IEquatable<DbVote> {
+public sealed class DbVote : IEquatable<DbVote> {
     public long GameId { get; set; }
     public long UserId { get; set; }
     public string Subject { get; set; }
@@ -400,7 +400,7 @@ public class DbVote : IEquatable<DbVote> {
     }
 }
 
-public class DbIdGeneration {
+public sealed class DbIdGeneration {
     public const string SUBJECT_MISC = "";
     public const string SUBJECT_GAME = "game";
     public const string SUBJECT_USER = "user";

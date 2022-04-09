@@ -20,7 +20,7 @@ public interface ITransaction : IDisposable {
 
 public delegate void TransactionEventHandler(ITransaction transaction, TransactionEventArgs e);
 
-public class TransactionEventArgs : EventArgs {
+public sealed class TransactionEventArgs : EventArgs {
     public TransactionDomain TransactionDomain { get; }
     public TransactionEventArgs(TransactionDomain domain) => TransactionDomain = domain;
 }

@@ -5,7 +5,7 @@ using Xunit;
 namespace Draughts.IntegrationTest.EndToEnd.Database;
 
 [Collection("ModPanelRoleIT")]
-public class DbModPanelRoleIT {
+public sealed class DbModPanelRoleIT {
     private readonly DbApiTester _apiTester;
     private readonly ModPanelRoleTesterApi<DbApiTester> _modPanelApi;
 
