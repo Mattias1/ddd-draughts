@@ -11,7 +11,7 @@ namespace SqlQueryBuilder.Options;
 public sealed class SqlBuilderResultRow : IReadOnlyDictionary<string, object?> {
     private Dictionary<string, Dictionary<string, object?>> _results;
 
-    protected SqlBuilderResultRow() {
+    private SqlBuilderResultRow() {
         _results = new Dictionary<string, Dictionary<string, object?>>();
     }
 
@@ -41,7 +41,7 @@ public sealed class SqlBuilderResultRow : IReadOnlyDictionary<string, object?> {
         return result;
     }
 
-    protected void Add(string table, string column, object? value) {
+    private void Add(string table, string column, object? value) {
         if (!_results.ContainsKey(table)) {
             _results[table] = new Dictionary<string, object?>();
         }

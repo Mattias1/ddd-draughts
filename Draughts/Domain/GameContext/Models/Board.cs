@@ -22,6 +22,14 @@ public sealed class Board : IEquatable<Board> {
         private set => _squares[n.Value - 1] = value;
     }
 
+    public Square? At(int x, int y, bool boardIsRotated) {
+        if (boardIsRotated) {
+            x = Size - x - 1;
+            y = Size - y - 1;
+        }
+        return this[x, y];
+    }
+
     public int NrOfPlayableSquares => _squares.Length;
 
     private Board(int size, Piece[] pieces) {

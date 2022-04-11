@@ -5,7 +5,7 @@ using Xunit;
 
 namespace Draughts.Test.Domain.GameContext;
 
-public sealed class BoardPositionMiscTest {
+public sealed class BoardMiscTest {
     [Fact]
     public void InitialBoard4x4() {
         // |_|4|_|4|
@@ -95,5 +95,71 @@ public sealed class BoardPositionMiscTest {
         copy.PerformNewMove(4.AsSquare(), 7.AsSquare(), GameSettings.International, out bool canCaptureMore);
         board.ToLongString(" ", "").Should().Be("440 404 000 050 055 007");
         copy.ToLongString(" ", "").Should().Be("440 004 400 050 055 007");
+    }
+
+    [Fact]
+    public void GetPiecesForNormalBoard() {
+        // |_|4|_|6|
+        // |.|_|.|_|
+        // |_|.|_|.|
+        // |7|_|5|_|
+        var board = Board.FromString("46000075");
+        board.At(0, 0, false).Should().BeNull();
+        board.At(1, 0, false)?.Piece.Should().Be(Piece.BlackMan);
+        board.At(3, 0, false)?.Piece.Should().Be(Piece.BlackKing);
+        board.At(0, 1, false)?.Piece.Should().Be(Piece.Empty);
+        board.At(2, 1, false)?.Piece.Should().Be(Piece.Empty);
+        board.At(1, 2, false)?.Piece.Should().Be(Piece.Empty);
+        board.At(3, 2, false)?.Piece.Should().Be(Piece.Empty);
+        board.At(0, 3, false)?.Piece.Should().Be(Piece.WhiteKing);
+        board.At(2, 3, false)?.Piece.Should().Be(Piece.WhiteMan);
+
+        // |_|.|_|.|
+        // |4|_|6|_|
+        // |_|7|_|5|
+        // |.|_|.|_|
+        board = Board.FromString("00467500");
+        board.At(0, 0, false).Should().BeNull();
+        board.At(1, 0, false)?.Piece.Should().Be(Piece.Empty);
+        board.At(3, 0, false)?.Piece.Should().Be(Piece.Empty);
+        board.At(0, 1, false)?.Piece.Should().Be(Piece.BlackMan);
+        board.At(2, 1, false)?.Piece.Should().Be(Piece.BlackKing);
+        board.At(1, 2, false)?.Piece.Should().Be(Piece.WhiteKing);
+        board.At(3, 2, false)?.Piece.Should().Be(Piece.WhiteMan);
+        board.At(0, 3, false)?.Piece.Should().Be(Piece.Empty);
+        board.At(2, 3, false)?.Piece.Should().Be(Piece.Empty);
+    }
+
+    [Fact]
+    public void GetPiecesForRotatedBoard() {
+        // |_|4|_|6|
+        // |.|_|.|_|
+        // |_|.|_|.|
+        // |7|_|5|_|
+        var board = Board.FromString("46000075");
+        board.At(0, 0, true).Should().BeNull();
+        board.At(1, 0, true)?.Piece.Should().Be(Piece.WhiteMan);
+        board.At(3, 0, true)?.Piece.Should().Be(Piece.WhiteKing);
+        board.At(0, 1, true)?.Piece.Should().Be(Piece.Empty);
+        board.At(2, 1, true)?.Piece.Should().Be(Piece.Empty);
+        board.At(1, 2, true)?.Piece.Should().Be(Piece.Empty);
+        board.At(3, 2, true)?.Piece.Should().Be(Piece.Empty);
+        board.At(0, 3, true)?.Piece.Should().Be(Piece.BlackKing);
+        board.At(2, 3, true)?.Piece.Should().Be(Piece.BlackMan);
+
+        // |_|.|_|.|
+        // |4|_|6|_|
+        // |_|7|_|5|
+        // |.|_|.|_|
+        board = Board.FromString("00467500");
+        board.At(0, 0, true).Should().BeNull();
+        board.At(1, 0, true)?.Piece.Should().Be(Piece.Empty);
+        board.At(3, 0, true)?.Piece.Should().Be(Piece.Empty);
+        board.At(0, 1, true)?.Piece.Should().Be(Piece.WhiteMan);
+        board.At(2, 1, true)?.Piece.Should().Be(Piece.WhiteKing);
+        board.At(1, 2, true)?.Piece.Should().Be(Piece.BlackKing);
+        board.At(3, 2, true)?.Piece.Should().Be(Piece.BlackMan);
+        board.At(0, 3, true)?.Piece.Should().Be(Piece.Empty);
+        board.At(2, 3, true)?.Piece.Should().Be(Piece.Empty);
     }
 }

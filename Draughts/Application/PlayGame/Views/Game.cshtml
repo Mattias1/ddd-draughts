@@ -11,6 +11,7 @@
     var player1 = Model.Players.SingleOrDefault(p => p.Color == settings.FirstMove);
     var player2 = Model.Players.SingleOrDefault(p => p.Color == settings.FirstMove.Other);
     var captureSequenceFrom = Model.CurrentGameState.CaptureSequenceFrom;
+    var boardIsRotated = (player1?.UserId == ViewBag.UserId ? player1 : player2)?.Color == Color.Black;
 }
 
 <div class="text-container">
@@ -18,7 +19,7 @@
         <div id="game-board" class="game-board-@(settings.BoardSize)">
             @for (int y = 0; y < settings.BoardSize; y++) {
                 @for (int x = 0; x < settings.BoardSize; x++) {
-                    var square = board[x, y];
+                    var square = board.At(x, y, boardIsRotated);
                     if (square is null) {
                         <div class="square" style="left: @(60 * x)px; top: @(60 * y)px;"></div>
                     }

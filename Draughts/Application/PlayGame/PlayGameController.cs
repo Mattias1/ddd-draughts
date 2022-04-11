@@ -75,9 +75,11 @@ public sealed class PlayGameController : BaseController {
     }
 
     [HttpPost("/game/{gameId:long}/draw"), Requires(Permissions.PLAY_GAME)]
-    public IActionResult Draw(long gameId) {
+    public async Task<IActionResult> Draw(long gameId) {
         try {
             _playGameService.VoteForDraw(AuthContext.UserId, new GameId(gameId));
+            await _websocketHub.PushGameUpdateReady(new GameId(gameId));
+
             return SuccessRedirect($"/game/{gameId}", $"You've voted for a draw in game {gameId}");
         }
         catch (ManualValidationException e) {
@@ -86,9 +88,11 @@ public sealed class PlayGameController : BaseController {
     }
 
     [HttpPost("/game/{gameId:long}/resign"), Requires(Permissions.PLAY_GAME)]
-    public IActionResult Resign(long gameId) {
+    public async Task<IActionResult> Resign(long gameId) {
         try {
             _playGameService.Resign(AuthContext.UserId, new GameId(gameId));
+            await _websocketHub.PushGameUpdateReady(new GameId(gameId));
+
             return SuccessRedirect($"/game/{gameId}", $"You've resigned from game {gameId}");
         }
         catch (ManualValidationException e) {
