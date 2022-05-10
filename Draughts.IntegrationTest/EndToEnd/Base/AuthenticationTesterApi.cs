@@ -1,6 +1,7 @@
 using Draughts.Common.Utilities;
 using Draughts.Domain.AuthContext.Models;
 using Draughts.Domain.AuthContext.Specifications;
+using Draughts.Domain.UserContext.Specifications;
 using FluentAssertions;
 using NodaTime;
 using System.Globalization;
@@ -63,6 +64,9 @@ public sealed class AuthenticationTesterApi<T> where T : BaseApiTester {
     public void AssertUserIsCreated() {
         ApiTester.UnitOfWork.WithAuthTransaction(tran => {
             ApiTester.AuthUserRepository.Count(new UsernameSpecification(CreatedUsername)).Should().Be(1);
+        });
+        ApiTester.UnitOfWork.WithUserTransaction(tran => {
+            ApiTester.UserRepository.Count(new UserUsernameSpecification(CreatedUsername)).Should().Be(1);
         });
     }
 }

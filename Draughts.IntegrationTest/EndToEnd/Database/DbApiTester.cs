@@ -11,6 +11,7 @@ public sealed class DbApiTester : BaseApiTester {
     public override IUnitOfWork UnitOfWork { get; }
     public override IRoleRepository RoleRepository { get; }
     public override IAuthUserRepository AuthUserRepository { get; }
+    public override IAdminLogRepository AdminLogRepository { get; }
     public override IUserRepository UserRepository { get; }
     public override IGameRepository GameRepository { get; }
 
@@ -19,6 +20,7 @@ public sealed class DbApiTester : BaseApiTester {
         UnitOfWork = new DbUnitOfWork(Clock, IdGenerator);
         RoleRepository = new DbRoleRepository(UnitOfWork);
         AuthUserRepository = new DbAuthUserRepository(RoleRepository, UnitOfWork);
+        AdminLogRepository = new DbAdminLogRepository(UnitOfWork);
         UserRepository = new DbUserRepository(UnitOfWork);
         GameRepository = new DbGameRepository(UnitOfWork);
     }

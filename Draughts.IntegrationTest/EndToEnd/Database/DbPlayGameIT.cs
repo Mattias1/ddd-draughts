@@ -23,6 +23,8 @@ public sealed class DbPlayGameIT {
         string white = _apiTester.LoginAsTestPlayerWhite();
         await _gameApi.PostJoinGame(white);
 
+        _gameApi.RecordUserStatistics();
+
         await _gameApi.ViewGameJsonWithTurn(Color.White);
 
         // |_|4|_|4|_|4|        // |_|1|_|2|_|3|
@@ -72,8 +74,10 @@ public sealed class DbPlayGameIT {
         await _gameApi.PostMove(8, 16, black);
 
         await _gameApi.ViewGamePageWithVictor("TestPlayerBlack");
-
-        _gameApi.AssertUserStatisticsAreUpdatedCorrectly();
+        _gameApi.AssertUserStatisticsDiff(
+            blackStats => blackStats.OtherTally.Won, 1,
+            whiteStats => whiteStats.OtherTally.Lost, 1
+        );
     }
 
     [Fact]
@@ -84,9 +88,34 @@ public sealed class DbPlayGameIT {
         string white = _apiTester.LoginAsTestPlayerWhite();
         await _gameApi.PostJoinGame(white);
 
+        _gameApi.RecordUserStatistics();
+
         await _gameApi.PostDrawVote(white);
         await _gameApi.PostDrawVote(black);
 
         _gameApi.AssertGameIsDraw();
+        _gameApi.AssertUserStatisticsDiff(
+            blackStats => blackStats.OtherTally.Tied, 1,
+            whiteStats => whiteStats.OtherTally.Tied, 1
+        );
+    }
+
+    [Fact]
+    public async Task ResignGame() {
+        string black = _apiTester.LoginAsTestPlayerBlack();
+        await _gameApi.PostCreateGame(black);
+
+        string white = _apiTester.LoginAsTestPlayerWhite();
+        await _gameApi.PostJoinGame(white);
+
+        _gameApi.RecordUserStatistics();
+
+        await _gameApi.PostResignation(white);
+
+        await _gameApi.ViewGamePageWithVictor("TestPlayerBlack");
+        _gameApi.AssertUserStatisticsDiff(
+            blackStats => blackStats.OtherTally.Won, 1,
+            whiteStats => whiteStats.OtherTally.Lost, 1
+        );
     }
 }

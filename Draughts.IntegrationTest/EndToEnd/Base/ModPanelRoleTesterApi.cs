@@ -1,6 +1,8 @@
+using Draughts.Common.Utilities;
 using Draughts.Domain.AuthContext.Models;
 using Draughts.Repositories.InMemory;
 using FluentAssertions;
+using NodaTime;
 using System.Threading.Tasks;
 using static Draughts.Application.ModPanel.ModPanelController;
 
@@ -31,11 +33,14 @@ public sealed class ModPanelRoleTesterApi<T> where T : BaseApiTester {
         var result = await ApiTester.PostForm("/modpanel/role/create", new CreateRoleRequest("New IT test role"));
         result.StatusCode.Should().Be(200);
         if (!ApiTester.TryRegex(result.RequestUri(), @"/modpanel/role/(\d+)/edit", out string? value)) {
+            // Make the test fail with a nice message.
             result.RequestUri().Should().Match("/modpanel/role/<some-value>/edit?success=*");
             return;
         }
         RoleId = new RoleId(long.Parse(value));
         result.RequestUri().Should().Match($"/modpanel/role/{RoleId}/edit?success=*");
+
+        AssertRoleIsLogged("role.created");
     }
 
     public async Task ViewEditRolePage() {
@@ -48,6 +53,8 @@ public sealed class ModPanelRoleTesterApi<T> where T : BaseApiTester {
             new EditRoleRequest(EDITED_ROLENAME, new string[] { Permission.Permissions.PLAY_GAME }));
         result.StatusCode.Should().Be(200);
         result.RequestUri().Should().Match("/modpanel/roles?success=*");
+
+        AssertRoleIsLogged("role.edited");
     }
 
     public async Task ViewRoleUsersPage() {
@@ -60,6 +67,8 @@ public sealed class ModPanelRoleTesterApi<T> where T : BaseApiTester {
             new AssignUserToRoleRequest(ASSIGNED_USERNAME));
         result.StatusCode.Should().Be(200);
         result.RequestUri().Should().Match($"/modpanel/role/{RoleId}/users?success=*");
+
+        AssertRoleIsLogged("role.gained");
     }
 
     public async Task PostRemoveUserFromRole() {
@@ -67,12 +76,23 @@ public sealed class ModPanelRoleTesterApi<T> where T : BaseApiTester {
         var result = await ApiTester.Post($"/modpanel/role/{RoleId}/user/{userId}/remove");
         result.StatusCode.Should().Be(200);
         result.RequestUri().Should().Match($"/modpanel/role/{RoleId}/users?success=*");
+
+        AssertRoleIsLogged("role.lost");
     }
 
     public async Task PostDeleteRole() {
         var result = await ApiTester.Post($"/modpanel/role/{RoleId}/delete");
         result.StatusCode.Should().Be(200);
         result.RequestUri().Should().Match("/modpanel/roles?success=*");
+
+        AssertRoleIsLogged("role.deleted");
+    }
+
+    private void AssertRoleIsLogged(string adminLogType) {
+        ApiTester.UnitOfWork.WithAuthTransaction(tran => {
+            var adminLogs = ApiTester.AdminLogRepository.List();
+            adminLogs.Should().Contain(l => l.Type == adminLogType, $"a '{adminLogType}' type event has happened.");
+        });
     }
 
     public void AssertRoleIsCorrect() {

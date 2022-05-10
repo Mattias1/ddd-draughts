@@ -27,6 +27,7 @@ public abstract class BaseApiTester {
     public abstract IUnitOfWork UnitOfWork { get; }
     public abstract IRoleRepository RoleRepository { get; }
     public abstract IAuthUserRepository AuthUserRepository { get; }
+    public abstract IAdminLogRepository AdminLogRepository { get; }
     public abstract IUserRepository UserRepository { get; }
     public abstract IGameRepository GameRepository { get; }
 

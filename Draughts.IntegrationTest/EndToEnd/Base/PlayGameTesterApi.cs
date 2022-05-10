@@ -1,6 +1,8 @@
 using Draughts.Application.Shared.ViewModels;
 using Draughts.Domain.GameContext.Models;
+using Draughts.Domain.UserContext.Models;
 using FluentAssertions;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 using static Draughts.Application.Lobby.LobbyController;
@@ -9,6 +11,9 @@ using static Draughts.Application.PlayGame.PlayGameController;
 namespace Draughts.IntegrationTest.EndToEnd.Base;
 
 public sealed class PlayGameTesterApi<T> where T : BaseApiTester {
+    private UserStatistics? _recordedBlackUserStats;
+    private UserStatistics? _recordedWhiteUserStats;
+
     public T ApiTester { get; }
     public GameId? GameId { get; private set; }
 
@@ -70,13 +75,31 @@ public sealed class PlayGameTesterApi<T> where T : BaseApiTester {
         result.RequestUri().Should().Match($"/game/{GameId}?success=*");
     }
 
+    public async Task PostResignation(string cookie) {
+        var result = await ApiTester.As(cookie).Post($"/game/{GameId}/resign");
+        result.StatusCode.Should().Be(200);
+        result.RequestUri().Should().Match($"/game/{GameId}?success=*");
+    }
+
+    public void RecordUserStatistics() {
+        ApiTester.UnitOfWork.WithUserTransaction(tran => {
+            _recordedBlackUserStats = ApiTester.UserRepository.FindByName("TestPlayerBlack").Statistics;
+            _recordedWhiteUserStats = ApiTester.UserRepository.FindByName("TestPlayerWhite").Statistics;
+        });
+    }
+
     // TODO: What to do here when events are handled in a different thread?
-    public void AssertUserStatisticsAreUpdatedCorrectly() {
+    public void AssertUserStatisticsDiff(Func<UserStatistics, int> blackStatFunc, int blackDiff,
+            Func<UserStatistics, int> whiteStatFunc, int whiteDiff) {
+        if (_recordedBlackUserStats is null || _recordedWhiteUserStats is null) {
+            throw new InvalidOperationException("Please record the user statistics before asserting.");
+        }
+
         ApiTester.UnitOfWork.WithUserTransaction(tran => {
             var blackUser = ApiTester.UserRepository.FindByName("TestPlayerBlack");
             var whiteUser = ApiTester.UserRepository.FindByName("TestPlayerWhite");
-            blackUser.Statistics.OtherTally.Won.Should().BeGreaterThan(0);
-            whiteUser.Statistics.OtherTally.Lost.Should().BeGreaterThan(0);
+            blackStatFunc(blackUser.Statistics).Should().Be(blackStatFunc(_recordedBlackUserStats) + blackDiff);
+            whiteStatFunc(whiteUser.Statistics).Should().Be(whiteStatFunc(_recordedWhiteUserStats) + whiteDiff);
         });
     }
 

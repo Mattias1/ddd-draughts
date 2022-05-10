@@ -1,4 +1,5 @@
 using Draughts.Common.OoConcepts;
+using Draughts.Domain.AuthContext.Models;
 using Draughts.Domain.UserContext.Models;
 using SqlQueryBuilder.Builder;
 using System;
@@ -9,6 +10,7 @@ namespace Draughts.Domain.UserContext.Specifications;
 public sealed class UserUsernameSpecification : Specification<User> {
     private readonly string? _username;
 
+    public UserUsernameSpecification(Username? username) : this(username?.Value) { }
     public UserUsernameSpecification(string? username) => _username = username;
 
     public override Expression<Func<User, bool>> ToExpression() => u => u.Username == _username;

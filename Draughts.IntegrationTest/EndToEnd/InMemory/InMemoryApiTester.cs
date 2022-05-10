@@ -16,6 +16,7 @@ public sealed class InMemoryApiTester : BaseApiTester {
     public override IUnitOfWork UnitOfWork { get; }
     public override IRoleRepository RoleRepository { get; }
     public override IAuthUserRepository AuthUserRepository { get; }
+    public override IAdminLogRepository AdminLogRepository { get; }
     public override IUserRepository UserRepository { get; }
     public override IGameRepository GameRepository { get; }
 
@@ -24,6 +25,7 @@ public sealed class InMemoryApiTester : BaseApiTester {
         UnitOfWork = new InMemoryUnitOfWork(Clock, IdGenerator);
         RoleRepository = new InMemoryRoleRepository(UnitOfWork);
         AuthUserRepository = new InMemoryAuthUserRepository(RoleRepository, UnitOfWork);
+        AdminLogRepository = new InMemoryAdminLogRepository(UnitOfWork);
         UserRepository = new InMemoryUserRepository(UnitOfWork);
         GameRepository = new InMemoryGameRepository(UnitOfWork);
     }

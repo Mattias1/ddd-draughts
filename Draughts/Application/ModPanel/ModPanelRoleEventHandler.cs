@@ -18,7 +18,7 @@ public sealed class ModPanelRoleEventHandler : DomainEventHandler {
     public ModPanelRoleEventHandler(
             IAdminLogRepository adminLogRepository, IAuthUserRepository authUserRepository,
             IClock clock, IIdGenerator idGenerator, IUnitOfWork unitOfWork)
-            : base(RoleCreated.TYPE, RoleEdited.TYPE, UserGainedRole.TYPE, UserLostRole.TYPE) {
+            : base(RoleCreated.TYPE, RoleEdited.TYPE, RoleDeleted.TYPE, UserGainedRole.TYPE, UserLostRole.TYPE) {
         _adminLogRepository = adminLogRepository;
         _authUserRepository = authUserRepository;
         _clock = clock;
@@ -33,6 +33,9 @@ public sealed class ModPanelRoleEventHandler : DomainEventHandler {
                 break;
             case RoleEdited roleEdited:
                 Handle(roleEdited);
+                break;
+            case RoleDeleted roleDeleted:
+                Handle(roleDeleted);
                 break;
             case UserGainedRole roleGained:
                 Handle(roleGained);
@@ -57,6 +60,15 @@ public sealed class ModPanelRoleEventHandler : DomainEventHandler {
         _unitOfWork.WithAuthTransaction(tran => {
             var authUser = _authUserRepository.FindById(evt.EditedBy);
             var adminLog = AdminLog.EditRoleLog(_idGenerator.ReservePool(), _clock, authUser, evt.RoleId, evt.Rolename);
+            _adminLogRepository.Save(adminLog);
+        });
+    }
+
+    public void Handle(RoleDeleted evt) {
+        _unitOfWork.WithAuthTransaction(tran => {
+            var authUser = _authUserRepository.FindById(evt.DeletedBy);
+            var adminLog = AdminLog.RoleDeletedLog(_idGenerator.ReservePool(), _clock, authUser,
+                evt.RoleId, evt.Rolename);
             _adminLogRepository.Save(adminLog);
         });
     }
