@@ -8,9 +8,9 @@ using System.Linq;
 namespace Draughts.Repositories.InMemory;
 
 public sealed class InMemoryVotingRepository : IVotingRepository {
-    private readonly IUnitOfWork _unitOfWork;
+    private readonly IRepositoryUnitOfWork _unitOfWork;
 
-    public InMemoryVotingRepository(IUnitOfWork unitOfWork) {
+    public InMemoryVotingRepository(IRepositoryUnitOfWork unitOfWork) {
         _unitOfWork = unitOfWork;
     }
 

@@ -12,11 +12,7 @@ using static Draughts.Repositories.Database.JoinEnum;
 namespace Draughts.Repositories.Database;
 
 public sealed class DbGameRepository : DbRepository<Game, GameId, DbGame>, IGameRepository {
-    private readonly IUnitOfWork _unitOfWork;
-
-    public DbGameRepository(IUnitOfWork unitOfWork) {
-        _unitOfWork = unitOfWork;
-    }
+    public DbGameRepository(IRepositoryUnitOfWork unitOfWork) : base(unitOfWork) { }
 
     public IReadOnlyList<GameId> ListGameIdsForExpiredTurns(ZonedDateTime datetime) {
         return GetBaseQuery()
@@ -29,7 +25,7 @@ public sealed class DbGameRepository : DbRepository<Game, GameId, DbGame>, IGame
 
     protected override string TableName => "game";
     private const string PlayerTableName = "player";
-    protected override IInitialQueryBuilder GetBaseQuery() => _unitOfWork.Query(TransactionDomain.Game);
+    protected override IInitialQueryBuilder GetBaseQuery() => UnitOfWork.Query(TransactionDomain.Game);
     private IQueryBuilder GetPlayerQuery() => GetBaseQuery().SelectAllFrom(PlayerTableName);
 
     protected override IQueryBuilder ApplySpec(Specification<Game> spec, IQueryBuilder builder) {
@@ -63,7 +59,7 @@ public sealed class DbGameRepository : DbRepository<Game, GameId, DbGame>, IGame
 
     private Player ParsePlayer(DbPlayer q) => q.ToDomainModel();
 
-    public override void Save(Game entity) {
+    protected override void SaveInternal(Game entity) {
         var obj = DbGame.FromDomainModel(entity);
         if (FindByIdOrNull(entity.Id) is null) {
             GetBaseQuery().InsertInto(TableName).InsertFrom(obj).Execute();

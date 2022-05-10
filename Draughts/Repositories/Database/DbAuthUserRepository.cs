@@ -12,17 +12,16 @@ namespace Draughts.Repositories.Database;
 
 public sealed class DbAuthUserRepository : DbRepository<AuthUser, UserId, DbAuthUser>, IAuthUserRepository {
     private readonly IRoleRepository _roleRepository;
-    private readonly IUnitOfWork _unitOfWork;
 
-    public DbAuthUserRepository(IRoleRepository roleRepository, IUnitOfWork unitOfWork) {
+    public DbAuthUserRepository(IRoleRepository roleRepository, IRepositoryUnitOfWork unitOfWork)
+            : base(unitOfWork) {
         _roleRepository = roleRepository;
-        _unitOfWork = unitOfWork;
     }
 
     public AuthUser FindByName(string username) => Find(new UsernameSpecification(username));
 
     protected override string TableName => "authuser";
-    protected override IInitialQueryBuilder GetBaseQuery() => _unitOfWork.Query(TransactionDomain.Auth);
+    protected override IInitialQueryBuilder GetBaseQuery() => UnitOfWork.Query(TransactionDomain.Auth);
     private IQueryBuilder GetAuthuserRoleQuery() => GetBaseQuery().SelectAllFrom("authuser_role");
 
     protected override IQueryBuilder ApplySpec(Specification<AuthUser> spec, IQueryBuilder builder) {
@@ -51,7 +50,7 @@ public sealed class DbAuthUserRepository : DbRepository<AuthUser, UserId, DbAuth
         return authUser.ToDomainModel(roleIds);
     }
 
-    public override void Save(AuthUser entity) {
+    protected override void SaveInternal(AuthUser entity) {
         var obj = DbAuthUser.FromDomainModel(entity);
         if (FindByIdOrNull(entity.Id) is null) {
             GetBaseQuery().InsertInto(TableName).InsertFrom(obj).Execute();

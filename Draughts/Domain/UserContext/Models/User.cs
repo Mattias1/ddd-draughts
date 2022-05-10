@@ -1,11 +1,12 @@
 using Draughts.Common.OoConcepts;
+using Draughts.Domain.AuthContext.Events;
 using Draughts.Domain.AuthContext.Models;
 using Draughts.Domain.GameContext.Models;
 using NodaTime;
 
 namespace Draughts.Domain.UserContext.Models;
 
-public sealed class User : Entity<User, UserId> {
+public sealed class User : AggregateRoot<User, UserId> {
     public override UserId Id { get; }
     public Username Username { get; }
     public Rating Rating { get; private set; }
@@ -28,6 +29,8 @@ public sealed class User : Entity<User, UserId> {
     }
 
     public static User BuildNew(UserId id, Username username, ZonedDateTime createdAt) {
-        return new User(id, username, Rating.StartRating, Rank.Ranks.Private, UserStatistics.BuildNew(id), createdAt);
+        var user = new User(id, username, Rating.StartRating, Rank.Ranks.Private, UserStatistics.BuildNew(id), createdAt);
+        user.RegisterEvent(UserCreated.Factory(user));
+        return user;
     }
 }

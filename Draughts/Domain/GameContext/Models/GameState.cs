@@ -1,12 +1,11 @@
 using Draughts.Common;
 using Draughts.Common.OoConcepts;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace Draughts.Domain.GameContext.Models;
 
-public sealed class GameState : Entity<GameState, GameId> {
+public sealed class GameState : AggregateRoot<GameState, GameId> {
     public const string ERROR_INVALID_SQUARES = "Invalid squares.";
     public const string ERROR_CAPTURE_SEQUENCE = "Continue the capture sequence.";
 

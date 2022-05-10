@@ -7,11 +7,7 @@ using System.Linq;
 namespace Draughts.Repositories.InMemory;
 
 public sealed class InMemoryGameStateRepository : InMemoryRepository<GameState, GameId>, IGameStateRepository {
-    private readonly IUnitOfWork _unitOfWork;
-
-    public InMemoryGameStateRepository(IUnitOfWork unitOfWork) {
-        _unitOfWork = unitOfWork;
-    }
+    public InMemoryGameStateRepository(IRepositoryUnitOfWork unitOfWork) : base(unitOfWork) { }
 
     protected override IList<GameState> GetBaseQuery() {
         var settings = GameDatabase.Get.GamesTable.ToDictionary(g => g.Id, g => g.GetGameSettings());
@@ -21,16 +17,16 @@ public sealed class InMemoryGameStateRepository : InMemoryRepository<GameState, 
             .ToList();
     }
 
-    public override void Save(GameState entity) {
+    protected override void SaveInternal(GameState entity) {
         var dbGameState = DbGameState.FromDomainModel(entity);
-        _unitOfWork.Store(dbGameState, tran => GameDatabase.Temp(tran).GameStatesTable);
+        UnitOfWork.Store(dbGameState, tran => GameDatabase.Temp(tran).GameStatesTable);
 
         var maxDbIndex = GameDatabase.Get.MovesTable
             .Where(m => m.GameId == entity.Id.Value)
             .Select(m => (int?)m.Index)
             .Max() ?? -1;
         foreach (var dbMove in DbMove.ArrayFromDomainModels(entity, maxDbIndex)) {
-            _unitOfWork.Store(dbMove, tran => GameDatabase.Temp(tran).MovesTable);
+            UnitOfWork.Store(dbMove, tran => GameDatabase.Temp(tran).MovesTable);
         }
     }
 }

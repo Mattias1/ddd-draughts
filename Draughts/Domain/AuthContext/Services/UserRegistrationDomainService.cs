@@ -25,12 +25,8 @@ public sealed class UserRegistrationDomainService {
                 nameof(pendingRegistrationRole));
         }
 
-        var nextUserId = new UserId(idPool.NextForUser());
-        var username = new Username(name);
-        var passwordHash = PasswordHash.Generate(plaintextPassword, nextUserId, username);
-
-        return new AuthUser(nextUserId, username, passwordHash, new Email(email), _clock.UtcNow(),
-            new[] { pendingRegistrationRole.Id });
+        return AuthUser.CreateNew(idPool, new Username(name), new Email(email), plaintextPassword,
+            pendingRegistrationRole.Id, _clock);
     }
 
     public void Register(AuthUser authUser, Role registeredUserRole, Role pendingRegistrationRole) {
@@ -47,7 +43,7 @@ public sealed class UserRegistrationDomainService {
             throw new ManualValidationException("This user doesn't have the pending registration role.");
         }
 
-        _userRoleService.RemoveRole(authUser, pendingRegistrationRole);
-        _userRoleService.AssignRole(authUser, registeredUserRole);
+        _userRoleService.RemoveRole(authUser, pendingRegistrationRole, null);
+        _userRoleService.AssignRole(authUser, registeredUserRole, null);
     }
 }

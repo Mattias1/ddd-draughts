@@ -9,11 +9,7 @@ using System.Linq;
 namespace Draughts.Repositories.InMemory;
 
 public sealed class InMemoryGameRepository : InMemoryRepository<Game, GameId>, IGameRepository {
-    private readonly IUnitOfWork _unitOfWork;
-
-    public InMemoryGameRepository(IUnitOfWork unitOfWork) {
-        _unitOfWork = unitOfWork;
-    }
+    public InMemoryGameRepository(IRepositoryUnitOfWork unitOfWork) : base(unitOfWork) { }
 
     public IReadOnlyList<GameId> ListGameIdsForExpiredTurns(ZonedDateTime datetime) {
         return GetBaseQuery()
@@ -28,11 +24,11 @@ public sealed class InMemoryGameRepository : InMemoryRepository<Game, GameId>, I
             .ToList();
     }
 
-    public override void Save(Game entity) {
+    protected override void SaveInternal(Game entity) {
         var dbGame = DbGame.FromDomainModel(entity);
-        _unitOfWork.Store(dbGame, tran => GameDatabase.Temp(tran).GamesTable);
+        UnitOfWork.Store(dbGame, tran => GameDatabase.Temp(tran).GamesTable);
         foreach (var dbPlayer in entity.Players.Select(p => DbPlayer.FromDomainModel(p, entity.Id))) {
-            _unitOfWork.Store(dbPlayer, tran => GameDatabase.Temp(tran).PlayersTable);
+            UnitOfWork.Store(dbPlayer, tran => GameDatabase.Temp(tran).PlayersTable);
         }
     }
 }

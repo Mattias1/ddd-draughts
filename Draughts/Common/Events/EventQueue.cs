@@ -22,18 +22,18 @@ public sealed class EventQueue {
     public void Enqueue(IEnumerable<DomainEvent> evts) => evts.ForEach(evt => Enqueue(evt));
     public void Enqueue(DomainEvent evt) => _queue.Enqueue(evt);
 
-    public bool FireNext() {
-        bool handled = FireEvent(_queue.Dequeue());
+    public bool DispatchNext() {
+        bool handled = DispatchEvent(_queue.Dequeue());
 
         RequeueFailedEvents();
 
         return handled;
     }
 
-    public bool FireAll() {
+    public bool DispatchAll() {
         bool allAreHandled = true;
         while (_queue.TryDequeue(out var evt)) {
-            allAreHandled &= FireEvent(evt);
+            allAreHandled &= DispatchEvent(evt);
         }
 
         RequeueFailedEvents();
@@ -41,7 +41,7 @@ public sealed class EventQueue {
         return allAreHandled;
     }
 
-    private bool FireEvent(DomainEvent evt) {
+    private bool DispatchEvent(DomainEvent evt) {
         try {
             return _eventHandlers
                 .Where(h => h.CanHandle(evt))

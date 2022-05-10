@@ -11,7 +11,7 @@ using static Draughts.Common.Events.DomainEvent;
 
 namespace Draughts.Repositories.Transaction;
 
-public sealed class DbUnitOfWork : IUnitOfWork {
+public sealed class DbUnitOfWork : IRepositoryUnitOfWork {
     private readonly IClock _clock;
     private readonly IIdGenerator _idGenerator;
 
@@ -78,7 +78,7 @@ public sealed class DbUnitOfWork : IUnitOfWork {
 
         if (transaction.Succeeded) {
             _eventQueue.Enqueue(transaction.RaisedEvents);
-            _eventQueue.FireAll();
+            _eventQueue.DispatchAll();
         }
     }
 
@@ -93,10 +93,10 @@ public sealed class DbUnitOfWork : IUnitOfWork {
             throw new InvalidOperationException("You can only raise events from within a transaction context.");
         }
 
-        _currentTransaction.Value.RaiseEvent(evt); // :( - what do we do in DB though?
+        _currentTransaction.Value.RaiseEvent(evt);
     }
 
-    public void FireAll() => _eventQueue.FireAll();
+    public void DispatchAll() => _eventQueue.DispatchAll();
 
     public void Store<T>(T obj, Func<ITransaction, List<T>> tableFunc) where T : IEquatable<T> {
         throw new InvalidOperationException("Store through the repositories, not through the unit of work.");
@@ -134,7 +134,6 @@ public sealed class DbUnitOfWork : IUnitOfWork {
         }
 
         public void RaiseEvent(DomainEvent evt) {
-            // TODO: Query that stores the event
             _raisedEvents.Add(evt);
         }
 

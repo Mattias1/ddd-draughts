@@ -6,18 +6,14 @@ using System;
 namespace Draughts.Repositories.Database;
 
 public sealed class DbAdminLogRepository : DbRepository<AdminLog, AdminLogId, DbAdminLog>, IAdminLogRepository {
-    private readonly IUnitOfWork _unitOfWork;
-
-    public DbAdminLogRepository(IUnitOfWork unitOfWork) {
-        _unitOfWork = unitOfWork;
-    }
+    public DbAdminLogRepository(IRepositoryUnitOfWork unitOfWork) : base (unitOfWork) { }
 
     protected override string TableName => "adminlog";
-    protected override IInitialQueryBuilder GetBaseQuery() => _unitOfWork.Query(TransactionDomain.Auth);
+    protected override IInitialQueryBuilder GetBaseQuery() => UnitOfWork.Query(TransactionDomain.Auth);
 
     protected override AdminLog Parse(DbAdminLog q) => q.ToDomainModel();
 
-    public override void Save(AdminLog entity) {
+    protected override void SaveInternal(AdminLog entity) {
         var obj = DbAdminLog.FromDomainModel(entity);
         if (FindByIdOrNull(entity.Id) is null) {
             GetBaseQuery().InsertInto(TableName).InsertFrom(obj).Execute();

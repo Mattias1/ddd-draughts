@@ -4,15 +4,12 @@ using Draughts.Repositories.Transaction;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using static Draughts.Common.Events.DomainEvent;
 
 namespace Draughts.Repositories.InMemory;
 
 public sealed class InMemoryRoleRepository : InMemoryRepository<Role, RoleId>, IRoleRepository {
-    private readonly IUnitOfWork _unitOfWork;
-
-    public InMemoryRoleRepository(IUnitOfWork unitOfWork) {
-        _unitOfWork = unitOfWork;
-    }
+    public InMemoryRoleRepository(IRepositoryUnitOfWork unitOfWork) : base(unitOfWork) { }
 
     protected override IList<Role> GetBaseQuery() {
         var permissionRoles = AuthDatabase.Get.PermissionRolesTable.ToLookup(pr => pr.RoleId, pr => pr.Permission);
@@ -26,20 +23,20 @@ public sealed class InMemoryRoleRepository : InMemoryRepository<Role, RoleId>, I
         return role?.Permissions ?? new List<Permission>().AsReadOnly();
     }
 
-    public override void Save(Role entity) {
+    protected override void SaveInternal(Role entity) {
         var dbRole = DbRole.FromDomainModel(entity);
-        _unitOfWork.Store(dbRole, tran => AuthDatabase.Temp(tran).RolesTable);
+        UnitOfWork.Store(dbRole, tran => AuthDatabase.Temp(tran).RolesTable);
 
         foreach (var permission in entity.Permissions.Select(p => p.Value)) {
             var dbPermission = new DbPermissionRole {
                 Permission = permission,
                 RoleId = dbRole.Id
             };
-            _unitOfWork.Store(dbPermission, tran => AuthDatabase.Temp(tran).PermissionRolesTable);
+            UnitOfWork.Store(dbPermission, tran => AuthDatabase.Temp(tran).PermissionRolesTable);
         }
     }
 
-    public void Delete(RoleId roleId) {
+    public void Delete(RoleId roleId, DomainEventFactory eventFactory) {
         throw new NotImplementedException("Deleting data is not supported for the in memory database.");
     }
 }

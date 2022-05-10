@@ -51,10 +51,12 @@ public static class DraughtsServiceProvider {
     }
 
     private static void ConfigureRepositories(IServiceCollection services, bool useInMemoryDatabase, int hiloLargeIntervalSize, int hiloSmallIntervalSize) {
+        services.AddSingleton<IUnitOfWork, UnitOfWorkWrapper>();
+
         if (useInMemoryDatabase) {
             services.AddSingleton<IIdGenerator>(HiLoIdGenerator.InMemoryHiloGIdGenerator(
                 hiloLargeIntervalSize, hiloSmallIntervalSize, hiloSmallIntervalSize));
-            services.AddSingleton<IUnitOfWork, InMemoryUnitOfWork>();
+            services.AddSingleton<IRepositoryUnitOfWork, InMemoryUnitOfWork>();
 
             services.AddSingleton<IAuthUserRepository, InMemoryAuthUserRepository>();
             services.AddSingleton<IRoleRepository, InMemoryRoleRepository>();
@@ -67,7 +69,7 @@ public static class DraughtsServiceProvider {
         else {
             services.AddSingleton<IIdGenerator>(HiLoIdGenerator.DbHiloGIdGenerator(
                 hiloLargeIntervalSize, hiloSmallIntervalSize, hiloSmallIntervalSize));
-            services.AddSingleton<IUnitOfWork, DbUnitOfWork>();
+            services.AddSingleton<IRepositoryUnitOfWork, DbUnitOfWork>();
 
             services.AddSingleton<IAuthUserRepository, DbAuthUserRepository>();
             services.AddSingleton<IRoleRepository, DbRoleRepository>();
@@ -96,7 +98,7 @@ public static class DraughtsServiceProvider {
     }
 
     public static void RegisterEventHandlers(IServiceProvider serviceProvider) {
-        var unitOfWork = serviceProvider.GetRequiredService<IUnitOfWork>();
+        var unitOfWork = serviceProvider.GetRequiredService<IRepositoryUnitOfWork>();
 
         unitOfWork.Register(serviceProvider.GetRequiredService<SynchronizePendingUserEventHandler>());
         unitOfWork.Register(serviceProvider.GetRequiredService<FinishUserRegistrationEventHandler>());

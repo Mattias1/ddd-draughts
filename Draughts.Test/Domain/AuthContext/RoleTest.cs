@@ -1,4 +1,5 @@
 using Draughts.Common;
+using Draughts.Domain.UserContext.Models;
 using Draughts.Test.TestHelpers;
 using FluentAssertions;
 using System;
@@ -9,11 +10,12 @@ using static Draughts.Domain.AuthContext.Models.Permission;
 namespace Draughts.Test.Domain.AuthContext;
 
 public sealed class RoleTest {
+    private static readonly UserId AdminUserId = new UserId(1);
     [Fact]
     public void ThrowWhenRoleNameIsTooShort() {
         var role = RoleTestHelper.RegisteredUser().Build();
 
-        Action editingRole = () => role.Edit("42", role.Permissions);
+        Action editingRole = () => role.Edit("42", role.Permissions, AdminUserId);
 
         editingRole.Should().Throw<ManualValidationException>();
     }
@@ -22,7 +24,7 @@ public sealed class RoleTest {
     public void EditRoleSuccessfully() {
         var role = RoleTestHelper.RegisteredUser().Build();
 
-        role.Edit("1337", new[] { Permissions.ViewModPanel });
+        role.Edit("1337", new[] { Permissions.ViewModPanel }, AdminUserId);
 
         role.Rolename.Should().Be("1337");
         role.Permissions.Should().BeEquivalentTo(new[] { Permissions.ViewModPanel });
@@ -32,7 +34,7 @@ public sealed class RoleTest {
     public void ThrowWhenModifyingAdminRoleName() {
         var role = RoleTestHelper.Admin().Build();
 
-        Action editingRole = () => role.Edit("adMIN", role.Permissions);
+        Action editingRole = () => role.Edit("adMIN", role.Permissions, AdminUserId);
 
         editingRole.Should().Throw<ManualValidationException>();
     }
@@ -42,7 +44,7 @@ public sealed class RoleTest {
         var role = RoleTestHelper.Admin().Build();
         var newPermissions = role.Permissions.Where(p => p != Permissions.PLAY_GAME).ToList();
 
-        Action editingRole = () => role.Edit(role.Rolename, newPermissions);
+        Action editingRole = () => role.Edit(role.Rolename, newPermissions, AdminUserId);
 
         editingRole.Should().Throw<ManualValidationException>();
     }
@@ -54,7 +56,7 @@ public sealed class RoleTest {
             .Build();
         var newPermissions = role.Permissions.Where(p => p != Permissions.PENDING_REGISTRATION).ToList();
 
-        role.Edit(role.Rolename, newPermissions);
+        role.Edit(role.Rolename, newPermissions, AdminUserId);
 
         role.Permissions.Should().NotContain(Permissions.PendingRegistration);
     }
@@ -64,7 +66,7 @@ public sealed class RoleTest {
         var role = RoleTestHelper.Admin().Build();
         var newPermissions = role.Permissions.Concat(new[] { Permissions.PendingRegistration }).ToList();
 
-        role.Edit(role.Rolename, newPermissions);
+        role.Edit(role.Rolename, newPermissions, AdminUserId);
 
         role.Permissions.Should().Contain(Permissions.PendingRegistration);
     }

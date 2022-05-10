@@ -8,11 +8,11 @@ using System.Linq;
 namespace Draughts.Repositories.Database;
 
 public sealed class DbVotingRepository : IVotingRepository {
-    private readonly IUnitOfWork _unitOfWork;
+    private readonly IRepositoryUnitOfWork _unitOfWork;
 
     private string TableName => "vote";
 
-    public DbVotingRepository(IUnitOfWork unitOfWork) {
+    public DbVotingRepository(IRepositoryUnitOfWork unitOfWork) {
         _unitOfWork = unitOfWork;
     }
 

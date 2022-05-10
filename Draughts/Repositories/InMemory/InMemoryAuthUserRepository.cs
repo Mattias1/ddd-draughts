@@ -10,11 +10,10 @@ namespace Draughts.Repositories.InMemory;
 
 public sealed class InMemoryAuthUserRepository : InMemoryRepository<AuthUser, UserId>, IAuthUserRepository {
     private readonly IRoleRepository _roleRepository;
-    private readonly IUnitOfWork _unitOfWork;
 
-    public InMemoryAuthUserRepository(IRoleRepository roleRepository, IUnitOfWork unitOfWork) {
+    public InMemoryAuthUserRepository(IRoleRepository roleRepository, IRepositoryUnitOfWork unitOfWork)
+            : base(unitOfWork) {
         _roleRepository = roleRepository;
-        _unitOfWork = unitOfWork;
     }
 
     public AuthUser FindByName(string username) => Find(new UsernameSpecification(username));
@@ -26,16 +25,16 @@ public sealed class InMemoryAuthUserRepository : InMemoryRepository<AuthUser, Us
             .ToList();
     }
 
-    public override void Save(AuthUser entity) {
+    protected override void SaveInternal(AuthUser entity) {
         var dbAuthUser = DbAuthUser.FromDomainModel(entity);
-        _unitOfWork.Store(dbAuthUser, tran => AuthDatabase.Temp(tran).AuthUsersTable);
+        UnitOfWork.Store(dbAuthUser, tran => AuthDatabase.Temp(tran).AuthUsersTable);
 
         foreach (var roleId in entity.RoleIds.Select(r => r.Value)) {
             var dbAuthUserRole = new DbAuthUserRole {
                 UserId = dbAuthUser.Id,
                 RoleId = roleId
             };
-            _unitOfWork.Store(dbAuthUserRole, tran => AuthDatabase.Temp(tran).AuthUserRolesTable);
+            UnitOfWork.Store(dbAuthUserRole, tran => AuthDatabase.Temp(tran).AuthUserRolesTable);
         }
     }
 }

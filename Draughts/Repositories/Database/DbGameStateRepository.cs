@@ -5,16 +5,12 @@ using SqlQueryBuilder.Builder;
 namespace Draughts.Repositories.Database;
 
 public sealed class DbGameStateRepository : DbRepository<GameState, GameId, DbGameState>, IGameStateRepository {
-    private readonly IUnitOfWork _unitOfWork;
-
-    public DbGameStateRepository(IUnitOfWork unitOfWork) {
-        _unitOfWork = unitOfWork;
-    }
+    public DbGameStateRepository(IRepositoryUnitOfWork unitOfWork) : base(unitOfWork) { }
 
     protected override string TableName => "gamestate";
     private const string MoveTableName = "move";
     private const string GameTableName = "game"; // Read only; this belongs to a different aggregate.
-    protected override IInitialQueryBuilder GetBaseQuery() => _unitOfWork.Query(TransactionDomain.Game);
+    protected override IInitialQueryBuilder GetBaseQuery() => UnitOfWork.Query(TransactionDomain.Game);
 
     protected override GameState Parse(DbGameState gs) {
         var settings = GetBaseQuery().SelectAllFrom(GameTableName)
@@ -28,13 +24,13 @@ public sealed class DbGameStateRepository : DbRepository<GameState, GameId, DbGa
         return gs.ToDomainModel(settings, moves);
     }
 
-    public override void Save(GameState entity) {
+    protected override void SaveInternal(GameState entity) {
         var obj = DbGameState.FromDomainModel(entity);
         if (FindByIdOrNull(entity.Id) is null) {
             GetBaseQuery().InsertInto(TableName).InsertFrom(obj).Execute();
         }
         else {
-            // There's no reason to update a game state entity, nothing can change
+            // There's no reason to update the game state entity itself, nothing can change
         }
 
         int maxDbIndex = GetBaseQuery().Select().Max("index")

@@ -8,7 +8,7 @@ namespace Draughts.IntegrationTest.EndToEnd.Database;
 
 public sealed class DbApiTester : BaseApiTester {
     public override IIdGenerator IdGenerator { get; }
-    public override IUnitOfWork UnitOfWork { get; }
+    public override IRepositoryUnitOfWork UnitOfWork { get; }
     public override IRoleRepository RoleRepository { get; }
     public override IAuthUserRepository AuthUserRepository { get; }
     public override IAdminLogRepository AdminLogRepository { get; }

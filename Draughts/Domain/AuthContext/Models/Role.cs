@@ -1,12 +1,16 @@
 using Draughts.Common;
 using Draughts.Common.OoConcepts;
+using Draughts.Common.Utilities;
+using Draughts.Domain.AuthContext.Events;
+using Draughts.Domain.UserContext.Models;
+using Draughts.Repositories;
 using NodaTime;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace Draughts.Domain.AuthContext.Models;
 
-public sealed class Role : Entity<Role, RoleId> {
+public sealed class Role : AggregateRoot<Role, RoleId> {
     public const string ADMIN_ROLENAME = "Admin";
     public const string PENDING_REGISTRATION_ROLENAME = "Pending registration";
     public const string REGISTERED_USER_ROLENAME = "Registered user";
@@ -33,12 +37,14 @@ public sealed class Role : Entity<Role, RoleId> {
             .AsReadOnly();
     }
 
-    public void Edit(string rolename, IEnumerable<Permission> grantedPermissions) {
+    public void Edit(string rolename, IEnumerable<Permission> grantedPermissions, UserId responsibleUserId) {
         ValidateRolename(rolename);
         DontLockYourselfOut(rolename, grantedPermissions);
 
         Rolename = rolename;
         Permissions = grantedPermissions.ToList().AsReadOnly();
+
+        RegisterEvent(RoleEdited.Factory(this, responsibleUserId));
     }
 
     private void ValidateRolename(string rolename) {
@@ -58,6 +64,16 @@ public sealed class Role : Entity<Role, RoleId> {
         if (Permissions.Except(Permission.Permissions.IgnoredByAdmins).Except(newPermissions).Any()) {
             throw new ManualValidationException("You are not allowed to remove permissions from the admin role.");
         }
+    }
+
+    public bool IsUserCreationRole() {
+        return Rolename == PENDING_REGISTRATION_ROLENAME || Rolename == REGISTERED_USER_ROLENAME;
+    }
+
+    public static Role CreateNew(IIdPool idPool, string rolename, IClock clock, UserId responsibleUserId) {
+        var role = new Role(new RoleId(idPool.Next()), rolename, clock.UtcNow());
+        role.RegisterEvent(RoleCreated.Factory(role, responsibleUserId));
+        return role;
     }
 
     public readonly struct PermissionItem {

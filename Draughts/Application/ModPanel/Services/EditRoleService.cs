@@ -1,5 +1,4 @@
 using Draughts.Common;
-using Draughts.Common.Utilities;
 using Draughts.Domain.AuthContext.Events;
 using Draughts.Domain.AuthContext.Models;
 using Draughts.Domain.AuthContext.Specifications;
@@ -42,13 +41,8 @@ public sealed class EditRoleService {
 
     public Role CreateRole(UserId responsibleUserId, string rolename) {
         return _unitOfWork.WithAuthTransaction(tran => {
-            var nextId = _idGenerator.ReservePool().Next();
-            var createdAt = _clock.UtcNow();
-            var role = new Role(new RoleId(nextId), rolename, createdAt);
-
+            var role = Role.CreateNew(_idGenerator.ReservePool(), rolename, _clock, responsibleUserId);
             _roleRepository.Save(role);
-
-            _unitOfWork.Raise(RoleCreated.Factory(role, responsibleUserId));
 
             return role;
         });
@@ -57,11 +51,9 @@ public sealed class EditRoleService {
     public void EditRole(UserId responsibleUserId, RoleId roleId, string rolename, string[] grantedPermissions) {
         _unitOfWork.WithAuthTransaction(tran => {
             var role = FindRole(roleId);
-            role.Edit(rolename, grantedPermissions.Select(p => new Permission(p)));
+            role.Edit(rolename, grantedPermissions.Select(p => new Permission(p)), responsibleUserId);
 
             _roleRepository.Save(role);
-
-            _unitOfWork.Raise(RoleEdited.Factory(role, responsibleUserId));
         });
     }
 
@@ -73,9 +65,7 @@ public sealed class EditRoleService {
                 throw new ManualValidationException("You cannot delete roles with users assigned.");
             }
 
-            _roleRepository.Delete(roleId);
-
-            _unitOfWork.Raise(RoleDeleted.Factory(role, responsibleUserId));
+            _roleRepository.Delete(roleId, RoleDeleted.Factory(role, responsibleUserId));
         });
     }
 

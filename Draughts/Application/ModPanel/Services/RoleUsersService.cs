@@ -45,10 +45,8 @@ public sealed class RoleUsersService {
                 throw new ManualValidationException("User not found");
             }
 
-            _userRoleDomainService.AssignRole(authUser, role);
+            _userRoleDomainService.AssignRole(authUser, role, responsibleUserId);
             _authUserRepository.Save(authUser);
-
-            _unitOfWork.Raise(UserGainedRole.Factory(role, authUser, responsibleUserId));
         });
     }
 
@@ -60,10 +58,8 @@ public sealed class RoleUsersService {
                 throw new ManualValidationException("User not found");
             }
 
-            _userRoleDomainService.RemoveRole(authUser, role);
+            _userRoleDomainService.RemoveRole(authUser, role, responsibleUserId);
             _authUserRepository.Save(authUser);
-
-            _unitOfWork.Raise(UserLostRole.Factory(role, authUser, responsibleUserId));
         });
     }
 

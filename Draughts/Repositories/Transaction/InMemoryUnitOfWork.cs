@@ -11,7 +11,7 @@ using static Draughts.Repositories.Transaction.TransactionDomain;
 
 namespace Draughts.Repositories.Transaction;
 
-public sealed class InMemoryUnitOfWork : IUnitOfWork {
+public sealed class InMemoryUnitOfWork : IRepositoryUnitOfWork {
     private readonly IClock _clock;
     private readonly IIdGenerator _idGenerator;
 
@@ -95,7 +95,7 @@ public sealed class InMemoryUnitOfWork : IUnitOfWork {
 
         if (transaction.Succeeded) {
             _eventQueue.Enqueue(transaction.RaisedEvents);
-            _eventQueue.FireAll();
+            _eventQueue.DispatchAll();
         }
     }
 
@@ -109,7 +109,7 @@ public sealed class InMemoryUnitOfWork : IUnitOfWork {
         Store(evt, tran => CurrentTransactionDomain.TempDomainEventsTable(tran));
     }
 
-    public void FireAll() => _eventQueue.FireAll();
+    public void DispatchAll() => _eventQueue.DispatchAll();
 
     public void Store<T>(T obj, Func<ITransaction, List<T>> tableFunc) where T : IEquatable<T> {
         var tran = _openTransactions[CurrentTransactionDomain.Key];

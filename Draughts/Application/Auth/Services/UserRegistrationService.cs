@@ -1,6 +1,5 @@
 using Draughts.Common;
 using Draughts.Common.Utilities;
-using Draughts.Domain.AuthContext.Events;
 using Draughts.Domain.AuthContext.Models;
 using Draughts.Domain.AuthContext.Services;
 using Draughts.Domain.AuthContext.Specifications;
@@ -44,8 +43,6 @@ public sealed class UserRegistrationService {
 
             _authUserRepository.Save(authUser);
 
-            _unitOfWork.Raise(AuthUserCreated.Factory(authUser));
-
             return authUser;
         });
     }
@@ -61,8 +58,6 @@ public sealed class UserRegistrationService {
         return _unitOfWork.WithTransaction(TransactionDomain.User, tran => {
             var user = User.BuildNew(userId, username, _clock.UtcNow());
             _userRepository.Save(user);
-
-            _unitOfWork.Raise(UserCreated.Factory(user));
 
             return user;
         });

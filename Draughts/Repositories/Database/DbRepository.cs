@@ -1,4 +1,5 @@
 using Draughts.Common.OoConcepts;
+using Draughts.Repositories.Transaction;
 using SqlQueryBuilder.Builder;
 using System.Collections.Generic;
 using System.Linq;
@@ -6,8 +7,12 @@ using System.Linq;
 namespace Draughts.Repositories.Database;
 
 public abstract class DbRepository<T, TId, TDb> : IRepository<T, TId>
-        where T : Entity<T, TId> where TId : IdValueObject<TId> where TDb : new() {
-    protected DbRepository() { }
+        where T : AggregateRoot<T, TId> where TId : IdValueObject<TId> where TDb : new() {
+    protected readonly IRepositoryUnitOfWork UnitOfWork;
+
+    protected DbRepository(IRepositoryUnitOfWork unitOfWork) {
+        UnitOfWork = unitOfWork;
+    }
 
     public long Count() {
         return GetBaseQuery().Select().CountAll().From(TableName).SingleLong();
@@ -65,5 +70,17 @@ public abstract class DbRepository<T, TId, TDb> : IRepository<T, TId>
     protected virtual T? ParseNullable(TDb? result) => result is null ? null : Parse(result);
     protected abstract T Parse(TDb result);
 
-    public abstract void Save(T entity);
+    public void Save(T entity) {
+        RaiseEvents(entity);
+        SaveInternal(entity);
+    }
+    protected abstract void SaveInternal(T entity);
+
+    protected void RaiseEvents(AggregateRoot<T, TId> aggregateRoot) {
+        // TODO: Actually save the events to the database?
+        foreach (var evt in aggregateRoot.Events) {
+            UnitOfWork.Raise(evt);
+        }
+        aggregateRoot.ClearEvents();
+    }
 }

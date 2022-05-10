@@ -17,7 +17,7 @@ namespace Draughts.Test.Repositories.InMemory;
 public sealed class InMemoryUnitOfWorkTest {
     private readonly FakeClock _clock;
     private readonly FakeDomainEventHandler _fakeDomainEventHandler;
-    private readonly IUnitOfWork _unitOfWork;
+    private readonly IRepositoryUnitOfWork _unitOfWork;
 
     public InMemoryUnitOfWorkTest() {
         _clock = FakeClock.FromUtc(2020, 02, 29);
@@ -89,7 +89,7 @@ public sealed class InMemoryUnitOfWorkTest {
     }
 
     [Fact]
-    public void DontFireEventWhenRollbacking() {
+    public void DontDispatchEventWhenRollbacking() {
         _unitOfWork.Register(_fakeDomainEventHandler);
 
         _unitOfWork.WithTransaction(TransactionDomain.Auth, tran => {
@@ -102,7 +102,7 @@ public sealed class InMemoryUnitOfWorkTest {
     }
 
     [Fact]
-    public void FireEventWhenCommitting() {
+    public void DispatchEventWhenCommitting() {
         _unitOfWork.Register(_fakeDomainEventHandler);
 
         _unitOfWork.WithTransaction(TransactionDomain.Auth, tran => {
@@ -114,13 +114,13 @@ public sealed class InMemoryUnitOfWorkTest {
     }
 
     [Fact]
-    public void FireEventOnlyOnceWhenCommittingAndReFiringAll() {
+    public void DispatchEventOnlyOnceWhenCommittingAndReDispatchingAll() {
         _unitOfWork.Register(_fakeDomainEventHandler);
 
         _unitOfWork.WithTransaction(TransactionDomain.Auth, tran => {
             RaiseEvent(1);
         });
-        _unitOfWork.FireAll();
+        _unitOfWork.DispatchAll();
 
         _fakeDomainEventHandler.HandledEvents.Should().Contain(evt => evt.Id == 1);
         _fakeDomainEventHandler.HandledEvents.Should().HaveCount(1);

@@ -8,11 +8,7 @@ using System.Linq;
 namespace Draughts.Repositories.InMemory;
 
 public sealed class InMemoryUserRepository : InMemoryRepository<User, UserId>, IUserRepository {
-    private readonly IUnitOfWork _unitOfWork;
-
-    public InMemoryUserRepository(IUnitOfWork unitOfWork) {
-        _unitOfWork = unitOfWork;
-    }
+    public InMemoryUserRepository(IRepositoryUnitOfWork unitOfWork) : base(unitOfWork) { }
 
     public User FindByName(string username) => Find(new UserUsernameSpecification(username));
 
@@ -20,8 +16,8 @@ public sealed class InMemoryUserRepository : InMemoryRepository<User, UserId>, I
         return UserDatabase.Get.UsersTable.Select(u => u.ToDomainModel()).ToList();
     }
 
-    public override void Save(User entity) {
+    protected override void SaveInternal(User entity) {
         var user = DbUser.FromDomainModel(entity);
-        _unitOfWork.Store(user, tran => UserDatabase.Temp(tran).UsersTable);
+        UnitOfWork.Store(user, tran => UserDatabase.Temp(tran).UsersTable);
     }
 }

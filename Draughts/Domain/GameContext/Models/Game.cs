@@ -1,5 +1,6 @@
 using Draughts.Common;
 using Draughts.Common.OoConcepts;
+using Draughts.Domain.AuthContext.Events;
 using Draughts.Domain.UserContext.Models;
 using NodaTime;
 using System.Collections.Generic;
@@ -7,7 +8,7 @@ using System.Linq;
 
 namespace Draughts.Domain.GameContext.Models;
 
-public sealed class Game : Entity<Game, GameId> {
+public sealed class Game : AggregateRoot<Game, GameId> {
     public const string ERROR_GAME_NOT_ACTIVE = "This game is not active.";
     public const string ERROR_NOT_YOUR_TURN = "It's not your turn.";
     public const string ERROR_NOT_IN_GAME = "You're not in the game.";
@@ -108,6 +109,8 @@ public sealed class Game : Entity<Game, GameId> {
         FinishedAt = finishedAt;
         Victor = Turn!.Player;
         Turn = null;
+
+        RegisterEvent(GameFinished.Factory(this));
     }
 
     public void Draw(ZonedDateTime finishedAt) {
@@ -116,6 +119,8 @@ public sealed class Game : Entity<Game, GameId> {
         FinishedAt = finishedAt;
         Victor = null;
         Turn = null;
+
+        RegisterEvent(GameFinished.Factory(this));
     }
 
     public void ResignGame(UserId currentUser, ZonedDateTime finishedAt) {
@@ -124,6 +129,8 @@ public sealed class Game : Entity<Game, GameId> {
         FinishedAt = finishedAt;
         Victor = Players.Single(p => p.UserId != currentUser);
         Turn = null;
+
+        RegisterEvent(GameFinished.Factory(this));
     }
 
     public void ValidateCanDoMove(UserId currentUser) {

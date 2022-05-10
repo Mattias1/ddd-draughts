@@ -1,4 +1,5 @@
 using Draughts.Common.OoConcepts;
+using Draughts.Repositories.Transaction;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -6,7 +7,13 @@ using System.Linq;
 namespace Draughts.Repositories.InMemory;
 
 public abstract class InMemoryRepository<T, TId> : IRepository<T, TId>
-        where T : Entity<T, TId> where TId : IdValueObject<TId> {
+        where T : AggregateRoot<T, TId> where TId : IdValueObject<TId> {
+    protected readonly IRepositoryUnitOfWork UnitOfWork;
+
+    protected InMemoryRepository(IRepositoryUnitOfWork unitOfWork) {
+        UnitOfWork = unitOfWork;
+    }
+
     protected abstract IList<T> GetBaseQuery();
 
     public long Count() => GetBaseQuery().Count;
@@ -38,5 +45,17 @@ public abstract class InMemoryRepository<T, TId> : IRepository<T, TId>
 
     private int GetPageIndex(long page) => Math.Max((int)page - 1, 0);
 
-    public abstract void Save(T entity);
+    public void Save(T entity) {
+        RaiseEvents(entity);
+        SaveInternal(entity);
+    }
+    protected abstract void SaveInternal(T entity);
+
+    protected void RaiseEvents(AggregateRoot<T, TId> aggregateRoot) {
+        // TODO: Actually save the events to the database?
+        foreach (var evt in aggregateRoot.Events) {
+            UnitOfWork.Raise(evt);
+        }
+        aggregateRoot.ClearEvents();
+    }
 }

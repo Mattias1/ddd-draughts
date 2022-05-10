@@ -36,10 +36,6 @@ public sealed class PlayGameService {
             _gameRepository.Save(game);
             _gameStateRepository.Save(gameState);
 
-            if (game.IsFinished) {
-                _unitOfWork.Raise(GameFinished.Factory(game));
-            }
-
             return (game, gameState);
         });
     }
@@ -53,10 +49,6 @@ public sealed class PlayGameService {
 
             _votingRepository.Save(voting);
             _gameRepository.Save(game);
-
-            if (game.IsFinished) {
-                _unitOfWork.Raise(GameFinished.Factory(game));
-            }
         });
     }
 
@@ -65,8 +57,6 @@ public sealed class PlayGameService {
             var game = FindGame(gameId);
             game.ResignGame(currentUserId, _clock.UtcNow());
             _gameRepository.Save(game);
-
-            _unitOfWork.Raise(GameFinished.Factory(game));
         });
     }
 
