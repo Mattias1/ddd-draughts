@@ -17,7 +17,7 @@ public sealed class AuthUserCreated : DomainEvent {
         Username = authUser.Username;
     }
 
-    public static Func<DomainEventId, ZonedDateTime, AuthUserCreated> Factory(AuthUser authUser) {
+    public static DomainEventFactory Factory(AuthUser authUser) {
         return (id, now) => new AuthUserCreated(authUser, id, now);
     }
 }

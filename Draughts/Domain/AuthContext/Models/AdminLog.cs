@@ -34,12 +34,15 @@ public sealed class AdminLog : Entity<AdminLog, AdminLogId> {
     public string Description() {
         string userId, username = "";
         switch (Type) {
-            case "role.create":
+            case "role.created":
                 var (roleId, rolename) = Parameters.UnpackDuo();
                 return $"Created a new role '{roleId} - {rolename}'";
-            case "role.edit":
+            case "role.edited":
                 (roleId, rolename) = Parameters.UnpackDuo();
                 return $"Edited the role '{roleId} - {rolename}'";
+            case "role.deleted":
+                (roleId, rolename) = Parameters.UnpackDuo();
+                return $"Deleted the role '{roleId} - {rolename}'";
             case "role.gained":
                 (roleId, rolename, userId, username) = Parameters.UnpackQuad();
                 return $"Assigned the role '{roleId} - {rolename}' to '{userId} - {username}'";
@@ -53,7 +56,7 @@ public sealed class AdminLog : Entity<AdminLog, AdminLogId> {
 
     public static AdminLog CreateRoleLog(IIdPool idPool, IClock clock, AuthUser actor, RoleId roleId, string rolename) {
         return new AdminLog(
-            Next(idPool), "role.create", Params(roleId, rolename),
+            NextId(idPool), "role.created", Params(roleId, rolename),
             actor.Id, actor.Username,
             Permissions.EditRoles, clock.UtcNow()
         );
@@ -61,7 +64,7 @@ public sealed class AdminLog : Entity<AdminLog, AdminLogId> {
 
     public static AdminLog EditRoleLog(IIdPool idPool, IClock clock, AuthUser actor, RoleId roleId, string rolename) {
         return new AdminLog(
-            Next(idPool), "role.edit", Params(roleId, rolename),
+            NextId(idPool), "role.edited", Params(roleId, rolename),
             actor.Id, actor.Username,
             Permissions.EditRoles, clock.UtcNow()
         );
@@ -70,7 +73,7 @@ public sealed class AdminLog : Entity<AdminLog, AdminLogId> {
     public static AdminLog RoleGainedLog(IIdPool idPool, IClock clock, AuthUser actor,
             RoleId roleId, string rolename, UserId userId, Username username) {
         return new AdminLog(
-            Next(idPool), "role.gained", Params(roleId, rolename, userId, username),
+            NextId(idPool), "role.gained", Params(roleId, rolename, userId, username),
             actor.Id, actor.Username,
             Permissions.EditRoles, clock.UtcNow()
         );
@@ -79,13 +82,23 @@ public sealed class AdminLog : Entity<AdminLog, AdminLogId> {
     public static AdminLog RoleLostLog(IIdPool idPool, IClock clock, AuthUser actor,
             RoleId roleId, string rolename, UserId userId, Username username) {
         return new AdminLog(
-            Next(idPool), "role.lost", Params(roleId, rolename, userId, username),
+            NextId(idPool), "role.lost", Params(roleId, rolename, userId, username),
             actor.Id, actor.Username,
             Permissions.EditRoles, clock.UtcNow()
         );
     }
 
-    private static AdminLogId Next(IIdPool idPool) => new AdminLogId(idPool.Next());
+    public static AdminLog RoleDeletedLog(IIdPool idPool, IClock clock, AuthUser actor,
+            RoleId roleId, string rolename) {
+        return new AdminLog(
+            NextId(idPool), "role.deleted", Params(roleId, rolename),
+            actor.Id, actor.Username,
+            Permissions.EditRoles, clock.UtcNow()
+        );
+    }
+
+    private static AdminLogId NextId(IIdPool idPool) => new AdminLogId(idPool.Next());
+
     private static IReadOnlyList<string> Params(params object[] parameters) => parameters
         .Select(o => o.ToString() ?? "").ToList().AsReadOnly();
 }

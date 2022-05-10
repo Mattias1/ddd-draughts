@@ -19,7 +19,7 @@ public sealed class RoleCreated : DomainEvent {
         CreatedBy = createdBy;
     }
 
-    public static Func<DomainEventId, ZonedDateTime, RoleCreated> Factory(Role role, UserId createdBy) {
+    public static DomainEventFactory Factory(Role role, UserId createdBy) {
         return (id, now) => new RoleCreated(role, createdBy, id, now);
     }
 }

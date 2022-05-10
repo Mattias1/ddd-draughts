@@ -1,8 +1,8 @@
 using Draughts.Common.Events;
-using NodaTime;
 using SqlQueryBuilder.Builder;
 using System;
 using System.Collections.Generic;
+using static Draughts.Common.Events.DomainEvent;
 
 namespace Draughts.Repositories.Transaction;
 
@@ -19,7 +19,7 @@ public interface IUnitOfWork {
     ITransaction BeginTransaction(TransactionDomain domain);
 
     void Register(IDomainEventHandler eventHandler);
-    void Raise(Func<DomainEventId, ZonedDateTime, DomainEvent> evtFunc);
+    void Raise(DomainEventFactory eventFactory);
     void Raise(DomainEvent evt);
     void FireAll();
 

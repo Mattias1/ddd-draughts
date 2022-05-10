@@ -5,6 +5,7 @@ using SqlQueryBuilder.Builder;
 using System;
 using System.Collections.Generic;
 using System.Threading;
+using static Draughts.Common.Events.DomainEvent;
 using static Draughts.Repositories.Transaction.PairTableFunctions;
 using static Draughts.Repositories.Transaction.TransactionDomain;
 
@@ -100,9 +101,9 @@ public sealed class InMemoryUnitOfWork : IUnitOfWork {
 
     public void Register(IDomainEventHandler eventHandler) => _eventHandlers.Add(eventHandler);
 
-    public void Raise(Func<DomainEventId, ZonedDateTime, DomainEvent> evtFactoryFunc) {
+    public void Raise(DomainEventFactory eventFactory) {
         var nextId = new DomainEventId(_idGenerator.ReservePool(1, 0, 0).Next());
-        Raise(evtFactoryFunc(nextId, _clock.UtcNow()));
+        Raise(eventFactory(nextId, _clock.UtcNow()));
     }
     public void Raise(DomainEvent evt) {
         Store(evt, tran => CurrentTransactionDomain.TempDomainEventsTable(tran));

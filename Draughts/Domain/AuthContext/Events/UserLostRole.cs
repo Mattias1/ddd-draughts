@@ -23,7 +23,7 @@ public sealed class UserLostRole : DomainEvent {
         RemovedBy = removedBy;
     }
 
-    public static Func<DomainEventId, ZonedDateTime, UserLostRole> Factory(Role role, AuthUser user, UserId removedBy) {
+    public static DomainEventFactory Factory(Role role, AuthUser user, UserId removedBy) {
         return (id, now) => new UserLostRole(role, user, removedBy, id, now);
     }
 }

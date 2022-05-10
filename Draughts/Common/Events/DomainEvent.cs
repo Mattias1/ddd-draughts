@@ -5,6 +5,8 @@ using System;
 namespace Draughts.Common.Events;
 
 public abstract class DomainEvent : IEquatable<DomainEvent> {
+    public delegate DomainEvent DomainEventFactory(DomainEventId eventId, ZonedDateTime createdAt);
+
     public DomainEventId Id { get; }
     public string Type { get; }
     public ZonedDateTime CreatedAt { get; }

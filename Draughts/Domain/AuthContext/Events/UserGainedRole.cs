@@ -23,7 +23,7 @@ public sealed class UserGainedRole : DomainEvent {
         AssignedBy = assignedBy;
     }
 
-    public static Func<DomainEventId, ZonedDateTime, UserGainedRole> Factory(Role role, AuthUser user, UserId assignedBy) {
+    public static DomainEventFactory Factory(Role role, AuthUser user, UserId assignedBy) {
         return (id, now) => new UserGainedRole(role, user, assignedBy, id, now);
     }
 }

@@ -7,6 +7,7 @@ using SqlQueryBuilder.Options;
 using System;
 using System.Collections.Generic;
 using System.Threading;
+using static Draughts.Common.Events.DomainEvent;
 
 namespace Draughts.Repositories.Transaction;
 
@@ -83,9 +84,9 @@ public sealed class DbUnitOfWork : IUnitOfWork {
 
     public void Register(IDomainEventHandler eventHandler) => _eventHandlers.Add(eventHandler);
 
-    public void Raise(Func<DomainEventId, ZonedDateTime, DomainEvent> evtFunc) {
+    public void Raise(DomainEventFactory eventFactory) {
         var nextId = new DomainEventId(_idGenerator.ReservePool(1, 0, 0).Next());
-        Raise(evtFunc(nextId, _clock.UtcNow()));
+        Raise(eventFactory(nextId, _clock.UtcNow()));
     }
     public void Raise(DomainEvent evt) {
         if (_currentTransaction.Value is null) {

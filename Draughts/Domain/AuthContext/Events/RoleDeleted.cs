@@ -2,7 +2,6 @@ using Draughts.Common.Events;
 using Draughts.Domain.AuthContext.Models;
 using Draughts.Domain.UserContext.Models;
 using NodaTime;
-using System;
 
 namespace Draughts.Domain.AuthContext.Events;
 
@@ -19,7 +18,7 @@ public sealed class RoleDeleted : DomainEvent {
         DeletedBy = deletedBy;
     }
 
-    public static Func<DomainEventId, ZonedDateTime, RoleDeleted> Factory(Role role, UserId createdBy) {
+    public static DomainEventFactory Factory(Role role, UserId createdBy) {
         return (id, now) => new RoleDeleted(role, createdBy, id, now);
     }
 }

@@ -25,7 +25,7 @@ public sealed class GameFinished : DomainEvent {
         SettingsPreset = game.Settings.PresetEnum;
     }
 
-    public static Func<DomainEventId, ZonedDateTime, GameFinished> Factory(Game game) {
+    public static DomainEventFactory Factory(Game game) {
         return (id, now) => new GameFinished(game, id, now);
     }
 }
