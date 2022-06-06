@@ -238,6 +238,39 @@ public sealed class PossibleMoveCalculatorTest {
         posisbleMoves.Should().BeEquivalentTo("5x2");
     }
 
+    [Fact]
+    public void CannotCaptureDeadPieces() {
+        // |_|.|_|.|_|.|
+        // |.|_|5|_|D|_|
+        // |_|.|_|4|_|.|
+        // |.|_|7|_|F|_|
+        // |_|.|_|.|_|.|
+        // |.|_|.|_|.|_|
+        var board = Board.FromString("000 05D 040 07F 000 000");
+        var posisbleMoves = PossibleMoveCalculator.ForChainCaptures(board, 8.AsSquare(), InternationalSettings(6))
+            .Calculate()
+            .Select(m => m.ToString())
+            .ToList();
+        posisbleMoves.Should().BeEquivalentTo("8x1", "8x13");
+    }
+
+    [Fact]
+    public void DontCapturePiecesTwiceInAChainCapture() {
+        // |_|5|_|.|_|.|_|.|_|.|
+        // |.|_|5|_|.|_|4|_|4|_|
+        // |_|.|_|5|_|7|_|.|_|.|
+        // |.|_|.|_|5|_|4|_|4|_|
+        // |_|.|_|.|_|5|_|.|_|.|
+        // |.|_|.|_|.|_|5|_|4|_|
+        // |_|.|_|.|_|.|_|5|_|.|
+        // |.|_|4|_|.|_|.|_|.|_|
+        // |_|.|_|.|_|4|_|4|_|5|
+        // |.|_|.|_|.|_|.|_|.|_|
+        string boardString = "50000 05044 05700 00544 00500 00054 00050 04000 00445 00000";
+        CalculatePossibleMoves(boardString, Color.White, InternationalSettings(10))
+            .Should().BeEquivalentTo("13x4");
+    }
+
     private static List<string> CalculatePossibleMoves(string boardString, Color color, GameSettings settings) {
         var board = Board.FromString(boardString);
         return PossibleMoveCalculator.ForNewTurn(board, color, settings)

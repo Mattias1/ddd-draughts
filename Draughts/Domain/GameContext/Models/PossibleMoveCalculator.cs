@@ -61,7 +61,7 @@ public sealed class PossibleMoveCalculator {
             return;
         }
 
-        if (next.Color == _currentTurn.Other) {
+        if (next.Color == _currentTurn.Other && next.IsAlive) {
             var jump = next.GetBorder(dir);
             if (jump is null || jump.IsNotEmpty || !CanCaptureInDirection(dir, from)) {
                 return;
@@ -93,7 +93,7 @@ public sealed class PossibleMoveCalculator {
             if (target is null || jump is null) {
                 continue;
             }
-            if (target.Color == _currentTurn.Other && jump.IsEmpty && CanCaptureInDirection(dir, to)) {
+            if (target.Color == _currentTurn.Other && target.IsAlive && jump.IsEmpty && CanCaptureInDirection(dir, to)) {
                 if (_settings.CaptureConstraints == DraughtsCaptureConstraints.AnyFinishedSequence) {
                     maxChainLength = 2;
                     break;
@@ -107,6 +107,7 @@ public sealed class PossibleMoveCalculator {
         return maxChainLength;
     }
 
+    // TODO: Move these to the board or square class?
     private bool CanCaptureInDirection(Direction dir, Square from) {
         return _settings.MenCaptureBackwards || CanMoveInDirection(dir, from);
     }
@@ -130,7 +131,7 @@ public sealed class PossibleMoveCalculator {
                 continue;
             }
 
-            if (next.Color == _currentTurn.Other && victim is null) {
+            if (next.Color == _currentTurn.Other && next.IsAlive && victim is null) {
                 var jump = next.GetBorder(dir);
                 if (jump is null || jump.IsNotEmpty) {
                     return;
@@ -156,7 +157,7 @@ public sealed class PossibleMoveCalculator {
         int maxChainLength = 1;
         foreach (var dir in Direction.All) {
             Square? target = FirstNonEmptySquareInDirection(to, dir);
-            if (target is null || target.Color != _currentTurn.Other) {
+            if (target is null || target.Color != _currentTurn.Other || target.IsDead) {
                 continue;
             }
 

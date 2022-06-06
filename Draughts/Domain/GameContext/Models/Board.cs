@@ -8,6 +8,7 @@ using System.Text;
 namespace Draughts.Domain.GameContext.Models;
 
 // This class is like a mutuable value object. It could be immutable, but that'd be not very performant. Maybe. Hmmm. :/
+// It's not an entity either. It doesn't really have an identity.
 public sealed class Board : IEquatable<Board> {
     private readonly Square[] _squares;
     public int Size { get; }
@@ -20,14 +21,6 @@ public sealed class Board : IEquatable<Board> {
     public Square this[SquareId n] {
         get => _squares[n.Value - 1];
         private set => _squares[n.Value - 1] = value;
-    }
-
-    public Square? At(int x, int y, bool boardIsRotated) {
-        if (boardIsRotated) {
-            x = Size - x - 1;
-            y = Size - y - 1;
-        }
-        return this[x, y];
     }
 
     public int NrOfPlayableSquares => _squares.Length;
@@ -58,12 +51,17 @@ public sealed class Board : IEquatable<Board> {
             throw new ManualValidationException($"Invalid move ({from}, {to}).");
         }
 
-        PerformMoveUnsafe(from, to, move.Victim);
         canCaptureMore = move.MoreCapturesAvailable;
+        PerformMoveUnsafe(from, to, move.Victim);
 
         if (!canCaptureMore && IsManOnLastRow(to)) {
             PromoteUnsafe(to);
         }
+
+        if (!canCaptureMore) {
+            CleanUpBodies();
+        }
+
         return move;
     }
 
@@ -71,7 +69,7 @@ public sealed class Board : IEquatable<Board> {
         this[to].Piece = this[from].Piece;
         this[from].Piece = Piece.Empty;
         if (victim is not null) {
-            this[victim].Piece = Piece.Empty;
+            this[victim].Piece = this[victim].Piece.Killed();
         }
     }
 
@@ -96,6 +94,10 @@ public sealed class Board : IEquatable<Board> {
         return square.Color == Color.Black ? y == Size - 1 : y == 0;
     }
 
+    private void CleanUpBodies() {
+        _squares.Where(s => s.IsDead).ForEach(s => s.Piece = Piece.Empty);
+    }
+
     public int NrOfPiecesPerColor(Color color) => _squares.Count(p => p.Color == color);
 
     public override string ToString() => ToLongString("", "");
@@ -103,7 +105,7 @@ public sealed class Board : IEquatable<Board> {
         var sb = new StringBuilder(_squares.Length * 2 + Size);
         for (int y = 0; y < Size; y++) {
             for (int x = 0; x < Size; x++) {
-                sb.Append(this[x, y]?.Piece.RawValue.ToString() ?? empty);
+                sb.Append(this[x, y]?.Piece.ToHexString() ?? empty);
             }
             if (y != Size - 1) {
                 sb.Append(separator);
@@ -120,7 +122,7 @@ public sealed class Board : IEquatable<Board> {
     public static Board FromString(string input, string separator = "\n", string empty = " ") {
         var pieces = input.ToCharArray().Select(c => c.ToString())
             .Where(s => s != empty && s != separator)
-            .Select(s => new Piece(byte.Parse(s)))
+            .Select(s => Piece.FromHexString(s))
             .ToArray();
         int size = Convert.ToInt32(Math.Sqrt(pieces.Length * 2));
         return new Board(size, pieces);

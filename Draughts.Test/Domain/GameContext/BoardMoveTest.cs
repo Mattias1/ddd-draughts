@@ -136,7 +136,7 @@ public sealed class BoardMoveTest {
         // |.|_|.|_|.|_|
         var board = Board.FromString("000 044 500 000 000 000");
         board.PerformNewMove(7.AsSquare(), 2.AsSquare(), _settings, out bool canCaptureMore);
-        board.ToLongString(" ", "").Should().Be("050 004 000 000 000 000");
+        board.ToLongString(" ", "").Should().Be("050 0C4 000 000 000 000");
         canCaptureMore.Should().BeTrue();
     }
 }

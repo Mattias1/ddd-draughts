@@ -2,7 +2,7 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace Draughts.Domain.GameContext.Models;
 
-// Right now this class is mutuable because the BoardPosition is.
+// Right now this class is mutuable because the Board is.
 public sealed class Square {
     private Board _board;
     public SquareId Id { get; }
@@ -19,6 +19,8 @@ public sealed class Square {
     public Color? Color => Piece.Color;
     public bool IsMan => Piece.IsMan;
     public bool IsKing => Piece.IsKing;
+    public bool IsAlive => Piece.IsAlive;
+    public bool IsDead => Piece.IsDead;
 
     public (int x, int y) ToPosition() => Id.ToPosition(_board.Size);
 

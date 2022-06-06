@@ -43,7 +43,7 @@ export class Board {
 
     public static fromString(boardString: string): Board {
         let pieces = Array.from(boardString)
-            .map(c => parseInt(c))
+            .map(c => parseInt('0x0' + c, 16))
             .filter(i => !isNaN(i))
             .map(i => new Piece(i));
         let size = Math.sqrt(pieces.length * 2);
@@ -67,8 +67,14 @@ export class Piece {
     public isMan(): boolean {
         return (this.value & 0b110) === 0b100;
     }
-    public isKing() {
-        return this.value >= 0b110;
+    public isKing(): boolean {
+        return (this.value & 0b0010) >= 0b0010;
+    }
+    public isAlive(): boolean {
+        return this.value < 0b1000;
+    }
+    public isDead(): boolean {
+        return this.value >= 0b1000;
     }
 
     public getColor(): string|null {

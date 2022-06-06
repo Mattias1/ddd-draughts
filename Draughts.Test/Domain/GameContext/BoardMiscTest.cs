@@ -1,3 +1,4 @@
+using Draughts.Application.Shared.ViewModels;
 using Draughts.Domain.GameContext.Models;
 using Draughts.Test.TestHelpers;
 using FluentAssertions;
@@ -103,31 +104,31 @@ public sealed class BoardMiscTest {
         // |.|_|.|_|
         // |_|.|_|.|
         // |7|_|5|_|
-        var board = Board.FromString("46000075");
-        board.At(0, 0, false).Should().BeNull();
-        board.At(1, 0, false)?.Piece.Should().Be(Piece.BlackMan);
-        board.At(3, 0, false)?.Piece.Should().Be(Piece.BlackKing);
-        board.At(0, 1, false)?.Piece.Should().Be(Piece.Empty);
-        board.At(2, 1, false)?.Piece.Should().Be(Piece.Empty);
-        board.At(1, 2, false)?.Piece.Should().Be(Piece.Empty);
-        board.At(3, 2, false)?.Piece.Should().Be(Piece.Empty);
-        board.At(0, 3, false)?.Piece.Should().Be(Piece.WhiteKing);
-        board.At(2, 3, false)?.Piece.Should().Be(Piece.WhiteMan);
+        var boardViewModel = new BoardViewModel(Board.FromString("46000075"));
+        boardViewModel.At(0, 0, false).Should().BeNull();
+        boardViewModel.At(1, 0, false).Should().Be(Piece.BlackMan);
+        boardViewModel.At(3, 0, false).Should().Be(Piece.BlackKing);
+        boardViewModel.At(0, 1, false).Should().Be(Piece.Empty);
+        boardViewModel.At(2, 1, false).Should().Be(Piece.Empty);
+        boardViewModel.At(1, 2, false).Should().Be(Piece.Empty);
+        boardViewModel.At(3, 2, false).Should().Be(Piece.Empty);
+        boardViewModel.At(0, 3, false).Should().Be(Piece.WhiteKing);
+        boardViewModel.At(2, 3, false).Should().Be(Piece.WhiteMan);
 
         // |_|.|_|.|
         // |4|_|6|_|
         // |_|7|_|5|
         // |.|_|.|_|
-        board = Board.FromString("00467500");
-        board.At(0, 0, false).Should().BeNull();
-        board.At(1, 0, false)?.Piece.Should().Be(Piece.Empty);
-        board.At(3, 0, false)?.Piece.Should().Be(Piece.Empty);
-        board.At(0, 1, false)?.Piece.Should().Be(Piece.BlackMan);
-        board.At(2, 1, false)?.Piece.Should().Be(Piece.BlackKing);
-        board.At(1, 2, false)?.Piece.Should().Be(Piece.WhiteKing);
-        board.At(3, 2, false)?.Piece.Should().Be(Piece.WhiteMan);
-        board.At(0, 3, false)?.Piece.Should().Be(Piece.Empty);
-        board.At(2, 3, false)?.Piece.Should().Be(Piece.Empty);
+        boardViewModel = new BoardViewModel(Board.FromString("00467500"));
+        boardViewModel.At(0, 0, false).Should().BeNull();
+        boardViewModel.At(1, 0, false).Should().Be(Piece.Empty);
+        boardViewModel.At(3, 0, false).Should().Be(Piece.Empty);
+        boardViewModel.At(0, 1, false).Should().Be(Piece.BlackMan);
+        boardViewModel.At(2, 1, false).Should().Be(Piece.BlackKing);
+        boardViewModel.At(1, 2, false).Should().Be(Piece.WhiteKing);
+        boardViewModel.At(3, 2, false).Should().Be(Piece.WhiteMan);
+        boardViewModel.At(0, 3, false).Should().Be(Piece.Empty);
+        boardViewModel.At(2, 3, false).Should().Be(Piece.Empty);
     }
 
     [Fact]
@@ -136,30 +137,30 @@ public sealed class BoardMiscTest {
         // |.|_|.|_|
         // |_|.|_|.|
         // |7|_|5|_|
-        var board = Board.FromString("46000075");
+        var board = new BoardViewModel(Board.FromString("46000075"));
         board.At(0, 0, true).Should().BeNull();
-        board.At(1, 0, true)?.Piece.Should().Be(Piece.WhiteMan);
-        board.At(3, 0, true)?.Piece.Should().Be(Piece.WhiteKing);
-        board.At(0, 1, true)?.Piece.Should().Be(Piece.Empty);
-        board.At(2, 1, true)?.Piece.Should().Be(Piece.Empty);
-        board.At(1, 2, true)?.Piece.Should().Be(Piece.Empty);
-        board.At(3, 2, true)?.Piece.Should().Be(Piece.Empty);
-        board.At(0, 3, true)?.Piece.Should().Be(Piece.BlackKing);
-        board.At(2, 3, true)?.Piece.Should().Be(Piece.BlackMan);
+        board.At(1, 0, true).Should().Be(Piece.WhiteMan);
+        board.At(3, 0, true).Should().Be(Piece.WhiteKing);
+        board.At(0, 1, true).Should().Be(Piece.Empty);
+        board.At(2, 1, true).Should().Be(Piece.Empty);
+        board.At(1, 2, true).Should().Be(Piece.Empty);
+        board.At(3, 2, true).Should().Be(Piece.Empty);
+        board.At(0, 3, true).Should().Be(Piece.BlackKing);
+        board.At(2, 3, true).Should().Be(Piece.BlackMan);
 
         // |_|.|_|.|
         // |4|_|6|_|
         // |_|7|_|5|
         // |.|_|.|_|
-        board = Board.FromString("00467500");
+        board = new BoardViewModel(Board.FromString("00467500"));
         board.At(0, 0, true).Should().BeNull();
-        board.At(1, 0, true)?.Piece.Should().Be(Piece.Empty);
-        board.At(3, 0, true)?.Piece.Should().Be(Piece.Empty);
-        board.At(0, 1, true)?.Piece.Should().Be(Piece.WhiteMan);
-        board.At(2, 1, true)?.Piece.Should().Be(Piece.WhiteKing);
-        board.At(1, 2, true)?.Piece.Should().Be(Piece.BlackKing);
-        board.At(3, 2, true)?.Piece.Should().Be(Piece.BlackMan);
-        board.At(0, 3, true)?.Piece.Should().Be(Piece.Empty);
-        board.At(2, 3, true)?.Piece.Should().Be(Piece.Empty);
+        board.At(1, 0, true).Should().Be(Piece.Empty);
+        board.At(3, 0, true).Should().Be(Piece.Empty);
+        board.At(0, 1, true).Should().Be(Piece.WhiteMan);
+        board.At(2, 1, true).Should().Be(Piece.WhiteKing);
+        board.At(1, 2, true).Should().Be(Piece.BlackKing);
+        board.At(3, 2, true).Should().Be(Piece.BlackMan);
+        board.At(0, 3, true).Should().Be(Piece.Empty);
+        board.At(2, 3, true).Should().Be(Piece.Empty);
     }
 }

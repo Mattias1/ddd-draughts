@@ -50,9 +50,9 @@ public sealed class LoadGameStateTest {
     public void LoadGameFromMovesWithCapturesLeft() {
         // |_|.|_|4|_|4|
         // |4|_|.|_|.|_|
-        // |_|x|_|.|_|4|
+        // |_|D|_|.|_|4|
         // |.|_|.|_|.|_|
-        // |_|x|_|5|_|5|
+        // |_|D|_|5|_|5|
         // |5|_|4|_|.|_|
         string moves = "4-7, 14-11, 7x14, 18x11,";
         moves += "1-4, 17-14, 6-9, 11-7,";
@@ -62,7 +62,7 @@ public sealed class LoadGameStateTest {
         var parsedMoves = moves.Split(',').Select(Move.FromString);
         var gameState = GameState.FromStorage(game.Id, game.Settings, null, parsedMoves);
 
-        gameState.Board.ToLongString(" ", "").Should().Be("044 400 004 000 055 540");
+        gameState.Board.ToLongString(" ", "").Should().Be("044 400 D04 000 D55 540");
         gameState.CaptureSequenceFrom.Should().Be(17.AsSquare());
     }
 }

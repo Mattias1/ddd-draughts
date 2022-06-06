@@ -392,6 +392,12 @@ main {
 #game-board .square.black.king {
     background-image: url("/img/black-king.png");
 }
+#game-board .square.dead.man {
+    background-image: url("/img/grey-piece.png");
+}
+#game-board .square.dead.king {
+    background-image: url("/img/grey-king.png");
+}
 #game-board .square.row {
     text-align: right;
     line-height: 60px;

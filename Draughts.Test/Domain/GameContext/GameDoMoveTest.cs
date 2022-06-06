@@ -49,7 +49,7 @@ public sealed class GameDoMoveTest {
 
         _playGameService.DoMove(game, gameState, black, 9.AsSquare(), 14.AsSquare());
 
-        gameState.Board.ToLongString(" ", "").Should().Be("440 440 000 550 045 005");
+        gameState.Board.ToLongString(" ", "").Should().Be("440 440 000 55D 045 005");
         gameState.CaptureSequenceFrom.Should().NotBeNull();
         gameState.CaptureSequenceFrom!.Should().Be(14.AsSquare());
         game.Turn!.Player.Color.Should().Be(Color.Black);

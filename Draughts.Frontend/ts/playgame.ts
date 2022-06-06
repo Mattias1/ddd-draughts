@@ -88,7 +88,7 @@ function updateGameData(data: GameDto): void {
     updateSidebar(data);
 
     selectSquare(data.captureSequenceFrom);
-    isCaptureSequenceSquare = selectedSquare === null;
+    isCaptureSequenceSquare = data.captureSequenceFrom !== null;
 
     if (data.gameEndedMessage != null && data.gameEndedMessage != "") {
         // Yeah, this is ugly but whatever.
@@ -100,8 +100,11 @@ function drawBoard(board: Board): void {
     for (let i = 1; i <= board.nrSquares; i++) {
         let piece = board.at(i);
         let el = $(`#square-${i}`);
-        el.removeClass('black white man king');
+        el.removeClass('dead black white man king');
         if (piece.isNotEmpty()) {
+            if (piece.isDead()) {
+                el.addClass('dead');
+            }
             el.addClass(piece.getColor() ?? '');
             el.addClass(piece.isMan() ? 'man' : 'king');
         }
