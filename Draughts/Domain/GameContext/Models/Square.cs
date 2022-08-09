@@ -16,11 +16,11 @@ public sealed class Square {
 
     public bool IsEmpty => Piece.IsEmpty;
     public bool IsNotEmpty => Piece.IsNotEmpty;
-    public Color? Color => Piece.Color;
-    public bool IsMan => Piece.IsMan;
-    public bool IsKing => Piece.IsKing;
-    public bool IsAlive => Piece.IsAlive;
-    public bool IsDead => Piece.IsDead;
+    public Color? ColorOfPiece => Piece.Color;
+    public bool HasMan => Piece.IsMan;
+    public bool HasKing => Piece.IsKing;
+    public bool HasLivingPiece => Piece.IsAlive;
+    public bool HasDeadPiece => Piece.IsDead;
 
     public (int x, int y) ToPosition() => Id.ToPosition(_board.Size);
 
@@ -39,4 +39,12 @@ public sealed class Square {
         }
         return _board[x + direction.DX, y + direction.DY];
     }
+
+    public (Square? target, Square? jump) GetTargetAndJump(Direction direction) {
+        var target = GetBorder(direction);
+        var jump = target?.GetBorder(direction);
+        return (target, jump);
+    }
+
+    public override string ToString() => $"{Id}: {(IsEmpty ? "empty" : Piece.CssClasses)}";
 }

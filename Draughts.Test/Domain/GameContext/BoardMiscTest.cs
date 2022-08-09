@@ -1,4 +1,3 @@
-using Draughts.Application.Shared.ViewModels;
 using Draughts.Domain.GameContext.Models;
 using Draughts.Test.TestHelpers;
 using FluentAssertions;

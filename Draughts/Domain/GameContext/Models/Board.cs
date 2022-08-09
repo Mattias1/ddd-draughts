@@ -35,7 +35,7 @@ public sealed class Board : IEquatable<Board> {
     }
 
     public Move PerformNewMove(SquareId from, SquareId to, GameSettings settings, out bool canCaptureMore) {
-        var currentTurn = this[from].Color ?? throw new ManualValidationException($"Invalid move ({from}, {to}).");
+        var currentTurn = this[from].ColorOfPiece ?? throw new ManualValidationException($"Invalid move ({from}, {to}).");
         var possibleMoves = PossibleMoveCalculator.ForNewTurn(this, currentTurn, settings).Calculate();
         return PerformMove(from, to, possibleMoves, out canCaptureMore);
     }
@@ -87,18 +87,18 @@ public sealed class Board : IEquatable<Board> {
 
     private bool IsManOnLastRow(SquareId squareId) {
         var square = this[squareId];
-        if (square.Color is null || square.IsKing) {
+        if (square.ColorOfPiece is null || square.HasKing) {
             return false;
         }
         int y = square.ToPosition().y;
-        return square.Color == Color.Black ? y == Size - 1 : y == 0;
+        return square.ColorOfPiece == Color.Black ? y == Size - 1 : y == 0;
     }
 
     private void CleanUpBodies() {
-        _squares.Where(s => s.IsDead).ForEach(s => s.Piece = Piece.Empty);
+        _squares.Where(s => s.HasDeadPiece).ForEach(s => s.Piece = Piece.Empty);
     }
 
-    public int NrOfPiecesPerColor(Color color) => _squares.Count(p => p.Color == color);
+    public int NrOfPiecesPerColor(Color color) => _squares.Count(p => p.ColorOfPiece == color);
 
     public override string ToString() => ToLongString("", "");
     public string ToLongString(string separator = "\n", string empty = " ") {

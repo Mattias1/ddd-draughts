@@ -33,7 +33,7 @@ public sealed class GameState : AggregateRoot<GameState, GameId> {
         if (from.Value > Board.NrOfPlayableSquares || to.Value > Board.NrOfPlayableSquares) {
             throw new ManualValidationException(ERROR_INVALID_SQUARES);
         }
-        if (currentTurn != Board[from].Color) {
+        if (currentTurn != Board[from].ColorOfPiece) {
             throw new ManualValidationException($"You can only move {currentTurn} pieces.");
         }
 

@@ -68,7 +68,7 @@ export class Piece {
         return (this.value & 0b110) === 0b100;
     }
     public isKing(): boolean {
-        return (this.value & 0b0010) >= 0b0010;
+        return (this.value & 0b0010) === 0b0010;
     }
     public isAlive(): boolean {
         return this.value < 0b1000;

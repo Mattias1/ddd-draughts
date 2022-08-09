@@ -1,6 +1,7 @@
 using Draughts.Common;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using static Draughts.Domain.GameContext.Models.GameSettings;
 
 namespace Draughts.Domain.GameContext.Models;
@@ -10,19 +11,19 @@ public sealed class PossibleMoveCalculator {
     private GameSettings _settings;
     private Color _currentTurn;
     private SquareId? _restrictedTo;
-    private int _minCaptureSequence;
+    private int _minCaptureSequenceLength;
 
-    private bool MustCapture => _minCaptureSequence > 0;
+    private bool MustCapture => _minCaptureSequenceLength > 0;
 
     private PossibleMoveCalculator(Board board, GameSettings settings,
-            Color currentTurn, SquareId? restrictedTo, int minCaptureSequence) {
+            Color currentTurn, SquareId? restrictedTo, int minCaptureSequenceLength) {
         _board = board;
         _settings = settings;
         _currentTurn = currentTurn;
         _restrictedTo = restrictedTo;
-        _minCaptureSequence = minCaptureSequence;
+        _minCaptureSequenceLength = minCaptureSequenceLength;
 
-        if (_restrictedTo is not null && _board[_restrictedTo].Color != _currentTurn) {
+        if (_restrictedTo is not null && _board[_restrictedTo].ColorOfPiece != _currentTurn) {
             throw new InvalidOperationException("Moves can only be restricted to pieces whose turn it is.");
         }
     }
@@ -31,7 +32,7 @@ public sealed class PossibleMoveCalculator {
         var possibleMoves = new List<PossibleMove>();
         foreach (var from in AllLoopPositions()) {
             foreach (var dir in Direction.All) {
-                if (!_settings.FlyingKings || from.IsMan) {
+                if (!_settings.FlyingKings || from.HasMan) {
                     AddNormalMovesFrom(possibleMoves, from, dir);
                 }
                 else {
@@ -49,7 +50,7 @@ public sealed class PossibleMoveCalculator {
         else {
             for (int i = 1; i <= _board.NrOfPlayableSquares; i++) {
                 var squareId = new SquareId(i);
-                if (_board[squareId].Color == _currentTurn) {
+                if (_board[squareId].ColorOfPiece == _currentTurn) {
                     yield return _board[squareId];
                 }
             }
@@ -57,43 +58,33 @@ public sealed class PossibleMoveCalculator {
     }
 
     private void AddNormalMovesFrom(List<PossibleMove> possibleMoves, Square from, Direction dir) {
-        if (!from.TryGetBorder(dir, out var next)) {
-            return;
-        }
-
-        if (next.Color == _currentTurn.Other && next.IsAlive) {
-            var jump = next.GetBorder(dir);
-            if (jump is null || jump.IsNotEmpty || !CanCaptureInDirection(dir, from)) {
-                return;
-            }
+        var (next, jump) = from.GetTargetAndJump(dir);
+        if (IsKillable(next) && IsFree(jump) && IsValidCaptureDirection(dir, from.Piece)) {
             int chainLength = NormalChainLength(from, jump, next);
-            if (chainLength > _minCaptureSequence) {
-                _minCaptureSequence = chainLength;
+            if (chainLength > _minCaptureSequenceLength) {
+                _minCaptureSequenceLength = chainLength;
                 possibleMoves.Clear();
             }
-            if (chainLength >= _minCaptureSequence) {
+            if (chainLength >= _minCaptureSequenceLength) {
                 possibleMoves.Add(PossibleMove.CaptureMove(from, jump, next, chainLength > 1));
             }
             return;
         }
 
-        if (next.IsEmpty && !MustCapture && CanMoveInDirection(dir, from)) {
+        if (!MustCapture && IsFree(next) && IsValidMoveDirection(dir, from.Piece)) {
             possibleMoves.Add(PossibleMove.NormalMove(from, next));
         }
     }
 
     private int NormalChainLength(Square from, Square to, Square victim) {
+        var currentPiece = from.Piece;
         var capturedPiece = victim.Piece;
         _board.PerformMoveUnsafe(from.Id, to.Id, victim.Id);
 
         int maxChainLength = 1;
         foreach (var dir in Direction.All) {
-            var target = to.GetBorder(dir);
-            var jump = target?.GetBorder(dir);
-            if (target is null || jump is null) {
-                continue;
-            }
-            if (target.Color == _currentTurn.Other && target.IsAlive && jump.IsEmpty && CanCaptureInDirection(dir, to)) {
+            var (target, jump) = to.GetTargetAndJump(dir);
+            if (IsKillable(target) && IsFree(jump) && IsValidCaptureDirection(dir, currentPiece)) {
                 if (_settings.CaptureConstraints == DraughtsCaptureConstraints.AnyFinishedSequence) {
                     maxChainLength = 2;
                     break;
@@ -107,40 +98,47 @@ public sealed class PossibleMoveCalculator {
         return maxChainLength;
     }
 
-    // TODO: Move these to the board or square class?
-    private bool CanCaptureInDirection(Direction dir, Square from) {
-        return _settings.MenCaptureBackwards || CanMoveInDirection(dir, from);
+    private bool IsKillable([NotNullWhen(returnValue: true)] Square? target) {
+        return target is not null && target.ColorOfPiece == _currentTurn.Other && target.HasLivingPiece;
     }
 
-    private bool CanMoveInDirection(Direction dir, Square from) {
-        return dir.IsForwardsDirection(_currentTurn) || from.IsKing;
+    private bool IsFree([NotNullWhen(returnValue: true)] Square? jump) {
+        return jump is not null && jump.IsEmpty;
+    }
+
+    private bool IsValidCaptureDirection(Direction dir, Piece currentPiece) {
+        return _settings.MenCaptureBackwards || IsValidMoveDirection(dir, currentPiece);
+    }
+
+    private bool IsValidMoveDirection(Direction dir, Piece currentPiece) {
+        return dir.IsForwardsDirection(_currentTurn) || currentPiece.IsKing;
     }
 
     private void AddFlyingMovesFrom(List<PossibleMove> possibleMoves, Square from, Direction dir) {
         Square? victim = null;
         for (var next = from.GetBorder(dir); next is not null; next = next.GetBorder(dir)) {
-            if (next.IsEmpty && victim is not null) {
+            if (IsFree(next) && HasVictim(victim)) {
                 int chainLength = FlyingChainLength(from, next, victim);
-                if (chainLength > _minCaptureSequence) {
-                    _minCaptureSequence = chainLength;
+                if (chainLength > _minCaptureSequenceLength) {
+                    _minCaptureSequenceLength = chainLength;
                     possibleMoves.Clear();
                 }
-                if (chainLength >= _minCaptureSequence) {
+                if (chainLength >= _minCaptureSequenceLength) {
                     possibleMoves.Add(PossibleMove.CaptureMove(from, next, victim, chainLength > 1));
                 }
                 continue;
             }
 
-            if (next.Color == _currentTurn.Other && next.IsAlive && victim is null) {
+            if (IsKillable(next) && HasNoVictimYet(victim)) {
                 var jump = next.GetBorder(dir);
-                if (jump is null || jump.IsNotEmpty) {
-                    return;
+                if (IsFree(jump)) {
+                    victim = next;
+                    continue;
                 }
-                victim = next;
-                continue;
+                return;
             }
 
-            if (next.IsEmpty) {
+            if (IsFree(next)) {
                 if (!MustCapture) {
                     possibleMoves.Add(PossibleMove.NormalMove(from, next));
                 }
@@ -150,6 +148,9 @@ public sealed class PossibleMoveCalculator {
         }
     }
 
+    private bool HasVictim([NotNullWhen(returnValue: true)] Square? victim) => victim is not null;
+    private bool HasNoVictimYet(Square? victim) => victim is null;
+
     private int FlyingChainLength(Square from, Square to, Square victim) {
         var capturedPiece = victim.Piece;
         _board.PerformMoveUnsafe(from.Id, to.Id, victim.Id);
@@ -157,11 +158,11 @@ public sealed class PossibleMoveCalculator {
         int maxChainLength = 1;
         foreach (var dir in Direction.All) {
             Square? target = FirstNonEmptySquareInDirection(to, dir);
-            if (target is null || target.Color != _currentTurn.Other || target.IsDead) {
+            if (!IsKillable(target)) {
                 continue;
             }
 
-            for (var jump = target.GetBorder(dir); jump is not null && jump.IsEmpty; jump = jump.GetBorder(dir)) {
+            for (var jump = target.GetBorder(dir); IsFree(jump); jump = jump.GetBorder(dir)) {
                 if (_settings.CaptureConstraints == DraughtsCaptureConstraints.AnyFinishedSequence) {
                     maxChainLength = 2;
                     goto end_of_loop;
@@ -189,7 +190,7 @@ public sealed class PossibleMoveCalculator {
     }
 
     public static PossibleMoveCalculator ForChainCaptures(Board board, SquareId from, GameSettings settings) {
-        var currentTurn = board[from].Color ?? throw new ManualValidationException("Invalid move.");
+        var currentTurn = board[from].ColorOfPiece ?? throw new ManualValidationException("Invalid move.");
         return new PossibleMoveCalculator(board, settings, currentTurn, from, 1);
     }
 }
