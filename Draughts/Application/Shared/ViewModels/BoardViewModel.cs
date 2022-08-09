@@ -31,4 +31,14 @@ public class BoardViewModel {
         }
         return SquareId.FromPosition(x, y, Size);
     }
+
+    public SquareId FirstSquareIdOfRow(int row, bool boardIsRotated) {
+        return Board.IsPlayable(0, row) ? SquareIdAt(0, row, boardIsRotated) : SquareIdAt(1, row, boardIsRotated);
+    }
+
+    public SquareId LastSquareIdOfCol(int col, bool boardIsRotated) {
+        return Board.IsPlayable(col, Size - 1)
+            ? SquareIdAt(col, Size - 1, boardIsRotated)
+            : SquareIdAt(col, Size - 2, boardIsRotated);
+    }
 }

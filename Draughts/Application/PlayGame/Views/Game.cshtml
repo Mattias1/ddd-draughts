@@ -11,7 +11,9 @@
     var player1 = Model.Players.SingleOrDefault(p => p.Color == settings.FirstMove);
     var player2 = Model.Players.SingleOrDefault(p => p.Color == settings.FirstMove.Other);
     var captureSequenceFrom = Model.CurrentGameState.CaptureSequenceFrom;
-    var boardIsRotated = (player1?.UserId == ViewBag.UserId ? player1 : player2)?.Color == Color.Black;
+    var boardIsRotated = (Model.Players.Any(p => p.UserId == ViewBag.UserId))
+        ? (player1?.UserId == ViewBag.UserId ? player1 : player2)?.Color == Color.Black
+        : false;
 }
 
 <div class="text-container">
@@ -35,8 +37,10 @@
                 }
             }
             @for (int i = 0; i < settings.BoardSize; i++) {
-                <div id="row-@i" class="square row" style="left: -60px; top: @(60 * i)px">@(settings.BoardSize - i)</div>
-                <div id="col-@i" class="square col" style="left: @(60 * i)px; top: @(60 * settings.BoardSize)px">@((char)('a' + i))</div>
+                <div id="row-@i" class="square row" style="left: -60px; top: @(60 * i)px">
+                    @(board.FirstSquareIdOfRow(i, boardIsRotated))</div>
+                <div id="col-@i" class="square col" style="left: @(60 * i)px; top: @(60 * settings.BoardSize)px">
+                    @(board.LastSquareIdOfCol(i, boardIsRotated))</div>
             }
         </div>
 
