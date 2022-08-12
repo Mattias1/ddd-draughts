@@ -1,3 +1,4 @@
+using Draughts.Application.Shared.Attributes;
 using Draughts.Application.Shared.Middleware;
 using Draughts.Common;
 using Draughts.Domain.AuthContext.Models;
@@ -96,5 +97,17 @@ public class BaseController : Controller {
 
         ViewBag.Errors = Errors;
         ViewBag.SuccessMessage = _successMessage;
+    }
+
+    public override ViewResult View() => View((object?)null);
+
+    public override ViewResult View(object? model) {
+        var viewsFrom = Attribute.GetCustomAttribute(GetType(), typeof(ViewsFromAttribute)) as ViewsFromAttribute;
+        if (viewsFrom is not null) {
+            var actionName = RouteData.Values["action"] as string;
+            return base.View(string.Format(Startup.VIEW_LOCATION_TEMPLATE, actionName, viewsFrom.Directory), model);
+        }
+
+        return base.View(model);
     }
 }

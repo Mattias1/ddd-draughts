@@ -16,6 +16,7 @@ using System.Threading.Tasks;
 namespace Draughts;
 
 public class Startup {
+    public static string VIEW_LOCATION_TEMPLATE = "/Application/{1}/Views/{0}" + RazorViewEngine.ViewExtension;
     protected virtual bool UseInMemoryDatabase => false;
 
     // This method gets called by the runtime. Use this method to add services to the container.
@@ -35,7 +36,7 @@ public class Startup {
         services.Configure<RazorViewEngineOptions>(o => {
             // {2} is area, {1} is controller, {0} is the action
             o.ViewLocationFormats.Clear();
-            o.ViewLocationFormats.Add("/Application/{1}/Views/{0}" + RazorViewEngine.ViewExtension);
+            o.ViewLocationFormats.Add(VIEW_LOCATION_TEMPLATE);
             o.ViewLocationFormats.Add("/Application/Shared/Views/{0}" + RazorViewEngine.ViewExtension);
         });
     }

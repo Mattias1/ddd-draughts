@@ -1,10 +1,8 @@
-using Draughts.Common.Utilities;
 using Draughts.Domain.AuthContext.Models;
 using Draughts.Repositories.InMemory;
 using FluentAssertions;
-using NodaTime;
 using System.Threading.Tasks;
-using static Draughts.Application.ModPanel.ModPanelController;
+using static Draughts.Application.ModPanel.ModPanelRolesController;
 
 namespace Draughts.IntegrationTest.EndToEnd.Base;
 
