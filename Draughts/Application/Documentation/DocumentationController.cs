@@ -25,6 +25,9 @@ public sealed class DocumentationController : BaseController {
     public IActionResult BuildingBlocks() => ViewWithMenu();
 
     [HttpGet, GuestRoute]
+    public IActionResult EventualConsistency() => ViewWithMenu();
+
+    [HttpGet, GuestRoute]
     public IActionResult GoodToKnow() => ViewWithMenu();
 
     [HttpGet, GuestRoute]
@@ -37,6 +40,7 @@ public sealed class DocumentationController : BaseController {
             ("Bounded contexts", "/documentation/boundedcontexts"),
             ("Hexagonal architecture", "/documentation/hexagonalarchitecture"),
             ("Building blocks", "/documentation/buildingblocks"),
+            ("Eventual consistency", "/documentation/eventualconsistency"),
             ("Good to know", "/documentation/goodtoknow"),
             ("Authentication and authorization", "/documentation/auth")
         ));

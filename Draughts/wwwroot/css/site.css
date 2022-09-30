@@ -114,6 +114,34 @@ a:hover, button.link:hover, input[type=submit].link:hover {
     margin: 6px 0;
 }
 
+.ref {
+    position: relative;
+}
+.ref .refnum {
+    font-size: 0.6em;
+    font-weight: bold;
+    position: relative;
+    top: -0.8em;
+    margin: 0 0 0 -0.3em;
+}
+.ref .refbody {
+    display: none;
+    position: absolute;
+    min-width: 20em;
+    font-size: 0.8em;
+    padding: 9px;
+    border-radius: 3px;
+    box-shadow: 0px 1px 6px #222;
+    line-height: 1.1;
+    left: 21px;
+    bottom: 7px;
+    background-color: #222;
+    border: 1px solid #000;
+    word-wrap: break-word;
+    z-index: 99;
+    overflow: auto;
+}
+
 /* ------- Forms ------- */
 input:not(.link), select, textarea {
     height: 24px;

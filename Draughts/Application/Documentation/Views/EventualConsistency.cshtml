@@ -1,0 +1,92 @@
+@{
+    ViewBag.Title = "Documentation";
+
+    var refs = new ReferenceTooltips();
+}
+
+<nav class="side-menu">
+    @Utils.SideMenu(Model)
+</nav>
+
+<div class="text-side-menu-container">
+    <h1>@ViewBag.Title</h1>
+
+    <h3>About eventual consistency</h3>
+    <p>
+        We have several bounded contexts. Sometimes one needs to be updated if something
+        happened in another. For this we use event based communication.
+        Combined with a guarantee it will happen eventually, this is known as <em>Eventual
+        consistency</em>.
+    </p>
+
+    <h4>Sending the event</h4>
+    <p>
+        First of all, in order to have an event at all an aggregate needs to do some domain logic
+        that's worth informing others about. When that happens an event is created and attached to
+        the aggregate root.
+        Once this aggregate root is saved via a repository, the event is inserted in the database
+        @refs.Print("Specifically in a database table from the bounded context that sent the event.")
+        and attached to the transaction object.
+    </p>
+    <p>
+        Once the transaction is committed, the event is stored in our database for real.
+        After that all the events are dispatched in a separate thread. The request that raised this
+        event will now finish and return an OK to the user.
+        We've now have achieved that the event is 'queued' if and only if the action completed
+        successfully.
+    </p>
+
+    <h4>Receiving the event</h4>
+    <p>
+        If we haven't handled this event yet we'll do so now and mark it as handled (in the same
+        transaction). We mark this by storing the event id (and datetime) in the database.
+        @refs.Print("Specifically in a database table from the bounded context that received the "
+            + "event. Note that the sending bounded context doesn't know that the event is "
+            + "handled successfully yet.")
+    </p>
+    <p>
+        We have a separate request that is executed in a cron job @refs.Print("Or manually in the "
+            + "modpanel.") that gathers all the successful event ids (and datetimes) and then marks
+        the events in the original tables as handled successfully.
+    </p>
+    <p>
+        Assuming that nothing failed unexpectedly on the way we're done.
+    </p>
+
+    <h3>But what if ...</h3>
+    <p>
+        <em>... anythin goes wrong before the original transaction is committed?</em><br>
+        In this case the event is lost without anyone knowing about it. That's good, because the
+        action the event was to inform about has not (successfully) happened.
+    </p>
+    <p>
+        <em>... anything goes wrong after the original transaction is committed?</em><br>
+        In this case the event is in our table and will be retried later in a cronjob.
+        @refs.Print("Or manually in the modpanel.")
+        If that retry fails as well then at some point it will stop retrying the event (because it
+        only retries new-ish events), and it'll be flagged for admin review.
+    </p>
+    <p>
+        <em>... events arrive out of order?</em><br>
+        This is a tricky one. Event handlers need to be able to deal with this. Which is not a super
+        satisfying answer.
+    </p>
+    <p>
+        <em>... a mod retries the event at the same moment as the cronjob does?</em><br>
+        Just use a locking mechanism.
+    </p>
+    <p>
+        <em>... the database the events are stored in is lost?</em><br>
+        We restore a backup and everything is consistent again (or will be eventually).
+        @refs.Print("You might've lost data too. Which is bad. But that's another topic.")
+    </p>
+    <p>
+        <em>Can't you just use a message queue?</em><br>
+        We want to guarantee an event will never get lost. If we use a message queue naively, we'll
+        either have to queue the event before we committed the transaction (in which case the event
+        can be dispatched while the transaction rollbacks) or after we committed the transaction
+        (in which case the application could crash before the event is queued).<br>
+        So if we're not ok with that, we need to store and re-queue events ourselves anyway. And
+        then a message queue doesn't add much anymore.
+    </p>
+</div>

@@ -25,7 +25,14 @@
 
     <h4>Domain events</h4>
     <p>
-        Things that have happened in the domain. Past tense. These can be broadcasted to other applications or domains.
+        Things that have happened in the domain. Past tense. These can be dispatched to other applications or domains.
+        See <a @Utils.Href("/documentation/eventualconsistency")>eventual consistency</a>.
+    </p>
+
+    <h4>Aggregates</h4>
+    <p>
+        A group of entities and value objects. See <a @Utils.Href("/documentation/boundedcontexts")>bounded
+            contexts</a>.
     </p>
 
     <h4>Domain services and application services</h4>
@@ -34,15 +41,9 @@
         logic at all. They do your transaction management and coordinate between bounded contexts if that's necessary.
     </p>
 
-    <h4>Factories</h4>
-    <p>
-        Factories are responsible for building domain objects, usually the entire aggregate. In Draughts they're
-        implemented as a type of domain service or as a static method on the model.
-    </p>
-
     <h4>Repositories</h4>
     <p>
         A repository is reseponsible for all communication with your database (or whatever it is you use to store data).
-        There's one repository per aggregate.
+        You could also see this as an aggregate factory.
     </p>
 </div>
