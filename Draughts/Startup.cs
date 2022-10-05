@@ -53,9 +53,9 @@ public class Startup {
             app.UseDeveloperExceptionPage();
         }
         else {
-            app.UseExceptionHandler(exApp => exApp.Run(ctx => {
+            app.UseExceptionHandler(exApp => exApp.Run(async ctx => {
                 ctx.Response.StatusCode = StatusCodes.Status500InternalServerError;
-                return Task.CompletedTask;
+                await ctx.Response.WriteAsync("Whoops, an unexpected error occured (500).");
             }));
         }
 
