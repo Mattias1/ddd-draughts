@@ -9,5 +9,5 @@ namespace Draughts.Domain.GameContext.Specifications;
 public sealed class GameIdSort : Sort<Game, GameId> {
     public GameIdSort() : base(defaultDescending: true) { }
     public override Expression<Func<Game, GameId>> ToExpression() => g => g.Id;
-    public override IQueryBuilder ApplyQueryBuilder(IQueryBuilder builder) => ApplyColumnSort(builder, "game.id");
+    public override IQueryBuilder ApplyQueryBuilder(IQueryBuilder builder) => ApplyColumnSort(builder, "games.id");
 }

@@ -17,22 +17,22 @@ public sealed class GameRepository : BaseRepository<Game, GameId, DbGame> {
 
     public IReadOnlyList<GameId> ListGameIdsForExpiredTurns(ZonedDateTime datetime) {
         return GetBaseQuery()
-            .Select("id").From("game")
+            .Select("id").From(TableName)
             .Where("finished_at").IsNull() // For optimization purposes
             .Where("turn_expires_at").Lt(datetime)
             .ListLongs()
             .MapReadOnly(l => new GameId(l));
     }
 
-    protected override string TableName => "game";
-    private const string PlayerTableName = "player";
+    protected override string TableName => "games";
+    private const string PlayersTableName = "players";
     protected override IInitialQueryBuilder GetBaseQuery() => UnitOfWork.Query(TransactionDomain.Game);
-    private IQueryBuilder GetPlayerQuery() => GetBaseQuery().SelectAllFrom(PlayerTableName);
+    private IQueryBuilder GetPlayerQuery() => GetBaseQuery().SelectAllFrom(PlayersTableName);
 
     protected override IQueryBuilder ApplySpec(Specification<Game> spec, IQueryBuilder builder) {
         var joins = spec.RequiredJoins().ToArray();
         if (joins.Contains(PossibleJoins.Player)) {
-            builder.Join(PlayerTableName, "game.id", PlayerTableName + ".game_id");
+            builder.Join(PlayersTableName, "game.id", PlayersTableName + ".game_id");
         }
         return base.ApplySpec(spec, builder);
     }
@@ -73,15 +73,15 @@ public sealed class GameRepository : BaseRepository<Game, GameId, DbGame> {
 
     private void SavePlayers(Game gameEntity) {
         var existingPlayerIds = GetBaseQuery()
-            .Select("id").From(PlayerTableName).Where("game_id").Is(gameEntity.Id)
+            .Select("id").From(PlayersTableName).Where("game_id").Is(gameEntity.Id)
             .ListLongs();
         foreach (var playerEntity in gameEntity.Players) {
             var obj = DbPlayer.FromDomainModel(playerEntity, gameEntity.Id);
             if (existingPlayerIds.Contains(playerEntity.Id.Value)) {
-                GetBaseQuery().Update(PlayerTableName).SetWithoutIdFrom(obj).Where("id").Is(playerEntity.Id).Execute();
+                GetBaseQuery().Update(PlayersTableName).SetWithoutIdFrom(obj).Where("id").Is(playerEntity.Id).Execute();
             }
             else {
-                GetBaseQuery().InsertInto(PlayerTableName).InsertFrom(obj).Execute();
+                GetBaseQuery().InsertInto(PlayersTableName).InsertFrom(obj).Execute();
             }
         }
     }

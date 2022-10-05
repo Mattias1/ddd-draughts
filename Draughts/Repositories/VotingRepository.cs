@@ -11,7 +11,7 @@ namespace Draughts.Repositories;
 public sealed class VotingRepository {
     private readonly IRepositoryUnitOfWork _unitOfWork;
 
-    private string TableName => "vote";
+    private string TableName => "votes";
 
     public VotingRepository(IRepositoryUnitOfWork unitOfWork) {
         _unitOfWork = unitOfWork;

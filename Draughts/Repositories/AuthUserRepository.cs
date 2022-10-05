@@ -21,14 +21,15 @@ public sealed class AuthUserRepository : BaseRepository<AuthUser, UserId, DbAuth
 
     public AuthUser FindByName(string username) => Find(new UsernameSpecification(username));
 
-    protected override string TableName => "authuser";
+    protected override string TableName => "authusers";
+    private const string AuthuserRolesTableName = "authuser_roles";
     protected override IInitialQueryBuilder GetBaseQuery() => UnitOfWork.Query(TransactionDomain.Auth);
-    private IQueryBuilder GetAuthuserRoleQuery() => GetBaseQuery().SelectAllFrom("authuser_role");
+    private IQueryBuilder GetAuthuserRoleQuery() => GetBaseQuery().SelectAllFrom(AuthuserRolesTableName);
 
     protected override IQueryBuilder ApplySpec(Specification<AuthUser> spec, IQueryBuilder builder) {
         var joins = spec.RequiredJoins().ToArray();
         if (joins.Contains(PossibleJoins.AuthUserRole)) {
-            builder.Join("authuser_role", "authuser.id", "authuser_role.user_id");
+            builder.Join(AuthuserRolesTableName, TableName + ".id", AuthuserRolesTableName + ".user_id");
         }
         return base.ApplySpec(spec, builder);
     }
@@ -65,7 +66,7 @@ public sealed class AuthUserRepository : BaseRepository<AuthUser, UserId, DbAuth
 
             GetBaseQuery().Update(TableName).SetWithoutIdFrom(obj).Where("id").Is(entity.Id).Execute();
             if (toDelete.Any()) {
-                GetBaseQuery().DeleteFrom("authuser_role")
+                GetBaseQuery().DeleteFrom(AuthuserRolesTableName)
                     .Where("user_id").Is(entity.Id)
                     .And("role_id").In(toDelete)
                     .Execute();
@@ -79,7 +80,7 @@ public sealed class AuthUserRepository : BaseRepository<AuthUser, UserId, DbAuth
             return;
         }
         var values = BuildInsertValues(userId.Value, roleIds);
-        GetBaseQuery().InsertInto("authuser_role")
+        GetBaseQuery().InsertInto(AuthuserRolesTableName)
             .Columns("user_id", "role_id").Values(values)
             .Execute();
     }
@@ -94,7 +95,7 @@ public sealed class AuthUserRepository : BaseRepository<AuthUser, UserId, DbAuth
     private IReadOnlyList<long> QueryRoleIdsForUser(long authUserId) {
         return GetBaseQuery()
             .Select("role_id")
-            .From("authuser_role")
+            .From(AuthuserRolesTableName)
             .Where("user_id").Is(authUserId)
             .ListLongs();
     }

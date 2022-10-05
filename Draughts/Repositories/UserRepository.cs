@@ -11,7 +11,7 @@ public sealed class UserRepository : BaseRepository<User, UserId, DbUser> {
 
     public User FindByName(string username) => Find(new UserUsernameSpecification(username));
 
-    protected override string TableName => "user";
+    protected override string TableName => "users";
     protected override IInitialQueryBuilder GetBaseQuery() => UnitOfWork.Query(TransactionDomain.User);
 
     protected override User Parse(DbUser q) => q.ToDomainModel();

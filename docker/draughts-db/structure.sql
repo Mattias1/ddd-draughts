@@ -2,7 +2,7 @@
 CREATE DATABASE `draughts_user`;
 USE `draughts_user`;
 
-CREATE TABLE `user` (
+CREATE TABLE `users` (
     `id` BIGINT NOT NULL,
     `username` VARCHAR(25) NOT NULL UNIQUE,
     `rating` INT NOT NULL,
@@ -28,7 +28,7 @@ CREATE TABLE `user` (
     PRIMARY KEY (`id`)
 );
 
-CREATE TABLE `event` (
+CREATE TABLE `events` (
     `id` BIGINT NOT NULL,
     `type` VARCHAR(50) NOT NULL,
     `created_at` DATETIME NOT NULL,
@@ -43,7 +43,7 @@ CREATE TABLE `event` (
 CREATE DATABASE `draughts_authuser`;
 USE `draughts_authuser`;
 
-CREATE TABLE `authuser` (
+CREATE TABLE `authusers` (
     `id` BIGINT NOT NULL,
     `username` VARCHAR(25) NOT NULL UNIQUE,
     `password_hash` VARCHAR(200) NOT NULL,
@@ -53,7 +53,7 @@ CREATE TABLE `authuser` (
     PRIMARY KEY (`id`)
 );
 
-CREATE TABLE `role` (
+CREATE TABLE `roles` (
     `id` BIGINT NOT NULL,
     `rolename` VARCHAR(50) NOT NULL,
     `created_at` DATETIME NOT NULL,
@@ -61,26 +61,26 @@ CREATE TABLE `role` (
     PRIMARY KEY (`id`)
 );
 
-CREATE TABLE `authuser_role` (
+CREATE TABLE `authuser_roles` (
     `user_id` BIGINT NOT NULL,
     `role_id` BIGINT NOT NULL,
 
     PRIMARY KEY (`user_id`, `role_id`),
     CONSTRAINT fk_aur_au FOREIGN KEY (`user_id`)
-        REFERENCES `authuser` (`id`)
+        REFERENCES `authusers` (`id`)
         ON UPDATE RESTRICT ON DELETE CASCADE,
     CONSTRAINT fk_aur_role FOREIGN KEY (`role_id`)
-        REFERENCES `role` (`id`)
+        REFERENCES `roles` (`id`)
         ON UPDATE RESTRICT ON DELETE CASCADE
 );
 
-CREATE TABLE `permission_role` (
+CREATE TABLE `permission_roles` (
     `role_id` BIGINT NOT NULL,
     `permission` VARCHAR(50) NOT NULL,
 
     PRIMARY KEY (`role_id`, `permission`),
     CONSTRAINT fk_pr_role FOREIGN KEY (`role_id`)
-        REFERENCES `role` (`id`)
+        REFERENCES `roles` (`id`)
         ON UPDATE RESTRICT ON DELETE CASCADE
 );
 
@@ -95,11 +95,11 @@ CREATE TABLE `adminlog` (
 
     PRIMARY KEY (`id`),
     CONSTRAINT fk_al_au FOREIGN KEY (`user_id`)
-        REFERENCES `authuser` (`id`)
+        REFERENCES `authusers` (`id`)
         ON UPDATE RESTRICT ON DELETE CASCADE
 );
 
-CREATE TABLE `event` (
+CREATE TABLE `events` (
     `id` BIGINT NOT NULL,
     `type` VARCHAR(50) NOT NULL,
     `created_at` DATETIME NOT NULL,
@@ -114,7 +114,7 @@ CREATE TABLE `event` (
 CREATE DATABASE `draughts_game`;
 USE `draughts_game`;
 
-CREATE TABLE `game` (
+CREATE TABLE `games` (
     `id` BIGINT NOT NULL,
     `board_size` TINYINT UNSIGNED NOT NULL,
     `first_move_color_is_white` BIT NOT NULL,
@@ -133,9 +133,9 @@ CREATE TABLE `game` (
     PRIMARY KEY (`id`)
 );
 
-CREATE INDEX idx_g_status ON `game` (`finished_at`);
+CREATE INDEX idx_g_status ON `games` (`finished_at`);
 
-CREATE TABLE `player` (
+CREATE TABLE `players` (
     `id` BIGINT NOT NULL,
     `user_id` BIGINT NOT NULL,
     `game_id` BIGINT NOT NULL,
@@ -146,23 +146,23 @@ CREATE TABLE `player` (
 
     PRIMARY KEY (`id`),
     CONSTRAINT fk_p_game FOREIGN KEY (`game_id`)
-        REFERENCES `game` (`id`)
+        REFERENCES `games` (`id`)
         ON UPDATE RESTRICT ON DELETE CASCADE
 );
 
-CREATE INDEX idx_p_user ON `player` (`user_id`);
+CREATE INDEX idx_p_user ON `players` (`user_id`);
 
-CREATE TABLE `gamestate` (
+CREATE TABLE `gamestates` (
     `id` BIGINT NOT NULL,
     `initial_game_state` VARCHAR(72) NULL,
 
     PRIMARY KEY (`id`),
     CONSTRAINT fk_gs_game FOREIGN KEY (`id`)
-        REFERENCES `game` (`id`)
+        REFERENCES `games` (`id`)
         ON UPDATE RESTRICT ON DELETE CASCADE
 );
 
-CREATE TABLE `move` (
+CREATE TABLE `moves` (
     `game_id` BIGINT NOT NULL,
     `index` SMALLINT NOT NULL,
     `from` TINYINT UNSIGNED NOT NULL,
@@ -171,11 +171,11 @@ CREATE TABLE `move` (
 
     PRIMARY KEY (`game_id`, `index`),
     CONSTRAINT fk_move_gs FOREIGN KEY (`game_id`)
-        REFERENCES `gamestate` (`id`)
+        REFERENCES `gamestates` (`id`)
         ON UPDATE RESTRICT ON DELETE CASCADE
 );
 
-CREATE TABLE `vote` (
+CREATE TABLE `votes` (
     `game_id` BIGINT NOT NULL,
     `user_id` BIGINT NOT NULL,
     `subject` VARCHAR(10) NOT NULL,
@@ -184,11 +184,11 @@ CREATE TABLE `vote` (
 
     PRIMARY KEY (`game_id`, `user_id`, `subject`),
     CONSTRAINT fk_vote_g FOREIGN KEY (`game_id`)
-        REFERENCES `game` (`id`)
+        REFERENCES `games` (`id`)
         ON UPDATE RESTRICT ON DELETE CASCADE
 );
 
-CREATE TABLE `event` (
+CREATE TABLE `events` (
     `id` BIGINT NOT NULL,
     `type` VARCHAR(50) NOT NULL,
     `created_at` DATETIME NOT NULL,

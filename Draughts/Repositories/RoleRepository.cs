@@ -16,10 +16,10 @@ public sealed class RoleRepository : BaseRepository<Role, RoleId, DbRole> {
         return role?.Permissions ?? new List<Permission>().AsReadOnly();
     }
 
-    protected override string TableName => "role";
-    private const string PermissionRoleTableName = "permission_role";
+    protected override string TableName => "roles";
+    private const string PermissionRolesTableName = "permission_roles";
     protected override IInitialQueryBuilder GetBaseQuery() => UnitOfWork.Query(TransactionDomain.Auth);
-    private IQueryBuilder GetPermissionRoleQuery() => GetBaseQuery().SelectAllFrom(PermissionRoleTableName);
+    private IQueryBuilder GetPermissionRoleQuery() => GetBaseQuery().SelectAllFrom(PermissionRolesTableName);
 
     protected override IReadOnlyList<Role> Parse(IReadOnlyList<DbRole> qs) {
         if (qs.Count == 0) {
@@ -55,7 +55,7 @@ public sealed class RoleRepository : BaseRepository<Role, RoleId, DbRole> {
 
             GetBaseQuery().Update(TableName).SetWithoutIdFrom(obj).Where("id").Is(entity.Id).Execute();
             if (toDelete.Any()) {
-                GetBaseQuery().DeleteFrom(PermissionRoleTableName)
+                GetBaseQuery().DeleteFrom(PermissionRolesTableName)
                     .Where("role_id").Is(entity.Id)
                     .And("permission").In(toDelete)
                     .Execute();
@@ -69,7 +69,7 @@ public sealed class RoleRepository : BaseRepository<Role, RoleId, DbRole> {
             return;
         }
         var values = BuildInsertValues(roleId.ToString(), permissions);
-        GetBaseQuery().InsertInto(PermissionRoleTableName)
+        GetBaseQuery().InsertInto(PermissionRolesTableName)
             .Columns("role_id", "permission").Values(values)
             .Execute();
     }
@@ -84,7 +84,7 @@ public sealed class RoleRepository : BaseRepository<Role, RoleId, DbRole> {
     public void Delete(RoleId roleId, DomainEventFactory eventFactory) {
         UnitOfWork.Raise(eventFactory);
 
-        GetBaseQuery().DeleteFrom(PermissionRoleTableName).Where("role_id").Is(roleId).Execute();
+        GetBaseQuery().DeleteFrom(PermissionRolesTableName).Where("role_id").Is(roleId).Execute();
         GetBaseQuery().DeleteFrom(TableName).Where("id").Is(roleId).Execute();
     }
 }
