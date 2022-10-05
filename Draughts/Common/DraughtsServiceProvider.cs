@@ -8,8 +8,7 @@ using Draughts.Application.Shared.Middleware;
 using Draughts.Domain.AuthContext.Services;
 using Draughts.Domain.GameContext.Services;
 using Draughts.Repositories;
-using Draughts.Repositories.Database;
-using Draughts.Repositories.InMemory;
+using Draughts.Repositories.Misc;
 using Draughts.Repositories.Transaction;
 using Microsoft.Extensions.DependencyInjection;
 using NodaTime;
@@ -22,12 +21,12 @@ public static class DraughtsServiceProvider {
     private const int HI_LO_INTERVAL_SIZE_LARGE = 100;
     private const int HI_LO_INTERVAL_SIZE_SMALL = 10;
 
-    public static void ConfigureServices(IServiceCollection services, bool useInMemoryDatabase,
+    public static void ConfigureServices(IServiceCollection services,
             int hiloLargeIntervalSize = HI_LO_INTERVAL_SIZE_LARGE,
             int hiloSmallIntervalSize = HI_LO_INTERVAL_SIZE_SMALL) {
         ConfigureApplicationMiddleware(services);
         ConfigureEventHandlers(services);
-        ConfigureRepositories(services, useInMemoryDatabase, hiloLargeIntervalSize, hiloSmallIntervalSize);
+        ConfigureRepositories(services, hiloLargeIntervalSize, hiloSmallIntervalSize);
 
         ConfigureApplicationServices(services);
 
@@ -50,35 +49,19 @@ public static class DraughtsServiceProvider {
         services.AddSingleton<ModPanelRoleEventHandler>();
     }
 
-    private static void ConfigureRepositories(IServiceCollection services, bool useInMemoryDatabase, int hiloLargeIntervalSize, int hiloSmallIntervalSize) {
+    private static void ConfigureRepositories(IServiceCollection services, int hiloLargeIntervalSize, int hiloSmallIntervalSize) {
+        services.AddSingleton<IIdGenerator>(HiLoIdGenerator.BuildHiloGIdGenerator(
+            hiloLargeIntervalSize, hiloSmallIntervalSize, hiloSmallIntervalSize));
         services.AddSingleton<IUnitOfWork, UnitOfWorkWrapper>();
+        services.AddSingleton<IRepositoryUnitOfWork, UnitOfWork>();
 
-        if (useInMemoryDatabase) {
-            services.AddSingleton<IIdGenerator>(HiLoIdGenerator.InMemoryHiloGIdGenerator(
-                hiloLargeIntervalSize, hiloSmallIntervalSize, hiloSmallIntervalSize));
-            services.AddSingleton<IRepositoryUnitOfWork, InMemoryUnitOfWork>();
-
-            services.AddSingleton<IAuthUserRepository, InMemoryAuthUserRepository>();
-            services.AddSingleton<IRoleRepository, InMemoryRoleRepository>();
-            services.AddSingleton<IAdminLogRepository, InMemoryAdminLogRepository>();
-            services.AddSingleton<IUserRepository, InMemoryUserRepository>();
-            services.AddSingleton<IGameRepository, InMemoryGameRepository>();
-            services.AddSingleton<IGameStateRepository, InMemoryGameStateRepository>();
-            services.AddSingleton<IVotingRepository, InMemoryVotingRepository>();
-        }
-        else {
-            services.AddSingleton<IIdGenerator>(HiLoIdGenerator.DbHiloGIdGenerator(
-                hiloLargeIntervalSize, hiloSmallIntervalSize, hiloSmallIntervalSize));
-            services.AddSingleton<IRepositoryUnitOfWork, DbUnitOfWork>();
-
-            services.AddSingleton<IAuthUserRepository, DbAuthUserRepository>();
-            services.AddSingleton<IRoleRepository, DbRoleRepository>();
-            services.AddSingleton<IAdminLogRepository, DbAdminLogRepository>();
-            services.AddSingleton<IUserRepository, DbUserRepository>();
-            services.AddSingleton<IGameRepository, DbGameRepository>();
-            services.AddSingleton<IGameStateRepository, DbGameStateRepository>();
-            services.AddSingleton<IVotingRepository, DbVotingRepository>();
-        }
+        services.AddSingleton<AuthUserRepository>();
+        services.AddSingleton<RoleRepository>();
+        services.AddSingleton<AdminLogRepository>();
+        services.AddSingleton<UserRepository>();
+        services.AddSingleton<GameRepository>();
+        services.AddSingleton<GameStateRepository>();
+        services.AddSingleton<VotingRepository>();
     }
 
     private static void ConfigureApplicationServices(IServiceCollection services) {

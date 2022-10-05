@@ -9,11 +9,11 @@ using System.Linq;
 namespace Draughts.Application.Auth.Services;
 
 public sealed class AuthService {
-    private readonly IAuthUserRepository _authUserRepository;
+    private readonly AuthUserRepository _authUserRepository;
     private readonly IClock _clock;
-    private readonly IRoleRepository _roleRepository;
+    private readonly RoleRepository _roleRepository;
 
-    public AuthService(IRoleRepository roleRepository, IClock clock, IAuthUserRepository authUserRepository) {
+    public AuthService(RoleRepository roleRepository, IClock clock, AuthUserRepository authUserRepository) {
         _authUserRepository = authUserRepository;
         _clock = clock;
         _roleRepository = roleRepository;

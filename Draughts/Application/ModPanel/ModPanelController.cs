@@ -5,6 +5,7 @@ using Draughts.Application.Shared.ViewModels;
 using Draughts.Domain.AuthContext.Models;
 using Draughts.Domain.AuthContext.Specifications;
 using Draughts.Repositories;
+using Draughts.Repositories.Misc;
 using Draughts.Repositories.Transaction;
 using Microsoft.AspNetCore.Mvc;
 using static Draughts.Domain.AuthContext.Models.Permission;
@@ -12,10 +13,10 @@ using static Draughts.Domain.AuthContext.Models.Permission;
 namespace Draughts.Application.ModPanel;
 
 public sealed class ModPanelController : BaseController {
-    private readonly IAdminLogRepository _adminLogRepository;
+    private readonly AdminLogRepository _adminLogRepository;
     private readonly IUnitOfWork _unitOfWork;
 
-    public ModPanelController(IAdminLogRepository adminLogRepository, IUnitOfWork unitOfWork) {
+    public ModPanelController(AdminLogRepository adminLogRepository, IUnitOfWork unitOfWork) {
         _adminLogRepository = adminLogRepository;
         _unitOfWork = unitOfWork;
     }

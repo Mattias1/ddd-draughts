@@ -1,5 +1,6 @@
 using Draughts.Application.Shared;
-using Draughts.Repositories.Database;
+using Draughts.Repositories;
+using Draughts.Repositories.Misc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;

@@ -13,9 +13,9 @@ public sealed class UsersController : BaseController {
     private const int PAGE_SIZE = 10;
 
     private readonly IUnitOfWork _unitOfWork;
-    private readonly IUserRepository _userRepository;
+    private readonly UserRepository _userRepository;
 
-    public UsersController(IUnitOfWork unitOfWork, IUserRepository userRepository) {
+    public UsersController(IUnitOfWork unitOfWork, UserRepository userRepository) {
         _unitOfWork = unitOfWork;
         _userRepository = userRepository;
     }

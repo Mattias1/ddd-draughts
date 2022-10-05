@@ -5,6 +5,7 @@ using Draughts.Domain.AuthContext.Models;
 using Draughts.Domain.GameContext.Models;
 using Draughts.Domain.UserContext.Models;
 using Draughts.Repositories;
+using Draughts.Repositories.Misc;
 using Draughts.Test.TestHelpers;
 using FluentAssertions;
 using NodaTime.Testing;

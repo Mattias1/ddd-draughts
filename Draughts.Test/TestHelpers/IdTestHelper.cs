@@ -1,5 +1,5 @@
 using Draughts.Repositories;
-using Draughts.Repositories.Database;
+using Draughts.Repositories.Misc;
 using System.Collections.Generic;
 
 namespace Draughts.Test.TestHelpers;

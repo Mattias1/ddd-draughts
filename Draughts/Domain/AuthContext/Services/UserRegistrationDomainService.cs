@@ -1,8 +1,6 @@
 using Draughts.Common;
-using Draughts.Common.Utilities;
 using Draughts.Domain.AuthContext.Models;
-using Draughts.Domain.UserContext.Models;
-using Draughts.Repositories;
+using Draughts.Repositories.Misc;
 using NodaTime;
 using System;
 using System.Linq;

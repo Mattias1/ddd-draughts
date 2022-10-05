@@ -4,6 +4,7 @@ using Draughts.Domain.AuthContext.Models;
 using Draughts.Domain.AuthContext.Specifications;
 using Draughts.Domain.UserContext.Models;
 using Draughts.Repositories;
+using Draughts.Repositories.Misc;
 using Draughts.Repositories.Transaction;
 using NodaTime;
 using System.Collections.Generic;
@@ -12,14 +13,14 @@ using System.Linq;
 namespace Draughts.Application.ModPanel.Services;
 
 public sealed class EditRoleService {
-    private readonly IAuthUserRepository _authUserRepository;
+    private readonly AuthUserRepository _authUserRepository;
     private readonly IClock _clock;
     private readonly IIdGenerator _idGenerator;
-    private readonly IRoleRepository _roleRepository;
+    private readonly RoleRepository _roleRepository;
     private readonly IUnitOfWork _unitOfWork;
 
-    public EditRoleService(IAuthUserRepository authUserRepository, IClock clock, IIdGenerator idGenerator,
-            IRoleRepository roleRepository, IUnitOfWork unitOfWork) {
+    public EditRoleService(AuthUserRepository authUserRepository, IClock clock, IIdGenerator idGenerator,
+            RoleRepository roleRepository, IUnitOfWork unitOfWork) {
         _authUserRepository = authUserRepository;
         _clock = clock;
         _idGenerator = idGenerator;

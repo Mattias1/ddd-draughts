@@ -12,14 +12,14 @@ namespace Draughts.Application.PlayGame.Services;
 
 public sealed class PlayGameService {
     private readonly IClock _clock;
-    private readonly IGameRepository _gameRepository;
-    private readonly IGameStateRepository _gameStateRepository;
+    private readonly GameRepository _gameRepository;
+    private readonly GameStateRepository _gameStateRepository;
     private readonly PlayGameDomainService _playGameDomainService;
     private readonly IUnitOfWork _unitOfWork;
-    private readonly IVotingRepository _votingRepository;
+    private readonly VotingRepository _votingRepository;
 
-    public PlayGameService(IClock clock, IGameRepository gameRepository, IGameStateRepository gameStateRepository,
-            PlayGameDomainService playGameDomainService, IUnitOfWork unitOfWork, IVotingRepository votingRepository) {
+    public PlayGameService(IClock clock, GameRepository gameRepository, GameStateRepository gameStateRepository,
+            PlayGameDomainService playGameDomainService, IUnitOfWork unitOfWork, VotingRepository votingRepository) {
         _clock = clock;
         _gameRepository = gameRepository;
         _gameStateRepository = gameStateRepository;

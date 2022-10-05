@@ -1,5 +1,5 @@
 using Draughts.Domain.GameContext.Models;
-using Draughts.Repositories;
+using Draughts.Repositories.Misc;
 using NodaTime;
 using System.Collections.Generic;
 

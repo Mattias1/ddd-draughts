@@ -5,6 +5,7 @@ using Draughts.Common.OoConcepts;
 using Draughts.Domain.GameContext.Models;
 using Draughts.Domain.GameContext.Specifications;
 using Draughts.Repositories;
+using Draughts.Repositories.Misc;
 using Draughts.Repositories.Transaction;
 using Microsoft.AspNetCore.Mvc;
 using NodaTime;
@@ -17,10 +18,10 @@ public sealed class GamelistController : BaseController {
     private const int PAGE_SIZE = 10;
 
     private readonly IClock _clock;
-    private readonly IGameRepository _gameRepository;
+    private readonly GameRepository _gameRepository;
     private readonly IUnitOfWork _unitOfWork;
 
-    public GamelistController(IClock clock, IGameRepository gameRepository, IUnitOfWork unitOfWork) {
+    public GamelistController(IClock clock, GameRepository gameRepository, IUnitOfWork unitOfWork) {
         _clock = clock;
         _gameRepository = gameRepository;
         _unitOfWork = unitOfWork;

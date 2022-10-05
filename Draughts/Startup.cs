@@ -1,7 +1,8 @@
 using Draughts.Application.Shared;
 using Draughts.Application.Shared.Middleware;
 using Draughts.Common;
-using Draughts.Repositories.Database;
+using Draughts.Repositories;
+using Draughts.Repositories.Misc;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -17,7 +18,6 @@ namespace Draughts;
 
 public class Startup {
     public static string VIEW_LOCATION_TEMPLATE = "/Application/{1}/Views/{0}" + RazorViewEngine.ViewExtension;
-    protected virtual bool UseInMemoryDatabase => false;
 
     // This method gets called by the runtime. Use this method to add services to the container.
     public void ConfigureServices(IServiceCollection services) {
@@ -26,7 +26,7 @@ public class Startup {
             options.Filters.Add(typeof(ExceptionLoggerActionFilter));
         });
 
-        DraughtsServiceProvider.ConfigureServices(services, UseInMemoryDatabase);
+        DraughtsServiceProvider.ConfigureServices(services);
 
         ConfigureRazorViewLocations(services);
         services.AddSignalR();
@@ -83,12 +83,4 @@ public class Startup {
         DbContext.Init(settings.DbPassword);
         Utils.BaseUrl = settings.BaseUrl;
     }
-}
-
-public sealed class DbStartup : Startup {
-    protected override bool UseInMemoryDatabase => false;
-}
-
-public sealed class InMemoryStartup : Startup {
-    protected override bool UseInMemoryDatabase => true;
 }

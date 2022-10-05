@@ -1,6 +1,6 @@
 using Draughts.Command.Seeders;
 using Draughts.Repositories;
-using Draughts.Repositories.Database;
+using Draughts.Repositories.Misc;
 using Draughts.Test.TestHelpers;
 using SqlQueryBuilder.Exceptions;
 using System;
