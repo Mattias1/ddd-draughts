@@ -1,4 +1,5 @@
 using Draughts.Repositories;
+using Draughts.Repositories.Misc;
 
 namespace Draughts.Application.Shared.ViewModels;
 

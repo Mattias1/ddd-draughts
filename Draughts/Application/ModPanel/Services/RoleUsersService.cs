@@ -5,6 +5,7 @@ using Draughts.Domain.AuthContext.Services;
 using Draughts.Domain.AuthContext.Specifications;
 using Draughts.Domain.UserContext.Models;
 using Draughts.Repositories;
+using Draughts.Repositories.Misc;
 using Draughts.Repositories.Transaction;
 using NodaTime;
 using System.Collections.Generic;
@@ -12,15 +13,15 @@ using System.Collections.Generic;
 namespace Draughts.Application.ModPanel.Services;
 
 public sealed class RoleUsersService {
-    private readonly IAuthUserRepository _authUserRepository;
+    private readonly AuthUserRepository _authUserRepository;
     private readonly IClock _clock;
     private readonly IIdGenerator _idGenerator;
-    private readonly IRoleRepository _roleRepository;
+    private readonly RoleRepository _roleRepository;
     private readonly UserRoleDomainService _userRoleDomainService;
     private readonly IUnitOfWork _unitOfWork;
 
-    public RoleUsersService(IAuthUserRepository authUserRepository, IClock clock, IIdGenerator idGenerator,
-            IRoleRepository roleRepository, UserRoleDomainService userRoleDomainService, IUnitOfWork unitOfWork) {
+    public RoleUsersService(AuthUserRepository authUserRepository, IClock clock, IIdGenerator idGenerator,
+            RoleRepository roleRepository, UserRoleDomainService userRoleDomainService, IUnitOfWork unitOfWork) {
         _authUserRepository = authUserRepository;
         _clock = clock;
         _idGenerator = idGenerator;

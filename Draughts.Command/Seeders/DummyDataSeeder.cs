@@ -11,16 +11,16 @@ using System.Linq;
 namespace Draughts.Command.Seeders;
 
 public sealed class DummyDataSeeder {
-    private readonly IAuthUserRepository _authUserRepository;
-    private readonly IGameRepository _gameRepository;
-    private readonly IGameStateRepository _gameStateRepository;
-    private readonly IRoleRepository _roleRepository;
+    private readonly AuthUserRepository _authUserRepository;
+    private readonly GameRepository _gameRepository;
+    private readonly GameStateRepository _gameStateRepository;
+    private readonly RoleRepository _roleRepository;
     private readonly IUnitOfWork _unitOfWork;
-    private readonly IUserRepository _userRepository;
+    private readonly UserRepository _userRepository;
 
-    public DummyDataSeeder(IAuthUserRepository authUserRepository, IGameRepository gameRepository,
-        IGameStateRepository gameStateRepository, IRoleRepository roleRepository,
-        IUnitOfWork unitOfWork, IUserRepository userRepository
+    public DummyDataSeeder(AuthUserRepository authUserRepository, GameRepository gameRepository,
+        GameStateRepository gameStateRepository, RoleRepository roleRepository,
+        IUnitOfWork unitOfWork, UserRepository userRepository
     ) {
         _authUserRepository = authUserRepository;
         _gameRepository = gameRepository;

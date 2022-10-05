@@ -3,6 +3,7 @@ using Draughts.Domain.GameContext.Models;
 using Draughts.Domain.GameContext.Services;
 using Draughts.Domain.UserContext.Models;
 using Draughts.Repositories;
+using Draughts.Repositories.Misc;
 using Draughts.Repositories.Transaction;
 using System.Linq;
 using static Draughts.Domain.GameContext.Services.GameFactory;
@@ -12,15 +13,15 @@ namespace Draughts.Application.Lobby.Services;
 // Note: This name is way to generic. In the future I'll put everything in here. So I'll rename it then :)
 public sealed class GameService {
     private readonly GameFactory _gameFactory;
-    private readonly IGameRepository _gameRepository;
-    private readonly IGameStateRepository _gameStateRepository;
+    private readonly GameRepository _gameRepository;
+    private readonly GameStateRepository _gameStateRepository;
     private readonly IIdGenerator _idGenerator;
     private readonly IUnitOfWork _unitOfWork;
-    private readonly IUserRepository _userRepository;
+    private readonly UserRepository _userRepository;
 
-    public GameService(GameFactory gameFactory, IGameRepository gameRepository,
-            IGameStateRepository gameStateRepository, IIdGenerator idGenerator,
-            IUnitOfWork unitOfWork, IUserRepository userRepository) {
+    public GameService(GameFactory gameFactory, GameRepository gameRepository,
+            GameStateRepository gameStateRepository, IIdGenerator idGenerator,
+            IUnitOfWork unitOfWork, UserRepository userRepository) {
         _gameFactory = gameFactory;
         _gameRepository = gameRepository;
         _gameStateRepository = gameStateRepository;

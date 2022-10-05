@@ -1,7 +1,7 @@
 using Draughts.Common.OoConcepts;
 using Draughts.Common.Utilities;
 using Draughts.Domain.UserContext.Models;
-using Draughts.Repositories;
+using Draughts.Repositories.Misc;
 using NodaTime;
 using SqlQueryBuilder.Common;
 using System;

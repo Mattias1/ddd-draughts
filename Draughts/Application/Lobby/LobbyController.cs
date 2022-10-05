@@ -17,11 +17,11 @@ public sealed class LobbyController : BaseController {
     private const int PAGE_SIZE = 10;
 
     private readonly IClock _clock;
-    private readonly IGameRepository _gameRepository;
+    private readonly GameRepository _gameRepository;
     private readonly GameService _gameService;
     private readonly IUnitOfWork _unitOfWork;
 
-    public LobbyController(IClock clock, IGameRepository gameRepository, GameService gameService, IUnitOfWork unitOfWork) {
+    public LobbyController(IClock clock, GameRepository gameRepository, GameService gameService, IUnitOfWork unitOfWork) {
         _clock = clock;
         _gameRepository = gameRepository;
         _gameService = gameService;

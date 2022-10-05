@@ -1,6 +1,7 @@
 using Draughts.Application.Shared.ViewModels;
 using Draughts.Domain.AuthContext.Models;
 using Draughts.Repositories;
+using Draughts.Repositories.Misc;
 using System.Collections.Generic;
 
 namespace Draughts.Application.ModPanel.ViewModels;

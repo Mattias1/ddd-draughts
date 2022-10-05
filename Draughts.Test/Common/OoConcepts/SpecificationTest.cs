@@ -6,7 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using Xunit;
-using static Draughts.Repositories.Database.JoinEnum;
+using static Draughts.Repositories.Misc.JoinEnum;
 
 namespace Draughts.Test.Common.OoConcepts;
 

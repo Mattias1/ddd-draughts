@@ -20,13 +20,13 @@ public sealed class HeartBeatMiddleware {
 
     private readonly BackgroundQueue _backgroundQueue;
     private readonly IClock _clock;
-    private readonly IGameRepository _gameRepository;
+    private readonly GameRepository _gameRepository;
     private readonly ILogger<HeartBeatMiddleware> _log;
     private readonly RequestDelegate _next;
     private readonly IUnitOfWork _unitOfWork;
     private readonly IHubContext<WebsocketHub> _websocketHub;
 
-    public HeartBeatMiddleware(BackgroundQueue backgroundQueue, IClock clock, IGameRepository gameRepository,
+    public HeartBeatMiddleware(BackgroundQueue backgroundQueue, IClock clock, GameRepository gameRepository,
             ILogger<HeartBeatMiddleware> log, RequestDelegate next, IUnitOfWork unitOfWork,
             IHubContext<WebsocketHub> websocketHub) {
         _backgroundQueue = backgroundQueue;

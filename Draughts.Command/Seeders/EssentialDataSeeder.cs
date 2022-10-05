@@ -1,7 +1,7 @@
 using Draughts.Domain.AuthContext.Models;
 using Draughts.Domain.UserContext.Models;
 using Draughts.Repositories;
-using Draughts.Repositories.Database;
+using Draughts.Repositories.Misc;
 using Draughts.Repositories.Transaction;
 using Draughts.Test.TestHelpers;
 using System;
@@ -9,13 +9,13 @@ using System;
 namespace Draughts.Command.Seeders;
 
 public sealed class EssentialDataSeeder {
-    private readonly IAuthUserRepository _authUserRepository;
-    private readonly IRoleRepository _roleRepository;
+    private readonly AuthUserRepository _authUserRepository;
+    private readonly RoleRepository _roleRepository;
     private readonly IUnitOfWork _unitOfWork;
-    private readonly IUserRepository _userRepository;
+    private readonly UserRepository _userRepository;
 
-    public EssentialDataSeeder(IAuthUserRepository authUserRepository, IRoleRepository roleRepository,
-        IUnitOfWork unitOfWork, IUserRepository userRepository
+    public EssentialDataSeeder(AuthUserRepository authUserRepository, RoleRepository roleRepository,
+        IUnitOfWork unitOfWork, UserRepository userRepository
     ) {
         _authUserRepository = authUserRepository;
         _roleRepository = roleRepository;

@@ -2,6 +2,7 @@ using Draughts.Common.Events;
 using Draughts.Domain.AuthContext.Events;
 using Draughts.Domain.AuthContext.Models;
 using Draughts.Repositories;
+using Draughts.Repositories.Misc;
 using Draughts.Repositories.Transaction;
 using NodaTime;
 using System;
@@ -9,14 +10,14 @@ using System;
 namespace Draughts.Application.Auth;
 
 public sealed class ModPanelRoleEventHandler : DomainEventHandler {
-    private readonly IAdminLogRepository _adminLogRepository;
-    private readonly IAuthUserRepository _authUserRepository;
+    private readonly AdminLogRepository _adminLogRepository;
+    private readonly AuthUserRepository _authUserRepository;
     private readonly IClock _clock;
     private readonly IIdGenerator _idGenerator;
     private readonly IUnitOfWork _unitOfWork;
 
     public ModPanelRoleEventHandler(
-            IAdminLogRepository adminLogRepository, IAuthUserRepository authUserRepository,
+            AdminLogRepository adminLogRepository, AuthUserRepository authUserRepository,
             IClock clock, IIdGenerator idGenerator, IUnitOfWork unitOfWork)
             : base(RoleCreated.TYPE, RoleEdited.TYPE, RoleDeleted.TYPE, UserGainedRole.TYPE, UserLostRole.TYPE) {
         _adminLogRepository = adminLogRepository;

@@ -4,6 +4,7 @@ using Draughts.Common.Utilities;
 using Draughts.Domain.AuthContext.Events;
 using Draughts.Domain.UserContext.Models;
 using Draughts.Repositories;
+using Draughts.Repositories.Misc;
 using NodaTime;
 using System.Collections.Generic;
 using System.Linq;

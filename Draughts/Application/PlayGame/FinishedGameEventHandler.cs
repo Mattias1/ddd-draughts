@@ -7,9 +7,9 @@ namespace Draughts.Application.Auth;
 
 public sealed class FinishedGameEventHandler : DomainEventHandler<GameFinished> {
     private readonly IUnitOfWork _unitOfWork;
-    private readonly IUserRepository _userRepository;
+    private readonly UserRepository _userRepository;
 
-    public FinishedGameEventHandler(IUnitOfWork unitOfWork, IUserRepository userRepository) {
+    public FinishedGameEventHandler(IUnitOfWork unitOfWork, UserRepository userRepository) {
         _unitOfWork = unitOfWork;
         _userRepository = userRepository;
     }

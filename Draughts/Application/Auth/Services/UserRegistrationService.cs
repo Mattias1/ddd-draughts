@@ -5,23 +5,24 @@ using Draughts.Domain.AuthContext.Services;
 using Draughts.Domain.AuthContext.Specifications;
 using Draughts.Domain.UserContext.Models;
 using Draughts.Repositories;
+using Draughts.Repositories.Misc;
 using Draughts.Repositories.Transaction;
 using NodaTime;
 
 namespace Draughts.Application.Auth.Services;
 
 public sealed class UserRegistrationService {
-    private readonly IAuthUserRepository _authUserRepository;
+    private readonly AuthUserRepository _authUserRepository;
     private readonly IClock _clock;
-    private readonly IUserRepository _userRepository;
+    private readonly UserRepository _userRepository;
     private readonly UserRegistrationDomainService _userRegistrationDomainService;
     private readonly IIdGenerator _idGenerator;
-    private readonly IRoleRepository _roleRepository;
+    private readonly RoleRepository _roleRepository;
     private readonly IUnitOfWork _unitOfWork;
 
     public UserRegistrationService(
-            IAuthUserRepository authUserRepository, IClock clock, IIdGenerator idGenerator,
-            IRoleRepository roleRepository, IUnitOfWork unitOfWork, IUserRepository userRepository,
+            AuthUserRepository authUserRepository, IClock clock, IIdGenerator idGenerator,
+            RoleRepository roleRepository, IUnitOfWork unitOfWork, UserRepository userRepository,
             UserRegistrationDomainService userRegistrationDomainService) {
         _authUserRepository = authUserRepository;
         _clock = clock;

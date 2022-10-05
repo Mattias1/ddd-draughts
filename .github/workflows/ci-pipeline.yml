@@ -55,15 +55,9 @@ jobs:
         --no-build
         --verbosity normal
         --filter FullyQualifiedName~Draughts.Test
-    - name: Run in-memory backend tests
-      run: >
-        dotnet test
-        --no-build
-        --verbosity normal
-        --filter FullyQualifiedName~Draughts.IntegrationTest.EndToEnd.InMemory
     - name: Run database backend tests
       run: >
         dotnet test
         --no-build
         --verbosity normal
-        --filter FullyQualifiedName~Draughts.IntegrationTest.EndToEnd.Database
+        --filter FullyQualifiedName~Draughts.IntegrationTest

@@ -18,11 +18,11 @@ namespace Draughts.Application.ModPanel;
 [ViewsFrom("ModPanel")]
 public sealed class ModPanelGameToolsController : BaseController {
     private readonly IClock _clock;
-    private readonly IGameRepository _gameRepository;
+    private readonly GameRepository _gameRepository;
     private readonly IUnitOfWork _unitOfWork;
     private readonly IHubContext<WebsocketHub> _websocketHub;
 
-    public ModPanelGameToolsController(IClock clock, IGameRepository gameRepository,
+    public ModPanelGameToolsController(IClock clock, GameRepository gameRepository,
             IUnitOfWork unitOfWork, IHubContext<WebsocketHub> websocketHub) {
         _clock = clock;
         _gameRepository = gameRepository;

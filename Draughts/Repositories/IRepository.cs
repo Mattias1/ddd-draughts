@@ -1,4 +1,5 @@
 using Draughts.Common.OoConcepts;
+using Draughts.Repositories.Misc;
 using System.Collections.Generic;
 
 namespace Draughts.Repositories;
