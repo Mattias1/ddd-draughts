@@ -67,16 +67,4 @@ public sealed class DomainEventTest {
         (left == right).Should().BeTrue();
         (left != right).Should().BeFalse();
     }
-
-    [Fact]
-    public void RegisterFailedAttemptShouldUpdateDateAndNrOfAttempts() {
-        var role = RoleTestHelper.PendingRegistration().Build();
-        var evt = new RoleCreated(role, new UserId(5),
-            new DomainEventId(IdTestHelper.Next()), _clock.UtcNow().PlusHours(-1));
-
-        evt.RegisterFailedAttempt(_clock.UtcNow());
-
-        evt.LastAttemptedAt.Should().Be(_clock.UtcNow());
-        evt.NrOfAttempts.Should().Be(1);
-    }
 }

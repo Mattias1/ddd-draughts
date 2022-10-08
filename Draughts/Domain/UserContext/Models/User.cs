@@ -30,7 +30,7 @@ public sealed class User : AggregateRoot<User, UserId> {
 
     public static User BuildNew(UserId id, Username username, ZonedDateTime createdAt) {
         var user = new User(id, username, Rating.StartRating, Rank.Ranks.Private, UserStatistics.BuildNew(id), createdAt);
-        user.RegisterEvent(UserCreated.Factory(user));
+        user.AttachEvent(UserCreated.Factory(user));
         return user;
     }
 }

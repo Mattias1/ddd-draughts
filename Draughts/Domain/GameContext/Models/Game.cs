@@ -110,7 +110,7 @@ public sealed class Game : AggregateRoot<Game, GameId> {
         Victor = Turn!.Player;
         Turn = null;
 
-        RegisterEvent(GameFinished.Factory(this));
+        AttachEvent(GameFinished.Factory(this));
     }
 
     public void Draw(ZonedDateTime finishedAt) {
@@ -120,7 +120,7 @@ public sealed class Game : AggregateRoot<Game, GameId> {
         Victor = null;
         Turn = null;
 
-        RegisterEvent(GameFinished.Factory(this));
+        AttachEvent(GameFinished.Factory(this));
     }
 
     public void ResignGame(UserId currentUser, ZonedDateTime finishedAt) {
@@ -130,7 +130,7 @@ public sealed class Game : AggregateRoot<Game, GameId> {
         Victor = Players.Single(p => p.UserId != currentUser);
         Turn = null;
 
-        RegisterEvent(GameFinished.Factory(this));
+        AttachEvent(GameFinished.Factory(this));
     }
 
     public void ValidateCanDoMove(UserId currentUser) {

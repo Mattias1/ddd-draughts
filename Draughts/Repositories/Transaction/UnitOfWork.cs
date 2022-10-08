@@ -16,18 +16,21 @@ public sealed class UnitOfWork : IRepositoryUnitOfWork {
     private readonly IIdGenerator _idGenerator;
 
     private readonly AsyncLocal<Transaction?> _currentTransaction;
-    private readonly List<IDomainEventHandler> _eventHandlers;
-    private readonly EventQueue _eventQueue;
+    private readonly EventDispatcher _eventDispatcher;
 
     private static readonly object _lock = new object();
 
-    public UnitOfWork(IClock clock, IIdGenerator idGenerator) {
+    public UnitOfWork(IClock clock, EventDispatcher eventDispatcher, IIdGenerator idGenerator) {
         _clock = clock;
+        _eventDispatcher = eventDispatcher;
         _idGenerator = idGenerator;
 
         _currentTransaction = new AsyncLocal<Transaction?>();
-        _eventHandlers = new List<IDomainEventHandler>();
-        _eventQueue = new EventQueue(clock, _eventHandlers);
+    }
+
+    public TransactionDomain ActiveTransactionDomain() {
+        return _currentTransaction?.Value?.TransactionDomain
+                ?? throw new InvalidOperationException("There is no open transaction.");
     }
 
     public void WithAuthTransaction(Action<ITransaction> function) => WithTransaction(TransactionDomain.Auth, function);
@@ -77,29 +80,21 @@ public sealed class UnitOfWork : IRepositoryUnitOfWork {
         }
 
         if (transaction.Succeeded) {
-            _eventQueue.Enqueue(transaction.RaisedEvents);
-            _eventQueue.DispatchAll();
+            _eventDispatcher.DispatchAll(transaction.RaisedEvents);
         }
     }
 
-    public void Register(IDomainEventHandler eventHandler) => _eventHandlers.Add(eventHandler);
-
-    public void Raise(DomainEventFactory eventFactory) {
+    public DomainEvent Raise(DomainEventFactory eventFactory) {
         var nextId = new DomainEventId(_idGenerator.ReservePool(1, 0, 0).Next());
-        Raise(eventFactory(nextId, _clock.UtcNow()));
+        return Raise(eventFactory(nextId, _clock.UtcNow()));
     }
-    public void Raise(DomainEvent evt) {
+    public DomainEvent Raise(DomainEvent evt) {
         if (_currentTransaction.Value is null) {
             throw new InvalidOperationException("You can only raise events from within a transaction context.");
         }
 
         _currentTransaction.Value.RaiseEvent(evt);
-    }
-
-    public void DispatchAll() => _eventQueue.DispatchAll();
-
-    public void Store<T>(T obj, Func<ITransaction, List<T>> tableFunc) where T : IEquatable<T> {
-        throw new InvalidOperationException("Store through the repositories, not through the unit of work.");
+        return evt;
     }
 
     public IInitialQueryBuilder Query(TransactionDomain domain) {
@@ -114,6 +109,7 @@ public sealed class UnitOfWork : IRepositoryUnitOfWork {
         private readonly TransactionDomain _transactionDomain;
         private ISqlTransactionFlavor? _transactionFlavor;
 
+        public TransactionDomain TransactionDomain => _transactionDomain;
         public bool IsOpen { get; private set; }
         public bool Succeeded { get; private set; }
         public IReadOnlyList<DomainEvent> RaisedEvents => _raisedEvents.AsReadOnly();

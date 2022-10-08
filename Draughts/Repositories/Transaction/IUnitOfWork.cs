@@ -1,7 +1,6 @@
 using Draughts.Common.Events;
 using SqlQueryBuilder.Builder;
 using System;
-using System.Collections.Generic;
 using static Draughts.Common.Events.DomainEvent;
 
 namespace Draughts.Repositories.Transaction;
@@ -9,12 +8,10 @@ namespace Draughts.Repositories.Transaction;
 // This unit of work is only meant to be used by repositories - the rest of the code shouldn't
 // concern itself with manual queries or raising events.
 public interface IRepositoryUnitOfWork : IUnitOfWork {
-    void Register(IDomainEventHandler eventHandler);
-    void Raise(DomainEventFactory eventFactory);
-    void Raise(DomainEvent evt);
-    void DispatchAll();
+    DomainEvent Raise(DomainEventFactory eventFactory);
+    DomainEvent Raise(DomainEvent evt);
 
-    void Store<T>(T obj, Func<ITransaction, List<T>> tableFunc) where T : IEquatable<T>;
+    TransactionDomain ActiveTransactionDomain();
 
     IInitialQueryBuilder Query(TransactionDomain domain);
 }

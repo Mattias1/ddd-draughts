@@ -40,7 +40,7 @@ public sealed class AuthUser : AggregateRoot<AuthUser, UserId> {
         _rolesIds.Add(roleId);
 
         if (responsibleUserId is not null) {
-            RegisterEvent(UserGainedRole.Factory(this, roleId, rolename, responsibleUserId));
+            AttachEvent(UserGainedRole.Factory(this, roleId, rolename, responsibleUserId));
         }
     }
 
@@ -51,7 +51,7 @@ public sealed class AuthUser : AggregateRoot<AuthUser, UserId> {
         _rolesIds.Remove(roleId);
 
         if (responsibleUserId is not null) {
-            RegisterEvent(UserLostRole.Factory(this, roleId, rolename, responsibleUserId));
+            AttachEvent(UserLostRole.Factory(this, roleId, rolename, responsibleUserId));
         }
     }
 
@@ -63,7 +63,7 @@ public sealed class AuthUser : AggregateRoot<AuthUser, UserId> {
         var authUser = new AuthUser(nextUserId, username, passwordHash, email, clock.UtcNow(),
             new[] { pendingRegistrationRoleId });
 
-        authUser.RegisterEvent(AuthUserCreated.Factory(authUser));
+        authUser.AttachEvent(AuthUserCreated.Factory(authUser));
         return authUser;
     }
 }

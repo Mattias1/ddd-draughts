@@ -12,4 +12,6 @@ public sealed class UserId : IdValueObject<UserId> {
         }
         Value = id;
     }
+
+    public static UserId? FromNullable(long? userId) => userId is null ? null : new UserId(userId.Value);
 }

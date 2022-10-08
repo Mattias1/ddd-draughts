@@ -28,12 +28,19 @@ CREATE TABLE `users` (
     PRIMARY KEY (`id`)
 );
 
-CREATE TABLE `events` (
+CREATE TABLE `sent_events` (
     `id` BIGINT NOT NULL,
     `type` VARCHAR(50) NOT NULL,
     `created_at` DATETIME NOT NULL,
-    `last_attempted_at` DATETIME NOT NULL,
-    `nr_of_attempts` SMALLINT UNSIGNED NOT NULL,
+    `handled_at` DATETIME NULL,
+    `data` NVARCHAR(400) NOT NULL,
+
+    PRIMARY KEY (`id`)
+);
+
+CREATE TABLE `received_events` (
+    `id` BIGINT NOT NULL,
+    `handled_at` DATETIME NOT NULL,
 
     PRIMARY KEY (`id`)
 );
@@ -99,12 +106,19 @@ CREATE TABLE `adminlog` (
         ON UPDATE RESTRICT ON DELETE CASCADE
 );
 
-CREATE TABLE `events` (
+CREATE TABLE `sent_events` (
     `id` BIGINT NOT NULL,
     `type` VARCHAR(50) NOT NULL,
     `created_at` DATETIME NOT NULL,
-    `last_attempted_at` DATETIME NOT NULL,
-    `nr_of_attempts` SMALLINT UNSIGNED NOT NULL,
+    `handled_at` DATETIME NULL,
+    `data` NVARCHAR(400) NOT NULL,
+
+    PRIMARY KEY (`id`)
+);
+
+CREATE TABLE `received_events` (
+    `id` BIGINT NOT NULL,
+    `handled_at` DATETIME NOT NULL,
 
     PRIMARY KEY (`id`)
 );
@@ -188,12 +202,19 @@ CREATE TABLE `votes` (
         ON UPDATE RESTRICT ON DELETE CASCADE
 );
 
-CREATE TABLE `events` (
+CREATE TABLE `sent_events` (
     `id` BIGINT NOT NULL,
     `type` VARCHAR(50) NOT NULL,
     `created_at` DATETIME NOT NULL,
-    `last_attempted_at` DATETIME NOT NULL,
-    `nr_of_attempts` SMALLINT UNSIGNED NOT NULL,
+    `handled_at` DATETIME NULL,
+    `data` NVARCHAR(400) NOT NULL,
+
+    PRIMARY KEY (`id`)
+);
+
+CREATE TABLE `received_events` (
+    `id` BIGINT NOT NULL,
+    `handled_at` DATETIME NOT NULL,
 
     PRIMARY KEY (`id`)
 );

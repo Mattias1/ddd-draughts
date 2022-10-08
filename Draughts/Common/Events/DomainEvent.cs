@@ -10,21 +10,16 @@ public abstract class DomainEvent : IEquatable<DomainEvent> {
     public DomainEventId Id { get; }
     public string Type { get; }
     public ZonedDateTime CreatedAt { get; }
-    public ZonedDateTime LastAttemptedAt { get; private set; }
-    public int NrOfAttempts { get; private set; }
+    public ZonedDateTime? HandledAt { get; private set; }
 
-    public DomainEvent(DomainEventId id, string type, ZonedDateTime createdAt) {
+    public DomainEvent(DomainEventId id, string type, ZonedDateTime createdAt, ZonedDateTime? handledAt) {
         Id = id;
         Type = type;
         CreatedAt = createdAt;
-        LastAttemptedAt = createdAt;
-        NrOfAttempts = 0;
+        HandledAt = handledAt;
     }
 
-    public void RegisterFailedAttempt(ZonedDateTime zonedDateTime) {
-        LastAttemptedAt = zonedDateTime;
-        NrOfAttempts++;
-    }
+    public abstract string BuildDataString();
 
     public override bool Equals(object? obj) => obj is DomainEvent other && Id.Equals(other.Id);
     public bool Equals(DomainEvent? other) => Id.Equals(other?.Id);

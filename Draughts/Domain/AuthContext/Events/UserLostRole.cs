@@ -1,8 +1,8 @@
 using Draughts.Common.Events;
+using Draughts.Common.Utilities;
 using Draughts.Domain.AuthContext.Models;
 using Draughts.Domain.UserContext.Models;
 using NodaTime;
-using System;
 
 namespace Draughts.Domain.AuthContext.Events;
 
@@ -15,15 +15,31 @@ public sealed class UserLostRole : DomainEvent {
     public string Rolename { get; }
     public UserId RemovedBy { get; }
 
-    public UserLostRole(AuthUser user, RoleId roleId, string rolename, UserId removedBy, DomainEventId id, ZonedDateTime created) : base(id, TYPE, created) {
-        UserId = user.Id;
-        Username = user.Username;
+    public UserLostRole(UserId userId, Username username, RoleId roleId, string rolename, UserId removedBy,
+            DomainEventId id, ZonedDateTime createdAt, ZonedDateTime? handledAt) : base(id, TYPE, createdAt, handledAt) {
+        UserId = userId;
+        Username = username;
         RoleId = roleId;
         Rolename = rolename;
         RemovedBy = removedBy;
     }
 
-    public static DomainEventFactory Factory(AuthUser user, RoleId roleId, string rolename, UserId removedBy) {
-        return (id, now) => new UserLostRole(user, roleId, rolename, removedBy, id, now);
+    public override string BuildDataString() {
+        return JsonUtils.SerializeEvent(Id, new EventData(UserId.Value, Username.Value,
+            RoleId.Value, Rolename, RemovedBy.Value));
     }
+
+    public static DomainEventFactory Factory(AuthUser user, RoleId roleId, string rolename, UserId removedBy) {
+        return (id, now) => new UserLostRole(user.Id, user.Username, roleId, rolename, removedBy, id, now, null);
+    }
+
+    public static UserGainedRole FromStorage(DomainEventId id,
+            ZonedDateTime createdAt, ZonedDateTime? handledAt, string dataString) {
+        var data = JsonUtils.DeserializeEvent<EventData>(id, dataString);
+        return new UserGainedRole(new UserId(data.UserId), new Username(data.Username),
+            new RoleId(data.RoleId), data.Rolename, new UserId(data.RemovedBy), id, createdAt, handledAt);
+    }
+
+    private readonly record struct EventData(long UserId, string Username,
+            long RoleId, string Rolename, long RemovedBy);
 }

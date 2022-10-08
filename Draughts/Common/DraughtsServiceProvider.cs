@@ -5,6 +5,7 @@ using Draughts.Application.Lobby.Services;
 using Draughts.Application.ModPanel.Services;
 using Draughts.Application.PlayGame.Services;
 using Draughts.Application.Shared.Middleware;
+using Draughts.Common.Events;
 using Draughts.Domain.AuthContext.Services;
 using Draughts.Domain.GameContext.Services;
 using Draughts.Repositories;
@@ -43,10 +44,12 @@ public static class DraughtsServiceProvider {
     }
 
     private static void ConfigureEventHandlers(IServiceCollection services) {
-        services.AddSingleton<SynchronizePendingUserEventHandler>();
-        services.AddSingleton<FinishUserRegistrationEventHandler>();
-        services.AddSingleton<FinishedGameEventHandler>();
-        services.AddSingleton<ModPanelRoleEventHandler>();
+        services.AddSingleton<EventDispatcher>();
+
+        services.AddSingleton<IDomainEventHandler, SynchronizePendingUserEventHandler>();
+        services.AddSingleton<IDomainEventHandler, FinishUserRegistrationEventHandler>();
+        services.AddSingleton<IDomainEventHandler, FinishedGameEventHandler>();
+        services.AddSingleton<IDomainEventHandler, ModPanelRoleEventHandler>();
     }
 
     private static void ConfigureRepositories(IServiceCollection services, int hiloLargeIntervalSize, int hiloSmallIntervalSize) {
@@ -81,11 +84,10 @@ public static class DraughtsServiceProvider {
     }
 
     public static void RegisterEventHandlers(IServiceProvider serviceProvider) {
-        var unitOfWork = serviceProvider.GetRequiredService<IRepositoryUnitOfWork>();
+        // This method is here to prevent a circular dependencies:
+        // Repositories -> Unit of work -> Event dispatcher -> Event handlers -> Repositories.
+        var eventDispatcher = serviceProvider.GetRequiredService<EventDispatcher>();
 
-        unitOfWork.Register(serviceProvider.GetRequiredService<SynchronizePendingUserEventHandler>());
-        unitOfWork.Register(serviceProvider.GetRequiredService<FinishUserRegistrationEventHandler>());
-        unitOfWork.Register(serviceProvider.GetRequiredService<FinishedGameEventHandler>());
-        unitOfWork.Register(serviceProvider.GetRequiredService<ModPanelRoleEventHandler>());
+        eventDispatcher.Register(serviceProvider.GetServices<IDomainEventHandler>());
     }
 }

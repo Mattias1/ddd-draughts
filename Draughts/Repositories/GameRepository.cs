@@ -32,7 +32,7 @@ public sealed class GameRepository : BaseRepository<Game, GameId, DbGame> {
     protected override IQueryBuilder ApplySpec(Specification<Game> spec, IQueryBuilder builder) {
         var joins = spec.RequiredJoins().ToArray();
         if (joins.Contains(PossibleJoins.Player)) {
-            builder.Join(PlayersTableName, "game.id", PlayersTableName + ".game_id");
+            builder.Join(PlayersTableName, "games.id", PlayersTableName + ".game_id");
         }
         return base.ApplySpec(spec, builder);
     }

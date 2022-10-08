@@ -1,3 +1,4 @@
+using Draughts.Common.Events;
 using Draughts.Common.OoConcepts;
 using Draughts.Repositories.Misc;
 using Draughts.Repositories.Transaction;
@@ -9,6 +10,7 @@ namespace Draughts.Repositories;
 
 public abstract class BaseRepository<T, TId, TDb> : IRepository<T, TId>
         where T : AggregateRoot<T, TId> where TId : IdValueObject<TId> where TDb : new() {
+    private const string SENT_EVENTS_TABLE = "sent_events";
     protected readonly IRepositoryUnitOfWork UnitOfWork;
 
     protected BaseRepository(IRepositoryUnitOfWork unitOfWork) {
@@ -79,10 +81,21 @@ public abstract class BaseRepository<T, TId, TDb> : IRepository<T, TId>
     protected abstract void SaveInternal(T entity);
 
     protected void RaiseEvents(AggregateRoot<T, TId> aggregateRoot) {
-        // TODO: Actually save the events to the database?
-        foreach (var evt in aggregateRoot.Events) {
-            UnitOfWork.Raise(evt);
+        foreach (var evtFactory in aggregateRoot.Events) {
+            var evt = UnitOfWork.Raise(evtFactory);
+            SaveEvent(evt);
         }
         aggregateRoot.ClearEvents();
+    }
+
+    private void SaveEvent(DomainEvent evt) {
+        var obj = DbEvent.FromDomainModel(evt);
+        bool eventExists = GetBaseQuery().Select().Count("id").From(SENT_EVENTS_TABLE).Where("id").Is(evt.Id).SingleLong() > 0;
+        if (eventExists) {
+            GetBaseQuery().Update(SENT_EVENTS_TABLE).SetWithoutIdFrom(obj).Where("id").Is(evt.Id).Execute();
+        }
+        else {
+            GetBaseQuery().InsertInto(SENT_EVENTS_TABLE).InsertFrom(obj).Execute();
+        }
     }
 }

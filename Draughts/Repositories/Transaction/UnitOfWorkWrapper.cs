@@ -3,7 +3,7 @@ using System;
 namespace Draughts.Repositories.Transaction;
 
 public sealed class UnitOfWorkWrapper : IUnitOfWork {
-    IRepositoryUnitOfWork _realUnitOfWork;
+    private readonly IRepositoryUnitOfWork _realUnitOfWork;
 
     public UnitOfWorkWrapper(IRepositoryUnitOfWork realUnitOfWork) {
         _realUnitOfWork = realUnitOfWork;

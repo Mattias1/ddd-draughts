@@ -26,5 +26,5 @@ public abstract class AggregateRoot<T, TId> : Entity<T, TId> where T : Aggregate
 
     public void ClearEvents() => _newEvents.Clear();
 
-    protected void RegisterEvent(DomainEventFactory eventFactory) => _newEvents.Add(eventFactory);
+    protected void AttachEvent(DomainEventFactory eventFactory) => _newEvents.Add(eventFactory);
 }

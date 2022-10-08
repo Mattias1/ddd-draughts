@@ -1,4 +1,6 @@
+using Draughts.Common.Events;
 using Draughts.Common.Utilities;
+using Draughts.Domain.AuthContext.Events;
 using Draughts.Domain.AuthContext.Models;
 using Draughts.Domain.GameContext.Models;
 using Draughts.Domain.UserContext.Models;
@@ -400,6 +402,43 @@ public sealed class DbVote : IEquatable<DbVote> {
     }
 }
 
+public sealed class DbEvent : IDbObject<DbEvent, DomainEvent> {
+    public long Id { get; set; }
+    public string Type { get; set; }
+    public ZonedDateTime CreatedAt { get; set; }
+    public ZonedDateTime? HandledAt { get; set; }
+    public string Data { get; set; }
+
+    public bool Equals(DbEvent? other) => other?.Id == Id;
+
+    public static DomainEvent ToDomainModel(DbEvent e) {
+        return e.Type switch
+        {
+            AuthUserCreated.TYPE => AuthUserCreated.FromStorage(GetId(e), e.CreatedAt, e.HandledAt, e.Data),
+            RoleCreated.TYPE => RoleCreated.FromStorage(GetId(e), e.CreatedAt, e.HandledAt, e.Data),
+            RoleEdited.TYPE => RoleEdited.FromStorage(GetId(e), e.CreatedAt, e.HandledAt, e.Data),
+            RoleDeleted.TYPE => RoleDeleted.FromStorage(GetId(e), e.CreatedAt, e.HandledAt, e.Data),
+            UserLostRole.TYPE => UserLostRole.FromStorage(GetId(e), e.CreatedAt, e.HandledAt, e.Data),
+            UserGainedRole.TYPE => UserGainedRole.FromStorage(GetId(e), e.CreatedAt, e.HandledAt, e.Data),
+            GameFinished.TYPE => GameFinished.FromStorage(GetId(e), e.CreatedAt, e.HandledAt, e.Data),
+            UserCreated.TYPE => UserCreated.FromStorage(GetId(e), e.CreatedAt, e.HandledAt, e.Data),
+            _ => throw new InvalidOperationException($"Unknown event type '{e.Type}' for event '{e.Id}'")
+        };
+    }
+
+    private static DomainEventId GetId(DbEvent dbEvent) => new DomainEventId(dbEvent.Id);
+
+    public static DbEvent FromDomainModel(DomainEvent entity) {
+        return new DbEvent {
+            Id = entity.Id.Value,
+            Type = entity.Type,
+            CreatedAt = entity.CreatedAt,
+            HandledAt = entity.HandledAt,
+            Data = entity.BuildDataString()
+        };
+    }
+}
+
 public sealed class DbIdGeneration {
     public const string SUBJECT_MISC = "";
     public const string SUBJECT_GAME = "game";
@@ -414,7 +453,7 @@ public sealed class DbIdGeneration {
         AvailableId = id;
     }
 
-    public bool Equals(DbIdGeneration? other) => AvailableId.Equals(other?.Subject);
+    public bool Equals(DbIdGeneration? other) => AvailableId.Equals(other?.AvailableId) && Subject.Equals(other?.Subject);
 }
 
 #pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.

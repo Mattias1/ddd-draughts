@@ -1,10 +1,12 @@
 using Draughts.Application.Shared.Middleware;
 using Draughts.Common;
+using Draughts.Common.Events;
 using Draughts.Common.Utilities;
 using Draughts.Domain.AuthContext.Models;
 using Draughts.Repositories;
 using Draughts.Repositories.Misc;
 using Draughts.Repositories.Transaction;
+using Draughts.Test.Fakes;
 using Flurl;
 using Flurl.Http;
 using Microsoft.AspNetCore.Hosting;
@@ -39,7 +41,8 @@ public class ApiTester {
         Clock = SystemClock.Instance;
         IdGenerator = HiLoIdGenerator.BuildHiloGIdGenerator(1, 1, 1);
 
-        var unitOfWork = new UnitOfWork(Clock, IdGenerator);
+        var eventDispatcher = new EventDispatcher(new FakeLogger<EventDispatcher>());
+        var unitOfWork = new UnitOfWork(Clock, eventDispatcher, IdGenerator);
         UnitOfWork = unitOfWork;
 
         RoleRepository = new RoleRepository(unitOfWork);

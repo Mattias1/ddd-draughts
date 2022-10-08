@@ -45,7 +45,7 @@ public sealed class Role : AggregateRoot<Role, RoleId> {
         Rolename = rolename;
         Permissions = grantedPermissions.ToList().AsReadOnly();
 
-        RegisterEvent(RoleEdited.Factory(this, responsibleUserId));
+        AttachEvent(RoleEdited.Factory(this, responsibleUserId));
     }
 
     private void ValidateRolename(string rolename) {
@@ -73,7 +73,7 @@ public sealed class Role : AggregateRoot<Role, RoleId> {
 
     public static Role CreateNew(IIdPool idPool, string rolename, IClock clock, UserId responsibleUserId) {
         var role = new Role(new RoleId(idPool.Next()), rolename, clock.UtcNow());
-        role.RegisterEvent(RoleCreated.Factory(role, responsibleUserId));
+        role.AttachEvent(RoleCreated.Factory(role, responsibleUserId));
         return role;
     }
 
