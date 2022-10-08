@@ -65,6 +65,7 @@ public static class DraughtsServiceProvider {
         services.AddSingleton<GameRepository>();
         services.AddSingleton<GameStateRepository>();
         services.AddSingleton<VotingRepository>();
+        services.AddSingleton<EventsRepository>();
     }
 
     private static void ConfigureApplicationServices(IServiceCollection services) {

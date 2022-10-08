@@ -13,6 +13,7 @@ public sealed class Permission : StringValueObject<Permission> {
         public const string PLAY_GAME = "game.play";
         public const string VIEW_MOD_PANEL = "modpanel.view";
         public const string VIEW_ADMIN_LOGS = "modpanel.adminlogs.view";
+        public const string SYSTEM_MAINTENANCE = "modpanel.system.maintenance";
         public const string EDIT_GAMES = "modpanel.games.edit";
         public const string EDIT_ROLES = "modpanel.roles.edit";
 
@@ -20,11 +21,13 @@ public sealed class Permission : StringValueObject<Permission> {
         public static Permission PlayGame => new Permission(PLAY_GAME);
         public static Permission ViewModPanel => new Permission(VIEW_MOD_PANEL);
         public static Permission ViewAdminLogs => new Permission(VIEW_ADMIN_LOGS);
+        public static Permission SystemMaintenance => new Permission(SYSTEM_MAINTENANCE);
         public static Permission EditGames => new Permission(EDIT_GAMES);
         public static Permission EditRoles => new Permission(EDIT_ROLES);
 
         public static IReadOnlyList<Permission> All => new List<Permission>() {
-                PendingRegistration, PlayGame, ViewModPanel, ViewAdminLogs, EditGames, EditRoles
+                PendingRegistration, PlayGame,
+                ViewModPanel, ViewAdminLogs, SystemMaintenance, EditGames, EditRoles
             }.AsReadOnly();
 
         public static IReadOnlyList<Permission> IgnoredByAdmins => new List<Permission>() {

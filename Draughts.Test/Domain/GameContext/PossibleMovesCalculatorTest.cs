@@ -9,8 +9,6 @@ using static Draughts.Domain.GameContext.Models.GameSettings;
 namespace Draughts.Test.Domain.GameContext;
 
 public sealed class PossibleMoveCalculatorTest {
-    // TODO: You can't move over captured pieces!!!
-    // AKA: Pieces are only removed after the capture is completed.
     [Fact]
     public void ManMoves() {
         // |_|4|_|.|

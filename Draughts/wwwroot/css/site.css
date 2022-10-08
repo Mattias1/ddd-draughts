@@ -231,6 +231,12 @@ button.link, input[type=submit].link {
     border-top: 1px solid #444;
     border-bottom: 1px solid #2a2a2a;
 }
+.border-intern-right {
+    border-right: 1px solid #444;
+}
+.border-intern-left {
+    border-left: 1px solid #2a2a2a;
+}
 .paginate ul {
     text-align: center;
     margin: 0;

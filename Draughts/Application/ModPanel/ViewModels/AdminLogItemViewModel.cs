@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace Draughts.Application.ModPanel.ViewModels;
 
-public class AdminLogViewModel {
+public class AdminLogItemViewModel {
     public AdminLogId Id { get; }
     public string Type { get; }
     public IReadOnlyList<string> Parameters { get; }
@@ -15,14 +15,14 @@ public class AdminLogViewModel {
     public Permission Permission { get; }
     public ZonedDateTime CreatedAt { get; }
 
-    public AdminLogViewModel(AdminLog adminLog) {
-        Id = adminLog.Id;
-        Type = adminLog.Type;
-        Parameters = adminLog.Parameters;
-        Description = adminLog.Description();
-        UserId = adminLog.UserId;
-        Username = adminLog.Username;
-        Permission = adminLog.Permission;
-        CreatedAt = adminLog.CreatedAt;
+    public AdminLogItemViewModel(AdminLog item) {
+        Id = item.Id;
+        Type = item.Type;
+        Parameters = item.Parameters;
+        Description = item.Description();
+        UserId = item.UserId;
+        Username = item.Username;
+        Permission = item.Permission;
+        CreatedAt = item.CreatedAt;
     }
 }

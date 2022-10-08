@@ -3,6 +3,7 @@ using Draughts.Common.Utilities;
 using Draughts.Domain.AuthContext.Models;
 using Draughts.Domain.GameContext.Models;
 using Draughts.Domain.UserContext.Models;
+using Draughts.Repositories.Misc;
 using Flurl;
 using Microsoft.AspNetCore.Html;
 using NodaTime;
@@ -134,13 +135,13 @@ public static class Utils {
     public static bool Can(IReadOnlyList<Permission> permissions, Permission permission) => permissions.Contains(permission);
 
     /// <summary>
-    /// DateTime to display, for example '29 Feb 2021, 07:42'
+    /// DateTime to display, for example '29 Feb 2020, 07:42'
     /// </summary>
     public static string DateTime(ZonedDateTime? datetime) {
         return datetime?.ToString("dd MMM yyyy, HH:mm", CultureInfo.InvariantCulture) ?? "";
     }
     /// <summary>
-    /// DateTime in ISO format, for example '2021-02-29T07:13:37Z'
+    /// DateTime in ISO format, for example '2020-02-29T07:13:37Z'
     /// </summary>
     public static HtmlString DateTimeIso(ZonedDateTime? datetime) => new HtmlString(datetime.ToIsoString());
 
@@ -152,14 +153,23 @@ public static class Utils {
     /// <summary>
     /// Print the range description including the total amount for the pagination, for example '1-10 of 70'
     /// </summary>
-    public static HtmlString PaginationRangeOfTotal<T>(IPaginationViewModel<T> model) {
-        return new HtmlString(PaginationRange(model).Value + " of " + model.Pagination.Count);
+    public static HtmlString PaginationRangeOfTotal<T>(IPaginationViewModel<T> model) => PaginationRangeOfTotal(model.Pagination);
+    /// <summary>
+    /// Print the range description including the total amount for the pagination, for example '1-10 of 70'
+    /// </summary>
+    public static HtmlString PaginationRangeOfTotal<T>(Pagination<T> pagination) {
+        return new HtmlString(PaginationRange(pagination).Value + " of " + pagination.Count);
     }
+
     /// <summary>
     /// Print the range description (without the total amount) for the pagination, for example '1-10'
     /// </summary>
-    public static HtmlString PaginationRange<T>(IPaginationViewModel<T> model) {
-        return new HtmlString($"{model.Pagination.BeginInclusive}-{model.Pagination.EndInclusive}");
+    public static HtmlString PaginationRange<T>(IPaginationViewModel<T> model) => PaginationRange(model.Pagination);
+    /// <summary>
+    /// Print the range description (without the total amount) for the pagination, for example '1-10'
+    /// </summary>
+    public static HtmlString PaginationRange<T>(Pagination<T> pagination) {
+        return new HtmlString($"{pagination.BeginInclusive}-{pagination.EndInclusive}");
     }
 
     /// <summary>
@@ -167,12 +177,19 @@ public static class Utils {
     /// </summary>
     public static HtmlString PaginationNav<T>(IPaginationViewModel<T> model, string url,
             int maxInitial = 2, int minAround = 3, int maxClosing = 2) {
-        if (model.Pagination.PageCount <= 1) {
+        return PaginationNav(model.Pagination, url, maxInitial, minAround, maxClosing);
+    }
+    /// <summary>
+    /// Print the url list for the pagination, for example '< 1 2 ... 7 >'
+    /// </summary>
+    public static HtmlString PaginationNav<T>(Pagination<T> pagination, string url,
+            int maxInitial = 2, int minAround = 3, int maxClosing = 2) {
+        long page = pagination.Page;
+        long pageCount = pagination.PageCount;
+
+        if (pageCount <= 1) {
             return new HtmlString("");
         }
-
-        long page = model.Pagination.Page;
-        long pageCount = model.Pagination.PageCount;
 
         string s = "<nav class=\"pagination-nav\"><ul>";
         if (page == 1) {

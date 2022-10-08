@@ -17,7 +17,7 @@ public sealed class PlayGameIT {
     private UserStatistics? _recordedBlackUserStats;
     private UserStatistics? _recordedWhiteUserStats;
 
-    public GameId? GameId { get; private set; }
+    private GameId? GameId;
 
     public PlayGameIT() {
         _apiTester = new ApiTester();

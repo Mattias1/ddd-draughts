@@ -2,6 +2,7 @@ using Draughts.Application.ModPanel.ViewModels;
 using Draughts.Application.Shared;
 using Draughts.Application.Shared.Attributes;
 using Draughts.Application.Shared.ViewModels;
+using Draughts.Common.Events.Specifications;
 using Draughts.Domain.AuthContext.Models;
 using Draughts.Domain.AuthContext.Specifications;
 using Draughts.Repositories;
@@ -14,10 +15,13 @@ namespace Draughts.Application.ModPanel;
 
 public sealed class ModPanelController : BaseController {
     private readonly AdminLogRepository _adminLogRepository;
+    private readonly EventsRepository _eventsRepository;
     private readonly IUnitOfWork _unitOfWork;
 
-    public ModPanelController(AdminLogRepository adminLogRepository, IUnitOfWork unitOfWork) {
+    public ModPanelController(AdminLogRepository adminLogRepository, EventsRepository eventsRepository,
+            IUnitOfWork unitOfWork) {
         _adminLogRepository = adminLogRepository;
+        _eventsRepository = eventsRepository;
         _unitOfWork = unitOfWork;
     }
 
@@ -40,11 +44,26 @@ public sealed class ModPanelController : BaseController {
         return adminLogs;
     }
 
+    [HttpGet("/modpanel/event-queue"), Requires(Permissions.SYSTEM_MAINTENANCE)]
+    public IActionResult EventQueue(int page = 1) {
+        var authEvents = _unitOfWork.WithAuthTransaction(tran => {
+            return _eventsRepository.PaginateSentEvents(page, 20, new EventIdSort());
+        });
+        var userEvents = _unitOfWork.WithUserTransaction(tran => {
+            return _eventsRepository.PaginateSentEvents(page, 20, new EventIdSort());
+        });
+        var gameEvents = _unitOfWork.WithGameTransaction(tran => {
+            return _eventsRepository.PaginateSentEvents(page, 20, new EventIdSort());
+        });
+        return View(new EventQueueViewModel(authEvents, userEvents, gameEvents));
+    }
+
     public static MenuViewModel BuildMenu() {
         return new MenuViewModel("Mod panel",
             ("Overview", "/modpanel"),
             ("Game tools", "/modpanel/game-tools"),
-            ("Manage roles", "/modpanel/roles")
+            ("Manage roles", "/modpanel/roles"),
+            ("Event queue", "/modpanel/event-queue")
         );
     }
 }

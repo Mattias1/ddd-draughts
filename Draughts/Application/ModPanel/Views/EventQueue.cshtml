@@ -1,0 +1,56 @@
+@using Draughts.Application.ModPanel.ViewModels
+@model EventQueueViewModel
+@{
+    if (Model is null) {
+        throw new InvalidOperationException("Model not set.");
+    }
+    ViewBag.Title = "Mod panel - Event queue";
+}
+
+<div class="text-container">
+    <h1>@ViewBag.Title</h1>
+    <p>
+        The list of all dispatched events.
+        <a @Utils.Href("/modpanel")>Go back</a>.
+    </p>
+    <table class="page-table">
+        <caption>Displaying @Utils.PaginationRangeOfTotal(Model.LargestPagination) events.</caption>
+        <thead>
+            <tr>
+                <th class="left">Type</th>
+                <th class="left">Created</th>
+                <th class="left border-intern-right">Handled</th>
+                <th class="left border-intern-left">Type</th>
+                <th class="left">Created</th>
+                <th class="left border-intern-right">Handled</th>
+                <th class="left border-intern-left">Type</th>
+                <th class="left">Created</th>
+                <th class="left">Handled</th>
+            </tr>
+        </thead>
+        <tbody>
+            @for (int i = 0; i < Model.LargestPagination.Count; i++) {
+                var authEvt = Model.AuthEvents.AtOrNull(i);
+                var userEvt = Model.UserEvents.AtOrNull(i);
+                var gameEvt = Model.GameEvents.AtOrNull(i);
+                <tr>
+                    <td id="evt-@authEvt?.Id">@authEvt?.Type</td>
+                    <td>@Utils.DateTime(authEvt?.CreatedAt)</td>
+                    <td class="border-intern-right">@Utils.DateTime(authEvt?.HandledAt)</td>
+                    <td class="border-intern-left" id="evt-@userEvt?.Id">@userEvt?.Type</td>
+                    <td>@Utils.DateTime(userEvt?.CreatedAt)</td>
+                    <td class="border-intern-right">@Utils.DateTime(userEvt?.HandledAt)</td>
+                    <td class="border-intern-left" id="evt-@gameEvt?.Id">@gameEvt?.Type</td>
+                    <td>@Utils.DateTime(gameEvt?.CreatedAt)</td>
+                    <td>@Utils.DateTime(gameEvt?.HandledAt)</td>
+                </tr>
+            }
+            @if (Model.LargestPagination.Count == 0) {
+                <tr><td colspan="9">No events found.</td></tr>
+            }
+        </tbody>
+    </table>
+    <div class="paginate">
+        @Utils.PaginationNav(Model.LargestPagination, "/modpanel/event-queue")
+    </div>
+</div>
