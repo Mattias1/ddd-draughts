@@ -1,0 +1,2 @@
+Contact: File an issue at https://github.com/Mattias1/ddd-draughts/issues
+Preferred-Languages: en
