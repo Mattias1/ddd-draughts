@@ -5,6 +5,7 @@ namespace SqlQueryBuilder.Builder;
 public sealed partial class QueryBuilder : IInitialQueryBuilder {
     public IQueryBuilder SelectAllFrom(string table) => SelectAll(table).From(table);
     public IQueryBuilder SelectAllFromAs(string table, string alias) => SelectAll(alias).FromAs(table, alias);
+    public IQueryBuilder CountAllFrom(string table) => CountAll().From(table);
     public ISelectQueryBuilder SelectAll(string table) => Select(table + ".*");
     public ISelectQueryBuilder SelectAll() => Select("*");
 

@@ -46,7 +46,7 @@ public sealed class EssentialDataSeeder {
             }
         });
         using (var tranFlavor = DbContext.Get.BeginMiscTransaction()) {
-            if (DbContext.Get.Query(tranFlavor).Select().CountAll().From("id_generation").SingleLong() != 0) {
+            if (DbContext.Get.Query(tranFlavor).CountAllFrom("id_generation").SingleLong() != 0) {
                 throw new InvalidOperationException("Id generation table is not empty.");
             }
             tranFlavor.Commit();

@@ -3,6 +3,7 @@ namespace SqlQueryBuilder.Builder;
 public interface IInitialQueryBuilder : IQueryBuilderResult {
     IQueryBuilder SelectAllFrom(string table);
     IQueryBuilder SelectAllFromAs(string table, string alias);
+    IQueryBuilder CountAllFrom(string table);
     ISelectQueryBuilder SelectAll();
     ISelectQueryBuilder SelectAll(string table);
     ISelectQueryBuilder SelectDistinct();

@@ -18,10 +18,10 @@ public abstract class BaseRepository<T, TId, TDb> : IRepository<T, TId>
     }
 
     public long Count() {
-        return GetBaseQuery().Select().CountAll().From(TableName).SingleLong();
+        return GetBaseQuery().CountAllFrom(TableName).SingleLong();
     }
     public long Count(Specification<T> spec) {
-        var query = GetBaseQuery().Select().CountAll().From(TableName);
+        var query = GetBaseQuery().CountAllFrom(TableName);
         ApplySpec(spec, query);
         return query.SingleLong();
     }
@@ -90,7 +90,7 @@ public abstract class BaseRepository<T, TId, TDb> : IRepository<T, TId>
 
     private void SaveEvent(DomainEvent evt) {
         var obj = DbEvent.FromDomainModel(evt);
-        bool eventExists = GetBaseQuery().Select().Count("id").From(SENT_EVENTS_TABLE).Where("id").Is(evt.Id).SingleLong() > 0;
+        bool eventExists = GetBaseQuery().CountAllFrom(SENT_EVENTS_TABLE).Where("id").Is(evt.Id).SingleLong() > 0;
         if (eventExists) {
             GetBaseQuery().Update(SENT_EVENTS_TABLE).SetWithoutIdFrom(obj).Where("id").Is(evt.Id).Execute();
         }

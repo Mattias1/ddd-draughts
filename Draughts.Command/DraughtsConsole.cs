@@ -53,7 +53,7 @@ public sealed class DraughtsConsole {
         for (int i = 1; i <= maxSeconds + 1; i++) {
             try {
                 using (var tranFlavor = DbContext.Get.BeginMiscTransaction()) {
-                    DbContext.Get.Query(tranFlavor).Select().CountAll().From("id_generation").SingleLong();
+                    DbContext.Get.Query(tranFlavor).CountAllFrom("id_generation").SingleLong();
                     tranFlavor.Commit();
                     return;
                 }

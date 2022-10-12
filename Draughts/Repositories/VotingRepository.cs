@@ -18,10 +18,10 @@ public sealed class VotingRepository {
     }
 
     public long Count() {
-        return GetBaseQuery().Select().CountAll().From(TableName).SingleLong();
+        return GetBaseQuery().CountAllFrom(TableName).SingleLong();
     }
     public long Count(Specification<Voting> spec) {
-        return GetBaseQuery().Select().CountAll().From(TableName).Specifically(spec).SingleLong();
+        return GetBaseQuery().CountAllFrom(TableName).Specifically(spec).SingleLong();
     }
 
     public Voting FindById(GameId id) => Find(new EntityIdSpecification<Voting, GameId>(id, "game_id"));

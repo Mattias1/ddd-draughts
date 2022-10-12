@@ -45,6 +45,12 @@ public sealed class BasicQueriesTest {
     }
 
     [Fact]
+    public void TestSimpleCount() {
+        string sql = Query().CountAllFrom("user").Where("rating").Gt(9000).ToParameterizedSql();
+        sql.Should().Be("select count(*) from `user` where `rating` > @0");
+    }
+
+    [Fact]
     public void TestSimpleInsert() {
         string sql = Query()
             .InsertInto("user")
