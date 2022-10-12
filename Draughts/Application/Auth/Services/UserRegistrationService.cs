@@ -18,7 +18,6 @@ public sealed class UserRegistrationService {
     private readonly UserRegistrationDomainService _userRegistrationDomainService;
     private readonly IIdGenerator _idGenerator;
     private readonly RoleRepository _roleRepository;
-    private readonly IUnitOfWork _unitOfWork;
 
     public UserRegistrationService(
             AuthUserRepository authUserRepository, IClock clock, IIdGenerator idGenerator,
@@ -28,24 +27,21 @@ public sealed class UserRegistrationService {
         _clock = clock;
         _idGenerator = idGenerator;
         _roleRepository = roleRepository;
-        _unitOfWork = unitOfWork;
         _userRepository = userRepository;
         _userRegistrationDomainService = userRegistrationDomainService;
     }
 
     public AuthUser CreateAuthUser(string? name, string? email, string? plaintextPassword) {
-        return _unitOfWork.WithAuthTransaction(tran => {
-            var pendingRegistrationRole = _roleRepository.Find(new RolenameSpecification(Role.PENDING_REGISTRATION_ROLENAME));
+        var pendingRegistrationRole = _roleRepository.Find(new RolenameSpecification(Role.PENDING_REGISTRATION_ROLENAME));
 
-            ValidateUsernameAndEmailUniqueness(name, email);
+        ValidateUsernameAndEmailUniqueness(name, email);
 
-            var authUser = _userRegistrationDomainService.CreateAuthUser(_idGenerator.ReservePool(),
-                pendingRegistrationRole, name, email, plaintextPassword);
+        var authUser = _userRegistrationDomainService.CreateAuthUser(_idGenerator.ReservePool(),
+            pendingRegistrationRole, name, email, plaintextPassword);
 
-            _authUserRepository.Save(authUser);
+        _authUserRepository.Save(authUser);
 
-            return authUser;
-        });
+        return authUser;
     }
 
     private void ValidateUsernameAndEmailUniqueness(string? name, string? email) {
@@ -56,25 +52,21 @@ public sealed class UserRegistrationService {
     }
 
     public User CreateUser(UserId userId, Username username) {
-        return _unitOfWork.WithTransaction(TransactionDomain.User, tran => {
-            var user = User.BuildNew(userId, username, _clock.UtcNow());
-            _userRepository.Save(user);
+        var user = User.BuildNew(userId, username, _clock.UtcNow());
+        _userRepository.Save(user);
 
-            return user;
-        });
+        return user;
     }
 
     public AuthUser FinishRegistration(UserId id) {
-        return _unitOfWork.WithAuthTransaction(tran => {
-            var registeredUserRole = _roleRepository.Find(new RolenameSpecification(Role.REGISTERED_USER_ROLENAME));
-            var pendingRegistrationRole = _roleRepository.Find(new RolenameSpecification(Role.PENDING_REGISTRATION_ROLENAME));
-            var authUser = _authUserRepository.FindById(id);
+        var registeredUserRole = _roleRepository.Find(new RolenameSpecification(Role.REGISTERED_USER_ROLENAME));
+        var pendingRegistrationRole = _roleRepository.Find(new RolenameSpecification(Role.PENDING_REGISTRATION_ROLENAME));
+        var authUser = _authUserRepository.FindById(id);
 
-            _userRegistrationDomainService.Register(authUser, registeredUserRole, pendingRegistrationRole);
+        _userRegistrationDomainService.Register(authUser, registeredUserRole, pendingRegistrationRole);
 
-            _authUserRepository.Save(authUser);
+        _authUserRepository.Save(authUser);
 
-            return authUser;
-        });
+        return authUser;
     }
 }

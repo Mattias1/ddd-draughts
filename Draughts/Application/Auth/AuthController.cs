@@ -81,7 +81,9 @@ public sealed class AuthController : BaseController {
                 throw new ManualValidationException("PasswordConfirm", "The passwords do not match.");
             }
 
-            _userRegistrationService.CreateAuthUser(request.Name, request.Email, request.Password);
+            _unitOfWork.WithAuthTransaction(tran => {
+                _userRegistrationService.CreateAuthUser(request.Name, request.Email, request.Password);
+            });
             return SuccessRedirect("/", $"User '{request.Name}' is registered.");
         }
         catch (ManualValidationException e) {

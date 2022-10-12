@@ -10,21 +10,23 @@ using System;
 namespace Draughts.Application.Auth;
 
 public sealed class ModPanelRoleEventHandler : DomainEventHandler {
+    private static readonly string[] EVENT_TYPES = new string[] {
+        RoleCreated.TYPE, RoleEdited.TYPE, RoleDeleted.TYPE, UserGainedRole.TYPE, UserLostRole.TYPE
+    };
+
     private readonly AdminLogRepository _adminLogRepository;
     private readonly AuthUserRepository _authUserRepository;
     private readonly IClock _clock;
     private readonly IIdGenerator _idGenerator;
-    private readonly IUnitOfWork _unitOfWork;
 
     public ModPanelRoleEventHandler(
             AdminLogRepository adminLogRepository, AuthUserRepository authUserRepository,
-            IClock clock, IIdGenerator idGenerator, IUnitOfWork unitOfWork)
-            : base(RoleCreated.TYPE, RoleEdited.TYPE, RoleDeleted.TYPE, UserGainedRole.TYPE, UserLostRole.TYPE) {
+            EventsRepository eventsRepository, IClock clock, IIdGenerator idGenerator, IUnitOfWork unitOfWork)
+            : base(clock, eventsRepository, unitOfWork, EVENT_TYPES) {
         _adminLogRepository = adminLogRepository;
         _authUserRepository = authUserRepository;
         _clock = clock;
         _idGenerator = idGenerator;
-        _unitOfWork = unitOfWork;
     }
 
     public override void Handle(DomainEvent evt) {
@@ -50,7 +52,7 @@ public sealed class ModPanelRoleEventHandler : DomainEventHandler {
     }
 
     public void Handle(RoleCreated evt) {
-        _unitOfWork.WithAuthTransaction(tran => {
+        HandleWithTransaction(TransactionDomain.Auth, evt, tran => {
             var authUser = _authUserRepository.FindById(evt.CreatedBy);
             var adminLog = AdminLog.CreateRoleLog(_idGenerator.ReservePool(), _clock, authUser, evt.RoleId, evt.Rolename);
             _adminLogRepository.Save(adminLog);
@@ -58,7 +60,7 @@ public sealed class ModPanelRoleEventHandler : DomainEventHandler {
     }
 
     public void Handle(RoleEdited evt) {
-        _unitOfWork.WithAuthTransaction(tran => {
+        HandleWithTransaction(TransactionDomain.Auth, evt, tran => {
             var authUser = _authUserRepository.FindById(evt.EditedBy);
             var adminLog = AdminLog.EditRoleLog(_idGenerator.ReservePool(), _clock, authUser, evt.RoleId, evt.Rolename);
             _adminLogRepository.Save(adminLog);
@@ -66,7 +68,7 @@ public sealed class ModPanelRoleEventHandler : DomainEventHandler {
     }
 
     public void Handle(RoleDeleted evt) {
-        _unitOfWork.WithAuthTransaction(tran => {
+        HandleWithTransaction(TransactionDomain.Auth, evt, tran => {
             var authUser = _authUserRepository.FindById(evt.DeletedBy);
             var adminLog = AdminLog.RoleDeletedLog(_idGenerator.ReservePool(), _clock, authUser,
                 evt.RoleId, evt.Rolename);
@@ -75,7 +77,7 @@ public sealed class ModPanelRoleEventHandler : DomainEventHandler {
     }
 
     public void Handle(UserGainedRole evt) {
-        _unitOfWork.WithAuthTransaction(tran => {
+        HandleWithTransaction(TransactionDomain.Auth, evt, tran => {
             var authUser = _authUserRepository.FindById(evt.AssignedBy);
             var adminLog = AdminLog.RoleGainedLog(_idGenerator.ReservePool(), _clock, authUser,
                 evt.RoleId, evt.Rolename, evt.UserId, evt.Username);
@@ -84,7 +86,7 @@ public sealed class ModPanelRoleEventHandler : DomainEventHandler {
     }
 
     public void Handle(UserLostRole evt) {
-        _unitOfWork.WithAuthTransaction(tran => {
+        HandleWithTransaction(TransactionDomain.Auth, evt, tran => {
             var authUser = _authUserRepository.FindById(evt.RemovedBy);
             var adminLog = AdminLog.RoleLostLog(_idGenerator.ReservePool(), _clock, authUser,
                 evt.RoleId, evt.Rolename, evt.UserId, evt.Username);

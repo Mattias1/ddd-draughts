@@ -1,3 +1,4 @@
+using DalSoft.Hosting.BackgroundQueue;
 using Draughts.Application.Shared.Middleware;
 using Draughts.Common;
 using Draughts.Common.Events;
@@ -12,6 +13,7 @@ using Flurl.Http;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.TestHost;
 using NodaTime;
+using Serilog;
 using System.Diagnostics.CodeAnalysis;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -41,7 +43,9 @@ public class ApiTester {
         Clock = SystemClock.Instance;
         IdGenerator = HiLoIdGenerator.BuildHiloGIdGenerator(1, 1, 1);
 
-        var eventDispatcher = new EventDispatcher(new FakeLogger<EventDispatcher>());
+        // TODO: At this point, maybe just call the service provider and then fetch from the injector???
+        var backgroundQueue = new BackgroundQueue(e => Log.Logger.Error("Error in background task", e), 100, 0);
+        var eventDispatcher = new EventDispatcher(backgroundQueue, new FakeLogger<EventDispatcher>());
         var unitOfWork = new UnitOfWork(Clock, eventDispatcher, IdGenerator);
         UnitOfWork = unitOfWork;
 

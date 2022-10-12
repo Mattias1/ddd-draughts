@@ -439,6 +439,15 @@ public sealed class DbEvent : IDbObject<DbEvent, DomainEvent> {
     }
 }
 
+public sealed class DbReceivedEvent : IEquatable<DbReceivedEvent> {
+    public long Id { get; set; }
+    public ZonedDateTime HandledAt { get; set; }
+
+    public override bool Equals(object? obj) => obj is DbReceivedEvent evt && Equals(evt);
+    public bool Equals(DbReceivedEvent? other) => other?.Id == Id;
+    public override int GetHashCode() => Id.GetHashCode();
+}
+
 public sealed class DbIdGeneration {
     public const string SUBJECT_MISC = "";
     public const string SUBJECT_GAME = "game";
