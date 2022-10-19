@@ -116,6 +116,8 @@ public class ApiTester {
         value = groups[groupNr].Value;
         return true;
     }
+
+    public async Task WaitForEventsToComplete() => await Task.Delay(1000);
 }
 
 public static class HttpResponseMessageExtensions {

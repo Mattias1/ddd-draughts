@@ -60,7 +60,7 @@ public sealed class ModPanelRoleIT {
         RoleId = new RoleId(long.Parse(value));
         result.RequestUri().Should().Match($"/modpanel/role/{RoleId}/edit?success=*");
 
-        AssertRoleIsLogged("role.created");
+        await AssertRoleIsLogged("role.created");
     }
 
     private async Task ViewEditRolePage() {
@@ -74,7 +74,7 @@ public sealed class ModPanelRoleIT {
         result.StatusCode.Should().Be(200);
         result.RequestUri().Should().Match("/modpanel/roles?success=*");
 
-        AssertRoleIsLogged("role.edited");
+        await AssertRoleIsLogged("role.edited");
     }
 
     private async Task ViewRoleUsersPage() {
@@ -88,7 +88,7 @@ public sealed class ModPanelRoleIT {
         result.StatusCode.Should().Be(200);
         result.RequestUri().Should().Match($"/modpanel/role/{RoleId}/users?success=*");
 
-        AssertRoleIsLogged("role.gained");
+        await AssertRoleIsLogged("role.gained");
     }
 
     private async Task PostRemoveUserFromRole() {
@@ -97,7 +97,7 @@ public sealed class ModPanelRoleIT {
         result.StatusCode.Should().Be(200);
         result.RequestUri().Should().Match($"/modpanel/role/{RoleId}/users?success=*");
 
-        AssertRoleIsLogged("role.lost");
+        await AssertRoleIsLogged("role.lost");
     }
 
     private async Task PostDeleteRole() {
@@ -105,10 +105,12 @@ public sealed class ModPanelRoleIT {
         result.StatusCode.Should().Be(200);
         result.RequestUri().Should().Match("/modpanel/roles?success=*");
 
-        AssertRoleIsLogged("role.deleted");
+        await AssertRoleIsLogged("role.deleted");
     }
 
-    private void AssertRoleIsLogged(string adminLogType) {
+    private async Task AssertRoleIsLogged(string adminLogType) {
+        await _apiTester.WaitForEventsToComplete();
+
         _apiTester.UnitOfWork.WithAuthTransaction(tran => {
             var adminLogs = _apiTester.AdminLogRepository.List();
             adminLogs.Should().Contain(l => l.Type == adminLogType, $"a '{adminLogType}' type event has happened.");

@@ -82,7 +82,7 @@ public sealed class PlayGameIT {
         await PostMove(8, 16, black);
 
         await ViewGamePageWithVictor("TestPlayerBlack");
-        AssertUserStatisticsDiff(
+        await AssertUserStatisticsDiff(
             blackStats => blackStats.OtherTally.Won, 1,
             whiteStats => whiteStats.OtherTally.Lost, 1
         );
@@ -102,7 +102,7 @@ public sealed class PlayGameIT {
         await PostDrawVote(black);
 
         AssertGameIsDraw();
-        AssertUserStatisticsDiff(
+        await AssertUserStatisticsDiff(
             blackStats => blackStats.OtherTally.Tied, 1,
             whiteStats => whiteStats.OtherTally.Tied, 1
         );
@@ -121,7 +121,7 @@ public sealed class PlayGameIT {
         await PostResignation(white);
 
         await ViewGamePageWithVictor("TestPlayerBlack");
-        AssertUserStatisticsDiff(
+        await AssertUserStatisticsDiff(
             blackStats => blackStats.OtherTally.Won, 1,
             whiteStats => whiteStats.OtherTally.Lost, 1
         );
@@ -194,9 +194,10 @@ public sealed class PlayGameIT {
         });
     }
 
-    // TODO: What to do here when events are handled in a different thread?
-    private void AssertUserStatisticsDiff(Func<UserStatistics, int> blackStatFunc, int blackDiff,
+    private async Task AssertUserStatisticsDiff(Func<UserStatistics, int> blackStatFunc, int blackDiff,
             Func<UserStatistics, int> whiteStatFunc, int whiteDiff) {
+        await _apiTester.WaitForEventsToComplete();
+
         if (_recordedBlackUserStats is null || _recordedWhiteUserStats is null) {
             throw new InvalidOperationException("Please record the user statistics before asserting.");
         }

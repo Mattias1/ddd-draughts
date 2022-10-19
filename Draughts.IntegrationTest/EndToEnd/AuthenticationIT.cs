@@ -34,7 +34,7 @@ public sealed class AuthenticationIT {
         await VisitRegisterPage();
         await PostRegistration();
 
-        AssertUserIsCreated();
+        await AssertUserIsCreated();
     }
 
     [Fact]
@@ -76,7 +76,9 @@ public sealed class AuthenticationIT {
         result.RequestUri().Should().Be("/");
     }
 
-    private void AssertUserIsCreated() {
+    private async Task AssertUserIsCreated() {
+        await _apiTester.WaitForEventsToComplete();
+
         _apiTester.UnitOfWork.WithAuthTransaction(tran => {
             _apiTester.AuthUserRepository.Count(new UsernameSpecification(CreatedUsername)).Should().Be(1);
         });
