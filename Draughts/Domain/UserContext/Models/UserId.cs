@@ -4,6 +4,8 @@ using Draughts.Common.OoConcepts;
 namespace Draughts.Domain.UserContext.Models;
 
 public sealed class UserId : IdValueObject<UserId> {
+    public const long ADMIN = 1;
+
     public override long Value { get; }
 
     public UserId(long id) {

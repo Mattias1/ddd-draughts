@@ -1,5 +1,7 @@
+using Draughts.Application.ModPanel.Services;
 using Draughts.Command.Seeders;
-using Draughts.Repositories;
+using Draughts.Domain.AuthContext.Models;
+using Draughts.Domain.UserContext.Models;
 using Draughts.Repositories.Misc;
 using Draughts.Test.TestHelpers;
 using SqlQueryBuilder.Exceptions;
@@ -11,12 +13,14 @@ namespace Draughts.Command;
 public sealed class DraughtsConsole {
     private readonly EssentialDataSeeder _essentialDataSeeder;
     private readonly DummyDataSeeder _dummyDataSeeder;
+    private readonly SystemEventQueueService _systemEventQueueService;
     private readonly IIdGenerator _idGenerator;
 
     public DraughtsConsole(EssentialDataSeeder essentialDataSeeder, DummyDataSeeder dummyDataSeeder,
-            IIdGenerator idGenerator) {
+            SystemEventQueueService systemEventQueueService, IIdGenerator idGenerator) {
         _essentialDataSeeder = essentialDataSeeder;
         _dummyDataSeeder = dummyDataSeeder;
+        _systemEventQueueService = systemEventQueueService;
         _idGenerator = idGenerator;
     }
 
@@ -37,8 +41,28 @@ public sealed class DraughtsConsole {
                     _dummyDataSeeder.SeedData();
                     Console.WriteLine("Successfully seeded the database with dummy data.");
                     break;
+                case "events:syncstatus":
+                case "events:sync":
+                    Console.WriteLine("Start event queue status sync...");
+                    _systemEventQueueService.SyncEventQueueStatus(new UserId(UserId.ADMIN), new Username(Username.ADMIN));
+                    Console.WriteLine("Successfully synced the event queue status...");
+                    break;
+                case "events:redispatch":
+                case "events:dispatch":
+                    Console.WriteLine("Start event queue status redispatch...");
+                    _systemEventQueueService.RedispatchEventQueue(new UserId(UserId.ADMIN), new Username(Username.ADMIN));
+                    Console.WriteLine("Successfully dispatched the unhandled events...");
+                    break;
+                case "-v":
+                case "--version":
+                    Console.WriteLine("Draughts console - version alpha");
+                    break;
+                case "-h":
+                case "--help":
                 default:
-                    Console.Write($"Unknown argument given ('{arg}'); ");
+                    if (arg != "--help") {
+                        Console.Write($"Unknown argument given ('{arg}'); ");
+                    }
                     PrintHelp();
                     break;
             }
@@ -69,5 +93,9 @@ public sealed class DraughtsConsole {
     }
 
     // TODO: How to actually call this commandline utility from outside an IDE?
-    private static void PrintHelp() => Console.WriteLine("usage: <draughts.command> [data:essential|data:dummy]");
+    private static void PrintHelp() {
+        Console.WriteLine("usage: <draughts.command> ["
+            + "data:essential|data:dummy|events:sync|events:dispatch"
+            + "]");
+    }
 }

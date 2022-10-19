@@ -10,9 +10,10 @@
 <div class="text-container">
     <h1>@ViewBag.Title</h1>
     <p>
-        The list of all dispatched events.
-        <a @Utils.Href("/modpanel")>Go back</a>.
+        The list of all dispatched events. <a @Utils.Href("/modpanel")>Go back</a>.
     </p>
+    Maintanance tools: @Utils.PostLink("Sync events", "/modpanel/event-queue/sync-status"),
+    @Utils.PostLink("Re-dispatch events", "/modpanel/event-queue/redispatch").
     <table class="page-table">
         <caption>Displaying @Utils.PaginationRangeOfTotal(Model.LargestPagination) events.</caption>
         <thead>

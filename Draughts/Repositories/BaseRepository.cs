@@ -2,6 +2,7 @@ using Draughts.Common.OoConcepts;
 using Draughts.Repositories.Misc;
 using Draughts.Repositories.Transaction;
 using SqlQueryBuilder.Builder;
+using SqlQueryBuilder.Common;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -68,7 +69,7 @@ public abstract class BaseRepository<T, TId, TDb> : IRepository<T, TId>
         return spec.ApplyQueryBuilder(query);
     }
 
-    protected virtual IReadOnlyList<T> Parse(IReadOnlyList<TDb> results) => results.Select(Parse).ToList().AsReadOnly();
+    protected virtual IReadOnlyList<T> Parse(IReadOnlyList<TDb> results) => results.MapReadOnly(Parse);
     protected virtual T? ParseNullable(TDb? result) => result is null ? null : Parse(result);
     protected abstract T Parse(TDb result);
 
@@ -81,7 +82,7 @@ public abstract class BaseRepository<T, TId, TDb> : IRepository<T, TId>
     protected void RaiseEvents(AggregateRoot<T, TId> aggregateRoot) {
         foreach (var evtFactory in aggregateRoot.Events) {
             var evt = UnitOfWork.Raise(evtFactory);
-            EventsRepository.SaveEvent(evt, GetBaseQuery());
+            EventsRepository.InsertEvent(evt, GetBaseQuery());
         }
         aggregateRoot.ClearEvents();
     }

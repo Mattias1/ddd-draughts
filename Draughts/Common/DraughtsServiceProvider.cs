@@ -74,6 +74,7 @@ public static class DraughtsServiceProvider {
         services.AddSingleton<RoleUsersService>();
         services.AddSingleton<GameService>();
         services.AddSingleton<PlayGameService>();
+        services.AddSingleton<SystemEventQueueService>();
         services.AddSingleton<UserRegistrationService>();
     }
 

@@ -49,6 +49,10 @@ public sealed class AdminLog : AggregateRoot<AdminLog, AdminLogId> {
             case "role.lost":
                 (roleId, rolename, userId, username) = Parameters.UnpackQuad();
                 return $"Removed the role '{roleId} - {rolename}' from '{userId} - {username}'";
+            case "events.sync":
+                return "Synced the event queue status";
+            case "events.dispatch":
+                return "Dispatched the unhandled events";
             default:
                 throw new InvalidOperationException("Unknown admin log type.");
         }
@@ -94,6 +98,22 @@ public sealed class AdminLog : AggregateRoot<AdminLog, AdminLogId> {
             NextId(idPool), "role.deleted", Params(roleId, rolename),
             actor.Id, actor.Username,
             Permissions.EditRoles, clock.UtcNow()
+        );
+    }
+
+    public static AdminLog SyncingEventQueueStatus(IIdPool idPool, IClock clock, UserId actorId, Username actorName) {
+        return new AdminLog(
+            NextId(idPool), "events.sync", Params(),
+            actorId, actorName,
+            Permissions.SystemMaintenance, clock.UtcNow()
+        );
+    }
+
+    public static AdminLog DispatchEventQueue(IIdPool idPool, IClock clock, UserId actorId, Username actorName) {
+        return new AdminLog(
+            NextId(idPool), "events.dispatch", Params(),
+            actorId, actorName,
+            Permissions.SystemMaintenance, clock.UtcNow()
         );
     }
 

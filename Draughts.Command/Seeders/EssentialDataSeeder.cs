@@ -72,6 +72,12 @@ public sealed class EssentialDataSeeder {
 
         _unitOfWork.WithUserTransaction(tran => {
             _userRepository.Save(adminUser);
+
+            var createdAdminId = _userRepository.FindByName(Username.ADMIN).Id;
+            if (createdAdminId != UserId.ADMIN) {
+                throw new InvalidOperationException("The admin user has an unexpected id. "
+                    + $"Expected {UserId.ADMIN} but was {createdAdminId}.");
+            }
         });
 
         return adminUser;

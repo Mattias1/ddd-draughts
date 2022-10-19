@@ -4,6 +4,7 @@ using Draughts.Repositories.Misc;
 using Draughts.Repositories.Transaction;
 using NodaTime;
 using SqlQueryBuilder.Builder;
+using SqlQueryBuilder.Common;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -21,6 +22,7 @@ public sealed class EventsRepository {
 
     private IInitialQueryBuilder GetBaseQuery() => _unitOfWork.Query(_unitOfWork.ActiveTransactionDomain());
     private IQueryBuilder SelectAllFromSentEvents() => GetBaseQuery().SelectAllFrom(SENT_EVENTS);
+    private IQueryBuilder SelectAllFromReceivedEvents() => GetBaseQuery().SelectAllFrom(RECEIVED_EVENTS);
 
     private IReadOnlyList<DomainEvent> Parse(IReadOnlyList<DbEvent> results) {
         return results.Select(DbEvent.ToDomainModel).ToList().AsReadOnly();
@@ -37,15 +39,25 @@ public sealed class EventsRepository {
         return new Pagination<DomainEvent>(Parse(p.Results), p.Count, p.PageIndex, p.PageSize);
     }
 
-    public static void SaveEvent(DomainEvent evt, IInitialQueryBuilder baseQuery) {
-        var obj = DbEvent.FromDomainModel(evt);
-        bool eventExists = baseQuery.CountAllFrom(SENT_EVENTS).Where("id").Is(evt.Id).SingleLong() > 0;
-        if (eventExists) {
-            baseQuery.Update(SENT_EVENTS).SetWithoutIdFrom(obj).Where("id").Is(evt.Id).Execute();
+    public IReadOnlyList<long> ListUnhandledEventIds(int limit) {
+        return GetBaseQuery().Select("id")
+            .From(SENT_EVENTS)
+            .Where("handled_at").IsNull()
+            .OrderByDesc("id")
+            .Take(limit)
+            .List<long>();
+    }
+    public IReadOnlyList<DomainEvent> ListUnhandledEvents(int limit) {
+        return SelectAllFromSentEvents().Where("handled_at").IsNull().OrderByDesc("id").Take(limit).List<DbEvent>()
+            .MapReadOnly(DbEvent.ToDomainModel);
+    }
+
+    public IReadOnlyList<(DomainEventId Id, ZonedDateTime HandledAt)> ListReceivedEventsForIds(IReadOnlyList<long> eventIds) {
+        if (eventIds.Count == 0) {
+            return new List<(DomainEventId Id, ZonedDateTime HandledAt)>().AsReadOnly();
         }
-        else {
-            baseQuery.InsertInto(SENT_EVENTS).InsertFrom(obj).Execute();
-        }
+        return SelectAllFromReceivedEvents().Where("id").In(eventIds).List<DbReceivedEvent>()
+            .MapReadOnly(re => (new DomainEventId(re.Id), re.HandledAt));
     }
 
     public bool EventIsReceived(DomainEventId evtId) {
@@ -55,5 +67,14 @@ public sealed class EventsRepository {
     public void MarkEventAsReceived(DomainEventId evtId, ZonedDateTime handledAt) {
         var obj = new DbReceivedEvent { Id = evtId.Value, HandledAt = handledAt };
         GetBaseQuery().InsertInto(RECEIVED_EVENTS).InsertFrom(obj).Execute();
+    }
+
+    public void MarkEventAsHandled(DomainEventId evtId, ZonedDateTime handledAt) {
+        GetBaseQuery().Update(SENT_EVENTS).SetColumn("handled_at", handledAt).Where("id").Is(evtId).Execute();
+    }
+
+    public static void InsertEvent(DomainEvent evt, IInitialQueryBuilder baseQuery) {
+        var obj = DbEvent.FromDomainModel(evt);
+        baseQuery.InsertInto(SENT_EVENTS).InsertFrom(obj).Execute();
     }
 }
