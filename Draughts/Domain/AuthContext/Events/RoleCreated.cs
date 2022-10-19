@@ -2,6 +2,7 @@ using Draughts.Common.Events;
 using Draughts.Common.Utilities;
 using Draughts.Domain.AuthContext.Models;
 using Draughts.Domain.UserContext.Models;
+using Draughts.Repositories.Transaction;
 using NodaTime;
 
 namespace Draughts.Domain.AuthContext.Events;
@@ -12,6 +13,8 @@ public sealed class RoleCreated : DomainEvent {
     public RoleId RoleId { get; }
     public string Rolename { get; }
     public UserId CreatedBy { get; }
+
+    public override TransactionDomain OriginTransactionDomain => TransactionDomain.Auth;
 
     public RoleCreated(Role role, UserId createdBy, DomainEventId id, ZonedDateTime created)
             : this(role.Id, role.Rolename, createdBy, id, created, null) { }

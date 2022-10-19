@@ -24,6 +24,7 @@ public abstract class DomainEventHandlerBase : IDomainEventHandler {
 
     protected void HandleWithTransaction(TransactionDomain transactionDomain, DomainEvent evt,
             Action<ITransaction> eventHandlerFunction) {
+        ZonedDateTime handledAt = _clock.UtcNow();
         _unitOfWork.WithTransaction(transactionDomain, tran => {
             if (_eventsRepository.EventIsReceived(evt.Id)) {
                 // This event is already received and handled, no need to do anything.
@@ -33,7 +34,13 @@ public abstract class DomainEventHandlerBase : IDomainEventHandler {
 
             eventHandlerFunction(tran);
 
-            _eventsRepository.MarkEventAsReceived(evt.Id, _clock.UtcNow());
+            _eventsRepository.MarkEventAsReceived(evt.Id, handledAt);
+        });
+
+        // Let's already try to make the sender stop asking us now. Just for efficiency.
+        // If this fails, no problems, we'll catch up later.
+        _unitOfWork.WithTransaction(evt.OriginTransactionDomain, tran => {
+            _eventsRepository.MarkEventAsHandled(evt.Id, handledAt);
         });
     }
 }

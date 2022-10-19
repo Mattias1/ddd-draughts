@@ -1,4 +1,5 @@
 using Draughts.Common.Utilities;
+using Draughts.Repositories.Transaction;
 using NodaTime;
 using System;
 
@@ -11,6 +12,8 @@ public abstract class DomainEvent : IEquatable<DomainEvent> {
     public string Type { get; }
     public ZonedDateTime CreatedAt { get; }
     public ZonedDateTime? HandledAt { get; private set; }
+
+    public abstract TransactionDomain OriginTransactionDomain { get; }
 
     public DomainEvent(DomainEventId id, string type, ZonedDateTime createdAt, ZonedDateTime? handledAt) {
         Id = id;

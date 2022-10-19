@@ -2,6 +2,7 @@ using Draughts.Common.Events;
 using Draughts.Common.Utilities;
 using Draughts.Domain.GameContext.Models;
 using Draughts.Domain.UserContext.Models;
+using Draughts.Repositories.Transaction;
 using NodaTime;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,6 +16,8 @@ public sealed class GameFinished : DomainEvent {
     public UserId? Victor { get; }
     private UserId[] _players;
     public GameSettings.GameSettingsPreset SettingsPreset { get; }
+
+    public override TransactionDomain OriginTransactionDomain => TransactionDomain.Game;
 
     public IReadOnlyList<UserId> Players => _players.ToList().AsReadOnly();
 
