@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace SqlQueryBuilder.Common;
+namespace Draughts.Common.Utilities;
 
 public static class IReadOnlyListExtensions {
     public static (T, T) UnpackDuo<T>(this IReadOnlyList<T> source) {

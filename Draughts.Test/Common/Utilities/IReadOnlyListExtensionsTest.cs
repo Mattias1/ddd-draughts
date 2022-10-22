@@ -1,8 +1,9 @@
+using Draughts.Common.Utilities;
 using FluentAssertions;
-using SqlQueryBuilder.Common;
+using System;
 using Xunit;
 
-namespace SqlQueryBuilder.Test.Common;
+namespace Draughts.Test.Common.Utilities;
 
 public sealed class IReadOnlyListExtensionsTest {
     [Fact]
@@ -36,5 +37,19 @@ public sealed class IReadOnlyListExtensionsTest {
         second.Should().Be('h');
         third.Should().Be('a');
         fourth.Should().Be('r');
+    }
+
+    [Fact]
+    public void ThrowWhenTooFewParams() {
+        var numbers = new int[] { 42 };
+        var unpackFunc = () => numbers.UnpackDuo();
+        unpackFunc.Should().Throw<InvalidOperationException>();
+    }
+
+    [Fact]
+    public void ThrowWhenTooManyParams() {
+        var numbers = new int[] { 7, 42, 1337, 9001, 32 };
+        var unpackFunc = () => numbers.UnpackDuo();
+        unpackFunc.Should().Throw<InvalidOperationException>();
     }
 }
