@@ -4,7 +4,7 @@ using NodaTime;
 
 namespace Draughts.Application.Shared.ViewModels;
 
-public class TurnViewModel {
+public sealed class TurnViewModel {
     public PlayerViewModel Player { get; }
     public ZonedDateTime CreatedAt { get; }
     public ZonedDateTime CurrentTime { get; }

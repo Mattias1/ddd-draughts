@@ -4,7 +4,7 @@ using NodaTime;
 
 namespace Draughts.Application.Shared.ViewModels;
 
-public class GameDto {
+public sealed class GameDto {
     public long Id { get; }
     public TurnDto? Turn { get; }
     public string GameEndedMessage { get; }
@@ -37,7 +37,7 @@ public class GameDto {
         return $"{game.Victor.Username} won the game.";
     }
 
-    public class TurnDto {
+    public sealed class TurnDto {
         public long PlayerId { get; }
         public string CurrentTime { get; }
         public string ExpiresAt { get; }

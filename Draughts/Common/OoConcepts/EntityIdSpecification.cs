@@ -4,7 +4,7 @@ using System.Linq.Expressions;
 
 namespace Draughts.Common.OoConcepts;
 
-public class EntityIdSpecification<T, TId> : Specification<T> where T : Entity<T, TId> where TId : IdValueObject<TId> {
+public sealed class EntityIdSpecification<T, TId> : Specification<T> where T : Entity<T, TId> where TId : IdValueObject<TId> {
     private readonly TId _id;
     private readonly string _fieldName;
 

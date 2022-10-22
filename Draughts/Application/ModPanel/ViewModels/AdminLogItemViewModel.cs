@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace Draughts.Application.ModPanel.ViewModels;
 
-public class AdminLogItemViewModel {
+public sealed class AdminLogItemViewModel {
     public AdminLogId Id { get; }
     public string Type { get; }
     public IReadOnlyList<string> Parameters { get; }

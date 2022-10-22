@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace Draughts.Application.Shared.ViewModels;
 
-public class UserlistViewModel : IPaginationViewModel<UserViewModel> {
+public sealed class UserlistViewModel : IPaginationViewModel<UserViewModel> {
     public IReadOnlyList<UserViewModel> Users => Pagination.Results;
     public Pagination<UserViewModel> Pagination { get; }
 

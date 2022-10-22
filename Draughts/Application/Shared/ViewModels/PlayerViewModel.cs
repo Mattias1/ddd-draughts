@@ -4,7 +4,7 @@ using Draughts.Domain.UserContext.Models;
 
 namespace Draughts.Application.Shared.ViewModels;
 
-public class PlayerViewModel {
+public sealed class PlayerViewModel {
     public PlayerId Id { get; }
     public UserId UserId { get; }
     public Username Username { get; }

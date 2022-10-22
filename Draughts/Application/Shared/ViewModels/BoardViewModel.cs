@@ -2,7 +2,7 @@ using Draughts.Domain.GameContext.Models;
 
 namespace Draughts.Application.Shared.ViewModels;
 
-public class BoardViewModel {
+public sealed class BoardViewModel {
     private readonly Piece?[,] _pieces;
     public int Size { get; }
 

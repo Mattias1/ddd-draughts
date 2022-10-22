@@ -16,7 +16,7 @@ using System.Threading.Tasks;
 
 namespace Draughts;
 
-public class Startup {
+public sealed class Startup {
     public static string VIEW_LOCATION_TEMPLATE = "/Application/{1}/Views/{0}" + RazorViewEngine.ViewExtension;
 
     // This method gets called by the runtime. Use this method to add services to the container.

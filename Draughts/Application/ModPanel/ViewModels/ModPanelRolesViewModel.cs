@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace Draughts.Application.ModPanel.ViewModels;
 
-public class ModPanelRolesViewModel : ModPanelViewModel {
+public sealed class ModPanelRolesViewModel : ModPanelViewModel {
     public IReadOnlyList<RoleViewModel> Roles { get; }
 
     public ModPanelRolesViewModel(IReadOnlyList<Role> roles, MenuViewModel menuViewModel)

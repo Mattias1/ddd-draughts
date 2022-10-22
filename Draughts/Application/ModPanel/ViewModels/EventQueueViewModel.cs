@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace Draughts.Application.ModPanel.ViewModels;
 
-public class EventQueueViewModel {
+public sealed class EventQueueViewModel {
     public IReadOnlyList<EventViewModel> AuthEvents => AuthEventsPagination.Results;
     public IReadOnlyList<EventViewModel> UserEvents => UserEventsPagination.Results;
     public IReadOnlyList<EventViewModel> GameEvents => GameEventsPagination.Results;
@@ -27,7 +27,7 @@ public class EventQueueViewModel {
     }
 }
 
-public class EventViewModel {
+public sealed class EventViewModel {
     public DomainEventId Id { get; }
     public string Type { get; }
     public ZonedDateTime CreatedAt { get; }

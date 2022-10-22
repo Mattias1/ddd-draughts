@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace Draughts.Application.Shared.ViewModels;
 
-public class GamelistAndMenuViewModel : IPaginationViewModel<GameViewModel> {
+public sealed class GamelistAndMenuViewModel : IPaginationViewModel<GameViewModel> {
     public Pagination<GameViewModel> Pagination { get; }
     public IReadOnlyList<GameViewModel> Games => Pagination.Results;
     public MenuViewModel Menu { get; }

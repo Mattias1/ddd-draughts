@@ -27,7 +27,7 @@ public class GameViewModel {
     }
 }
 
-public class PlayGameViewModel : GameViewModel {
+public sealed class PlayGameViewModel : GameViewModel {
     public GameStateViewModel CurrentGameState { get; }
 
     public PlayGameViewModel(Game game, GameState gameState, IClock clock) : base(game, clock) {

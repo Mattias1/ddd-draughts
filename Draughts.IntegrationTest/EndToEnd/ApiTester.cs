@@ -20,7 +20,7 @@ using System.Threading.Tasks;
 
 namespace Draughts.IntegrationTest.EndToEnd;
 
-public class ApiTester {
+public sealed class ApiTester {
     public static Url BASE_URL = "http://localhost:8080";
 
     private readonly TestServer Server;

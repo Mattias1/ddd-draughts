@@ -13,7 +13,7 @@ public class BasicUserViewModel {
     }
 }
 
-public class UserViewModel : BasicUserViewModel {
+public sealed class UserViewModel : BasicUserViewModel {
     public Rating Rating { get; }
     public Rank Rank { get; }
     public UserStatistics Statistics { get; }

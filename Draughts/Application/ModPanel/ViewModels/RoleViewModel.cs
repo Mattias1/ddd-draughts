@@ -22,7 +22,7 @@ public class RoleViewModel {
     }
 }
 
-public class RoleWithUsersViewModel : RoleViewModel {
+public sealed class RoleWithUsersViewModel : RoleViewModel {
     public IReadOnlyList<BasicUserViewModel> AuthUsers { get; }
 
     public RoleWithUsersViewModel(Role role, IReadOnlyList<AuthUser> authUsers) : base(role) {

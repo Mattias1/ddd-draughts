@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace Draughts.Application.Shared.ViewModels;
 
-public class MenuViewModel {
+public sealed class MenuViewModel {
     public string Title { get; }
     public IReadOnlyList<(string name, string url)> Menu { get; }
 

@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace Draughts.Application.ModPanel.ViewModels;
 
-public class ModPanelOverviewViewModel : ModPanelViewModel, IPaginationViewModel<AdminLogItemViewModel> {
+public sealed class ModPanelOverviewViewModel : ModPanelViewModel, IPaginationViewModel<AdminLogItemViewModel> {
     public IReadOnlyList<AdminLogItemViewModel> AdminLogs => Pagination.Results;
     public Pagination<AdminLogItemViewModel> Pagination { get; }
 

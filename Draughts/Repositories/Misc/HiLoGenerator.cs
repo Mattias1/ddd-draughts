@@ -8,7 +8,7 @@ namespace Draughts.Repositories.Misc;
 /// A thread safe id generator that doesn't need a database connection most of the time.
 /// Should be injected as singleton.
 /// </summary>
-public class HiLoGenerator {
+public sealed class HiLoGenerator {
     private static readonly object _lock = new object();
 
     public int IntervalSize { get; }

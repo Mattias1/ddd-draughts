@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Draughts.Application.Shared.ViewModels;
 
-public class GameStateViewModel {
+public sealed class GameStateViewModel {
     public GameId Id { get; }
     public BoardViewModel Board { get; }
     public SquareId? CaptureSequenceFrom { get; private set; }

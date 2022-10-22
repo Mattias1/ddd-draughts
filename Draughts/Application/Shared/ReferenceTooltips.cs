@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Html;
 
 namespace Draughts.Application.Shared;
 
-public class ReferenceTooltips {
+public sealed class ReferenceTooltips {
     private int _counter = 0;
 
     public HtmlString Print(string text) {
