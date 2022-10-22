@@ -49,7 +49,6 @@ public static class DraughtsServiceProvider {
         services.AddSingleton<IDomainEventHandler, SynchronizePendingUserEventHandler>();
         services.AddSingleton<IDomainEventHandler, FinishUserRegistrationEventHandler>();
         services.AddSingleton<IDomainEventHandler, FinishedGameEventHandler>();
-        services.AddSingleton<IDomainEventHandler, ModPanelRoleEventHandler>();
     }
 
     private static void ConfigureRepositories(IServiceCollection services, int hiloLargeIntervalSize, int hiloSmallIntervalSize) {
@@ -69,9 +68,8 @@ public static class DraughtsServiceProvider {
     }
 
     private static void ConfigureApplicationServices(IServiceCollection services) {
+        services.AddSingleton<AdminLogFactory>();
         services.AddSingleton<AuthService>();
-        services.AddSingleton<EditRoleService>();
-        services.AddSingleton<RoleUsersService>();
         services.AddSingleton<GameService>();
         services.AddSingleton<PlayGameService>();
         services.AddSingleton<SystemEventQueueService>();
@@ -80,7 +78,6 @@ public static class DraughtsServiceProvider {
 
     private static void ConfigureDomainServices(IServiceCollection services) {
         services.AddSingleton<UserRegistrationDomainService>();
-        services.AddSingleton<UserRoleDomainService>();
         services.AddSingleton<PlayGameDomainService>();
         services.AddSingleton<GameFactory>();
     }

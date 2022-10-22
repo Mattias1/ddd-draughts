@@ -3,7 +3,6 @@ using Draughts.Common.OoConcepts;
 using Draughts.Common.Utilities;
 using Draughts.Domain.AuthContext.Events;
 using Draughts.Domain.UserContext.Models;
-using Draughts.Repositories;
 using Draughts.Repositories.Misc;
 using NodaTime;
 using System.Collections.Generic;
@@ -33,26 +32,24 @@ public sealed class AuthUser : AggregateRoot<AuthUser, UserId> {
         CreatedAt = createdAt;
     }
 
-    public void AssignRole(RoleId roleId, string rolename, UserId? responsibleUserId) {
+    public void AssignRole(RoleId roleId, string rolename) {
         if (_rolesIds.Contains(roleId)) {
-            throw new ManualValidationException("This user already has that role.");
+            throw new ManualValidationException($"This user ({Id}, {Username}) "
+                + $"already has that role ({roleId}, {rolename}).");
         }
         _rolesIds.Add(roleId);
-
-        if (responsibleUserId is not null) {
-            AttachEvent(UserGainedRole.Factory(this, roleId, rolename, responsibleUserId));
-        }
     }
 
-    public void RemoveRole(RoleId roleId, string rolename, UserId? responsibleUserId) {
+    public void RemoveRole(RoleId roleId, string rolename) {
+        if (rolename == Role.ADMIN_ROLENAME && AuthUser.PROTECTED_USERS.Contains(Username.Value)) {
+            throw new ManualValidationException("You can't remove the admin role from protected users "
+                + $"({Id}, {Username}).");
+        }
         if (!_rolesIds.Contains(roleId)) {
-            throw new ManualValidationException("This user doesn't have that role.");
+            throw new ManualValidationException($"This user ({Id}, {Username}) "
+                + "doesn't have that role ({roleId}, {rolename}).");
         }
         _rolesIds.Remove(roleId);
-
-        if (responsibleUserId is not null) {
-            AttachEvent(UserLostRole.Factory(this, roleId, rolename, responsibleUserId));
-        }
     }
 
     public static AuthUser CreateNew(IIdPool idPool, Username username, Email email,

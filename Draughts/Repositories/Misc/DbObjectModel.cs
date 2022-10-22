@@ -159,7 +159,6 @@ public sealed class DbAdminLog : IDbObject<DbAdminLog, AdminLog> {
     public string Parameters { get; set; }
     public long UserId { get; set; }
     public string Username { get; set; }
-    public string Permission { get; set; }
     public ZonedDateTime CreatedAt { get; set; }
 
     public bool Equals(DbAdminLog? other) => Id.Equals(other?.Id);
@@ -171,7 +170,6 @@ public sealed class DbAdminLog : IDbObject<DbAdminLog, AdminLog> {
             Parameters.Split(','),
             new UserId(UserId),
             new Username(Username),
-            new Permission(Permission),
             CreatedAt
         );
     }
@@ -183,7 +181,6 @@ public sealed class DbAdminLog : IDbObject<DbAdminLog, AdminLog> {
             Parameters = string.Join(',', entity.Parameters),
             UserId = entity.UserId.Value,
             Username = entity.Username.Value,
-            Permission = entity.Permission.Value,
             CreatedAt = entity.CreatedAt
         };
     }
@@ -414,13 +411,8 @@ public sealed class DbEvent : IDbObject<DbEvent, DomainEvent> {
     public static DomainEvent ToDomainModel(DbEvent e) {
         return e.Type switch
         {
-            AuthUserCreated.TYPE => AuthUserCreated.FromStorage(GetId(e), e.CreatedAt, e.HandledAt, e.Data),
-            RoleCreated.TYPE => RoleCreated.FromStorage(GetId(e), e.CreatedAt, e.HandledAt, e.Data),
-            RoleEdited.TYPE => RoleEdited.FromStorage(GetId(e), e.CreatedAt, e.HandledAt, e.Data),
-            RoleDeleted.TYPE => RoleDeleted.FromStorage(GetId(e), e.CreatedAt, e.HandledAt, e.Data),
-            UserLostRole.TYPE => UserLostRole.FromStorage(GetId(e), e.CreatedAt, e.HandledAt, e.Data),
-            UserGainedRole.TYPE => UserGainedRole.FromStorage(GetId(e), e.CreatedAt, e.HandledAt, e.Data),
             GameFinished.TYPE => GameFinished.FromStorage(GetId(e), e.CreatedAt, e.HandledAt, e.Data),
+            AuthUserCreated.TYPE => AuthUserCreated.FromStorage(GetId(e), e.CreatedAt, e.HandledAt, e.Data),
             UserCreated.TYPE => UserCreated.FromStorage(GetId(e), e.CreatedAt, e.HandledAt, e.Data),
             _ => throw new InvalidOperationException($"Unknown event type '{e.Type}' for event '{e.Id}'")
         };

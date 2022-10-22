@@ -12,7 +12,6 @@ public sealed class AdminLogItemViewModel {
     public string Description { get; }
     public UserId UserId { get; }
     public Username Username { get; }
-    public Permission Permission { get; }
     public ZonedDateTime CreatedAt { get; }
 
     public AdminLogItemViewModel(AdminLog item) {
@@ -22,7 +21,6 @@ public sealed class AdminLogItemViewModel {
         Description = item.Description();
         UserId = item.UserId;
         Username = item.Username;
-        Permission = item.Permission;
         CreatedAt = item.CreatedAt;
     }
 }

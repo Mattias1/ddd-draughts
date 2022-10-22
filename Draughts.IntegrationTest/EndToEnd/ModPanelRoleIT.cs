@@ -60,7 +60,7 @@ public sealed class ModPanelRoleIT {
         RoleId = new RoleId(long.Parse(value));
         result.RequestUri().Should().Match($"/modpanel/role/{RoleId}/edit?success=*");
 
-        await AssertRoleIsLogged("role.created");
+        AssertRoleIsLogged("role.create");
     }
 
     private async Task ViewEditRolePage() {
@@ -74,7 +74,7 @@ public sealed class ModPanelRoleIT {
         result.StatusCode.Should().Be(200);
         result.RequestUri().Should().Match("/modpanel/roles?success=*");
 
-        await AssertRoleIsLogged("role.edited");
+        AssertRoleIsLogged("role.edit");
     }
 
     private async Task ViewRoleUsersPage() {
@@ -88,7 +88,7 @@ public sealed class ModPanelRoleIT {
         result.StatusCode.Should().Be(200);
         result.RequestUri().Should().Match($"/modpanel/role/{RoleId}/users?success=*");
 
-        await AssertRoleIsLogged("role.gained");
+        AssertRoleIsLogged("role.gain");
     }
 
     private async Task PostRemoveUserFromRole() {
@@ -97,7 +97,7 @@ public sealed class ModPanelRoleIT {
         result.StatusCode.Should().Be(200);
         result.RequestUri().Should().Match($"/modpanel/role/{RoleId}/users?success=*");
 
-        await AssertRoleIsLogged("role.lost");
+        AssertRoleIsLogged("role.lose");
     }
 
     private async Task PostDeleteRole() {
@@ -105,12 +105,10 @@ public sealed class ModPanelRoleIT {
         result.StatusCode.Should().Be(200);
         result.RequestUri().Should().Match("/modpanel/roles?success=*");
 
-        await AssertRoleIsLogged("role.deleted");
+        AssertRoleIsLogged("role.delete");
     }
 
-    private async Task AssertRoleIsLogged(string adminLogType) {
-        await _apiTester.WaitForEventsToComplete();
-
+    private void AssertRoleIsLogged(string adminLogType) {
         _apiTester.UnitOfWork.WithAuthTransaction(tran => {
             var adminLogs = _apiTester.AdminLogRepository.List();
             adminLogs.Should().Contain(l => l.Type == adminLogType, $"a '{adminLogType}' type event has happened.");

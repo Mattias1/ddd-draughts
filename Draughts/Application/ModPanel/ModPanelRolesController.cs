@@ -1,37 +1,56 @@
-using Draughts.Application.ModPanel.Services;
+using Draughts.Application.Auth.Services;
 using Draughts.Application.ModPanel.ViewModels;
 using Draughts.Application.Shared;
 using Draughts.Application.Shared.Attributes;
 using Draughts.Common;
 using Draughts.Domain.AuthContext.Models;
+using Draughts.Domain.AuthContext.Specifications;
 using Draughts.Domain.UserContext.Models;
+using Draughts.Repositories;
+using Draughts.Repositories.Misc;
+using Draughts.Repositories.Transaction;
 using Microsoft.AspNetCore.Mvc;
+using NodaTime;
+using System.Linq;
 using static Draughts.Domain.AuthContext.Models.Permission;
 
 namespace Draughts.Application.ModPanel;
 
 [ViewsFrom("ModPanel")]
 public sealed class ModPanelRolesController : BaseController {
-    private readonly EditRoleService _editRoleService;
-    private readonly RoleUsersService _roleUserService;
+    private readonly AdminLogFactory _adminLogFactory;
+    private readonly AuthUserRepository _authUserRepository;
+    private readonly IClock _clock;
+    private readonly IIdGenerator _idGenerator;
+    private readonly RoleRepository _roleRepository;
+    private readonly IUnitOfWork _unitOfWork;
 
-    public ModPanelRolesController(EditRoleService editRoleService, RoleUsersService roleUsersService) {
-        _editRoleService = editRoleService;
-        _roleUserService = roleUsersService;
+    public ModPanelRolesController(AdminLogFactory adminLogFactory, AuthUserRepository authUserRepository,
+            IClock clock, IIdGenerator idGenerator, RoleRepository roleRepository, IUnitOfWork unitOfWork) {
+        _adminLogFactory = adminLogFactory;
+        _authUserRepository = authUserRepository;
+        _clock = clock;
+        _idGenerator = idGenerator;
+        _roleRepository = roleRepository;
+        _unitOfWork = unitOfWork;
     }
 
     // --- Manage roles ---
     [HttpGet("/modpanel/roles"), Requires(Permissions.EDIT_ROLES)]
     public IActionResult ManageRoles() {
-        var roles = _editRoleService.GetRoles();
+        var roles = _unitOfWork.WithAuthTransaction(tran => {
+            return _roleRepository.List();
+        });
         return View(new ModPanelRolesViewModel(roles, ModPanelController.BuildMenu()));
     }
 
     // --- Edit role ---
-    [HttpGet("/modpanel/role/{roleId:long}/edit"), Requires(Permissions.EDIT_ROLES)]
-    public IActionResult EditRole(long roleId) {
+    [HttpGet("/modpanel/role/{rawRoleId:long}/edit"), Requires(Permissions.EDIT_ROLES)]
+    public IActionResult EditRole(long rawRoleId) {
         try {
-            var role = _editRoleService.GetRole(new RoleId(roleId));
+            var role = _unitOfWork.WithAuthTransaction(tran => {
+                return FindRole(new RoleId(rawRoleId));
+            });
             return View(new RoleViewModel(role));
         }
         catch (ManualValidationException e) {
@@ -44,7 +63,13 @@ public sealed class ModPanelRolesController : BaseController {
         try {
             ValidateNotNull(request?.Rolename);
 
-            var role = _editRoleService.CreateRole(AuthContext.UserId, request!.Rolename!);
+            var role = _unitOfWork.WithAuthTransaction(tran => {
+                var role = Role.CreateNew(_idGenerator.ReservePool(), request!.Rolename!, _clock);
+                _adminLogFactory.LogCreateRole(AuthContext.UserId, AuthContext.Username, role.Id, role.Rolename);
+                _roleRepository.Save(role);
+
+                return role;
+            });
 
             return SuccessRedirect($"/modpanel/role/{role.Id}/edit", $"Role '{role.Rolename}' is added.");
         }
@@ -53,25 +78,39 @@ public sealed class ModPanelRolesController : BaseController {
         }
     }
 
-    [HttpPost("/modpanel/role/{roleId:long}/edit"), Requires(Permissions.EDIT_ROLES)]
-    public IActionResult EditRolePost(long roleId, [FromForm] EditRoleRequest? request) {
+    [HttpPost("/modpanel/role/{rawRoleId:long}/edit"), Requires(Permissions.EDIT_ROLES)]
+    public IActionResult EditRolePost(long rawRoleId, [FromForm] EditRoleRequest? request) {
         try {
             ValidateNotNull(request?.Rolename, request?.Permissions);
 
-            _editRoleService.EditRole(AuthContext.UserId, new RoleId(roleId),
-                request!.Rolename!, request.Permissions!);
+            _unitOfWork.WithAuthTransaction(tran => {
+                var role = FindRole(new RoleId(rawRoleId));
+                _adminLogFactory.LogEditRole(AuthContext.UserId, AuthContext.Username, role.Id, role.Rolename);
+                role.Edit(request!.Rolename!, request!.Permissions!.Select(p => new Permission(p)));
 
-            return SuccessRedirect("/modpanel/roles", $"Role '{request.Rolename}' is edited.");
+                _roleRepository.Save(role);
+            });
+
+            return SuccessRedirect("/modpanel/roles", $"Role '{request?.Rolename}' is edited.");
         }
         catch (ManualValidationException e) {
-            return ErrorRedirect($"/modpanel/role/{roleId}/edit", e.Message);
+            return ErrorRedirect($"/modpanel/role/{rawRoleId}/edit", e.Message);
         }
     }
 
-    [HttpPost("/modpanel/role/{roleId:long}/delete"), Requires(Permissions.EDIT_ROLES)]
-    public IActionResult DeleteRole(long roleId) {
+    [HttpPost("/modpanel/role/{rawRoleId:long}/delete"), Requires(Permissions.EDIT_ROLES)]
+    public IActionResult DeleteRole(long rawRoleId) {
         try {
-            _editRoleService.DeleteRole(AuthContext.UserId, new RoleId(roleId));
+            _unitOfWork.WithAuthTransaction(tran => {
+                var role = FindRole(new RoleId(rawRoleId));
+                long nrOfUsersWithRole = _authUserRepository.Count(new UsersWithRoleSpecification(role.Id));
+                if (nrOfUsersWithRole > 0) {
+                    throw new ManualValidationException("You cannot delete roles with users assigned.");
+                }
+
+                _adminLogFactory.LogDeleteRole(AuthContext.UserId, AuthContext.Username, role.Id, role.Rolename);
+                _roleRepository.Delete(role.Id);
+            });
             return SuccessRedirect("/modpanel/roles", "The role is deleted.");
         }
         catch (ManualValidationException e) {
@@ -80,10 +119,15 @@ public sealed class ModPanelRolesController : BaseController {
     }
 
     // --- Role users ---
-    [HttpGet("/modpanel/role/{roleId:long}/users"), Requires(Permissions.EDIT_ROLES)]
-    public IActionResult RoleUsers(long roleId) {
+    [HttpGet("/modpanel/role/{rawRoleId:long}/users"), Requires(Permissions.EDIT_ROLES)]
+    public IActionResult RoleUsers(long rawRoleId) {
         try {
-            var (role, authUsers) = _roleUserService.GetRoleWithUsers(new RoleId(roleId));
+            var roleId = new RoleId(rawRoleId);
+            var (role, authUsers) = _unitOfWork.WithAuthTransaction(tran => {
+                var role = FindRole(roleId);
+                var authUsers = _authUserRepository.List(new UsersWithRoleSpecification(roleId));
+                return (role, authUsers);
+            });
             return View(new RoleWithUsersViewModel(role, authUsers));
         }
         catch (ManualValidationException e) {
@@ -91,28 +135,60 @@ public sealed class ModPanelRolesController : BaseController {
         }
     }
 
-    [HttpPost("/modpanel/role/{roleId:long}/user"), Requires(Permissions.EDIT_ROLES)]
-    public IActionResult AssignRoleToUser(long roleId, AssignUserToRoleRequest? request) {
+    [HttpPost("/modpanel/role/{rawRoleId:long}/user"), Requires(Permissions.EDIT_ROLES)]
+    public IActionResult AssignRoleToUser(long rawRoleId, AssignUserToRoleRequest? request) {
         try {
             ValidateNotNull(request?.Username);
 
-            _roleUserService.AssignRole(AuthContext.UserId, new RoleId(roleId), new Username(request!.Username));
-            return SuccessRedirect($"/modpanel/role/{roleId}/users", "Users are assigned to the role.");
+            _unitOfWork.WithAuthTransaction(tran => {
+                var role = FindRole(new RoleId(rawRoleId));
+                var authUser = _authUserRepository.FindOrNull(new UsernameSpecification(new Username(request!.Username)));
+                if (authUser is null) {
+                    throw new ManualValidationException("User not found");
+                }
+
+                _adminLogFactory.LogGainRole(AuthContext.UserId, AuthContext.Username,
+                    role.Id, role.Rolename, authUser.Id, authUser.Username);
+                authUser.AssignRole(role.Id, role.Rolename);
+                _authUserRepository.Save(authUser);
+            });
+            return SuccessRedirect($"/modpanel/role/{rawRoleId}/users", "Users are assigned to the role.");
         }
         catch (ManualValidationException e) {
-            return ErrorRedirect($"/modpanel/role/{roleId}/users", e.Message);
+            return ErrorRedirect($"/modpanel/role/{rawRoleId}/users", e.Message);
         }
     }
 
-    [HttpPost("/modpanel/role/{roleId:long}/user/{userId:long}/remove"), Requires(Permissions.EDIT_ROLES)]
-    public IActionResult RemoveRoleFromUser(long roleId, long userId) {
+    [HttpPost("/modpanel/role/{rawRoleId:long}/user/{rawUserId:long}/remove"), Requires(Permissions.EDIT_ROLES)]
+    public IActionResult RemoveRoleFromUser(long rawRoleId, long rawUserId) {
         try {
-            _roleUserService.RemoveRole(AuthContext.UserId, new RoleId(roleId), new UserId(userId));
-            return SuccessRedirect($"/modpanel/role/{roleId}/users", "The user is removed from this role.");
+            var roleId = new RoleId(rawRoleId);
+            var userId = new UserId(rawUserId);
+            _unitOfWork.WithAuthTransaction(tran => {
+                var role = FindRole(roleId);
+                var authUser = _authUserRepository.FindByIdOrNull(userId);
+                if (authUser is null) {
+                    throw new ManualValidationException("User not found");
+                }
+
+                _adminLogFactory.LogLoseRole(AuthContext.UserId, AuthContext.Username,
+                    role.Id, role.Rolename, authUser.Id, authUser.Username);
+                authUser.RemoveRole(role.Id, role.Rolename);
+                _authUserRepository.Save(authUser);
+            });
+            return SuccessRedirect($"/modpanel/role/{rawRoleId}/users", "The user is removed from this role.");
         }
         catch (ManualValidationException e) {
-            return ErrorRedirect($"/modpanel/role/{roleId}/users", e.Message);
+            return ErrorRedirect($"/modpanel/role/{rawRoleId}/users", e.Message);
         }
+    }
+
+    private Role FindRole(RoleId roleId) {
+        var role = _roleRepository.FindByIdOrNull(roleId);
+        if (role is null) {
+            throw new ManualValidationException("Role not found");
+        }
+        return role;
     }
 
     public record EditRoleRequest(string? Rolename, string[]? Permissions);

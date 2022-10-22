@@ -97,7 +97,6 @@ CREATE TABLE `adminlog` (
     `parameters` VARCHAR(50) NULL,
     `user_id` BIGINT NOT NULL,
     `username` VARCHAR(25) NOT NULL,
-    `permission` VARCHAR(50) NOT NULL,
     `created_at` DATETIME NOT NULL,
 
     PRIMARY KEY (`id`),

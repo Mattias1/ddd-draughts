@@ -17,8 +17,7 @@ public sealed class RegisterUserTest {
 
     public RegisterUserTest() {
         var clock = FakeClock.FromUtc(2020, 02, 29);
-        var userRoleService = new UserRoleDomainService();
-        _userRegistrationService = new UserRegistrationDomainService(clock, userRoleService);
+        _userRegistrationService = new UserRegistrationDomainService(clock);
     }
 
     [Fact]

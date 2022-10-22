@@ -81,9 +81,7 @@ public sealed class RoleRepository : BaseRepository<Role, RoleId, DbRole> {
         }
     }
 
-    public void Delete(RoleId roleId, DomainEventFactory eventFactory) {
-        UnitOfWork.Raise(eventFactory);
-
+    public void Delete(RoleId roleId) {
         GetBaseQuery().DeleteFrom(PermissionRolesTableName).Where("role_id").Is(roleId).Execute();
         GetBaseQuery().DeleteFrom(TableName).Where("id").Is(roleId).Execute();
     }

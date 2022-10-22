@@ -1,3 +1,4 @@
+using Draughts.Application.Auth.Services;
 using Draughts.Common.Events;
 using Draughts.Common.Events.Specifications;
 using Draughts.Domain.AuthContext.Models;
@@ -5,27 +6,22 @@ using Draughts.Domain.UserContext.Models;
 using Draughts.Repositories;
 using Draughts.Repositories.Misc;
 using Draughts.Repositories.Transaction;
-using NodaTime;
 using System;
 using System.Linq;
 
 namespace Draughts.Application.ModPanel.Services;
 
 public sealed class SystemEventQueueService {
-    private readonly AdminLogRepository _adminLogRepository;
+    private readonly AdminLogFactory _adminLogFactory;
     private readonly EventDispatcher _eventDispatcher;
     private readonly EventsRepository _eventsRepository;
-    private readonly IClock _clock;
-    private readonly IIdGenerator _idGenerator;
     private readonly IUnitOfWork _unitOfWork;
 
-    public SystemEventQueueService(AdminLogRepository adminLogRepository, EventDispatcher eventDispatcher,
-            EventsRepository eventsRepository, IClock clock, IIdGenerator idGenerator, IUnitOfWork unitOfWork) {
-        _adminLogRepository = adminLogRepository;
+    public SystemEventQueueService(AdminLogFactory adminLogFactory, EventDispatcher eventDispatcher,
+            EventsRepository eventsRepository, IUnitOfWork unitOfWork) {
+        _adminLogFactory = adminLogFactory;
         _eventDispatcher = eventDispatcher;
         _eventsRepository = eventsRepository;
-        _clock = clock;
-        _idGenerator = idGenerator;
         _unitOfWork = unitOfWork;
     }
 
@@ -38,11 +34,7 @@ public sealed class SystemEventQueueService {
     }
 
     public void SyncEventQueueStatus(UserId currentUserId, Username currentUsername) {
-        _unitOfWork.WithAuthTransaction(tran => {
-            var adminLog = AdminLog.SyncingEventQueueStatus(_idGenerator.ReservePool(), _clock,
-                currentUserId, currentUsername);
-            _adminLogRepository.Save(adminLog);
-        });
+        _adminLogFactory.LogSyncEventQueueStatus(currentUserId, currentUsername);
 
         var allDomains = new [] { TransactionDomain.Auth, TransactionDomain.User, TransactionDomain.Game };
         foreach (var sentDomain in allDomains) {
@@ -55,11 +47,7 @@ public sealed class SystemEventQueueService {
     }
 
     public void RedispatchEventQueue(UserId currentUserId, Username currentUsername) {
-        _unitOfWork.WithAuthTransaction(tran => {
-            var adminLog = AdminLog.DispatchEventQueue(_idGenerator.ReservePool(), _clock,
-                currentUserId, currentUsername);
-            _adminLogRepository.Save(adminLog);
-        });
+        _adminLogFactory.LogDispatchEventQueue(currentUserId, currentUsername);
 
         var allDomains = new [] { TransactionDomain.Auth, TransactionDomain.User, TransactionDomain.Game };
         foreach (var domain in allDomains) {

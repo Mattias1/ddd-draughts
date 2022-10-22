@@ -1,19 +1,15 @@
-using Draughts.Common;
 using Draughts.Domain.AuthContext.Models;
 using Draughts.Repositories.Misc;
 using NodaTime;
 using System;
-using System.Linq;
 
 namespace Draughts.Domain.AuthContext.Services;
 
 public sealed class UserRegistrationDomainService {
     private readonly IClock _clock;
-    private readonly UserRoleDomainService _userRoleService;
 
-    public UserRegistrationDomainService(IClock clock, UserRoleDomainService userRoleService) {
+    public UserRegistrationDomainService(IClock clock) {
         _clock = clock;
-        _userRoleService = userRoleService;
     }
 
     public AuthUser CreateAuthUser(IIdPool idPool, Role pendingRegistrationRole,
@@ -37,11 +33,7 @@ public sealed class UserRegistrationDomainService {
                 nameof(pendingRegistrationRole));
         }
 
-        if (!authUser.RoleIds.Contains(pendingRegistrationRole.Id)) {
-            throw new ManualValidationException("This user doesn't have the pending registration role.");
-        }
-
-        _userRoleService.RemoveRole(authUser, pendingRegistrationRole, null);
-        _userRoleService.AssignRole(authUser, registeredUserRole, null);
+        authUser.RemoveRole(pendingRegistrationRole.Id, pendingRegistrationRole.Rolename);
+        authUser.AssignRole(registeredUserRole.Id, registeredUserRole.Rolename);
     }
 }

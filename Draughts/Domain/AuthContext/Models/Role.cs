@@ -1,9 +1,6 @@
 using Draughts.Common;
 using Draughts.Common.OoConcepts;
 using Draughts.Common.Utilities;
-using Draughts.Domain.AuthContext.Events;
-using Draughts.Domain.UserContext.Models;
-using Draughts.Repositories;
 using Draughts.Repositories.Misc;
 using NodaTime;
 using System.Collections.Generic;
@@ -38,14 +35,12 @@ public sealed class Role : AggregateRoot<Role, RoleId> {
             .AsReadOnly();
     }
 
-    public void Edit(string rolename, IEnumerable<Permission> grantedPermissions, UserId responsibleUserId) {
+    public void Edit(string rolename, IEnumerable<Permission> grantedPermissions) {
         ValidateRolename(rolename);
         DontLockYourselfOut(rolename, grantedPermissions);
 
         Rolename = rolename;
         Permissions = grantedPermissions.ToList().AsReadOnly();
-
-        AttachEvent(RoleEdited.Factory(this, responsibleUserId));
     }
 
     private void ValidateRolename(string rolename) {
@@ -71,10 +66,8 @@ public sealed class Role : AggregateRoot<Role, RoleId> {
         return Rolename == PENDING_REGISTRATION_ROLENAME || Rolename == REGISTERED_USER_ROLENAME;
     }
 
-    public static Role CreateNew(IIdPool idPool, string rolename, IClock clock, UserId responsibleUserId) {
-        var role = new Role(new RoleId(idPool.Next()), rolename, clock.UtcNow());
-        role.AttachEvent(RoleCreated.Factory(role, responsibleUserId));
-        return role;
+    public static Role CreateNew(IIdPool idPool, string rolename, IClock clock) {
+        return new Role(new RoleId(idPool.Next()), rolename, clock.UtcNow());
     }
 
     public readonly struct PermissionItem {

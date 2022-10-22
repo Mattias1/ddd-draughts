@@ -1,13 +1,9 @@
 using Draughts.Common.OoConcepts;
 using Draughts.Common.Utilities;
 using Draughts.Domain.UserContext.Models;
-using Draughts.Repositories.Misc;
 using NodaTime;
-using SqlQueryBuilder.Common;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using static Draughts.Domain.AuthContext.Models.Permission;
 
 namespace Draughts.Domain.AuthContext.Models;
 
@@ -17,108 +13,57 @@ public sealed class AdminLog : AggregateRoot<AdminLog, AdminLogId> {
     public IReadOnlyList<string> Parameters { get; }
     public UserId UserId { get; }
     public Username Username { get; }
-    public Permission Permission { get; }
     public ZonedDateTime CreatedAt { get; }
 
     public AdminLog(AdminLogId id, string type, IReadOnlyList<string> parameters,
-            UserId userId, Username username, Permission permission, ZonedDateTime createdAt) {
+            UserId userId, Username username, ZonedDateTime createdAt) {
         Id = id;
         UserId = userId;
         Username = username;
         Type = type;
         Parameters = parameters;
-        Permission = permission;
         CreatedAt = createdAt;
+
+        try {
+            Description();
+        }
+        catch (Exception e) {
+            throw new InvalidOperationException($"Invalid admin log type ({type}).", e);
+        }
     }
 
     public string Description() {
         string userId, username = "";
         switch (Type) {
-            case "role.created":
+            case "role.create":
                 var (roleId, rolename) = Parameters.UnpackDuo();
                 return $"Created a new role '{roleId} - {rolename}'";
-            case "role.edited":
+            case "role.edit":
                 (roleId, rolename) = Parameters.UnpackDuo();
                 return $"Edited the role '{roleId} - {rolename}'";
-            case "role.deleted":
+            case "role.delete":
                 (roleId, rolename) = Parameters.UnpackDuo();
                 return $"Deleted the role '{roleId} - {rolename}'";
-            case "role.gained":
+            case "role.gain":
                 (roleId, rolename, userId, username) = Parameters.UnpackQuad();
                 return $"Assigned the role '{roleId} - {rolename}' to '{userId} - {username}'";
-            case "role.lost":
+            case "role.lose":
                 (roleId, rolename, userId, username) = Parameters.UnpackQuad();
                 return $"Removed the role '{roleId} - {rolename}' from '{userId} - {username}'";
             case "events.sync":
+                AssertNoParams();
                 return "Synced the event queue status";
             case "events.dispatch":
+                AssertNoParams();
                 return "Dispatched the unhandled events";
             default:
                 throw new InvalidOperationException("Unknown admin log type.");
         }
     }
 
-    public static AdminLog CreateRoleLog(IIdPool idPool, IClock clock, AuthUser actor, RoleId roleId, string rolename) {
-        return new AdminLog(
-            NextId(idPool), "role.created", Params(roleId, rolename),
-            actor.Id, actor.Username,
-            Permissions.EditRoles, clock.UtcNow()
-        );
+    private void AssertNoParams() {
+        if (Parameters.Count != 0) {
+            throw new InvalidOperationException("There should not be parameters for this admin log.");
+        }
     }
-
-    public static AdminLog EditRoleLog(IIdPool idPool, IClock clock, AuthUser actor, RoleId roleId, string rolename) {
-        return new AdminLog(
-            NextId(idPool), "role.edited", Params(roleId, rolename),
-            actor.Id, actor.Username,
-            Permissions.EditRoles, clock.UtcNow()
-        );
-    }
-
-    public static AdminLog RoleGainedLog(IIdPool idPool, IClock clock, AuthUser actor,
-            RoleId roleId, string rolename, UserId userId, Username username) {
-        return new AdminLog(
-            NextId(idPool), "role.gained", Params(roleId, rolename, userId, username),
-            actor.Id, actor.Username,
-            Permissions.EditRoles, clock.UtcNow()
-        );
-    }
-
-    public static AdminLog RoleLostLog(IIdPool idPool, IClock clock, AuthUser actor,
-            RoleId roleId, string rolename, UserId userId, Username username) {
-        return new AdminLog(
-            NextId(idPool), "role.lost", Params(roleId, rolename, userId, username),
-            actor.Id, actor.Username,
-            Permissions.EditRoles, clock.UtcNow()
-        );
-    }
-
-    public static AdminLog RoleDeletedLog(IIdPool idPool, IClock clock, AuthUser actor,
-            RoleId roleId, string rolename) {
-        return new AdminLog(
-            NextId(idPool), "role.deleted", Params(roleId, rolename),
-            actor.Id, actor.Username,
-            Permissions.EditRoles, clock.UtcNow()
-        );
-    }
-
-    public static AdminLog SyncingEventQueueStatus(IIdPool idPool, IClock clock, UserId actorId, Username actorName) {
-        return new AdminLog(
-            NextId(idPool), "events.sync", Params(),
-            actorId, actorName,
-            Permissions.SystemMaintenance, clock.UtcNow()
-        );
-    }
-
-    public static AdminLog DispatchEventQueue(IIdPool idPool, IClock clock, UserId actorId, Username actorName) {
-        return new AdminLog(
-            NextId(idPool), "events.dispatch", Params(),
-            actorId, actorName,
-            Permissions.SystemMaintenance, clock.UtcNow()
-        );
-    }
-
-    private static AdminLogId NextId(IIdPool idPool) => new AdminLogId(idPool.Next());
-
-    private static IReadOnlyList<string> Params(params object[] parameters) => parameters
-        .Select(o => o.ToString() ?? "").ToList().AsReadOnly();
 }
