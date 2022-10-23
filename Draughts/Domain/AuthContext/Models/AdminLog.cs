@@ -35,6 +35,10 @@ public sealed class AdminLog : AggregateRoot<AdminLog, AdminLogId> {
     public string Description() {
         string userId, username = "";
         switch (Type) {
+            case "game.turntimechange":
+                var (gameId, turnTimeInSeconds, forAllFutureTurns) = Parameters.UnpackTrio();
+                string whichTurns = forAllFutureTurns == bool.TrueString ? "all future turns" : "the current turn";
+                return $"Changed turn time in game {gameId} to {turnTimeInSeconds}s for {whichTurns}";
             case "role.create":
                 var (roleId, rolename) = Parameters.UnpackDuo();
                 return $"Created a new role '{roleId} - {rolename}'";

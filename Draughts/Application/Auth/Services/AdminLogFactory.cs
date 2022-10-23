@@ -1,5 +1,6 @@
 using Draughts.Common.Utilities;
 using Draughts.Domain.AuthContext.Models;
+using Draughts.Domain.GameContext.Models;
 using Draughts.Domain.UserContext.Models;
 using Draughts.Repositories;
 using Draughts.Repositories.Misc;
@@ -9,6 +10,10 @@ using System.Linq;
 
 namespace Draughts.Application.Auth.Services;
 
+/// <summary>
+/// A factory to log admin actions. This starts its own transaction (unless in the auth context)
+/// and should be called before the action is taken to ensure everything is always logged.
+/// </summary>
 public sealed class AdminLogFactory {
     private readonly AdminLogRepository _adminLogRepository;
     private readonly IClock _clock;
@@ -31,16 +36,24 @@ public sealed class AdminLogFactory {
         return CreateLog("role.edit", actorId, actorName, roleId, rolename);
     }
 
-    public AdminLog LogGainRole(UserId actorId, Username actorName, RoleId roleId, string rolename, UserId userId, Username username) {
+    public AdminLog LogGainRole(UserId actorId, Username actorName,
+            RoleId roleId, string rolename, UserId userId, Username username) {
         return CreateLog("role.gain", actorId, actorName, roleId, rolename, userId, username);
     }
 
-    public AdminLog LogLoseRole(UserId actorId, Username actorName, RoleId roleId, string rolename, UserId userId, Username username) {
+    public AdminLog LogLoseRole(UserId actorId, Username actorName,
+            RoleId roleId, string rolename, UserId userId, Username username) {
         return CreateLog("role.lose", actorId, actorName, roleId, rolename, userId, username);
     }
 
     public AdminLog LogDeleteRole(UserId actorId, Username actorName, RoleId roleId, string rolename) {
         return CreateLog("role.delete", actorId, actorName, roleId, rolename);
+    }
+
+    public AdminLog LogChangeTurnTime(UserId actorId, Username actorName,
+            GameId gameId, int turnTimeInSeconds, bool forAllFutureTurns) {
+        return CreateLogWithTransaction("game.turntimechange", actorId, actorName,
+            gameId, turnTimeInSeconds, forAllFutureTurns);
     }
 
     public AdminLog LogSyncEventQueueStatus(UserId actorId, Username actorName) {

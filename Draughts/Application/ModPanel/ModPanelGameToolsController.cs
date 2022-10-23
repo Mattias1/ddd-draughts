@@ -1,3 +1,4 @@
+using Draughts.Application.Auth.Services;
 using Draughts.Application.ModPanel.ViewModels;
 using Draughts.Application.Shared;
 using Draughts.Application.Shared.Attributes;
@@ -17,13 +18,15 @@ namespace Draughts.Application.ModPanel;
 
 [ViewsFrom("ModPanel")]
 public sealed class ModPanelGameToolsController : BaseController {
+    private readonly AdminLogFactory _adminLogFactory;
     private readonly IClock _clock;
     private readonly GameRepository _gameRepository;
     private readonly IUnitOfWork _unitOfWork;
     private readonly IHubContext<WebsocketHub> _websocketHub;
 
-    public ModPanelGameToolsController(IClock clock, GameRepository gameRepository,
+    public ModPanelGameToolsController(AdminLogFactory adminLogFactory, IClock clock, GameRepository gameRepository,
             IUnitOfWork unitOfWork, IHubContext<WebsocketHub> websocketHub) {
+        _adminLogFactory = adminLogFactory;
         _clock = clock;
         _gameRepository = gameRepository;
         _unitOfWork = unitOfWork;
@@ -41,9 +44,14 @@ public sealed class ModPanelGameToolsController : BaseController {
             ValidateNotNull(request?.GameId, request?.TurnTimeInSeconds);
 
             var gameId = new GameId(request?.GameId);
+            int turnTimeInSeconds = request!.TurnTimeInSeconds!.Value;
+            bool forAllFutureTurns = request.ForAllFutureTurns ?? false;
+            _adminLogFactory.LogChangeTurnTime(AuthContext.UserId, AuthContext.Username,
+                gameId, turnTimeInSeconds, forAllFutureTurns);
+
             _unitOfWork.WithGameTransaction(tran => {
                 var game = _gameRepository.FindById(gameId);
-                game.ChangeTurnTime(_clock.UtcNow(), request!.TurnTimeInSeconds!.Value, request.ForAllFutureTurns ?? false);
+                game.ChangeTurnTime(_clock.UtcNow(), turnTimeInSeconds, forAllFutureTurns);
                 _gameRepository.Save(game);
             });
 
