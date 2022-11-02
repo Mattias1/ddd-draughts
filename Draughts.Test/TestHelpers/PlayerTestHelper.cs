@@ -15,7 +15,7 @@ public sealed class PlayerTestHelper {
         return new PlayerBuilder()
             .WithId(IdTestHelper.Next())
             .WithUserId(IdTestHelper.Next())
-            .WithUsername("WhitePlayer")
+            .WithUsername("TestPlayerWhite")
             .WithRank(Rank.Ranks.Private)
             .WithColor(Color.White)
             .WithCreatedAt(Feb29);
@@ -25,7 +25,7 @@ public sealed class PlayerTestHelper {
         return new PlayerBuilder()
             .WithId(IdTestHelper.Next())
             .WithUserId(IdTestHelper.Next())
-            .WithUsername("BlackPlayer")
+            .WithUsername("TestPlayerBlack")
             .WithRank(Rank.Ranks.Private)
             .WithColor(Color.Black)
             .WithCreatedAt(Feb29);

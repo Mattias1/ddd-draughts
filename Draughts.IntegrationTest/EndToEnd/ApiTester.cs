@@ -8,6 +8,7 @@ using Draughts.Repositories;
 using Draughts.Repositories.Misc;
 using Draughts.Repositories.Transaction;
 using Draughts.Test.Fakes;
+using Draughts.Test.TestHelpers;
 using Flurl;
 using Flurl.Http;
 using Microsoft.AspNetCore.Hosting;
@@ -42,6 +43,7 @@ public sealed class ApiTester {
 
         Clock = SystemClock.Instance;
         IdGenerator = HiLoIdGenerator.BuildHiloGIdGenerator(1, 1, 1);
+        IdTestHelper.IdGenerator = IdGenerator;
 
         // TODO: At this point, maybe just call the service provider and then fetch from the injector???
         var backgroundQueue = new BackgroundQueue(e => Log.Logger.Error("Error in background task", e), 100, 0);

@@ -1,4 +1,3 @@
-using Draughts.Repositories;
 using Draughts.Repositories.Misc;
 using System.Collections.Generic;
 
@@ -16,13 +15,15 @@ public static class IdTestHelper {
     public sealed class FakeIdGenerator : IIdGenerator {
         private FakePool _pool = new FakePool();
         public IIdPool ReservePool() => _pool;
-        public IIdPool ReservePool(int minimumSizeMisc, int minimumSizeGame, int minimumSizeUser) => ReservePool();
+        public IIdPool ReservePool(int minimumSizeMisc, int minimumSizeGame, int minimumSizeUser) => _pool;
     }
 
     public sealed class FakePool : IIdPool {
         private Dictionary<string, long> _availableIds = new Dictionary<string, long>(3) {
-                { DbIdGeneration.SUBJECT_MISC, 1 }, { DbIdGeneration.SUBJECT_GAME, 1 }, { DbIdGeneration.SUBJECT_USER, 1 }
-            };
+            { DbIdGeneration.SUBJECT_MISC, 1 },
+            { DbIdGeneration.SUBJECT_GAME, 1 },
+            { DbIdGeneration.SUBJECT_USER, 1 }
+        };
 
         public int Count() => 42;
         public int CountForGame() => 42;
