@@ -1,7 +1,7 @@
 version: '3.8'
 services:
   draughts-db:
-    image: mariadb:10
+    image: mariadb:10.9 # MySQL.Data crashes with mariadb 10.10, so for now let's stay one version back and see if any of them fixes something.
     container_name: draughts-db
     restart: "no"
     environment:

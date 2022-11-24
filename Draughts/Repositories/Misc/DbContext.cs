@@ -10,28 +10,25 @@ public sealed class DbContext {
     private static DbContext? _instance = null;
     public static DbContext Get => _instance ?? throw new InvalidOperationException("The database context isn't initialized yet.");
 
-    private readonly DbConnectionInfo _userDb;
-    private readonly DbConnectionInfo _authUserDb;
-    private readonly DbConnectionInfo _gameDb;
-    private readonly DbConnectionInfo _miscDb;
+    private readonly DbConnectionInfo _userDb, _authDb, _gameDb, _miscDb;
 
     private DbContext(string dbPassword) {
         _userDb = new DbConnectionInfo("draughts_user", "draughts_user", "devapp");
-        _authUserDb = new DbConnectionInfo("draughts_authuser", "draughts_authuser", "devapp");
+        _authDb = new DbConnectionInfo("draughts_auth", "draughts_auth", "devapp");
         _gameDb = new DbConnectionInfo("draughts_game", "draughts_game", "devapp");
         _miscDb = new DbConnectionInfo("draughts_misc", "draughts_game", "devapp"); // All users can access the misc DB.
     }
 
     public ISqlTransactionFlavor BeginUserTransaction() => _userDb.Connection().BeginTransaction();
-    public ISqlTransactionFlavor BeginAuthTransaction() => _authUserDb.Connection().BeginTransaction();
+    public ISqlTransactionFlavor BeginAuthTransaction() => _authDb.Connection().BeginTransaction();
     public ISqlTransactionFlavor BeginGameTransaction() => _gameDb.Connection().BeginTransaction();
     public ISqlTransactionFlavor BeginMiscTransaction() => _miscDb.Connection().BeginTransaction();
 
     public IInitialQueryBuilder Query(ISqlTransactionFlavor transaction) => QueryBuilder.Init(transaction);
 
+    public static void Init(string dbPassword) => _instance = new DbContext(dbPassword);
+
     private record DbConnectionInfo(string Database, string User, string Password) {
         public MySqlFlavor Connection() => new MySqlFlavor(SERVER, PORT, User, Password, Database);
     }
-
-    public static void Init(string dbPassword) => _instance = new DbContext(dbPassword);
 }

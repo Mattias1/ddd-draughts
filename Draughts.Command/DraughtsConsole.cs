@@ -82,9 +82,9 @@ public sealed class DraughtsConsole {
                     return;
                 }
             }
-            catch (SqlQueryBuilderException) {
+            catch (SqlQueryBuilderException e) {
                 if (i <= maxSeconds) {
-                    Console.WriteLine($"Wait for database connection ({i}).");
+                    Console.WriteLine($"Wait for database connection ({i}: {e.Message})");
                     Thread.Sleep(1000);
                 }
             }

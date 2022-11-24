@@ -5,9 +5,9 @@ GRANT SELECT, INSERT, UPDATE, DELETE ON `draughts_misc`.* TO 'draughts_user'@'%'
 
 
 -- Auth user --
-CREATE USER 'draughts_authuser'@'%' IDENTIFIED BY 'devapp';
-GRANT SELECT, INSERT, UPDATE, DELETE ON `draughts_authuser`.* TO 'draughts_authuser'@'%';
-GRANT SELECT, INSERT, UPDATE, DELETE ON `draughts_misc`.* TO 'draughts_authuser'@'%';
+CREATE USER 'draughts_auth'@'%' IDENTIFIED BY 'devapp';
+GRANT SELECT, INSERT, UPDATE, DELETE ON `draughts_auth`.* TO 'draughts_auth'@'%';
+GRANT SELECT, INSERT, UPDATE, DELETE ON `draughts_misc`.* TO 'draughts_auth'@'%';
 
 
 -- Game --

@@ -47,8 +47,8 @@ CREATE TABLE `received_events` (
 
 
 -- Auth user --
-CREATE DATABASE `draughts_authuser`;
-USE `draughts_authuser`;
+CREATE DATABASE `draughts_auth`;
+USE `draughts_auth`;
 
 CREATE TABLE `authusers` (
     `id` BIGINT NOT NULL,
