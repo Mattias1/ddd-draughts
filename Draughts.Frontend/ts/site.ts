@@ -48,4 +48,10 @@ export function initializeShowHideLinks(parentIdentifier: string = ''): void {
 
         return false;
     });
+
+    $('html').on('click', function(evt) {
+        if ($(evt.target).closest('.hide-on-click-outside').length == 0) {
+            $('.hide-on-click-outside').hide();
+        }
+    });
 }

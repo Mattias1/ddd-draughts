@@ -1,5 +1,7 @@
 @{
     ViewBag.Title = "Documentation";
+
+    var refs = new ReferenceTooltips();
 }
 
 <nav class="side-menu">
@@ -12,12 +14,14 @@
     <h3>Authentication and authorization</h3>
     <p>
         Although not strictly a part of DDD, I implemented the whole authentication and authorization myself, partly
-        because it's fun and partly because that's the best way to learn how it works.
+        because it's fun and partly because that's the best way to learn how things work.
     </p>
     <p>
-        Because I wanted this to be a stateless webapplication, I used Json Web Tokens for authorization.
-        Visit <a class="extern" href="https://jwt.io">jwt.io</a> for more information on the JWT standard.
-        <!-- TODO: Drawbacks of JWT as 'stateless session': login invalidation, long JWT timeout/stale data, not battle tested -->
+        Because I wanted to experiment with a stateless webapplication, I used a JSON Web Token
+        (JWT)&nbsp;@refs.Print("Visit <a class=\"extern\" href=\"https://jwt.io\">jwt.io</a> for more information on "
+            + "the JWT standard.") for authentication and authorization.
+        Note that JWTs are not meant to be long lived, so this is not a sound idea and I would do this
+        <a @Utils.Href("/documentation/differentnexttime")>differently next time</a>.
     </p>
 
     <h4>The JWT action filter</h4>
@@ -38,14 +42,14 @@
 
     <h4>Using a cookie</h4>
     <p>
-        The Json Web Token is passed via a cookie. The reason for that is because our frontend doesn't rely on
-        javascript or ajax to communicate with the backend, but uses mostly just simple html links and form posts. With
-        a cookie it's way easier to attach the token to every request.
+        The JWT is passed via a cookie. The reason for that is because our frontend doesn't rely on javascript or ajax
+        to communicate with the backend, but uses mostly just simple html links and form posts. With a cookie it's way
+        easier to attach the token to every request.
     </p>
 
     <h4>Final note</h4>
     <p>
-        All of this is handcrafted and should not be used in production code. Please use properly audited libraries for
-        security related matters :).
+        Even if you want to use this idea, all of this is handcrafted and should not be used in production code. Please
+        use properly audited libraries for security related matters :).
     </p>
 </div>

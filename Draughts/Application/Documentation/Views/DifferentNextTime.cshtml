@@ -1,0 +1,92 @@
+@{
+    ViewBag.Title = "Documentation";
+}
+
+<nav class="side-menu">
+    @Utils.SideMenu(Model)
+</nav>
+
+<div class="text-side-menu-container">
+    <h1>@ViewBag.Title</h1>
+
+    <h3>Things I would do differently next time</h3>
+    <p>
+        As this project is set up to experiment there are a few things I've tried that, while not
+        terrible (otherwise I would've already refactored them away), I'm still not 100% happy
+        about.
+    </p>
+
+    <h4>A separate auth and user context</h4>
+    <p>
+        The goal of this project is to play with domain-driven design, and as such, I wanted a
+        project with several <a @Utils.Href("/documentation/boundedcontexts")>bounded contexts</a>
+        to play with. So I created a separate auth- and user context.
+    </p>
+    <p>
+        Now, if you have external authentication this would make sense. I do not however, so this
+        just adds complixity without much benefit.
+        For a next time I'd say just merge the two into a single bounded context.
+    </p>
+
+    <h4>Authentication via JSON web tokens in a cookie</h4>
+    <p>
+        I tried <a @Utils.Href("/documentation/auth")>authenticating via JWTs</a> in order to have
+        a stateless web application. Aside from the database of course. Oh, and bits of caching or
+        other in-memory state. ... Right.
+    </p>
+    <p>
+        But aside from the fact that draughts is far from stateless anyway, this is also
+        silly because JSON web tokens are meant to be short lived. And that doesn't match with a
+        web app where you want to log in once from your personal computer, and then stay logged in
+        for a year.
+        To make it workable my JWTs are valid for a day, which may be fine for demo purposes, but
+        really isn't ok in production. Both because this is way to long for a JWT to be secure, and
+        way to short for user convenience.
+    </p>
+    <p>
+        The reason using a JWT like this is insecure is because you cannot invalidate a token, and
+        so you cannot log out.
+        There are workarounds for that of course, but these require server-sided state, which kind
+        off defeats the purpose...
+        So yeah, I'll just use ye olde boring session cookies next time.
+    </p>
+
+    <h4>Overusing application services</h4>
+    <p>
+        The domain-driven design architecture recommends
+        <a @Utils.Href("/documentation/buildingblocks")>application services</a> to mediate between
+        your controllers and your database. And so I dutifully added them everywhere.
+    </p>
+    <p>
+        I ended up refactoring a lot of them away however, because most of the time there's little
+        or nothing at all for them to do that a controller can't just do itself. There's a few left
+        that have some use, but I think you can skip application services most of the time.
+    </p>
+
+    <h4>Specifications</h4>
+    <p>
+        The specification pattern is a cute little pattern that you can use to deduplicate domain
+        logic and where logic in database queries. You can also use it to chain together many
+        different query predicates.
+    </p>
+    <p>
+        And while that's nice and all, I don't actually use much of that. So for draughts this adds
+        a layer of abstraction that has little value. Best scrap 'em next time.
+    </p>
+
+    <h4>Seperate transactions for each event domain</h4>
+    <p>
+        In draughts I have separate database users for each domain, and they can't update data for
+        another domain. Which is how it should be.
+    </p>
+    <p>
+        This does mean however that when I need to retroactively
+        <a @Utils.Href("/documentation/eventualconsistency")>sync or resend events</a> I need to
+        start and commit transactions from one domain to the next and then back agian.
+        I kind of like this because that's also how it'd had to happen if these events are really
+        sent accross different applications. That said, in draughts they aren't and I can just
+        cheat and create a database user that can access all databases and be done in one go.
+        Maybe a bit of a hack, but it'd be much easier.
+        Hmmmmm.
+    </p>
+</div>

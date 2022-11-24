@@ -1,5 +1,7 @@
 @{
     ViewBag.Title = "Documentation";
+
+    var refs = new ReferenceTooltips();
 }
 
 <nav class="side-menu">
@@ -31,20 +33,13 @@
         It's never allowed to interact with layers further to the outside.<br>
         You'll put most of the domain logic inside the <em>domain model</em>, while the <em>domain services</em> are
         responsible for the bits of logic that span multiple aggregates.
-        The <em>controllers</em> manage you HTTP requests and the <em>repositories</em> your queries of course. That
-        leaves the <em>application services</em> to tie everything together.<br>
+        The <em>controllers</em> manage you HTTP requests and the <em>repositories</em>
+        @refs.Print("Sometimes people put repository interfaces inside the domain service layer (though never the "
+            + "implementations).<br><br>In my opinion this is cheating, as there's no point in pretending that "
+            + "interacting with an interface will really not perform any actual object storage logic.")
+        your queries of course. That leaves the <em>application services</em> to tie everything together.<br>
         If you have logic that spans multiple bounded contexts, you'll usually want the communication to go via events
         and that's where you'll need <em>event handlers</em>. They function a bit like a controllers, but react to
         events instead of HTTP requests.
-    </p>
-    <p>
-        Note that sometimes people put repository interfaces inside the domain service layer (though never the
-        implementations). In my opinion this is cheating, as there's no point in pretending that interacting with an
-        interface will really not perform actual object storage logic.
-
-        <!-- TODO: Actually implement this and move this to 'Good to know' -->
-        This has the consequence that we might need to put a tiny bit of domain logic in the application services
-        outside the domain (like for example guaranteeing uniqueness). That's not ideal, but it's better than allowing
-        queries inside the domain.
     </p>
 </div>

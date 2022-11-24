@@ -31,6 +31,9 @@ public sealed class DocumentationController : BaseController {
     public IActionResult GoodToKnow() => ViewWithMenu();
 
     [HttpGet, GuestRoute]
+    public IActionResult DifferentNextTime() => ViewWithMenu();
+
+    [HttpGet, GuestRoute]
     public IActionResult Auth() => ViewWithMenu();
 
     private IActionResult ViewWithMenu() {
@@ -42,6 +45,7 @@ public sealed class DocumentationController : BaseController {
             ("Building blocks", "/documentation/buildingblocks"),
             ("Eventual consistency", "/documentation/eventualconsistency"),
             ("Good to know", "/documentation/goodtoknow"),
+            ("Things I would do differently", "/documentation/differentnexttime"),
             ("Authentication and authorization", "/documentation/auth")
         ));
     }
