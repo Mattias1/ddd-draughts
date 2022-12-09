@@ -19,7 +19,7 @@ look at the [source files](/Draughts/Application/Documentation/Views) of the doc
 Setup
 ------
 ### Dependencies
-- Dotnet 6 SDK
+- Dotnet 7 SDK
 - Docker and docker-compose
 - Node.js and npm
 

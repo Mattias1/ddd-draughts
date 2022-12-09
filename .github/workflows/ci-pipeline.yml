@@ -17,7 +17,7 @@ jobs:
     - name: Setup .NET
       uses: actions/setup-dotnet@v1
       with:
-        dotnet-version: 6.0.x
+        dotnet-version: 7.0.x
     - name: Restore backend dependencies
       run: dotnet restore
     - name: Build backend
@@ -27,7 +27,7 @@ jobs:
     - name: Setup Node.js
       uses: actions/setup-node@v2
       with:
-        node-version: '16'
+        node-version: '18'
     - name: Install frontend dependencies
       run: >
         cd Draughts.Frontend/
@@ -55,6 +55,12 @@ jobs:
         --no-build
         --verbosity normal
         --filter FullyQualifiedName~Draughts.Test
+    - name: Run query builder tests
+      run: >
+        dotnet test
+        --no-build
+        --verbosity normal
+        --filter FullyQualifiedName~SqlQueryBuilder.Test
     - name: Run database backend tests
       run: >
         dotnet test

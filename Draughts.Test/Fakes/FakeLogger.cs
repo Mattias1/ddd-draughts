@@ -13,7 +13,7 @@ public sealed class FakeLogger<T> : ILogger<T> {
     public record Data(LogLevel LogLevel, string Message, Exception? Exception);
 
     // --- Implementation of the interface ---
-    public IDisposable BeginScope<TState>(TState state) {
+    public IDisposable BeginScope<TState>(TState state) where TState : notnull {
         throw new NotImplementedException("The fake logger doesn't support scopes (yet?).");
     }
 
