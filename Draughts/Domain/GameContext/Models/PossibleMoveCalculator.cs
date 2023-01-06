@@ -7,10 +7,10 @@ using static Draughts.Domain.GameContext.Models.GameSettings;
 namespace Draughts.Domain.GameContext.Models;
 
 public sealed class PossibleMoveCalculator {
-    private Board _board;
-    private GameSettings _settings;
-    private Color _currentTurn;
-    private SquareId? _restrictedTo;
+    private readonly Board _board;
+    private readonly GameSettings _settings;
+    private readonly Color _currentTurn;
+    private readonly SquareId? _restrictedTo;
     private int _minCaptureSequenceLength;
 
     private bool MustCapture => _minCaptureSequenceLength > 0;
@@ -31,7 +31,7 @@ public sealed class PossibleMoveCalculator {
     public IReadOnlyList<PossibleMove> Calculate() {
         var possibleMoves = new List<PossibleMove>();
         foreach (var from in AllLoopPositions()) {
-            foreach (var dir in Direction.All) {
+            foreach (var dir in _settings.BoardType.AllDirections()) {
                 if (!_settings.FlyingKings || from.HasMan) {
                     AddNormalMovesFrom(possibleMoves, from, dir);
                 } else {
@@ -80,7 +80,7 @@ public sealed class PossibleMoveCalculator {
         _board.PerformMoveUnsafe(from.Id, to.Id, victim.Id);
 
         int maxChainLength = 1;
-        foreach (var dir in Direction.All) {
+        foreach (var dir in _settings.BoardType.AllDirections()) {
             var (target, jump) = to.GetTargetAndJump(dir);
             if (IsKillable(target) && IsFree(jump) && IsValidCaptureDirection(dir, currentPiece)) {
                 if (_settings.CaptureConstraints == DraughtsCaptureConstraints.AnyFinishedSequence) {
@@ -154,7 +154,7 @@ public sealed class PossibleMoveCalculator {
         _board.PerformMoveUnsafe(from.Id, to.Id, victim.Id);
 
         int maxChainLength = 1;
-        foreach (var dir in Direction.All) {
+        foreach (var dir in _settings.BoardType.AllDirections()) {
             Square? target = FirstNonEmptySquareInDirection(to, dir);
             if (!IsKillable(target)) {
                 continue;

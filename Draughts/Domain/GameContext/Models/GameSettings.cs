@@ -1,12 +1,11 @@
 using Draughts.Common.OoConcepts;
 using NodaTime;
-using System;
 using System.Collections.Generic;
 
 namespace Draughts.Domain.GameContext.Models;
 
 public sealed class GameSettings : ValueObject<GameSettings> {
-    public enum GameSettingsPreset { International, EnglishAmerican, Mini, Other };
+    public enum GameSettingsPreset { International, EnglishAmerican, Mini, Hexdame, MiniHex, Other };
     public enum DraughtsCaptureConstraints { MaximumPieces, AnyFinishedSequence };
 
     public int BoardSize { get; }
@@ -14,16 +13,8 @@ public sealed class GameSettings : ValueObject<GameSettings> {
     public bool FlyingKings { get; }
     public bool MenCaptureBackwards { get; }
     public DraughtsCaptureConstraints CaptureConstraints { get; }
-
-    public Duration MaxTurnLength { get; private set; }
-
-    public int PiecesPerSide => BoardSize switch {
-        12 => 30,
-        10 => 20,
-        8 => 12,
-        6 => 6,
-        _ => throw new InvalidOperationException("Unknown board size: " + BoardSize)
-    };
+    public Duration MaxTurnLength { get; }
+    public IBoardType BoardType { get; }
 
     public GameSettings(int boardSize, Color firstMove, bool flyingKings, bool menCaptureBackwards,
             DraughtsCaptureConstraints captureConstraints)
@@ -38,19 +29,27 @@ public sealed class GameSettings : ValueObject<GameSettings> {
         MenCaptureBackwards = menCaptureBackwards;
         CaptureConstraints = captureConstraints;
         MaxTurnLength = turnLength;
+        BoardType = IsHexagonalBoard() ? new HexagonalBoardType(boardSize) : new SquareBoardType(boardSize);
     }
 
     public string Description {
         get => this == International ? "International"
             : this == EnglishAmerican ? "English draughts"
             : this == Mini ? "Mini 6x6"
+            : this == Hexdame ? "Hexdame"
+            : this == MiniHex ? "MiniHex"
+            : IsHexagonalBoard() ? $"Custom hex-{BoardSize}"
             : $"Custom {BoardSize}x{BoardSize}";
     }
+
+    private bool IsHexagonalBoard() => BoardSize == 3 || BoardSize == 5;
 
     public GameSettingsPreset PresetEnum {
         get => this == International ? GameSettingsPreset.International
             : this == EnglishAmerican ? GameSettingsPreset.EnglishAmerican
             : this == Mini ? GameSettingsPreset.Mini
+            : this == Hexdame ? GameSettingsPreset.Hexdame
+            : this == MiniHex ? GameSettingsPreset.MiniHex
             : GameSettingsPreset.Other;
     }
 
@@ -74,5 +73,11 @@ public sealed class GameSettings : ValueObject<GameSettings> {
     }
     public static GameSettings Mini {
         get => new GameSettings(6, Color.White, true, true, DraughtsCaptureConstraints.MaximumPieces);
+    }
+    public static GameSettings Hexdame {
+        get => new GameSettings(5, Color.White, true, true, DraughtsCaptureConstraints.MaximumPieces);
+    }
+    public static GameSettings MiniHex {
+        get => new GameSettings(3, Color.White, true, true, DraughtsCaptureConstraints.MaximumPieces);
     }
 }

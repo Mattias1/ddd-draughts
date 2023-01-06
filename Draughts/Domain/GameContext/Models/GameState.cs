@@ -13,9 +13,9 @@ public sealed class GameState : AggregateRoot<GameState, GameId> {
 
     public override GameId Id { get; }
 
-    private List<Move> _moves;
+    private readonly List<Move> _moves;
 
-    public Board? _initialBoard;
+    private readonly Board? _initialBoard;
     public Board Board { get; }
     public SquareId? CaptureSequenceFrom { get; private set; }
 
@@ -68,7 +68,7 @@ public sealed class GameState : AggregateRoot<GameState, GameId> {
     public string? InitialStateStorageString() => _initialBoard?.ToString();
 
     public static GameState FromStorage(GameId gameId, GameSettings settings, string? storage, IEnumerable<Move> moves) {
-        var board = storage is null ? Board.InitialSetup(settings.BoardSize) : Board.FromString(storage);
+        var board = storage is null ? Board.InitialSetup(settings.BoardType) : Board.FromString(settings.BoardType, storage);
         var initialBoard = storage is null ? null : board.Copy();
         SquareId? captureSequenceFrom = PerformAllMoves(board, moves, settings);
 
@@ -91,6 +91,7 @@ public sealed class GameState : AggregateRoot<GameState, GameId> {
     }
 
     public static GameState InitialState(GameId gameId, int boardSize) {
-        return new GameState(gameId, null, new List<Move>(), Board.InitialSetup(boardSize), null);
+        // TODO: HARDCODED FOR SQUARE
+        return new GameState(gameId, null, new List<Move>(), Board.InitialSetup(new SquareBoardType(boardSize)), null);
     }
 }

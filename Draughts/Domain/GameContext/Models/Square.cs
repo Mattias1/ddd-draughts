@@ -2,9 +2,9 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace Draughts.Domain.GameContext.Models;
 
-// Right now this class is mutuable because the Board is.
+// Right now this class is mutable because the Board is.
 public sealed class Square {
-    private Board _board;
+    private readonly Board _board;
     public SquareId Id { get; }
     public Piece Piece { get; internal set; }
 
@@ -22,7 +22,7 @@ public sealed class Square {
     public bool HasLivingPiece => Piece.IsAlive;
     public bool HasDeadPiece => Piece.IsDead;
 
-    public (int x, int y) ToPosition() => Id.ToPosition(_board.Size);
+    public (int x, int y) ToPosition() => Id.ToPosition(_board.Type);
 
     public bool TryGetBorder(Direction direction, [NotNullWhen(returnValue: true)] out Square? square) {
         square = GetBorder(direction);
@@ -30,14 +30,10 @@ public sealed class Square {
     }
 
     public Square? GetBorder(Direction direction) {
-        var (x, y) = ToPosition();
-        if (x <= 0 && direction.DX < 0
-                || x >= _board.Size - 1 && direction.DX > 0
-                || y <= 0 && direction.DY < 0
-                || y >= _board.Size - 1 && direction.DY > 0) {
-            return null;
-        }
-        return _board[x + direction.DX, y + direction.DY];
+        var (currentX, currentY) = ToPosition();
+        int borderX = currentX + direction.DX;
+        int borderY = currentY + direction.DY;
+        return _board.Type.IsInRange(borderX, borderY) ? _board[borderX, borderY] : null;
     }
 
     public (Square? target, Square? jump) GetTargetAndJump(Direction direction) {

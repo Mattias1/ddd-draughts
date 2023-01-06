@@ -13,16 +13,7 @@ public sealed class SquareId : IntValueObject<SquareId> {
         Value = value.Value;
     }
 
-    public (int x, int y) ToPosition(int size) {
-        int y = (Value - 1) * 2 / size;
-        int x = (Value * 2 - 1) % size - y % 2;
-        return (x, y);
-    }
+    public (int x, int y) ToPosition(IBoardType BoardType) => BoardType.CoordinateFor(this);
 
-    public static SquareId FromPosition(int x, int y, int size) {
-        if (!Board.IsPlayable(x, y)) {
-            throw new ManualValidationException($"This position ({x}, {y}) is not playable.");
-        }
-        return new SquareId((x + 2 + y * size) / 2);
-    }
+    public static SquareId FromPosition(int x, int y, IBoardType BoardType) => BoardType.SquareIdFor(x, y);
 }

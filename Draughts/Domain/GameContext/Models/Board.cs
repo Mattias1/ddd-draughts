@@ -7,17 +7,19 @@ using System.Text;
 
 namespace Draughts.Domain.GameContext.Models;
 
-// This class is like a mutuable value object. It could be immutable, but that'd be not very performant. Maybe. Hmmm. :/
+// This class is like a mutable value object. It could be immutable, but that'd be not very performant. Maybe. Hmm. :/
 // It's not an entity either. It doesn't really have an identity.
-public sealed class Board : IEquatable<Board> {
-    private readonly Square[] _squares;
-    public int Size { get; }
+public sealed class Board {
+    private readonly Square[] _squares; // Well, or hexes really, but close enough
+    public IBoardType Type { get; }
+    public int DisplaySize => Type.DisplaySize;
+    public int LongSize => Type.LongSize;
 
     /// <summary>
     /// The square at (x, y).
     /// The top left square is (0, 0).
     /// </summary>
-    public Square? this[int x, int y] => IsPlayable(x, y) ? this[SquareId.FromPosition(x, y, Size)] : null;
+    public Square? this[int x, int y] => Type.IsPlayable(x, y) ? this[SquareId.FromPosition(x, y, Type)] : null;
     public Square this[SquareId n] {
         get => _squares[n.Value - 1];
         private set => _squares[n.Value - 1] = value;
@@ -25,8 +27,8 @@ public sealed class Board : IEquatable<Board> {
 
     public int NrOfPlayableSquares => _squares.Length;
 
-    private Board(int size, Piece[] pieces) {
-        Size = size;
+    private Board(IBoardType type, Piece[] pieces) {
+        Type = type;
         var squares = new Square[pieces.Length];
         for (int i = 0; i < squares.Length; i++) {
             squares[i] = new Square(new SquareId(i + 1), pieces[i], this);
@@ -54,7 +56,7 @@ public sealed class Board : IEquatable<Board> {
         canCaptureMore = move.MoreCapturesAvailable;
         PerformMoveUnsafe(from, to, move.Victim);
 
-        if (!canCaptureMore && IsManOnLastRow(to)) {
+        if (!canCaptureMore && HasManOnLastRow(to)) {
             PromoteUnsafe(to);
         }
 
@@ -65,7 +67,7 @@ public sealed class Board : IEquatable<Board> {
         return move;
     }
 
-    internal void PerformMoveUnsafe(SquareId from, SquareId to, SquareId? victim) {
+    public void PerformMoveUnsafe(SquareId from, SquareId to, SquareId? victim) {
         this[to].Piece = this[from].Piece;
         this[from].Piece = Piece.Empty;
         if (victim is not null) {
@@ -73,7 +75,7 @@ public sealed class Board : IEquatable<Board> {
         }
     }
 
-    internal void UndoMoveUnsafe(SquareId from, SquareId to, SquareId? victim, Piece capturedPiece) {
+    public void UndoMoveUnsafe(SquareId from, SquareId to, SquareId? victim, Piece capturedPiece) {
         this[from].Piece = this[to].Piece;
         this[to].Piece = Piece.Empty;
         if (victim is not null) {
@@ -85,13 +87,13 @@ public sealed class Board : IEquatable<Board> {
         this[square].Piece = this[square].Piece.Promoted();
     }
 
-    private bool IsManOnLastRow(SquareId squareId) {
+    private bool HasManOnLastRow(SquareId squareId) {
         var square = this[squareId];
-        if (square.ColorOfPiece is null || square.HasKing) {
+        if (square.IsEmpty || square.HasKing) {
             return false;
         }
-        int y = square.ToPosition().y;
-        return square.ColorOfPiece == Color.Black ? y == Size - 1 : y == 0;
+        (int x, int y) = square.ToPosition();
+        return Type.IsLastRow(square.ColorOfPiece, x, y);
     }
 
     private void CleanUpBodies() {
@@ -102,46 +104,35 @@ public sealed class Board : IEquatable<Board> {
 
     public override string ToString() => ToLongString("", "");
     public string ToLongString(string separator = "\n", string empty = " ") {
-        var sb = new StringBuilder(_squares.Length * 2 + Size);
-        for (int y = 0; y < Size; y++) {
-            for (int x = 0; x < Size; x++) {
+        var sb = new StringBuilder(_squares.Length * 2 + LongSize);
+        for (int y = 0; y < LongSize; y++) {
+            for (int x = 0; x < LongSize; x++) {
                 sb.Append(this[x, y]?.Piece.ToHexString() ?? empty);
             }
-            if (y != Size - 1) {
+            if (y != LongSize - 1) {
                 sb.Append(separator);
             }
         }
         return sb.ToString();
     }
 
-    public Board Copy() {
-        var pieces = _squares.Select(s => s.Piece).ToArray();
-        return new Board(Size, pieces);
-    }
+    public Board Copy() => new Board(Type, _squares.Select(s => s.Piece).ToArray());
 
-    public static Board FromString(string input, string separator = "\n", string empty = " ") {
+    public static Board FromString(IBoardType boardType, string input, string separator = "\n", string empty = " ") {
         var pieces = input.ToCharArray().Select(c => c.ToString())
             .Where(s => s != empty && s != separator)
             .Select(s => Piece.FromHexString(s))
             .ToArray();
-        int size = Convert.ToInt32(Math.Sqrt(pieces.Length * 2));
-        return new Board(size, pieces);
+        if (pieces.Length != boardType.AmountOfSquares()) {
+            throw new InvalidOperationException($"Invalid board, expected {boardType.AmountOfSquares()} pieces, "
+                + $"got {pieces.Length}.");
+        }
+        return new Board(boardType, pieces);
     }
 
-    public static Board InitialSetup(int boardSize) {
-        int nrOfStartingPieces = boardSize * (boardSize - 2) / 4;
-        var pieces = new Piece[nrOfStartingPieces + boardSize + nrOfStartingPieces];
-        for (int i = 0; i < nrOfStartingPieces; i++) {
-            pieces[i] = Piece.BlackMan;
-            pieces[pieces.Length - i - 1] = Piece.WhiteMan;
-        }
-        for (int i = 0; i < boardSize; i++) {
-            pieces[i + nrOfStartingPieces] = Piece.Empty;
-        }
-        return new Board(boardSize, pieces);
+    public static Board InitialSetup(IBoardType boardType) {
+        return new Board(boardType, boardType.InitialPieces());
     }
-
-    public static bool IsPlayable(int x, int y) => (x + y) % 2 == 1;
 
     public override bool Equals(object? obj) => Equals(obj as Board);
     public bool Equals(Board? other) {
