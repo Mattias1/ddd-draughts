@@ -9,7 +9,7 @@ public abstract class ValueObject<T> : IEquatable<T> where T : ValueObject<T> {
     protected abstract IEnumerable<object> GetEqualityComponents();
 
     public override bool Equals(object? obj) => obj is T other && EqualsCore(other);
-    public bool Equals(T? other) => other is object && EqualsCore(other);
+    public bool Equals(T? other) => other is not null && EqualsCore(other);
     protected bool EqualsCore(T other) => GetEqualityComponents().SequenceEqual(other.GetEqualityComponents());
 
     public override int GetHashCode() => ComparisonUtils.GetHashCode(GetEqualityComponents());

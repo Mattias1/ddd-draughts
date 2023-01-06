@@ -9,6 +9,9 @@ using static Draughts.Domain.GameContext.Models.GameSettings;
 namespace Draughts.Test.Domain.GameContext;
 
 public sealed class PossibleMoveCalculatorTest {
+    private static readonly IBoardType SQUARE4 = new SquareBoardType(4);
+    private static readonly IBoardType SQUARE6 = new SquareBoardType(6);
+
     [Fact]
     public void ManMoves() {
         // |_|4|_|.|
@@ -228,7 +231,7 @@ public sealed class PossibleMoveCalculatorTest {
         // |.|_|5|_|
         // |_|4|_|4|
         // |.|_|5|_|
-        var board = Board.FromString("00054405");
+        var board = Board.FromString(SQUARE4, "00054405");
         var posisbleMoves = PossibleMoveCalculator.ForChainCaptures(board, 5.AsSquare(), InternationalSettings(4))
             .Calculate()
             .Select(m => m.ToString())
@@ -244,7 +247,7 @@ public sealed class PossibleMoveCalculatorTest {
         // |.|_|7|_|F|_|
         // |_|.|_|.|_|.|
         // |.|_|.|_|.|_|
-        var board = Board.FromString("000 05D 040 07F 000 000");
+        var board = Board.FromString(SQUARE6, "000 05D 040 07F 000 000");
         var posisbleMoves = PossibleMoveCalculator.ForChainCaptures(board, 8.AsSquare(), InternationalSettings(6))
             .Calculate()
             .Select(m => m.ToString())
@@ -270,7 +273,7 @@ public sealed class PossibleMoveCalculatorTest {
     }
 
     private static List<string> CalculatePossibleMoves(string boardString, Color color, GameSettings settings) {
-        var board = Board.FromString(boardString);
+        var board = Board.FromString(settings.BoardType, boardString);
         return PossibleMoveCalculator.ForNewTurn(board, color, settings)
             .Calculate()
             .Select(m => m.ToString())

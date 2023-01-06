@@ -175,7 +175,6 @@ public sealed class GameDoMoveTest {
 
     private (Game game, GameState gameState, UserId black, UserId white)
             BuildGame(string boardString, Color turn, params string[] moves) {
-        var board = Board.FromString(boardString);
         var game = GameTestHelper.StartedMiniGame().WithTurn(turn).Build();
         var gameState = GameState.FromStorage(game.Id, game.Settings, boardString, moves.Select(Move.FromString));
         var blackPlayer = game.Players.Single(p => p.Color == Color.Black);

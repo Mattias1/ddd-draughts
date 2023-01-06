@@ -23,9 +23,7 @@ public sealed class Piece : ValueObject<Piece> {
     public bool IsAlive => RawValue < 0b1000;
     public bool IsDead => RawValue >= 0b1000;
 
-    public string CssClasses {
-        get => $"{(IsDead ? "dead " : "")}{Color}{(IsMan ? " man" : "")}{(IsKing ? " king" : "")}";
-    }
+    public string CssClasses => $"{(IsDead ? "dead " : "")}{Color}{(IsMan ? " man" : "")}{(IsKing ? " king" : "")}";
 
     public string ToHexString() {
         string hex = Convert.ToHexString(new byte[] { RawValue });
