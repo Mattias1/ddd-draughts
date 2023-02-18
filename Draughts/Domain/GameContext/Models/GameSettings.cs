@@ -42,7 +42,9 @@ public sealed class GameSettings : ValueObject<GameSettings> {
             : $"Custom {BoardSize}x{BoardSize}";
     }
 
-    private bool IsHexagonalBoard() => BoardSize == 3 || BoardSize == 5;
+    // This one is a bit ugly. Currently all square boards have an even size (doh) and all hexagonal boards
+    // have an odd size (which does not necessarily have to be the case).
+    public bool IsHexagonalBoard() => BoardSize == 3 || BoardSize == 5;
 
     public GameSettingsPreset PresetEnum {
         get => this == International ? GameSettingsPreset.International

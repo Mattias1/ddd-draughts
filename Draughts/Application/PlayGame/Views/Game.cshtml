@@ -11,35 +11,36 @@
     var player1 = Model.Players.SingleOrDefault(p => p.Color == settings.FirstMove);
     var player2 = Model.Players.SingleOrDefault(p => p.Color == settings.FirstMove.Other);
     var captureSequenceFrom = Model.CurrentGameState.CaptureSequenceFrom;
-    var boardIsRotated = (Model.Players.Any(p => p.UserId == ViewBag.UserId))
+    var boardIsRotated = Model.Players.Any(p => p.UserId == ViewBag.UserId)
         ? (player1?.UserId == ViewBag.UserId ? player1 : player2)?.Color == Color.Black
         : false;
 }
 
 <div class="text-container">
     <div id="game-container">
-        <div id="game-board" class="game-board-@(settings.BoardSize)">
-            @for (int y = 0; y < settings.BoardSize; y++) {
-                @for (int x = 0; x < settings.BoardSize; x++) {
+        <div id="game-board" class="game-board-@(settings.BoardSize)@(settings.IsHexagonalBoard() ? " hexagonal" : "")">
+            @for (int y = 0; y < board.LongSize; y++) {
+                @for (int x = 0; x < board.LongSize; x++) {
                     var piece = board.At(x, y, boardIsRotated);
+                    var (cssX, cssY) = board.CssCoordinatesFor(x, y);
                     if (piece is null) {
-                        <div class="square" style="left: @(60 * x)px; top: @(60 * y)px;"></div>
+                        <div class="square" style="left: @(cssX)px; top: @(cssY)px;"></div>
                     } else {
                         var squareId = board.SquareIdAt(x, y, boardIsRotated);
                         <div id="square-@squareId"
                             class="square playable @(piece.CssClasses)"
-                            style="left: @(60 * x)px; top: @(60 * y)px;"
+                            style="left: @(cssX)px; top: @(cssY)px;"
                             data-number="@(squareId)"
                             data-gameid="@Model.Id">
                         </div>
                     }
                 }
             }
-            @for (int i = 0; i < settings.BoardSize; i++) {
-                <div id="row-@i" class="square row" style="left: -60px; top: @(60 * i)px">
-                    @(board.FirstSquareIdOfRow(i, boardIsRotated))</div>
-                <div id="col-@i" class="square col" style="left: @(60 * i)px; top: @(60 * settings.BoardSize)px">
-                    @(board.LastSquareIdOfCol(i, boardIsRotated))</div>
+            @for (int i = 0; i < board.LongSize; i++) {
+                var (rowSquareId, rowCssX, rowCssY) = board.FirstSquareIdOfRow(i, boardIsRotated);
+                <div id="row-@i" class="square row" style="left: @(rowCssX)px; top: @(rowCssY)px">@rowSquareId</div>
+                var (colSquareId, colCssX, colCssY) = board.LastSquareIdOfCol(i, boardIsRotated);
+                <div id="col-@i" class="square col" style="left: @(colCssX)px; top: @(colCssY)px">@colSquareId</div>
             }
         </div>
 

@@ -90,8 +90,7 @@ public sealed class GameState : AggregateRoot<GameState, GameId> {
         return captureSequenceFrom;
     }
 
-    public static GameState InitialState(GameId gameId, int boardSize) {
-        // TODO: HARDCODED FOR SQUARE
-        return new GameState(gameId, null, new List<Move>(), Board.InitialSetup(new SquareBoardType(boardSize)), null);
+    public static GameState InitialState(GameId gameId, IBoardType boardType) {
+        return new GameState(gameId, null, new List<Move>(), Board.InitialSetup(boardType), null);
     }
 }

@@ -82,10 +82,10 @@ public sealed class BoardViewModelTest {
         // |_|5|_|6|
         // |7|_|8|_|
         var board = new BoardViewModel(Board.InitialSetup(SQUARE4));
-        board.FirstSquareIdOfRow(0, false).Value.Should().Be(1);
-        board.FirstSquareIdOfRow(1, false).Value.Should().Be(3);
-        board.FirstSquareIdOfRow(2, false).Value.Should().Be(5);
-        board.FirstSquareIdOfRow(3, false).Value.Should().Be(7);
+        board.FirstSquareIdOfRow(0, false).id.Value.Should().Be(1);
+        board.FirstSquareIdOfRow(1, false).id.Value.Should().Be(3);
+        board.FirstSquareIdOfRow(2, false).id.Value.Should().Be(5);
+        board.FirstSquareIdOfRow(3, false).id.Value.Should().Be(7);
     }
 
     [Fact]
@@ -95,10 +95,10 @@ public sealed class BoardViewModelTest {
         // |_|4|_|3|
         // |2|_|1|_|
         var board = new BoardViewModel(Board.InitialSetup(SQUARE4));
-        board.FirstSquareIdOfRow(0, true).Value.Should().Be(8);
-        board.FirstSquareIdOfRow(1, true).Value.Should().Be(6);
-        board.FirstSquareIdOfRow(2, true).Value.Should().Be(4);
-        board.FirstSquareIdOfRow(3, true).Value.Should().Be(2);
+        board.FirstSquareIdOfRow(0, true).id.Value.Should().Be(8);
+        board.FirstSquareIdOfRow(1, true).id.Value.Should().Be(6);
+        board.FirstSquareIdOfRow(2, true).id.Value.Should().Be(4);
+        board.FirstSquareIdOfRow(3, true).id.Value.Should().Be(2);
     }
 
     [Fact]
@@ -108,10 +108,10 @@ public sealed class BoardViewModelTest {
         // |_|5|_|6|
         // |7|_|8|_|
         var board = new BoardViewModel(Board.InitialSetup(SQUARE4));
-        board.LastSquareIdOfCol(0, false).Value.Should().Be(7);
-        board.LastSquareIdOfCol(1, false).Value.Should().Be(5);
-        board.LastSquareIdOfCol(2, false).Value.Should().Be(8);
-        board.LastSquareIdOfCol(3, false).Value.Should().Be(6);
+        board.LastSquareIdOfCol(0, false).id.Value.Should().Be(7);
+        board.LastSquareIdOfCol(1, false).id.Value.Should().Be(5);
+        board.LastSquareIdOfCol(2, false).id.Value.Should().Be(8);
+        board.LastSquareIdOfCol(3, false).id.Value.Should().Be(6);
     }
 
     [Fact]
@@ -121,10 +121,10 @@ public sealed class BoardViewModelTest {
         // |_|4|_|3|
         // |2|_|1|_|
         var board = new BoardViewModel(Board.InitialSetup(SQUARE4));
-        board.LastSquareIdOfCol(0, true).Value.Should().Be(2);
-        board.LastSquareIdOfCol(1, true).Value.Should().Be(4);
-        board.LastSquareIdOfCol(2, true).Value.Should().Be(1);
-        board.LastSquareIdOfCol(3, true).Value.Should().Be(3);
+        board.LastSquareIdOfCol(0, true).id.Value.Should().Be(2);
+        board.LastSquareIdOfCol(1, true).id.Value.Should().Be(4);
+        board.LastSquareIdOfCol(2, true).id.Value.Should().Be(1);
+        board.LastSquareIdOfCol(3, true).id.Value.Should().Be(3);
     }
 
     [Fact]
@@ -135,11 +135,11 @@ public sealed class BoardViewModelTest {
         //  |04|09|14|18|
         //   |08|13|17|
         var board = new BoardViewModel(Board.InitialSetup(HEX3));
-        board.FirstSquareIdOfRow(0, false).Value.Should().Be(1);
-        board.FirstSquareIdOfRow(1, false).Value.Should().Be(4);
-        board.FirstSquareIdOfRow(2, false).Value.Should().Be(8);
-        board.FirstSquareIdOfRow(3, false).Value.Should().Be(13);
-        board.FirstSquareIdOfRow(4, false).Value.Should().Be(17);
+        board.FirstSquareIdOfRow(0, false).id.Value.Should().Be(1);
+        board.FirstSquareIdOfRow(1, false).id.Value.Should().Be(4);
+        board.FirstSquareIdOfRow(2, false).id.Value.Should().Be(8);
+        board.FirstSquareIdOfRow(3, false).id.Value.Should().Be(13);
+        board.FirstSquareIdOfRow(4, false).id.Value.Should().Be(17);
     }
 
     [Fact]
@@ -150,11 +150,11 @@ public sealed class BoardViewModelTest {
         //  |16|11|06|02|
         //   |12|07|03|
         var board = new BoardViewModel(Board.InitialSetup(HEX3));
-        board.FirstSquareIdOfRow(0, true).Value.Should().Be(19);
-        board.FirstSquareIdOfRow(1, true).Value.Should().Be(16);
-        board.FirstSquareIdOfRow(2, true).Value.Should().Be(12);
-        board.FirstSquareIdOfRow(3, true).Value.Should().Be(7);
-        board.FirstSquareIdOfRow(4, true).Value.Should().Be(3);
+        board.FirstSquareIdOfRow(0, true).id.Value.Should().Be(19);
+        board.FirstSquareIdOfRow(1, true).id.Value.Should().Be(16);
+        board.FirstSquareIdOfRow(2, true).id.Value.Should().Be(12);
+        board.FirstSquareIdOfRow(3, true).id.Value.Should().Be(7);
+        board.FirstSquareIdOfRow(4, true).id.Value.Should().Be(3);
     }
 
     [Fact]
@@ -165,11 +165,11 @@ public sealed class BoardViewModelTest {
         //  |04|09|14|18|
         //   |08|13|17|
         var board = new BoardViewModel(Board.InitialSetup(HEX3));
-        board.LastSquareIdOfCol(0, false).Value.Should().Be(17);
-        board.LastSquareIdOfCol(1, false).Value.Should().Be(18);
-        board.LastSquareIdOfCol(2, false).Value.Should().Be(19);
-        board.LastSquareIdOfCol(3, false).Value.Should().Be(16);
-        board.LastSquareIdOfCol(4, false).Value.Should().Be(12);
+        board.LastSquareIdOfCol(0, false).id.Value.Should().Be(17);
+        board.LastSquareIdOfCol(1, false).id.Value.Should().Be(18);
+        board.LastSquareIdOfCol(2, false).id.Value.Should().Be(19);
+        board.LastSquareIdOfCol(3, false).id.Value.Should().Be(16);
+        board.LastSquareIdOfCol(4, false).id.Value.Should().Be(12);
     }
 
     [Fact]
@@ -180,10 +180,10 @@ public sealed class BoardViewModelTest {
         //  |16|11|06|02|
         //   |12|07|03|
         var board = new BoardViewModel(Board.InitialSetup(HEX3));
-        board.LastSquareIdOfCol(0, true).Value.Should().Be(3);
-        board.LastSquareIdOfCol(1, true).Value.Should().Be(2);
-        board.LastSquareIdOfCol(2, true).Value.Should().Be(1);
-        board.LastSquareIdOfCol(3, true).Value.Should().Be(4);
-        board.LastSquareIdOfCol(4, true).Value.Should().Be(8);
+        board.LastSquareIdOfCol(0, true).id.Value.Should().Be(3);
+        board.LastSquareIdOfCol(1, true).id.Value.Should().Be(2);
+        board.LastSquareIdOfCol(2, true).id.Value.Should().Be(1);
+        board.LastSquareIdOfCol(3, true).id.Value.Should().Be(4);
+        board.LastSquareIdOfCol(4, true).id.Value.Should().Be(8);
     }
 }

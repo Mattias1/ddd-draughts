@@ -36,13 +36,15 @@ public sealed class BoardViewModel {
         return SquareId.FromPosition(x, y, BoardType);
     }
 
-    public SquareId FirstSquareIdOfRow(int row, bool boardIsRotated) {
-        int x = BoardType.XCoordinateForFirstSquareOfRow(row);
-        return SquareIdAt(x, row, boardIsRotated);
+    public (SquareId id, int cssX, int cssY) FirstSquareIdOfRow(int row, bool boardIsRotated) {
+        var (x, cssX, cssY) = BoardType.AnnotationCoordinatesForRow(row);
+        return (SquareIdAt(x, row, boardIsRotated), cssX, cssY);
     }
 
-    public SquareId LastSquareIdOfCol(int col, bool boardIsRotated) {
-        int y = BoardType.YCoordinateForLastSquareOfCol(col);
-        return SquareIdAt(col, y, boardIsRotated);
+    public (SquareId id, int cssX, int cssY) LastSquareIdOfCol(int col, bool boardIsRotated) {
+        var (y, cssX, cssY) = BoardType.AnnotationCoordinatesForCol(col);
+        return (SquareIdAt(col, y, boardIsRotated), cssX, cssY);
     }
+
+    public (int x, int y) CssCoordinatesFor(int x, int y) => BoardType.CssCoordinatesFor(x, y);
 }
