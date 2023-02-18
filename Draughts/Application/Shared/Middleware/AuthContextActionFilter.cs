@@ -21,8 +21,7 @@ public sealed class AuthContextActionFilter : IActionFilter {
             if (context.HttpContext.Request.Query.TryGetValue(SUCCESS_PARAM, out var successMessage)) {
                 controller.AddSuccessMessage(successMessage.ToString());
             }
-        }
-        else {
+        } else {
             throw new InvalidOperationException("We arrive at a controller that doesn't override the BaseController. How?");
         }
     }

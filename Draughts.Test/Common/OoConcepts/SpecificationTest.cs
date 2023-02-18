@@ -113,8 +113,7 @@ public sealed class SpecificationTest {
         public override void ApplyQueryBuilder(IQueryBuilder builder, QueryWhereType whereType) {
             if (_sign > 0) {
                 ApplyColumnWhere(builder, whereType, "number", q => q.Gt(0));
-            }
-            else {
+            } else {
                 ApplyColumnWhere(builder, whereType, "number", q => q.Lt(0));
             }
         }

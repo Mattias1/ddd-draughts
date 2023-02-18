@@ -81,8 +81,7 @@ public sealed class DraughtsConsole {
                     tranFlavor.Commit();
                     return;
                 }
-            }
-            catch (SqlQueryBuilderException e) {
+            } catch (SqlQueryBuilderException e) {
                 if (i <= maxSeconds) {
                     Console.WriteLine($"Wait for database connection ({i}: {e.Message})");
                     Thread.Sleep(1000);

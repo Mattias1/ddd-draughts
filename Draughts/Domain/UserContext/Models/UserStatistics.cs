@@ -25,11 +25,9 @@ public sealed class UserStatistics : Entity<UserStatistics, UserId> {
         TotalTally = TotalTally.WithFinishedGame(isWin);
         if (gameSettingsPreset == GameSettingsPreset.International) {
             InternationalTally = InternationalTally.WithFinishedGame(isWin);
-        }
-        else if (gameSettingsPreset == GameSettingsPreset.EnglishAmerican) {
+        } else if (gameSettingsPreset == GameSettingsPreset.EnglishAmerican) {
             EnglishAmericanTally = EnglishAmericanTally.WithFinishedGame(isWin);
-        }
-        else {
+        } else {
             OtherTally = OtherTally.WithFinishedGame(isWin);
         }
     }

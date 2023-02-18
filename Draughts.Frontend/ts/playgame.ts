@@ -60,8 +60,7 @@ function onSquareClick(squareEl: JQuery<HTMLElement>): void {
                 }
             }
         });
-    }
-    else {
+    } else {
         selectSquare(square, squareEl);
     }
 }
@@ -137,8 +136,7 @@ function updateTimer(currentTimeStr: string, expiresAtStr: string): void {
     const offsetWithLocalTimeInMs = now.diff(currentTime);
     if (offsetWithLocalTimeInMs > 2000) {
         $('#turn-time-left-offset').text('±' + Math.ceil(Math.abs(offsetWithLocalTimeInMs) / 1000).toString() + 's');
-    }
-    else {
+    } else {
         $('#turn-time-left-offset').text('');
     }
 

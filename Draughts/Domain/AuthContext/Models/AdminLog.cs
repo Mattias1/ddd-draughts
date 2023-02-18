@@ -26,8 +26,7 @@ public sealed class AdminLog : AggregateRoot<AdminLog, AdminLogId> {
 
         try {
             Description();
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             throw new InvalidOperationException($"Invalid admin log type ({type}).", e);
         }
     }

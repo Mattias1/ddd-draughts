@@ -194,25 +194,21 @@ public static class Utils {
         string s = "<nav class=\"pagination-nav\"><ul>";
         if (page == 1) {
             s += EmptyPaginationListItem("<");
-        }
-        else {
+        } else {
             s += PaginationListItem(url, page - 1, "<");
         }
 
         if (pageCount <= maxInitial + minAround * 2 + maxClosing + 3) {
             s += PaginationListItems(url, page, 1, pageCount);
-        }
-        else if (page <= maxInitial + minAround + 2) {
+        } else if (page <= maxInitial + minAround + 2) {
             s += PaginationListItems(url, page, 1, maxInitial + minAround * 2 + 2);
             s += EmptyPaginationListItem("...");
             s += PaginationListItems(url, page, pageCount - maxClosing + 1, pageCount);
-        }
-        else if (page > pageCount - maxClosing - minAround - 2) {
+        } else if (page > pageCount - maxClosing - minAround - 2) {
             s += PaginationListItems(url, page, 1, maxInitial);
             s += EmptyPaginationListItem("...");
             s += PaginationListItems(url, page, pageCount - maxClosing - minAround * 2 - 1, pageCount);
-        }
-        else {
+        } else {
             s += PaginationListItems(url, page, 1, maxInitial);
             s += EmptyPaginationListItem("...");
             s += PaginationListItems(url, page, page - minAround, page + minAround);
@@ -222,8 +218,7 @@ public static class Utils {
 
         if (page == pageCount) {
             s += EmptyPaginationListItem(">");
-        }
-        else {
+        } else {
             s += PaginationListItem(url, page + 1, ">");
         }
         s += "</ul></nav>";
@@ -235,8 +230,7 @@ public static class Utils {
         for (long i = startInclusive; i <= endInclusive; i++) {
             if (i == page) {
                 s += EmptyPaginationListItem(i.ToString(), "active");
-            }
-            else {
+            } else {
                 s += PaginationListItem(url, i, i.ToString());
             }
         }

@@ -36,8 +36,7 @@ public sealed class PlayGameController : BaseController {
             });
 
             return View(new PlayGameViewModel(game, gameState, _clock));
-        }
-        catch (ManualValidationException e) {
+        } catch (ManualValidationException e) {
             return NotFound(e.Message);
         }
     }
@@ -50,8 +49,7 @@ public sealed class PlayGameController : BaseController {
             });
 
             return Ok(new GameDto(game, gameState, _clock));
-        }
-        catch (ManualValidationException e) {
+        } catch (ManualValidationException e) {
             return NotFound(e.Message);
         }
     }
@@ -68,8 +66,7 @@ public sealed class PlayGameController : BaseController {
             await _websocketHub.PushGameUpdated(new GameId(gameId), data);
 
             return Ok(data);
-        }
-        catch (ManualValidationException e) {
+        } catch (ManualValidationException e) {
             return BadRequest(e.Message);
         }
     }
@@ -81,8 +78,7 @@ public sealed class PlayGameController : BaseController {
             await _websocketHub.PushGameUpdateReady(new GameId(gameId));
 
             return SuccessRedirect($"/game/{gameId}", $"You've voted for a draw in game {gameId}");
-        }
-        catch (ManualValidationException e) {
+        } catch (ManualValidationException e) {
             return BadRequest(e.Message);
         }
     }
@@ -94,8 +90,7 @@ public sealed class PlayGameController : BaseController {
             await _websocketHub.PushGameUpdateReady(new GameId(gameId));
 
             return SuccessRedirect($"/game/{gameId}", $"You've resigned from game {gameId}");
-        }
-        catch (ManualValidationException e) {
+        } catch (ManualValidationException e) {
             return BadRequest(e.Message);
         }
     }

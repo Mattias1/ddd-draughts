@@ -29,8 +29,7 @@ public sealed class GameStateRepository : BaseRepository<GameState, GameId, DbGa
         var obj = DbGameState.FromDomainModel(entity);
         if (FindByIdOrNull(entity.Id) is null) {
             GetBaseQuery().InsertInto(TableName).InsertFrom(obj).Execute();
-        }
-        else {
+        } else {
             // There's no reason to update the game state entity itself, nothing can change
         }
 

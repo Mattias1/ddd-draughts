@@ -39,8 +39,7 @@ public sealed partial class QueryBuilder : IQueryBuilderBase {
         string parameterizedSql = ToParameterizedSql();
         try {
             return _options.SqlFlavor.ToResults(parameterizedSql, _query.Parameters);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             throw new SqlExecutionException(e, _options.AddParameterizedSqlToException ? parameterizedSql : null);
         }
     }
@@ -53,8 +52,7 @@ public sealed partial class QueryBuilder : IQueryBuilderBase {
         string parameterizedSql = ToParameterizedSql();
         try {
             return await _options.SqlFlavor.ToResultsAsync(parameterizedSql, _query.Parameters);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             throw new SqlExecutionException(e, _options.AddParameterizedSqlToException ? parameterizedSql : null);
         }
     }
@@ -63,8 +61,7 @@ public sealed partial class QueryBuilder : IQueryBuilderBase {
         string parameterizedSql = ToParameterizedSql();
         try {
             return _options.SqlFlavor.Execute(parameterizedSql, _query.Parameters);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             throw new SqlExecutionException(e, _options.AddParameterizedSqlToException ? parameterizedSql : null);
         }
     }
@@ -73,8 +70,7 @@ public sealed partial class QueryBuilder : IQueryBuilderBase {
         string parameterizedSql = ToParameterizedSql();
         try {
             return await _options.SqlFlavor.ExecuteAsync(parameterizedSql, _query.Parameters);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             throw new SqlExecutionException(e, _options.AddParameterizedSqlToException ? parameterizedSql : null);
         }
     }
@@ -86,8 +82,7 @@ public sealed partial class QueryBuilder : IQueryBuilderBase {
         foreach (var (key, value) in _query.Parameters) {
             if (value is string stringValue) {
                 query = query.Replace(key, $"'{value}'");
-            }
-            else {
+            } else {
                 query = query.Replace(key, value?.ToString() ?? "null");
             }
         }

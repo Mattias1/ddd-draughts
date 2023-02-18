@@ -22,8 +22,7 @@ internal readonly struct SetColumn : ISetColumn {
         query.Builder.Append(query.WrapField(ColumnName)).Append(" = ");
         if (Type == ValueType.Column && Value is string columnValue) {
             query.Builder.Append(query.WrapField(columnValue));
-        }
-        else {
+        } else {
             query.AppendParameter(Value);
         }
     }

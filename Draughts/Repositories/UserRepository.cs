@@ -20,8 +20,7 @@ public sealed class UserRepository : BaseRepository<User, UserId, DbUser> {
         var obj = DbUser.FromDomainModel(entity);
         if (FindByIdOrNull(entity.Id) is null) {
             GetBaseQuery().InsertInto(TableName).InsertFrom(obj).Execute();
-        }
-        else {
+        } else {
             GetBaseQuery().Update(TableName).SetWithoutIdFrom(obj).Where("id").Is(entity.Id).Execute();
         }
     }

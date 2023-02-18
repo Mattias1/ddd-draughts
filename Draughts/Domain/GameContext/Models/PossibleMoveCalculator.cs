@@ -34,8 +34,7 @@ public sealed class PossibleMoveCalculator {
             foreach (var dir in Direction.All) {
                 if (!_settings.FlyingKings || from.HasMan) {
                     AddNormalMovesFrom(possibleMoves, from, dir);
-                }
-                else {
+                } else {
                     AddFlyingMovesFrom(possibleMoves, from, dir);
                 }
             }
@@ -46,8 +45,7 @@ public sealed class PossibleMoveCalculator {
     private IEnumerable<Square> AllLoopPositions() {
         if (_restrictedTo is not null) {
             yield return _board[_restrictedTo];
-        }
-        else {
+        } else {
             for (int i = 1; i <= _board.NrOfPlayableSquares; i++) {
                 var squareId = new SquareId(i);
                 if (_board[squareId].ColorOfPiece == _currentTurn) {

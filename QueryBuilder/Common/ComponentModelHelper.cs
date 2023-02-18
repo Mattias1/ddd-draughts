@@ -35,8 +35,7 @@ public static class ComponentModelHelper {
             var parsedValue = Parse(value, property.PropertyType);
             try {
                 property.SetValue(result, parsedValue);
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 throw new SqlQueryBuilderException($"Error trying to set property '{property.DisplayName}' to value '{value}'", e);
             }
         }

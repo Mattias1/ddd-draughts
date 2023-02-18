@@ -51,8 +51,7 @@ public sealed class Startup {
         // Catch exceptions and show the stacktrace / custom error page
         if (env.IsDevelopment()) {
             app.UseDeveloperExceptionPage();
-        }
-        else {
+        } else {
             app.UseExceptionHandler(exApp => exApp.Run(async ctx => {
                 ctx.Response.StatusCode = StatusCodes.Status500InternalServerError;
                 await ctx.Response.WriteAsync("Whoops, an unexpected error occured (500).");

@@ -55,8 +55,7 @@ public sealed class HeartBeatMiddleware {
                 });
                 _backgroundQueue.Enqueue(async cancellationToken => await HandleMissingTurns(gameIds, now.InUtc()));
             }
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             _log.LogError("Uncaught exception in the HeartBeat middleware", e);
         }
 
@@ -73,8 +72,7 @@ public sealed class HeartBeatMiddleware {
                 });
 
                 await _websocketHub.PushGameUpdateReady(gameId);
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 _log.LogError($"HeartBeat HandleMissingTurns exception for game {gameId}", e);
             }
         }

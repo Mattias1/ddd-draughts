@@ -166,22 +166,18 @@ internal sealed class Query {
         if (parameter is null) {
             Builder.Append("null");
             parameterize = false;
-        }
-        else if (DateTimeParser.ParseQueryParameter(parameter, out string? parsedParameter)) {
+        } else if (DateTimeParser.ParseQueryParameter(parameter, out string? parsedParameter)) {
             Builder.Append(key);
             parameter = parsedParameter;
-        }
-        else if (Options.DontParameterizeNumbers &&
+        } else if (Options.DontParameterizeNumbers &&
                 (parameter is int || parameter is long || parameter is byte || parameter is short
                 || parameter is uint || parameter is ulong || parameter is sbyte || parameter is ushort)) {
             Builder.Append(parameter);
             parameterize = false;
-        }
-        else if (Options.DontParameterizeNumbers && parameter is bool booleanParameter) {
+        } else if (Options.DontParameterizeNumbers && parameter is bool booleanParameter) {
             Builder.Append(booleanParameter ? 1 : 0);
             parameterize = false;
-        }
-        else {
+        } else {
             Builder.Append(key);
         }
 

@@ -64,8 +64,7 @@ public sealed class GameRepository : BaseRepository<Game, GameId, DbGame> {
         var obj = DbGame.FromDomainModel(entity);
         if (FindByIdOrNull(entity.Id) is null) {
             GetBaseQuery().InsertInto(TableName).InsertFrom(obj).Execute();
-        }
-        else {
+        } else {
             GetBaseQuery().Update(TableName).SetWithoutIdFrom(obj).Where("id").Is(entity.Id).Execute();
         }
         SavePlayers(entity);
@@ -79,8 +78,7 @@ public sealed class GameRepository : BaseRepository<Game, GameId, DbGame> {
             var obj = DbPlayer.FromDomainModel(playerEntity, gameEntity.Id);
             if (existingPlayerIds.Contains(playerEntity.Id.Value)) {
                 GetBaseQuery().Update(PlayersTableName).SetWithoutIdFrom(obj).Where("id").Is(playerEntity.Id).Execute();
-            }
-            else {
+            } else {
                 GetBaseQuery().InsertInto(PlayersTableName).InsertFrom(obj).Execute();
             }
         }

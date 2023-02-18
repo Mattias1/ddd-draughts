@@ -24,8 +24,7 @@
                     var piece = board.At(x, y, boardIsRotated);
                     if (piece is null) {
                         <div class="square" style="left: @(60 * x)px; top: @(60 * y)px;"></div>
-                    }
-                    else {
+                    } else {
                         var squareId = board.SquareIdAt(x, y, boardIsRotated);
                         <div id="square-@squareId"
                             class="square playable @(piece.CssClasses)"
@@ -52,8 +51,7 @@
                 @if (player1 is null) {
                     <li>@Utils.PostLink($"Join as {settings.FirstMove}", "/lobby/join",
                         ("gameId", Model.Id.ToString()), ("color", settings.FirstMove.ToString()))</li>
-                }
-                else {
+                } else {
                     <li>
                         <span id="turn-player-@(player1.Id)" class="turn-player" @Utils.HideIf(Model.Turn?.Player.Id != player1.Id)>&gt; </span>
                         <span id="nr@(player1.Color)"></span>
@@ -63,8 +61,7 @@
                 @if (player2 is null) {
                     <li>@Utils.PostLink($"Join as {settings.FirstMove.Other}", "/lobby/join",
                         ("gameId", Model.Id.ToString()), ("color", settings.FirstMove.Other.ToString()))</li>
-                }
-                else {
+                } else {
                     <li>
                         <span id="turn-player-@(player2.Id)" class="turn-player" @Utils.HideIf(Model.Turn?.Player.Id != player2.Id)>&gt; </span>
                         <span id="nr@(player2.Color)"></span>
@@ -76,8 +73,7 @@
                     <li>
                         Victor: @if (Model.Victor is null) { <span>Draw</span> } else { <span>@Model.Victor.Username</span> }
                     </li>
-                }
-                else if (Model.Turn is not null) {
+                } else if (Model.Turn is not null) {
                     <li>Time left: <span id="turn-time-left">88:88:88</span> <span id="turn-time-left-offset"></span></li>
                 }
             </ul>
@@ -98,8 +94,7 @@
                     Capture constraints:
                     @if (settings.CaptureConstraints == GameSettings.DraughtsCaptureConstraints.MaximumPieces) {
                         <span>The maximum amount of pieces possible.</span>
-                    }
-                    else if (settings.CaptureConstraints == GameSettings.DraughtsCaptureConstraints.AnyFinishedSequence) {
+                    } else if (settings.CaptureConstraints == GameSettings.DraughtsCaptureConstraints.AnyFinishedSequence) {
                         <span>Any finished sequence of pieces.</span>
                     }
                 </li>

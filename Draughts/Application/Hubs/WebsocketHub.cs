@@ -17,8 +17,7 @@ public sealed class WebsocketHub : Hub {
             }
             await Groups.AddToGroupAsync(Context.ConnectionId, GameGroup(gameId?.ToString()));
             Log.Debug("Websocket connection associated with game " + gameId);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             Log.Error(e.Message);
             throw;
         }
@@ -33,8 +32,7 @@ public static class WebsocketHubExtensions {
         try {
             await websocketHubContext.Clients.Group(WebsocketHub.GameGroup(gameId)).SendAsync("gameUpdateReady", gameId.ToString());
             Log.Debug($"Pushed websocket game update ready notification for game {gameId}");
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             Log.Error(e.Message);
             throw;
         }
@@ -44,8 +42,7 @@ public static class WebsocketHubExtensions {
         try {
             await websocketHubContext.Clients.Group(WebsocketHub.GameGroup(gameId)).SendAsync("gameUpdated", data);
             Log.Debug($"Pushed websocket game update with data for game {gameId}");
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             Log.Error(e.Message);
             throw;
         }

@@ -56,8 +56,7 @@ public sealed class GameState : AggregateRoot<GameState, GameId> {
         Move move;
         if (CaptureSequenceFrom is null) {
             move = Board.PerformNewMove(from, to, settings, out canCaptureMore);
-        }
-        else {
+        } else {
             if (CaptureSequenceFrom != from) {
                 throw new ManualValidationException(ERROR_CAPTURE_SEQUENCE);
             }
@@ -82,8 +81,7 @@ public sealed class GameState : AggregateRoot<GameState, GameId> {
             bool canCaptureMore;
             if (captureSequenceFrom is null) {
                 board.PerformNewMove(move.From, move.To, settings, out canCaptureMore);
-            }
-            else {
+            } else {
                 board.PerformChainCaptureMove(move.From, move.To, settings, out canCaptureMore);
             }
             captureSequenceFrom = canCaptureMore ? move.To : null;
