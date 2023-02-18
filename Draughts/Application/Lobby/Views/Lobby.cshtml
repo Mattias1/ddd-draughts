@@ -1,4 +1,4 @@
-@model GamelistViewModel 
+@model GamelistViewModel
 @{
     if (Model is null) {
         throw new InvalidOperationException("Model not set.");
@@ -10,8 +10,7 @@
     <h1>@ViewBag.Title</h1>
     @if (Utils.Can(ViewBag.Permissions, Permissions.PlayGame)) {
         <p>Join one of the open games, or <a @Utils.Href("/lobby/create")>create a new game</a>.</p>
-    }
-    else {
+    } else {
         <p>The list of open games. You need to <a @Utils.Href("/auth/login")>login</a> to join one.</p>
     }
 

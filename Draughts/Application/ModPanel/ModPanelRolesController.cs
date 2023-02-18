@@ -52,8 +52,7 @@ public sealed class ModPanelRolesController : BaseController {
                 return FindRole(new RoleId(rawRoleId));
             });
             return View(new RoleViewModel(role));
-        }
-        catch (ManualValidationException e) {
+        } catch (ManualValidationException e) {
             return ErrorRedirect("/modpanel/roles", e.Message);
         }
     }
@@ -72,8 +71,7 @@ public sealed class ModPanelRolesController : BaseController {
             });
 
             return SuccessRedirect($"/modpanel/role/{role.Id}/edit", $"Role '{role.Rolename}' is added.");
-        }
-        catch (ManualValidationException e) {
+        } catch (ManualValidationException e) {
             return ErrorRedirect($"/modpanel/roles", e.Message);
         }
     }
@@ -92,8 +90,7 @@ public sealed class ModPanelRolesController : BaseController {
             });
 
             return SuccessRedirect("/modpanel/roles", $"Role '{request?.Rolename}' is edited.");
-        }
-        catch (ManualValidationException e) {
+        } catch (ManualValidationException e) {
             return ErrorRedirect($"/modpanel/role/{rawRoleId}/edit", e.Message);
         }
     }
@@ -112,8 +109,7 @@ public sealed class ModPanelRolesController : BaseController {
                 _roleRepository.Delete(role.Id);
             });
             return SuccessRedirect("/modpanel/roles", "The role is deleted.");
-        }
-        catch (ManualValidationException e) {
+        } catch (ManualValidationException e) {
             return ErrorRedirect("/modpanel/roles", e.Message);
         }
     }
@@ -129,8 +125,7 @@ public sealed class ModPanelRolesController : BaseController {
                 return (role, authUsers);
             });
             return View(new RoleWithUsersViewModel(role, authUsers));
-        }
-        catch (ManualValidationException e) {
+        } catch (ManualValidationException e) {
             return ErrorRedirect("/modpanel/roles", e.Message);
         }
     }
@@ -153,8 +148,7 @@ public sealed class ModPanelRolesController : BaseController {
                 _authUserRepository.Save(authUser);
             });
             return SuccessRedirect($"/modpanel/role/{rawRoleId}/users", "Users are assigned to the role.");
-        }
-        catch (ManualValidationException e) {
+        } catch (ManualValidationException e) {
             return ErrorRedirect($"/modpanel/role/{rawRoleId}/users", e.Message);
         }
     }
@@ -177,8 +171,7 @@ public sealed class ModPanelRolesController : BaseController {
                 _authUserRepository.Save(authUser);
             });
             return SuccessRedirect($"/modpanel/role/{rawRoleId}/users", "The user is removed from this role.");
-        }
-        catch (ManualValidationException e) {
+        } catch (ManualValidationException e) {
             return ErrorRedirect($"/modpanel/role/{rawRoleId}/users", e.Message);
         }
     }

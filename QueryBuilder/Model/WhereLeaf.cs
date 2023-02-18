@@ -41,8 +41,7 @@ internal readonly struct WhereLeaf : IWhere {
             query.Builder.Append(' ').Append(OperatorName).Append(' ');
             if (Type == ValueType.Column && Value is string columnValue) {
                 query.Builder.Append(query.WrapField(columnValue));
-            }
-            else {
+            } else {
                 query.AppendParameter(Value);
             }
         }

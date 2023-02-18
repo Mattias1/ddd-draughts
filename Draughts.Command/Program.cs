@@ -19,8 +19,7 @@ public sealed class Program {
             try {
                 var console = serviceScope.ServiceProvider.GetRequiredService<DraughtsConsole>();
                 console.ExecuteCommand(args);
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 Console.WriteLine();
                 Console.WriteLine("En error occured: " + e.Message);
                 Console.WriteLine();

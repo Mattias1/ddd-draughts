@@ -14,15 +14,13 @@ function applyPresets(preset: string): void {
         val('flyingKings', true);
         val('menCaptureBackwards', true);
         val('captureConstraints', 'max');
-    }
-    else if (preset === 'english-draughts') {
+    } else if (preset === 'english-draughts') {
         val('boardSize', 8);
         val('whiteHasFirstMove', false);
         val('flyingKings', false);
         val('menCaptureBackwards', false);
         val('captureConstraints', 'seq');
-    }
-    else if (preset === 'mini') {
+    } else if (preset === 'mini') {
         applyPresets('international');
         val('boardSize', 6);
     }

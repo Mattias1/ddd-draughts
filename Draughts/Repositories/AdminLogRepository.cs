@@ -18,8 +18,7 @@ public sealed class AdminLogRepository : BaseRepository<AdminLog, AdminLogId, Db
         var obj = DbAdminLog.FromDomainModel(entity);
         if (FindByIdOrNull(entity.Id) is null) {
             GetBaseQuery().InsertInto(TableName).InsertFrom(obj).Execute();
-        }
-        else {
+        } else {
             throw new InvalidOperationException("You cannot edit an audit log entry.");
         }
     }

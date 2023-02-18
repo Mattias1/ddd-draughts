@@ -45,8 +45,7 @@ public sealed class RoleRepository : BaseRepository<Role, RoleId, DbRole> {
         if (FindByIdOrNull(entity.Id) is null) {
             GetBaseQuery().InsertInto(TableName).InsertFrom(obj).Execute();
             InsertPermissions(entity.Id.Value, entity.Permissions.Select(p => p.Value));
-        }
-        else {
+        } else {
             var oldPermissions = GetPermissionRoleQuery().Where("role_id").Is(entity.Id).List<DbPermissionRole>()
                 .Select(pr => pr.Permission).ToArray();
             var newPermissions = entity.Permissions.Select(p => p.Value).ToArray();

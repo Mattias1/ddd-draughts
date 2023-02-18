@@ -76,8 +76,7 @@ public sealed class JwtActionFilter : IAuthorizationFilter {
     private void FailRequest(AuthorizationFilterContext context, HttpStatusCode statusCode) {
         if (IsAjaxRequest(context.HttpContext)) {
             context.Result = new StatusCodeResult((int)statusCode);
-        }
-        else {
+        } else {
             context.Result = new RedirectResult($"/Error?status={statusCode}");
         }
     }

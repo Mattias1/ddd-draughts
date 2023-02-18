@@ -1,11 +1,12 @@
-# Visual studio user-specific files
+# IDE specific files
 *.suo
 *.user
 *.sln.docstates
 [Bb]in/
 [Oo]bj/
-*.vs/
-*.vscode/
+.vs/
+.vscode/
+.idea/
 
 # MSTest test Results
 [Tt]est[Rr]esult*/
@@ -33,6 +34,6 @@ UpgradeLog*.htm
 *.swp
 
 # Application specific files
-logs/*
+**/logs/*
 Draughts/wwwroot/js/*
 appsettings.env.json

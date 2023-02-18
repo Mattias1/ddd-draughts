@@ -20,8 +20,7 @@ internal readonly struct Column : IColumn {
         }
         if (Function is null) {
             query.Builder.Append(query.WrapField(ColumnName));
-        }
-        else {
+        } else {
             query.Builder.Append(Function).Append('(').Append(query.WrapField(ColumnName)).Append(')');
         }
         if (Alias is not null) {

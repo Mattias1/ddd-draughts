@@ -57,8 +57,7 @@ public sealed class EventDispatcher {
             if (!foundHandler) {
                 _logger.LogError($"No event handler found for {evt.Type}.");
             }
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             _logger.LogError("Uncaught exception", e);
         }
     }

@@ -81,8 +81,7 @@ public sealed class MySqlTransactionFlavor : ISqlTransactionFlavor {
             await connection.OpenAsync();
             var transaction = await connection.BeginTransactionAsync();
             return new MySqlTransactionFlavor(connection, transaction);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             throw new SqlQueryBuilderException(e.Message, e);
         }
     }
@@ -91,8 +90,7 @@ public sealed class MySqlTransactionFlavor : ISqlTransactionFlavor {
             connection.Open();
             var transaction = connection.BeginTransaction();
             return new MySqlTransactionFlavor(connection, transaction);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             throw new SqlQueryBuilderException(e.Message, e);
         }
     }

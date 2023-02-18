@@ -24,8 +24,7 @@ internal readonly struct Where : IWhere {
         string resultString = recursiveQuery.ToParameterizedSqlInternal();
         if (resultString.StartsWith(" where ")) {
             resultString = resultString.Substring(7);
-        }
-        else if (resultString.StartsWith(" having ")) {
+        } else if (resultString.StartsWith(" having ")) {
             resultString = resultString.Substring(8);
         }
 

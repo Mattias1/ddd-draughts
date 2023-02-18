@@ -55,5 +55,5 @@ csharp_preserve_single_line_blocks = true
 csharp_using_directive_placement = outside_namespace
 max_line_length = 120
 
-[*.md,*.yaml]
+[{*.md,*.yaml}]
 indent_size = 2

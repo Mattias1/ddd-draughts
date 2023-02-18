@@ -59,8 +59,7 @@ public sealed class LobbyController : BaseController {
             var game = _gameService.CreateGame(AuthContext.UserId, request!.BuildGameSettings(), joinColor);
 
             return SuccessRedirect($"/game/{game.Id}", $"Game {game.Id} is created.");
-        }
-        catch (ManualValidationException e) {
+        } catch (ManualValidationException e) {
             return ErrorRedirect("/lobby/create", e.Message);
         }
     }
@@ -74,8 +73,7 @@ public sealed class LobbyController : BaseController {
             _gameService.JoinGame(AuthContext.UserId, new GameId(request.GameId), joinColor);
 
             return SuccessRedirect("/game/" + request.GameId, $"You've joined game {request.GameId}.");
-        }
-        catch (ManualValidationException e) {
+        } catch (ManualValidationException e) {
             return ErrorRedirect("/lobby", e.Message);
         }
     }

@@ -57,8 +57,7 @@ public sealed class AuthUserRepository : BaseRepository<AuthUser, UserId, DbAuth
         if (FindByIdOrNull(entity.Id) is null) {
             GetBaseQuery().InsertInto(TableName).InsertFrom(obj).Execute();
             InsertRoles(entity.Id, entity.RoleIds.Select(r => r.Value));
-        }
-        else {
+        } else {
             var oldRoleIds = QueryRoleIdsForUser(entity.Id.Value).ToArray();
             var newRoleIds = entity.RoleIds.Select(p => p.Value).ToArray();
             var toDelete = oldRoleIds.Except(newRoleIds).ToArray();

@@ -27,17 +27,13 @@ public abstract class Specification<T> {
             Func<IComparisonQueryBuilder, IQueryBuilder> func) {
         if (whereType == QueryWhereType.And) {
             func(builder.And(column));
-        }
-        else if (whereType == QueryWhereType.Or) {
+        } else if (whereType == QueryWhereType.Or) {
             func(builder.Or(column));
-        }
-        else if (whereType == QueryWhereType.AndNot) {
+        } else if (whereType == QueryWhereType.AndNot) {
             builder.AndNot(builder => func(builder.Where(column)));
-        }
-        else if (whereType == QueryWhereType.OrNot) {
+        } else if (whereType == QueryWhereType.OrNot) {
             builder.OrNot(builder => func(builder.Where(column)));
-        }
-        else {
+        } else {
             throw new InvalidOperationException("Unknown query where type");
         }
     }
@@ -45,17 +41,13 @@ public abstract class Specification<T> {
     protected void ApplyFuncWhere(IQueryBuilder builder, QueryWhereType whereType, QueryBuilder.SubWhereFunc func) {
         if (whereType == QueryWhereType.And) {
             builder.And(func);
-        }
-        else if (whereType == QueryWhereType.Or) {
+        } else if (whereType == QueryWhereType.Or) {
             builder.Or(func);
-        }
-        else if (whereType == QueryWhereType.AndNot) {
+        } else if (whereType == QueryWhereType.AndNot) {
             builder.AndNot(func);
-        }
-        else if (whereType == QueryWhereType.OrNot) {
+        } else if (whereType == QueryWhereType.OrNot) {
             builder.OrNot(func);
-        }
-        else {
+        } else {
             throw new InvalidOperationException("Unknown query where type");
         }
     }

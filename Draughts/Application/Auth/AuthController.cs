@@ -44,8 +44,7 @@ public sealed class AuthController : BaseController {
             AuthContext authContext = AuthContext.AttachToHttpContext(jwt, permissions, HttpContext);
 
             return Redirect("/");
-        }
-        catch (ManualValidationException) {
+        } catch (ManualValidationException) {
             return ErrorView("password", "Incorrect username or password.");
         }
     }
@@ -85,8 +84,7 @@ public sealed class AuthController : BaseController {
                 _userRegistrationService.CreateAuthUser(request.Name, request.Email, request.Password);
             });
             return SuccessRedirect("/", $"User '{request.Name}' is registered.");
-        }
-        catch (ManualValidationException e) {
+        } catch (ManualValidationException e) {
             return ErrorRedirect("/auth/register", e.Message);
         }
     }

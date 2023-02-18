@@ -20,14 +20,11 @@ public sealed class BoardMiscTest {
             for (int x = 0; x < board.Size; x++) {
                 if (y == 0 && (x == 1 || x == 3)) {
                     board[x, y]!.Piece.Should().Be(Piece.BlackMan);
-                }
-                else if (y == 3 && (x == 0 || x == 2)) {
+                } else if (y == 3 && (x == 0 || x == 2)) {
                     board[x, y]!.Piece.Should().Be(Piece.WhiteMan);
-                }
-                else if (Board.IsPlayable(x, y)) {
+                } else if (Board.IsPlayable(x, y)) {
                     board[x, y]!.Piece.Should().Be(Piece.Empty, $"because we're at ({x}, {y})");
-                }
-                else {
+                } else {
                     board[x, y].Should().BeNull($"because we're at ({x}, {y})");
                 }
             }
