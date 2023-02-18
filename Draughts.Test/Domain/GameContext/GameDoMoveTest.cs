@@ -111,7 +111,7 @@ public sealed class GameDoMoveTest {
     public void CantMoveWhenGameHasntStarted() {
         var whitePlayer = PlayerTestHelper.White().Build();
         var game = GameTestHelper.PendingMiniGame(whitePlayer).Build();
-        var gameState = GameState.InitialState(game.Id, game.Settings.BoardSize);
+        var gameState = GameState.InitialState(game.Id, game.Settings.BoardType);
 
         Action doMove = () => _playGameService.DoMove(game, gameState, whitePlayer.UserId, 13.AsSquare(), 11.AsSquare());
 

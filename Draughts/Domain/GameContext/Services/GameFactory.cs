@@ -19,7 +19,7 @@ public sealed class GameFactory {
             IIdPool idPool, GameSettings settings, UserInfo creator, Color creatorColor) {
         var nextGameId = new GameId(idPool.NextForGame());
         var game = new Game(nextGameId, settings, _clock.UtcNow());
-        var gameState = GameState.InitialState(game.Id, settings.BoardSize);
+        var gameState = GameState.InitialState(game.Id, settings.BoardType);
 
         var player = BuildPlayer(idPool, creator, creatorColor);
         game.JoinGame(player, _clock.UtcNow());

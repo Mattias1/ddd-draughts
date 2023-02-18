@@ -140,11 +140,15 @@ public sealed class DummyDataSeeder {
             var player4 = PlayerTestHelper.FromUser(mathy).Build();
             var game4 = GameTestHelper.PendingGame(GameSettings.Mini, player4).Build();
             SaveWithInitialGameState(game4);
+
+            var player5 = PlayerTestHelper.FromUser(mathy).Build();
+            var game5 = GameTestHelper.PendingGame(GameSettings.MiniHex, player5).Build();
+            SaveWithInitialGameState(game5);
         });
     }
 
     private void SaveWithInitialGameState(Game game) {
-        var gameState = GameState.InitialState(game.Id, game.Settings.BoardSize);
+        var gameState = GameState.InitialState(game.Id, game.Settings.BoardType);
         _gameRepository.Save(game);
         _gameStateRepository.Save(gameState);
     }

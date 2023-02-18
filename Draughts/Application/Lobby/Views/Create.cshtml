@@ -13,6 +13,8 @@
                     <option value="international" selected="selected">International</option>
                     <option value="english-draughts">English draughts (American checkers)</option>
                     <option value="mini">Mini</option>
+                    <option value="hexdame">Hexdame</option>
+                    <option value="minihex">Minihex</option>
                 </select>
             </label>
 
@@ -23,6 +25,8 @@
                 <label><input type="radio" name="boardSize" value="8" /> 8x8</label>
                 <label><input type="radio" name="boardSize" value="10" checked="checked" /> 10x10</label>
                 <label><input type="radio" name="boardSize" value="12" /> 12x12</label>
+                <label><input type="radio" name="boardSize" value="3" /> hex-3</label>
+                <label><input type="radio" name="boardSize" value="5" /> hex-5</label>
             </div>
             <div class="radio-label">
                 <span>First move:</span>
@@ -45,11 +49,6 @@
                 <span>Capture constraints:</span>
                 <label><input type="radio" name="captureConstraints" value="max" checked="checked" /> The maximum pieces</label>
                 <label><input type="radio" name="captureConstraints" value="seq" /> Any finished sequence</label>
-            </div>
-            <div class="radio-label">
-                <span>When no move possible:</span>
-                <label><input type="radio" name="onNoMove" value="lose" checked="checked" /> Lose</label>
-                <label><input type="radio" name="onNoMove" value="draw" disabled="disabled" /> Draw</label>
             </div>
 
             <h4>Finish up</h4>

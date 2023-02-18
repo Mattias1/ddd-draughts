@@ -13,7 +13,7 @@ public sealed class SquareId : IntValueObject<SquareId> {
         Value = value.Value;
     }
 
-    public (int x, int y) ToPosition(IBoardType BoardType) => BoardType.CoordinateFor(this);
+    public (int x, int y) ToPosition(IBoardType boardType) => boardType.CoordinateFor(this);
 
-    public static SquareId FromPosition(int x, int y, IBoardType BoardType) => BoardType.SquareIdFor(x, y);
+    public static SquareId FromPosition(int x, int y, IBoardType boardType) => boardType.SquareIdFor(x, y);
 }

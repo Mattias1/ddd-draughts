@@ -23,6 +23,12 @@ function applyPresets(preset: string): void {
     } else if (preset === 'mini') {
         applyPresets('international');
         val('boardSize', 6);
+    } else if (preset == 'hexdame') {
+        applyPresets('international');
+        val('boardSize', 5);
+    } else if (preset == 'minihex') {
+        applyPresets('international');
+        val('boardSize', 3);
     }
 }
 

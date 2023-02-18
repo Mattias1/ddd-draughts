@@ -379,6 +379,9 @@ main {
     background-repeat: no-repeat;
     margin: 15px 0 30px 0;
 }
+#game-board.hexagonal {
+    box-shadow: none;
+}
 .game-board-6 {
     width: 360px;
     height: 360px;
@@ -399,37 +402,80 @@ main {
     height: 720px;
     background-image: url("/img/board12x12.jpg");
 }
+.game-board-3 {
+    width: 335px;
+    height: 360px; /* 5x72 */
+    background-image: url("/img/board-hex-3.svg");
+    background-size: contain;
+}
+.game-board-5 {
+    width: 588px;
+    height: 648px; /* 9x72 */
+    background-image: url("/img/board-hex-5.svg");
+    background-size: contain;
+}
 #game-board .square {
     position: absolute;
     width: 60px;
     height: 60px;
     background-repeat: no-repeat;
     background-position: center;
+    z-index: 99;
 }
-#game-board .square.playable:hover {
+
+#game-board:not(.hexagonal) .square.playable:hover {
     box-shadow: 0 0 6px #ddd;
     background-color: #7777;
 }
-#game-board .square.playable.selected {
+#game-board:not(.hexagonal) .square.playable.selected {
     box-shadow: 0 0 6px #ddd;
     background-color: #5555;
 }
-#game-board .square.white.man {
+
+#game-board.hexagonal .square.playable:hover::before {
+    content: "\2B22";
+    display: block;
+    margin: -24px 0 0 -11px;
+    color: #7777;
+    font-size: 99px;
+    transform: rotate(-30deg);
+}
+#game-board.hexagonal .square.playable.selected::before {
+    content: "\2B22";
+    display: block;
+    margin: -24px 0 0 -11px;
+    color: #5555;
+    font-size: 99px;
+    transform: rotate(-30deg);
+}
+
+#game-board .square.playable::after {
+    content: " ";
+    width: 60px;
+    height: 60px;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+#game-board.hexagonal .square.playable::after {
+    left: 2px;
+}
+#game-board .square.white.man::after {
     background-image: url("/img/white-piece.png");
 }
-#game-board .square.black.man {
+#game-board .square.black.man::after {
     background-image: url("/img/black-piece.png");
 }
-#game-board .square.white.king {
+#game-board .square.white.king::after {
     background-image: url("/img/white-king.png");
 }
-#game-board .square.black.king {
+#game-board .square.black.king::after {
     background-image: url("/img/black-king.png");
 }
-#game-board .square.dead.man {
+#game-board .square.dead.man::after {
     background-image: url("/img/grey-piece.png");
 }
-#game-board .square.dead.king {
+#game-board .square.dead.king::after {
     background-image: url("/img/grey-king.png");
 }
 #game-board .square.row {

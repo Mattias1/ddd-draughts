@@ -8,6 +8,11 @@ using Xunit;
 namespace Draughts.Test.Domain.GameContext;
 
 public sealed class SquareIdTest {
+    private static readonly IBoardType SQUARE4 = new SquareBoardType(4);
+    private static readonly IBoardType SQUARE8 = new SquareBoardType(8);
+    private static readonly IBoardType HEX3 = new HexagonalBoardType(3);
+    private static readonly IBoardType HEX5 = new HexagonalBoardType(5);
+
     [Theory]
     [InlineData(1, 0, 1)]
     [InlineData(3, 0, 2)]
@@ -22,7 +27,7 @@ public sealed class SquareIdTest {
         // |3|_|4|_|
         // |_|5|_|6|
         // |7|_|8|_|
-        SquareId.FromPosition(x, y, new SquareBoardType(4)).Should().Be(id.AsSquare());
+        SquareId.FromPosition(x, y, SQUARE4).Should().Be(id.AsSquare());
     }
 
     [Theory]
@@ -37,40 +42,55 @@ public sealed class SquareIdTest {
     [InlineData(2, 3, 14)]
     [InlineData(6, 7, 32)]
     public void CoordinateToIdOn8x8Board(int x, int y, int id) {
-        SquareId.FromPosition(x, y, new SquareBoardType(8)).Should().Be(id.AsSquare());
+        SquareId.FromPosition(x, y, SQUARE8).Should().Be(id.AsSquare());
     }
 
     [Theory]
-    [InlineData(2, 0, 1)]
-    [InlineData(3, 0, 2)]
-    [InlineData(4, 0, 3)]
-    [InlineData(1, 1, 4)]
-    [InlineData(2, 1, 5)]
-    [InlineData(3, 1, 6)]
-    [InlineData(4, 1, 7)]
-    [InlineData(0, 2, 8)]
-    [InlineData(1, 2, 9)]
-    [InlineData(2, 2, 10)]
-    [InlineData(3, 2, 11)]
-    [InlineData(4, 2, 12)]
-    [InlineData(0, 3, 13)]
-    [InlineData(1, 3, 14)]
-    [InlineData(2, 3, 15)]
-    [InlineData(3, 3, 16)]
-    [InlineData(0, 4, 17)]
-    [InlineData(1, 4, 18)]
-    [InlineData(2, 4, 19)]
+    [InlineData(2, 0, 1), InlineData(3, 0, 2), InlineData(4, 0, 3)]
+    [InlineData(1, 1, 4), InlineData(2, 1, 5), InlineData(3, 1, 6), InlineData(4, 1, 7)]
+    [InlineData(0, 2, 8), InlineData(1, 2, 9), InlineData(2, 2, 10), InlineData(3, 2, 11), InlineData(4, 2, 12)]
+    [InlineData(0, 3, 13), InlineData(1, 3, 14), InlineData(2, 3, 15), InlineData(3, 3, 16)]
+    [InlineData(0, 4, 17), InlineData(1, 4, 18), InlineData(2, 4, 19)]
     public void CoordinateToIdOnMiniHexdameBoard(int x, int y, int id) {
-        SquareId.FromPosition(x, y, new HexagonalBoardType(3)).Should().Be(id.AsSquare());
+        SquareId.FromPosition(x, y, HEX3).Should().Be(id.AsSquare());
     }
 
-    [Fact]
-    public void NonPlayableCoordinatesShouldThrow() {
+    [Theory]
+    [InlineData(0, 0), InlineData(2, 0)]
+    [InlineData(1, 1), InlineData(3, 1)]
+    [InlineData(0, 2), InlineData(2, 2)]
+    [InlineData(1, 3), InlineData(3, 3)]
+    public void NonPlayableCoordinatesOn4x4BoardShouldThrow(int x, int y) {
         // |_|.|_|.|
         // |.|x|.|_|
         // |_|.|_|.|
         // |.|_|.|_|
-        Action fromPosition = () => SquareId.FromPosition(1, 1, new SquareBoardType(4));
+        Action fromPosition = () => SquareId.FromPosition(x, y, SQUARE4);
+        fromPosition.Should().Throw<ManualValidationException>();
+    }
+
+    [Theory]
+    [InlineData(0, 0), InlineData(1, 0), InlineData(0, 1)]
+    [InlineData(4, 3), InlineData(3, 4), InlineData(4, 4)]
+    public void NonPlayableCoordinatesOnMiniHexdameBoardShouldThrow(int x, int y) {
+        //     |03|07|12|__|__|  Side view    E
+        //    |02|06|11|16|__|             N  +  S
+        //   |01|05|10|15|19|    <- You       W
+        //  |__|04|09|14|18|
+        // |__|__|08|13|17|
+        Action fromPosition = () => SquareId.FromPosition(x, y, HEX3);
+        fromPosition.Should().Throw<ManualValidationException>();
+    }
+
+    [Theory]
+    [InlineData(0, 0), InlineData(1, 0), InlineData(2, 0)]
+    [InlineData(0, 1), InlineData(1, 1)]
+    [InlineData(0, 2)]
+    [InlineData(8, 6)]
+    [InlineData(7, 7), InlineData(8, 7)]
+    [InlineData(6, 8), InlineData(7, 8), InlineData(8, 8)]
+    public void NonPlayableCoordinatesOnHexdameBoardShouldThrow(int x, int y) {
+        Action fromPosition = () => SquareId.FromPosition(x, y, HEX5);
         fromPosition.Should().Throw<ManualValidationException>();
     }
 
@@ -88,7 +108,7 @@ public sealed class SquareIdTest {
         // |3|_|4|_|
         // |_|5|_|6|
         // |7|_|8|_|
-        id.AsSquare().ToPosition(new SquareBoardType(4)).Should().Be((x, y));
+        id.AsSquare().ToPosition(SQUARE4).Should().Be((x, y));
     }
 
     [Theory]
@@ -103,7 +123,7 @@ public sealed class SquareIdTest {
     [InlineData(14, 2, 3)]
     [InlineData(32, 6, 7)]
     public void SquareIdToCoordinateOn8x8Board(int id, int x, int y) {
-        id.AsSquare().ToPosition(new SquareBoardType(8)).Should().Be((x, y));
+        id.AsSquare().ToPosition(SQUARE8).Should().Be((x, y));
     }
 
     [Theory]
@@ -132,7 +152,7 @@ public sealed class SquareIdTest {
         //   |01|05|10|15|19|    <- You       W
         //  |__|04|09|14|18|
         // |__|__|08|13|17|
-        id.AsSquare().ToPosition(new HexagonalBoardType(3)).Should().Be((x, y));
+        id.AsSquare().ToPosition(HEX3).Should().Be((x, y));
     }
 
     // TODO: These are BoardType tests, not SquareId tests
@@ -145,7 +165,7 @@ public sealed class SquareIdTest {
     [InlineData(2, 3, true), InlineData(3, 3, false)]
     [InlineData(6, 7, true), InlineData(7, 7, false)]
     public void IsPlayable(int x, int y, bool expectedResult) {
-        new SquareBoardType(8).IsPlayable(x, y).Should().Be(expectedResult);
+        SQUARE8.IsPlayable(x, y).Should().Be(expectedResult);
     }
 
     // TODO: These are Square tests, not SquareId tests
@@ -155,7 +175,7 @@ public sealed class SquareIdTest {
     [InlineData(4, null, null, null, 8)]
     [InlineData(29, null, 25, null, null)]
     public void BorderSquaresOn8x8Board(int id, int? nw, int? ne, int? se, int? sw) {
-        var board = Board.InitialSetup(new SquareBoardType(8));
+        var board = Board.InitialSetup(SQUARE8);
         var square = board[id.AsSquare()];
 
         Square? result;
@@ -185,7 +205,7 @@ public sealed class SquareIdTest {
         // |01|05|10|15|19|  <- You       W
         //  |04|09|14|18|
         //   |08|13|17|
-        var board = Board.InitialSetup(new HexagonalBoardType(3));
+        var board = Board.InitialSetup(HEX3);
         var square = board[id.AsSquare()];
 
         Square? result;

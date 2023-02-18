@@ -7,22 +7,19 @@ using System.Collections.Generic;
 namespace Draughts.Domain.GameContext.Models;
 
 public interface IBoardType : IEquatable<IBoardType> {
-    // |_|4|_|4|       |_|1|_|2|       N
-    // |.|_|.|_|       |3|_|4|_|    W  +  E
-    // |_|.|_|.|       |_|5|_|6|       S
-    // |5|_|5|_|       |7|_|8|_|
     int DisplaySize { get; }
     int LongSize { get; }
 
     (int x, int y) CoordinateFor(SquareId squareId);
     SquareId SquareIdFor(int x, int y);
+    (int x, int cssX, int cssY) AnnotationCoordinatesForRow(int row);
+    (int y, int cssX, int cssY) AnnotationCoordinatesForCol(int col);
+    (int cssX, int cssY) CssCoordinatesFor(int x, int y);
 
     bool IsInRange(int x, int y);
     bool IsPlayable(int x, int y);
 
     bool IsLastRow(Color? forColor, int x, int y);
-    int XCoordinateForFirstSquareOfRow(int row);
-    int YCoordinateForLastSquareOfCol(int col);
     Piece[] InitialPieces();
     int AmountOfSquares();
 
@@ -30,6 +27,10 @@ public interface IBoardType : IEquatable<IBoardType> {
 }
 
 public sealed class SquareBoardType : ValueObject<SquareBoardType>, IBoardType {
+    // |_|4|_|4|       |_|1|_|2|       N
+    // |.|_|.|_|       |3|_|4|_|    W  +  E
+    // |_|.|_|.|       |_|5|_|6|       S
+    // |5|_|5|_|       |7|_|8|_|
     public int DisplaySize { get; }
     public int LongSize { get; }
 
@@ -51,14 +52,25 @@ public sealed class SquareBoardType : ValueObject<SquareBoardType>, IBoardType {
         return new SquareId((x + 2 + y * LongSize) / 2);
     }
 
+    public (int x, int cssX, int cssY) AnnotationCoordinatesForRow(int row) {
+        int x = IsPlayable(0, row) ? 0 : 1;
+        var (cssX, cssY) = CssCoordinatesFor(-1, row);
+        return (x, cssX, cssY);
+    }
+
+    public (int y, int cssX, int cssY) AnnotationCoordinatesForCol(int col) {
+        int y = IsPlayable(col, LongSize - 1) ? LongSize - 1 : LongSize - 2;
+        var (cssX, cssY) = CssCoordinatesFor(col, LongSize);
+        return (y, cssX, cssY);
+    }
+
+    public (int cssX, int cssY) CssCoordinatesFor(int x, int y) => (60 * x, 60 * y);
+
     public bool IsInRange(int x, int y) => x >= 0 && x < LongSize && y >= 0 && y < LongSize;
 
     public bool IsPlayable(int x, int y) => (x + y) % 2 == 1;
 
     public bool IsLastRow(Color? forColor, int x, int y) => forColor == Color.Black ? y == DisplaySize - 1 : y == 0;
-
-    public int XCoordinateForFirstSquareOfRow(int row) => IsPlayable(0, row) ? 0 : 1;
-    public int YCoordinateForLastSquareOfCol(int col) => IsPlayable(col, LongSize - 1) ? LongSize - 1 : LongSize - 2;
 
     public Piece[] InitialPieces() {
         int nrOfStartingPieces = LongSize * (LongSize - 2) / 4;
@@ -138,19 +150,29 @@ public sealed class HexagonalBoardType : ValueObject<HexagonalBoardType>, IBoard
         return new SquareId(value);
     }
 
+    public (int x, int cssX, int cssY) AnnotationCoordinatesForRow(int row) {
+        int x = row < DisplaySize ? DisplaySize - row - 1 : 0;
+        var (cssX, cssY) = CssCoordinatesFor(x - 1, row);
+        return (x, cssX, cssY);
+    }
+
+    public (int y, int cssX, int cssY) AnnotationCoordinatesForCol(int col) {
+        int y = col < DisplaySize ? LongSize - 1 : LongSize + DisplaySize - col - 2;
+        var (cssX, cssY) = CssCoordinatesFor(col, y + 1);
+        return (y, cssX, cssY);
+    }
+
+    // The conditional is here because the pixel coordinates of the hexagons in the SVG are rounded to pixels...   :(
+    public (int cssX, int cssY) CssCoordinatesFor(int x, int y) => (11 + 62 * x - (x < 5 ? 1 : 0), 72 * y + 36 * x - 36 * DisplaySize + 36 + 4);
+
     public bool IsInRange(int x, int y) => x >= 0 && x < LongSize && y >= 0 && y < LongSize;
 
-    public bool IsPlayable(int x, int y) => x + y > 1 && x + y < 4 * DisplaySize - 5;
+    public bool IsPlayable(int x, int y) => x + y > DisplaySize - 2 && x + y < LongSize + DisplaySize - 1;
 
     public bool IsLastRow(Color? forColor, int x, int y) {
         return forColor == Color.Black
             ? y == LongSize - 1 || x + y == LongSize + DisplaySize - 2
             : y == 0 || x + y == DisplaySize - 1;
-    }
-
-    public int XCoordinateForFirstSquareOfRow(int row) => row < DisplaySize ? DisplaySize - row - 1 : 0;
-    public int YCoordinateForLastSquareOfCol(int col) {
-        return col < DisplaySize ? LongSize - 1 : LongSize + DisplaySize - col - 2;
     }
 
     public Piece[] InitialPieces() {
