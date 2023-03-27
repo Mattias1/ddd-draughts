@@ -78,23 +78,21 @@ public sealed class Game : AggregateRoot<Game, GameId> {
         SwitchTurn(switchedAt);
     }
 
-    public void MissTurn(ZonedDateTime expiredAt) {
-        ValidateGameIsActive();
-        if (Turn is null || Turn.ExpiresAt.ToInstant() > expiredAt.ToInstant()) {
-            throw new ManualValidationException("You cannot miss a turn unless the turn exists and is expired.");
-        }
-        SwitchTurn(expiredAt);
-    }
-
     private void SwitchTurn(ZonedDateTime switchedAt) {
         var player = Turn is null ? GetPlayerForColor(Settings.FirstMove) : Players.Single(p => p != Turn.Player);
         Turn = new Turn(player, switchedAt, Settings.MaxTurnLength);
     }
 
+    public void MissTurn(ZonedDateTime expiredAt) {
+        ValidateGameIsActive();
+        if (Turn is null || Turn.ExpiresAt.ToInstant() > expiredAt.ToInstant()) {
+            throw new ManualValidationException("You cannot miss a turn unless the turn exists and is expired.");
+        }
+        ResignGame(Turn.Player.UserId, expiredAt);
+    }
+
     public void ChangeTurnTime(ZonedDateTime now, int turnTimeInSeconds, bool forAllTurns) {
         ValidateGameIsActive();
-        var test = now.PlusSeconds(turnTimeInSeconds);
-        var test2 = now.PlusHours(48);
         Turn = Turn!.WithExpiry(now.PlusSeconds(turnTimeInSeconds));
         if (forAllTurns) {
             Settings = Settings.WithTurnTime(Duration.FromSeconds(turnTimeInSeconds));

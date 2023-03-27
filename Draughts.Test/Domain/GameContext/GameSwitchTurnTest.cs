@@ -68,12 +68,13 @@ public sealed class GameSwitchTurnTest {
     public void MissTurnWhenItsExpired() {
         var game = GameTestHelper.StartedMiniGame().Build();
         var originalTurn = game.Turn ?? throw new InvalidOperationException("The turn should not be null as the game is started.");
+        var otherPlayer = game.Players.Single(p => p != originalTurn.Player);
 
         game.MissTurn(originalTurn.ExpiresAt.PlusSeconds(3));
 
-        game.Turn.Should().NotBeNull();
-        game.Turn!.Player.Color.Should().Be(originalTurn.Player.Color.Other);
-        game.Turn!.ExpiresAt.ToInstant().Should().BeGreaterThan(originalTurn.ExpiresAt.ToInstant());
+        game.Turn.Should().BeNull();
+        game.Victor.Should().Be(otherPlayer);
+        game.FinishedAt.Should().NotBeNull();
     }
 
     [Fact]
