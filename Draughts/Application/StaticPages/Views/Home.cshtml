@@ -4,16 +4,29 @@
 
 <div class="text-container">
     @if (ViewBag.IsLoggedIn) {
-        <h1>Dashboard</h1>
-        <p>Hi @ViewBag.Username, here's an overview of, err, well, things?</p>
-        <p>Nothing to see so far.</p>
+        <h1>Hi @ViewBag.Username</h1>
     } else {
         <h1>Hey there</h1>
-        <p>
-            This is a site I made to play around with Domain-driven design (DDD).
-            You can read about the design choices in the <a @Utils.Href("/documentation")>documentation</a>.
-        </p>
+    }
+    <p>
+        This is a site I made to play around with Domain-driven design (DDD).
+        You can read about the design choices in the <a @Utils.Href("/documentation")>documentation</a>.
+    </p>
+    <p>
+        Note that this site is setup as a demo for a software development principle, and has a crappy UI.
+        If you want to play a good game of draughts, why not visit
+        <a class="extern" href="https://lidraughts.org/">lidraughts.org</a>?
+    </p>
 
+    @if (ViewBag.IsLoggedIn) {
+        <h3>Dashboard</h3>
+        <p>
+            You could check your <a @Utils.Href("/gamelist/active")>active games</a>,
+            your <a @Utils.Href("/gamelist/pending")>pending games</a>,
+            join games that are <a @Utils.Href("/lobby")>waiting for players</a>
+            or <a @Utils.Href("/lobby/create")>create a new game</a>.
+        </p>
+    } else {
         <div>
             <form class="form-horizontal" action="/auth/login" method="post">
                 <h3>Login</h3>
@@ -36,9 +49,10 @@
             </form>
             <p>Or <a @Utils.Href("/auth/register")>register</a> a new account.</p>
             <div class="p-like">
-                Debug shortcut:
+                Debug shortcuts:
                 @Utils.PostLink("Login as Matty", "/auth/login", ("name", "Matty"), ("password", "admin")) or
                 @Utils.PostLink("Login as Mathy", "/auth/login", ("name", "Mathy"), ("password", "admin"))
+                (only works at local dev environment)
             </div>
         </div>
     }
