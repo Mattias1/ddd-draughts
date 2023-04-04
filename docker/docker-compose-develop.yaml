@@ -25,5 +25,20 @@ services:
     ports:
       - 52580:8080 # Webinterface: HTTP
 
+  sqlquerybuilder-it-db:
+    image: mariadb:10.9 # MySQL.Data crashes with mariadb 10.10, so for now let's stay one version back and see if any of them fixes something.
+    container_name: sqlquerybuilder-it-db
+    restart: "no"
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_INITDB_SKIP_TZINFO: skippls
+    volumes:
+      - sqlquerybuilder-it-db-data:/var/lib/mysql;
+      # Files in this directory are executed in alphabetical order when initializing
+      - ./sqlquerybuilder-it-db/init.sql:/docker-entrypoint-initdb.d/aa-init.sql
+    ports:
+      - 53306:3306 # SQL Port
+
 volumes:
   draughts-db-data:
+  sqlquerybuilder-it-db-data:

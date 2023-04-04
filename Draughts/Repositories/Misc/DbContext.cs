@@ -13,10 +13,10 @@ public sealed class DbContext {
     private readonly DbConnectionInfo _userDb, _authDb, _gameDb, _miscDb;
 
     private DbContext(string dbPassword) {
-        _userDb = new DbConnectionInfo("draughts_user", "draughts_user", "devapp");
-        _authDb = new DbConnectionInfo("draughts_auth", "draughts_auth", "devapp");
-        _gameDb = new DbConnectionInfo("draughts_game", "draughts_game", "devapp");
-        _miscDb = new DbConnectionInfo("draughts_misc", "draughts_game", "devapp"); // All users can access the misc DB.
+        _userDb = new DbConnectionInfo("draughts_user", "draughts_user", dbPassword);
+        _authDb = new DbConnectionInfo("draughts_auth", "draughts_auth", dbPassword);
+        _gameDb = new DbConnectionInfo("draughts_game", "draughts_game", dbPassword);
+        _miscDb = new DbConnectionInfo("draughts_misc", "draughts_game", dbPassword); // All users can access the misc DB.
     }
 
     public ISqlTransactionFlavor BeginUserTransaction() => _userDb.Connection().BeginTransaction();

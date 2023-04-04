@@ -67,13 +67,13 @@ public sealed class SubqueriesTest {
     public void TestWhereEqSubquery() {
         string sql = Query().Select("user_id")
             .From("statistics")
-            .Where("total_won").Eq(q => q
-                .Select().Max("total_won")
+            .Where("counter").Eq(q => q
+                .Select().Max("counter")
                 .From("statistics")
             )
             .ToUnsafeSql();
-        sql.Should().Be("select `user_id` from `statistics` where `total_won` = ("
-            + "select max(`total_won`) from `statistics`"
+        sql.Should().Be("select `user_id` from `statistics` where `counter` = ("
+            + "select max(`counter`) from `statistics`"
             + ")");
     }
 
@@ -81,32 +81,32 @@ public sealed class SubqueriesTest {
     public void TestWhereGtSubquery() {
         string sql = Query().Select("user_id")
             .From("statistics")
-            .Where("total_won").Gt(q => q
-                .Select().Avg("total_won")
+            .Where("counter").Gt(q => q
+                .Select().Avg("counter")
                 .From("statistics")
             )
             .ToUnsafeSql();
-        sql.Should().Be("select `user_id` from `statistics` where `total_won` > ("
-            + "select avg(`total_won`) from `statistics`"
+        sql.Should().Be("select `user_id` from `statistics` where `counter` > ("
+            + "select avg(`counter`) from `statistics`"
             + ")");
     }
 
     [Fact]
     public void TestInsertIntoSubquery() {
         string sql = Query().InsertInto("user_backup")
-            .Columns("id", "username", "total_turns")
-            .Select().Column("user_id").Column("username").SelectSubqueryAs("total_turns", q => q
+            .Columns("id", "username", "total_things")
+            .Select().Column("user_id").Column("username").SelectSubqueryAs("total_things", q => q
                 .Select().CountAll()
-                .From("turn")
-                .Where("turn.user_id").IsColumn("user.id")
+                .From("thing")
+                .Where("thing.user_id").IsColumn("user.id")
             )
             .From("user")
             .Where("last_active").Gt(new LocalDate(2020, 02, 02))
             .ToUnsafeSql();
-        sql.Should().Be("insert into `user_backup` (`id`, `username`, `total_turns`) "
+        sql.Should().Be("insert into `user_backup` (`id`, `username`, `total_things`) "
             + "select `user_id`, `username`, ("
-            + "select count(*) from `turn` where `turn`.`user_id` = `user`.`id`"
-            + ") as `total_turns` from `user` where `last_active` >= '2020-02-03'");
+            + "select count(*) from `thing` where `thing`.`user_id` = `user`.`id`"
+            + ") as `total_things` from `user` where `last_active` >= '2020-02-03'");
     }
 
     [Fact]

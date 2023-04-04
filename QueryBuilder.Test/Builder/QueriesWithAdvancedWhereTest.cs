@@ -32,49 +32,49 @@ public sealed class QueriesWithAdvancedWhereTest {
     [Fact]
     public void TestWhereIsNull() {
         string sql = Query().SelectAllFrom("user")
-            .Where("rank").IsNull()
+            .Where("color").IsNull()
             .ToParameterizedSql();
-        sql.Should().Be("select user.* from user where rank is null");
+        sql.Should().Be("select user.* from user where color is null");
     }
 
     [Fact]
     public void TestWhereIsntNull() {
         string sql = Query().SelectAllFrom("user")
-            .Where("rank").IsntNull()
+            .Where("color").IsntNull()
             .ToParameterizedSql();
-        sql.Should().Be("select user.* from user where rank is not null");
+        sql.Should().Be("select user.* from user where color is not null");
     }
 
     [Fact]
     public void TestWhereEqNull() {
         string sql = Query().SelectAllFrom("user")
-            .Where("rank").Eq(null)
+            .Where("color").Eq(null)
             .ToParameterizedSql();
-        sql.Should().Be("select user.* from user where rank is null");
+        sql.Should().Be("select user.* from user where color is null");
     }
 
     [Fact]
     public void TestWhereIsntRawNull() {
         string sql = Query().SelectAllFrom("user")
-            .Where("rank").Isnt(null)
+            .Where("color").Isnt(null)
             .ToParameterizedSql();
-        sql.Should().Be("select user.* from user where rank is not null");
+        sql.Should().Be("select user.* from user where color is not null");
     }
 
     [Fact]
     public void TestWhereBetween() {
         string sql = Query().SelectAllFrom("user")
-            .Where("rating").Between(900, 1100)
+            .Where("number").Between(900, 1100)
             .ToParameterizedSql();
-        sql.Should().Be("select user.* from user where rating between @0 and @1");
+        sql.Should().Be("select user.* from user where number between @0 and @1");
     }
 
     [Fact]
     public void TestWhereNotBetween() {
         string sql = Query().SelectAllFrom("user")
-            .Where("rating").NotBetween(900, 1100)
+            .Where("number").NotBetween(900, 1100)
             .ToParameterizedSql();
-        sql.Should().Be("select user.* from user where rating not between @0 and @1");
+        sql.Should().Be("select user.* from user where number not between @0 and @1");
     }
 
     [Fact]
@@ -96,140 +96,140 @@ public sealed class QueriesWithAdvancedWhereTest {
     [Fact]
     public void Test2Ands() {
         string sql = Query().SelectAllFrom("user")
-            .And("rank").Lt(500)
-            .And("games_played").Gt(50)
+            .And("number").Lt(500)
+            .And("counter").Gt(50)
             .ToParameterizedSql();
-        sql.Should().Be("select user.* from user where rank < @0 and games_played > @1");
+        sql.Should().Be("select user.* from user where number < @0 and counter > @1");
     }
 
     [Fact]
     public void TestOr() {
         string sql = Query().SelectAllFrom("user")
-            .Where("games_played").Eq(42)
-            .Or("games_played").Eq(1337)
+            .Where("counter").Eq(42)
+            .Or("counter").Eq(1337)
             .ToParameterizedSql();
-        sql.Should().Be("select user.* from user where games_played = @0 or games_played = @1");
+        sql.Should().Be("select user.* from user where counter = @0 or counter = @1");
     }
 
     [Fact]
     public void TestBracesAfterAnd() {
         string sql = Query().SelectAllFrom("user")
             .Where(q => q
-                .Where("games_played").Isnt(42)
-                .Or("games_played").Isnt(1337)
+                .Where("counter").Isnt(42)
+                .Or("counter").Isnt(1337)
             )
             .ToParameterizedSql();
-        sql.Should().Be("select user.* from user where (games_played != @0 or games_played != @1)");
+        sql.Should().Be("select user.* from user where (counter != @0 or counter != @1)");
     }
 
     [Fact]
     public void TestBracesAfterOr() {
         string sql = Query().SelectAllFrom("user")
-            .Where("rank").Is("Field marshal")
+            .Where("color").Is("orange")
             .Or(q => q
-                .Where("rating").GtEq(3000)
-                .And("rating").LtEq(3600)
+                .Where("number").GtEq(3000)
+                .And("number").LtEq(3600)
             )
             .ToParameterizedSql();
-        sql.Should().Be("select user.* from user where rank = @0 or (rating >= @1 and rating <= @2)");
+        sql.Should().Be("select user.* from user where color = @0 or (number >= @1 and number <= @2)");
     }
 
     [Fact]
     public void TestRecursiveBraces() {
         string sql = Query().SelectAllFrom("user")
-            .Where(q => q.Where(z => z.Where("rating").Is(1337)))
+            .Where(q => q.Where(z => z.Where("number").Is(1337)))
             .ToParameterizedSql();
-        sql.Should().Be("select user.* from user where ((rating = @0))");
+        sql.Should().Be("select user.* from user where ((number = @0))");
     }
 
     [Fact]
     public void TestWhereNot() {
         string sql = Query().SelectAllFrom("user")
-            .WhereNot(q => q.Where("rank").Is("Private"))
+            .WhereNot(q => q.Where("color").Is("yellow"))
             .ToParameterizedSql();
-        sql.Should().Be("select user.* from user where not (rank = @0)");
+        sql.Should().Be("select user.* from user where not (color = @0)");
     }
 
     [Fact]
     public void TestOrNot() {
         string sql = Query().SelectAllFrom("user")
             .Where("username").NotEq("admin")
-            .OrNot(q => q.Where("rank").Is("Private"))
+            .OrNot(q => q.Where("color").Is("orange"))
             .ToParameterizedSql();
-        sql.Should().Be("select user.* from user where username != @0 or not (rank = @1)");
+        sql.Should().Be("select user.* from user where username != @0 or not (color = @1)");
     }
 
     [Fact]
     public void TestWhereAndOrParameters() {
         string sql = Query().SelectAllFrom("user")
-            .Where("games_played").Gt(42)
-            .And("rating").Gt(1337)
-            .Or("games_played").Gt(1337)
+            .Where("counter").Gt(42)
+            .And("number").Gt(1337)
+            .Or("counter").Gt(1337)
             .ToUnsafeSql();
-        sql.Should().Be("select user.* from user where games_played > 42 and rating > 1337 or games_played > 1337");
+        sql.Should().Be("select user.* from user where counter > 42 and number > 1337 or counter > 1337");
     }
 
     [Fact]
     public void TestColumnEq() {
         string sql = Query().SelectAll().FromAs("user", "u")
-            .FromAs("authuser", "a")
-            .Where("u.username").EqColumn("a.username")
+            .FromAs("monarch", "m")
+            .Where("u.name").EqColumn("m.name")
             .ToParameterizedSql();
-        sql.Should().Be("select * from user as u, authuser as a where u.username = a.username");
+        sql.Should().Be("select * from user as u, monarch as m where u.name = m.name");
     }
 
     [Fact]
     public void TestColumnNotEq() {
         string sql = Query().SelectAll().FromAs("user", "u")
-            .FromAs("authuser", "a")
-            .Where("u.username").NotEqColumn("a.username")
+            .FromAs("monarch", "m")
+            .Where("u.name").NotEqColumn("m.name")
             .ToParameterizedSql();
-        sql.Should().Be("select * from user as u, authuser as a where u.username != a.username");
+        sql.Should().Be("select * from user as u, monarch as m where u.name != m.name");
     }
 
     [Fact]
     public void TestColumnGt() {
         string sql = Query().SelectAll().FromAs("user", "u")
-            .FromAs("authuser", "a")
-            .Where("u.username").GtColumn("a.username")
+            .FromAs("monarch", "m")
+            .Where("u.age").GtColumn("m.age")
             .ToParameterizedSql();
-        sql.Should().Be("select * from user as u, authuser as a where u.username > a.username");
+        sql.Should().Be("select * from user as u, monarch as m where u.age > m.age");
     }
 
     [Fact]
     public void TestColumnGtEq() {
         string sql = Query().SelectAll().FromAs("user", "u")
-            .FromAs("authuser", "a")
-            .Where("u.username").GtEqColumn("a.username")
+            .FromAs("monarch", "m")
+            .Where("u.age").GtEqColumn("m.age")
             .ToParameterizedSql();
-        sql.Should().Be("select * from user as u, authuser as a where u.username >= a.username");
+        sql.Should().Be("select * from user as u, monarch as m where u.age >= m.age");
     }
 
     [Fact]
     public void TestColumnLt() {
         string sql = Query().SelectAll().FromAs("user", "u")
-            .FromAs("authuser", "a")
-            .Where("u.username").LtColumn("a.username")
+            .FromAs("monarch", "m")
+            .Where("u.age").LtColumn("m.age")
             .ToParameterizedSql();
-        sql.Should().Be("select * from user as u, authuser as a where u.username < a.username");
+        sql.Should().Be("select * from user as u, monarch as m where u.age < m.age");
     }
 
     [Fact]
     public void TestColumnLtEq() {
         string sql = Query().SelectAll().FromAs("user", "u")
-            .FromAs("authuser", "a")
-            .Where("u.username").LtEqColumn("a.username")
+            .FromAs("monarch", "m")
+            .Where("u.age").LtEqColumn("m.age")
             .ToParameterizedSql();
-        sql.Should().Be("select * from user as u, authuser as a where u.username <= a.username");
+        sql.Should().Be("select * from user as u, monarch as m where u.age <= m.age");
     }
 
     [Fact]
     public void TestWrappedColumnName() {
         string sql = WrapFieldNamesQuery().SelectAll().FromAs("user", "u")
-            .FromAs("authuser", "a")
-            .Where("u.username").EqColumn("a.username")
+            .FromAs("monarch", "m")
+            .Where("u.name").EqColumn("m.name")
             .ToParameterizedSql();
-        sql.Should().Be("select * from `user` as `u`, `authuser` as `a` where `u`.`username` = `a`.`username`");
+        sql.Should().Be("select * from `user` as `u`, `monarch` as `m` where `u`.`name` = `m`.`name`");
     }
 
     [Fact]
@@ -294,7 +294,7 @@ public sealed class QueriesWithAdvancedWhereTest {
     [Fact]
     public void NoOrAsFirst() {
         Action func = () => Query().SelectAllFrom("user")
-            .Or("rating").Is(1)
+            .Or("number").Is(1)
             .ToParameterizedSql();
         func.Should().Throw<InvalidOperationException>();
     }
@@ -303,7 +303,7 @@ public sealed class QueriesWithAdvancedWhereTest {
     public void NoBracesOrAsFirst() {
         Action func = () => Query().SelectAllFrom("user")
             .Or(q => q
-                .Where("rating").Is(1)
+                .Where("number").Is(1)
             )
             .ToParameterizedSql();
         func.Should().Throw<InvalidOperationException>();
@@ -312,9 +312,9 @@ public sealed class QueriesWithAdvancedWhereTest {
     [Fact]
     public void NoOrAsFirstBetweenBraces() {
         Action func = () => Query().SelectAllFrom("user")
-            .Where("rating").Is(1)
+            .Where("number").Is(1)
             .Or(q => q
-                .Or("rating").Is(1)
+                .Or("number").Is(1)
             )
             .ToParameterizedSql();
         func.Should().Throw<InvalidOperationException>();

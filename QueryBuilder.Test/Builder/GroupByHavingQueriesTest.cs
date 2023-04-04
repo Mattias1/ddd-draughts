@@ -13,64 +13,64 @@ public sealed class GroupByHavingQueriesTest {
 
     [Fact]
     public void TestBasicGroupBy() {
-        string sql = Query().Select("rank").CountAllAs("ranks").From("user")
-            .GroupBy("rank")
+        string sql = Query().Select("color").CountAllAs("colors").From("user")
+            .GroupBy("color")
             .ToParameterizedSql();
-        sql.Should().Be("select `rank`, count(*) as `ranks` from `user` group by `rank`");
+        sql.Should().Be("select `color`, count(*) as `colors` from `user` group by `color`");
     }
 
     [Fact]
     public void TestGroupByMultipleSelectColumns() {
-        string sql = Query().Select("rank").Min("rating").Max("rating").From("user")
-            .GroupBy("rank")
+        string sql = Query().Select("color").Min("age").Max("age").From("user")
+            .GroupBy("color")
             .ToParameterizedSql();
-        sql.Should().Be("select `rank`, min(`rating`), max(`rating`) from `user` group by `rank`");
+        sql.Should().Be("select `color`, min(`age`), max(`age`) from `user` group by `color`");
     }
 
     [Fact]
     public void TestGroupByMultipleGroupColumns() {
-        string sql = Query().Select("rank", "games_played").AvgAs("rating", "avg_rating").From("user")
-            .GroupBy("rank", "games_played")
+        string sql = Query().Select("color", "counter").AvgAs("age", "avg_age").From("user")
+            .GroupBy("color", "counter")
             .ToParameterizedSql();
-        sql.Should().Be("select `rank`, `games_played`, avg(`rating`) as `avg_rating` from `user` "
-            + "group by `rank`, `games_played`");
+        sql.Should().Be("select `color`, `counter`, avg(`age`) as `avg_age` from `user` "
+            + "group by `color`, `counter`");
     }
 
     [Fact]
     public void TestBasicHaving() {
-        string sql = Query().Select("rank").CountAllAs("ranks").From("user")
-            .GroupBy("rank")
-            .Having("ranks").LtEq(50)
-            .OrderByAsc("ranks")
+        string sql = Query().Select("color").CountAllAs("colors").From("user")
+            .GroupBy("color")
+            .Having("colors").LtEq(50)
+            .OrderByAsc("colors")
             .ToParameterizedSql();
-        sql.Should().Be("select `rank`, count(*) as `ranks` from `user` "
-            + "group by `rank` having `ranks` <= @0 order by `ranks` asc");
+        sql.Should().Be("select `color`, count(*) as `colors` from `user` "
+            + "group by `color` having `colors` <= @0 order by `colors` asc");
     }
 
     [Fact]
     public void TestAdvancedHaving() {
         string sql = Query().SelectAllFrom("user")
             .Having(q => q
-                .Having("rating").Gt(2000)
-                .AndHaving("games_played").Gt(50)
+                .Having("age").Gt(20)
+                .AndHaving("counter").Gt(50)
             )
             .OrHaving(q => q
-                .Having("rating").Gt(1500)
-                .AndHaving("games_played").Gt(100)
+                .Having("age").Gt(15)
+                .AndHaving("counter").Gt(100)
                 .AndHaving(p => p
-                    .NotHaving(r => r.Having("rank").Like("%private%"))
-                    .OrNotHaving(r => r.Having("rank").Like("%protected%"))
-                    .AndNotHaving(r => r.Having("rank").Like("%internal%"))
+                    .NotHaving(r => r.Having("color").Like("%red%"))
+                    .OrNotHaving(r => r.Having("color").Like("%blue%"))
+                    .AndNotHaving(r => r.Having("color").Like("%green%"))
                 )
             )
-            .OrHaving("rating").Eq(1337)
+            .OrHaving("age").Eq(42)
             .ToParameterizedSql();
 
         sql.Should().Be("select `user`.* from `user` "
-            + "having (`rating` > @0 and `games_played` > @1) "
-            + "or (`rating` > @2 and `games_played` > @3 and ("
-            + "not (`rank` like @4) or not (`rank` like @5) and not (`rank` like @6))"
+            + "having (`age` > @0 and `counter` > @1) "
+            + "or (`age` > @2 and `counter` > @3 and ("
+            + "not (`color` like @4) or not (`color` like @5) and not (`color` like @6))"
             + ") "
-            + "or `rating` = @7");
+            + "or `age` = @7");
     }
 }

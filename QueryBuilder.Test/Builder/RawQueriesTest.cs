@@ -24,24 +24,24 @@ public sealed class RawQueriesTest {
     public void TestRawSqlParameters() {
         string sql = Query().Select().RawColumn("*, ?", 1337).From("user")
             .RawWhere(" where ?=?", 42, 42)
-            .RawOrderBy("rating, ? desc", 1337)
+            .RawOrderBy("age, ? desc", 1337)
             .ToUnsafeSql();
-        sql.Should().Be("select *, 1337 from `user` where 42=42 order by rating, 1337 desc");
+        sql.Should().Be("select *, 1337 from `user` where 42=42 order by age, 1337 desc");
     }
 
     [Fact]
     public void TestRawInsert() {
         string sql = Query().InsertInto("user")
-            .RawInsertColumn("username, rating")
+            .RawInsertColumn("username, age")
             .RawInsertValue("?, 13", "unlucky")
             .ToParameterizedSql();
-        sql.Should().Be("insert into `user` (username, rating) values (@0, 13)");
+        sql.Should().Be("insert into `user` (username, age) values (@0, 13)");
     }
 
     [Fact]
     public void TestRawUpdate() {
-        string sql = Query().Update("user").RawSet("username = ?, rating = 13", "unlucky").ToParameterizedSql();
-        sql.Should().Be("update `user` set username = @0, rating = 13");
+        string sql = Query().Update("user").RawSet("username = ?, age = 13", "unlucky").ToParameterizedSql();
+        sql.Should().Be("update `user` set username = @0, age = 13");
     }
 
     [Fact]
@@ -58,18 +58,18 @@ public sealed class RawQueriesTest {
     [Fact]
     public void TestRawSelect() {
         string sql = Query().SelectDistinct()
-            .Column("username").RawColumn(", 42").Column("rating")
+            .Column("username").RawColumn(", 42").Column("age")
             .From("user")
             .ToParameterizedSql();
-        sql.Should().Be("select distinct `username`, 42, `rating` from `user`");
+        sql.Should().Be("select distinct `username`, 42, `age` from `user`");
     }
 
     [Fact]
     public void TestRawWhereMultipleParams() {
         string sql = Query().SelectAllFrom("user")
-            .RawWhere(" where games_played = ? or games_played = ?", 42, 1337)
+            .RawWhere(" where counter = ? or counter = ?", 42, 1337)
             .ToParameterizedSql();
-        sql.Should().Be("select `user`.* from `user` where games_played = @0 or games_played = @1");
+        sql.Should().Be("select `user`.* from `user` where counter = @0 or counter = @1");
     }
 
     [Fact]
@@ -92,19 +92,19 @@ public sealed class RawQueriesTest {
 
     [Fact]
     public void TestRawGroupByHaving() {
-        string sql = Query().Select("rank").CountAll().From("user")
-            .RawGroupBy("rank")
+        string sql = Query().Select("color").CountAll().From("user")
+            .RawGroupBy("color")
             .RawHaving(" having count(*) > ?", 10)
             .ToParameterizedSql();
-        sql.Should().Be("select `rank`, count(*) from `user` group by rank having count(*) > @0");
+        sql.Should().Be("select `color`, count(*) from `user` group by color having count(*) > @0");
     }
 
     [Fact]
     public void TestRawOrderBy() {
         string sql = Query().SelectAllFrom("user")
-            .RawOrderBy("rank asc, rating, games_played desc")
+            .RawOrderBy("color asc, age, counter desc")
             .ToParameterizedSql();
-        sql.Should().Be("select `user`.* from `user` order by rank asc, rating, games_played desc");
+        sql.Should().Be("select `user`.* from `user` order by color asc, age, counter desc");
     }
 
     [Fact]

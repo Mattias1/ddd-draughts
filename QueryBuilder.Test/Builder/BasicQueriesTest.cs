@@ -23,162 +23,162 @@ public sealed class BasicQueriesTest {
     [Fact]
     public void TestSimpleOrderBySql() {
         string sql = Query().SelectAllFrom("user")
-            .OrderByDesc("rating")
+            .OrderByDesc("id")
             .ToParameterizedSql();
-        sql.Should().Be("select `user`.* from `user` order by `rating` desc");
+        sql.Should().Be("select `user`.* from `user` order by `id` desc");
     }
 
     [Fact]
     public void TestMultipleOrderBySql() {
         string sql = Query().SelectAllFrom("user")
-            .OrderByDesc("rank", "rating").OrderByAsc("games_played", "id")
+            .OrderByDesc("last_name", "first_name").OrderByAsc("color", "id")
             .ToParameterizedSql();
-        sql.Should().Be("select `user`.* from `user` order by `rank`, `rating` desc, `games_played`, `id` asc");
+        sql.Should().Be("select `user`.* from `user` order by `last_name`, `first_name` desc, `color`, `id` asc");
     }
 
     [Fact]
     public void TestMultipleOrderByWithRepeatingDescSql() {
         string sql = Query().SelectAllFrom("user")
-            .OrderByDesc("rank", "rating").OrderByDesc("games_played").OrderByDesc("id")
+            .OrderByDesc("last_name", "first_name").OrderByDesc("color").OrderByDesc("id")
             .ToParameterizedSql();
-        sql.Should().Be("select `user`.* from `user` order by `rank`, `rating` desc, `games_played` desc, `id` desc");
+        sql.Should().Be("select `user`.* from `user` order by `last_name`, `first_name` desc, `color` desc, `id` desc");
     }
 
     [Fact]
     public void TestSimpleCount() {
-        string sql = Query().CountAllFrom("user").Where("rating").Gt(9000).ToParameterizedSql();
-        sql.Should().Be("select count(*) from `user` where `rating` > @0");
+        string sql = Query().CountAllFrom("user").Where("age").Gt(9000).ToParameterizedSql();
+        sql.Should().Be("select count(*) from `user` where `age` > @0");
     }
 
     [Fact]
     public void TestSimpleInsert() {
         string sql = Query()
             .InsertInto("user")
-            .Values(1, 2, "admin", 1000, "Private", 0)
+            .Values(1, "admin", "orange", 1000, 0)
             .ToParameterizedSql();
-        sql.Should().Be("insert into `user` values (@0, @1, @2, @3, @4, @5)");
+        sql.Should().Be("insert into `user` values (@0, @1, @2, @3, @4)");
     }
 
     [Fact]
     public void TestInsertWithColumnNames() {
         string sql = Query()
             .InsertInto("user")
-            .Columns("id", "username", "rank")
-            .Values(1, "admin", "Private")
+            .Columns("id", "username", "color")
+            .Values(1, "admin", "orange")
             .ToParameterizedSql();
-        sql.Should().Be("insert into `user` (`id`, `username`, `rank`) values (@0, @1, @2)");
+        sql.Should().Be("insert into `user` (`id`, `username`, `color`) values (@0, @1, @2)");
     }
 
     [Fact]
     public void TestInsertParameters() {
         string sql = Query()
             .InsertInto("user")
-            .Columns("id", "username", "rank")
+            .Columns("id", "username", "color")
             .Values(1, "admin", null)
             .ToUnsafeSql();
-        sql.Should().Be("insert into `user` (`id`, `username`, `rank`) values (1, 'admin', null)");
+        sql.Should().Be("insert into `user` (`id`, `username`, `color`) values (1, 'admin', null)");
     }
 
     [Fact]
     public void TestInsertMultipleChunks() {
         string sql = Query()
             .InsertInto("user")
-            .Columns("id", "username", "rank")
+            .Columns("id", "username", "color")
             .Values(1, "admin", null)
             .Values(2, "user", null)
             .ToUnsafeSql();
-        sql.Should().Be("insert into `user` (`id`, `username`, `rank`) values (1, 'admin', null), (2, 'user', null)");
+        sql.Should().Be("insert into `user` (`id`, `username`, `color`) values (1, 'admin', null), (2, 'user', null)");
     }
 
     [Fact]
     public void TestInsertFromDictionary() {
         var dict = new Dictionary<string, object?> {
                 { "username", "testname" },
-                { "rating", 1337 }
+                { "age", 42 }
             };
         string sql = Query().InsertInto("user").InsertFromDictionary(dict).ToParameterizedSql();
-        sql.Should().Be("insert into `user` (`username`, `rating`) values (@0, @1)");
+        sql.Should().Be("insert into `user` (`username`, `age`) values (@0, @1)");
     }
 
     [Fact]
     public void TestInsertFromModel() {
         var model = new TestUserTable {
             Username = "testname",
-            Rating = 1337
+            Age = 1337
         };
         string sql = Query().InsertInto("user").InsertFrom(model).ToParameterizedSql();
-        sql.Should().Be("insert into `user` (`username`, `rating`) values (@0, @1)");
+        sql.Should().Be("insert into `user` (`username`, `age`) values (@0, @1)");
     }
 
     [Fact]
     public void TestInsertFromMultipleModels() {
         var model1 = new TestUserTable {
             Username = "testname",
-            Rating = 1337
+            Age = 1337
         };
         var model2 = new TestUserTable {
             Username = "othername",
-            Rating = 42
+            Age = 42
         };
         string sql = Query().InsertInto("user").InsertFrom(model1, model2).ToParameterizedSql();
-        sql.Should().Be("insert into `user` (`username`, `rating`) values (@0, @1), (@2, @3)");
+        sql.Should().Be("insert into `user` (`username`, `age`) values (@0, @1), (@2, @3)");
     }
 
     [Fact]
     public void TestUpdate() {
         string sql = Query()
             .Update("user")
-            .SetColumn("rating", 1100)
-            .SetColumn("rank", "Corporal")
-            .SetColumn("games_played", 1)
+            .SetColumn("age", 15)
+            .SetColumn("color", "orange")
+            .SetColumn("counter", 1)
             .Where("id").Is(1)
             .ToParameterizedSql();
-        sql.Should().Be("update `user` set `rating` = @0, `rank` = @1, `games_played` = @2 where `id` = @3");
+        sql.Should().Be("update `user` set `age` = @0, `color` = @1, `counter` = @2 where `id` = @3");
     }
 
     [Fact]
     public void TestUpdateParameters() {
         string sql = Query()
             .Update("user")
-            .SetColumn("rating", 1100)
+            .SetColumn("age", 15)
             .SetColumn("username", "Miss Piggy")
-            .SetColumn("rank", null)
-            .SetColumn("games_played", 1)
+            .SetColumn("color", null)
+            .SetColumn("counter", 1)
             .Where("id").Is(2)
             .ToUnsafeSql();
-        sql.Should().Be("update `user` set `rating` = 1100, `username` = 'Miss Piggy', "
-            + "`rank` = null, `games_played` = 1 where `id` = 2");
+        sql.Should().Be("update `user` set `age` = 15, `username` = 'Miss Piggy', "
+            + "`color` = null, `counter` = 1 where `id` = 2");
     }
 
     [Fact]
     public void TestUpdateFromDictionary() {
         var dict = new Dictionary<string, object?> {
                 { "username", "testname" },
-                { "rating", 1337 }
+                { "age", 42 }
             };
         string sql = Query().Update("user").SetFromDictionary(dict).Where("id").Is(42).ToParameterizedSql();
-        sql.Should().Be("update `user` set `username` = @0, `rating` = @1 where `id` = @2");
+        sql.Should().Be("update `user` set `username` = @0, `age` = @1 where `id` = @2");
     }
 
     [Fact]
     public void TestUpdateFromModel() {
         var model = new TestUserTable {
             Username = "testname",
-            Rating = 1337
+            Age = 1337
         };
         string sql = Query().Update("user").SetFrom(model).Where("id").Is(42).ToParameterizedSql();
-        sql.Should().Be("update `user` set `username` = @0, `rating` = @1 where `id` = @2");
+        sql.Should().Be("update `user` set `username` = @0, `age` = @1 where `id` = @2");
     }
 
     [Fact]
     public void DontUpdateWithoutWhere() {
-        Action func = () => Query().Update("user").SetColumn("rating", 42).ToParameterizedSql();
+        Action func = () => Query().Update("user").SetColumn("age", 42).ToParameterizedSql();
         func.Should().Throw<SqlQueryBuilderException>();
     }
 
     [Fact]
     public void AllowExplicitlyUpdatingWithoutWhere() {
-        Action func = () => Query().Update("user").SetColumn("rating", 42).WithoutWhere().ToParameterizedSql();
+        Action func = () => Query().Update("user").SetColumn("age", 42).WithoutWhere().ToParameterizedSql();
         func.Should().NotThrow();
     }
 
@@ -227,8 +227,8 @@ public sealed class BasicQueriesTest {
         func.Should().Throw<PotentialSqlInjectionException>();
     }
 
-    public sealed class TestUserTable {
+    private sealed class TestUserTable {
         public string? Username { get; set; }
-        public int? Rating { get; set; }
+        public int? Age { get; set; }
     }
 }

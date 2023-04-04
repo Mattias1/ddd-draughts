@@ -13,14 +13,14 @@ public sealed class QueriesWithAdvancedSelect {
 
     [Fact]
     public void TestSelectDistinctSql() {
-        string sql = Query().SelectDistinct().Column("rank").From("user").ToParameterizedSql();
-        sql.Should().Be("select distinct `rank` from `user`");
+        string sql = Query().SelectDistinct().Column("color").From("user").ToParameterizedSql();
+        sql.Should().Be("select distinct `color` from `user`");
     }
 
     [Fact]
     public void TestSelectColumnsSql() {
-        string sql = Query().Select("id", "username", "rank").From("user").ToParameterizedSql();
-        sql.Should().Be("select `id`, `username`, `rank` from `user`");
+        string sql = Query().Select("id", "username", "color").From("user").ToParameterizedSql();
+        sql.Should().Be("select `id`, `username`, `color` from `user`");
     }
 
     [Fact]
@@ -28,11 +28,11 @@ public sealed class QueriesWithAdvancedSelect {
         string sql = Query().Select()
             .ColumnAs("id", "blah")
             .ColumnAs("username", "blahblah")
-            .Column("rank")
-            .Column("rating")
+            .Column("color")
+            .Column("age")
             .From("user")
             .ToParameterizedSql();
-        sql.Should().Be("select `id` as `blah`, `username` as `blahblah`, `rank`, `rating` from `user`");
+        sql.Should().Be("select `id` as `blah`, `username` as `blahblah`, `color`, `age` from `user`");
     }
 
     [Fact]
@@ -41,14 +41,14 @@ public sealed class QueriesWithAdvancedSelect {
             .Column("id")
             .CountAll()
             .Count("admin")
-            .Sum("rating")
-            .Avg("rating")
-            .Max("rating")
-            .Min("rating")
+            .Sum("age")
+            .Avg("age")
+            .Max("age")
+            .Min("age")
             .From("user")
             .ToParameterizedSql();
-        sql.Should().Be("select `id`, count(*), count(`admin`), sum(`rating`), avg(`rating`), "
-            + "max(`rating`), min(`rating`) from `user`");
+        sql.Should().Be("select `id`, count(*), count(`admin`), sum(`age`), avg(`age`), "
+            + "max(`age`), min(`age`) from `user`");
     }
 
     [Fact]
@@ -57,14 +57,14 @@ public sealed class QueriesWithAdvancedSelect {
             .Column("id")
             .CountAllAs("rowcount")
             .CountAs("admin", "admins")
-            .SumAs("rating", "summ")
-            .AvgAs("rating", "avgg")
-            .MaxAs("rating", "maxx")
-            .MinAs("rating", "minn")
+            .SumAs("age", "summ")
+            .AvgAs("age", "avgg")
+            .MaxAs("age", "maxx")
+            .MinAs("age", "minn")
             .From("user")
             .ToParameterizedSql();
-        sql.Should().Be("select `id`, count(*) as `rowcount`, count(`admin`) as `admins`, sum(`rating`) as `summ`, "
-            + "avg(`rating`) as `avgg`, max(`rating`) as `maxx`, min(`rating`) as `minn` from `user`");
+        sql.Should().Be("select `id`, count(*) as `rowcount`, count(`admin`) as `admins`, sum(`age`) as `summ`, "
+            + "avg(`age`) as `avgg`, max(`age`) as `maxx`, min(`age`) as `minn` from `user`");
     }
 
     [Fact]
@@ -81,92 +81,94 @@ public sealed class QueriesWithAdvancedSelect {
     [Fact]
     public void TestInnerJoin() {
         string sql = Query().SelectAllFrom("user")
-            .Join("authuser", "user.id", "authuser.user_id")
+            .Join("street", "user.street_id", "street.id")
             .ToParameterizedSql();
-        sql.Should().Be("select `user`.* from `user` join `authuser` on `user`.`id` = `authuser`.`user_id`");
+        sql.Should().Be("select `user`.* from `user` join `street` on `user`.`street_id` = `street`.`id`");
     }
 
     [Fact]
     public void TestInnerJoinAs() {
         string sql = Query().Select("u.*").FromAs("user", "u")
-            .JoinAs("authuser", "a", "u.id", "a.user_id")
+            .JoinAs("street", "s", "u.street_id", "s.id")
             .ToParameterizedSql();
-        sql.Should().Be("select `u`.* from `user` as `u` join `authuser` as `a` on `u`.`id` = `a`.`user_id`");
+        sql.Should().Be("select `u`.* from `user` as `u` join `street` as `s` on `u`.`street_id` = `s`.`id`");
     }
 
     [Fact]
     public void TestLeftJoin() {
         string sql = Query().SelectAllFrom("user")
-            .LeftJoin("authuser", "user.id", "authuser.user_id")
+            .LeftJoin("street", "user.street_id", "street.id")
             .ToParameterizedSql();
-        sql.Should().Be("select `user`.* from `user` left join `authuser` on `user`.`id` = `authuser`.`user_id`");
+        sql.Should().Be("select `user`.* from `user` left join `street` on `user`.`street_id` = `street`.`id`");
     }
 
     [Fact]
     public void TestLeftJoinAs() {
         string sql = Query().Select("u.*").FromAs("user", "u")
-            .LeftJoinAs("authuser", "a", "u.id", "a.user_id")
+            .LeftJoinAs("street", "s", "u.street_id", "s.id")
             .ToParameterizedSql();
-        sql.Should().Be("select `u`.* from `user` as `u` left join `authuser` as `a` on `u`.`id` = `a`.`user_id`");
+        sql.Should().Be("select `u`.* from `user` as `u` left join `street` as `s` on `u`.`street_id` = `s`.`id`");
     }
 
     [Fact]
     public void TestRightJoin() {
         string sql = Query().SelectAllFrom("user")
-            .RightJoin("authuser", "user.id", "authuser.user_id")
+            .RightJoin("street", "user.street_id", "street.id")
             .ToParameterizedSql();
-        sql.Should().Be("select `user`.* from `user` right join `authuser` on `user`.`id` = `authuser`.`user_id`");
+        sql.Should().Be("select `user`.* from `user` right join `street` on `user`.`street_id` = `street`.`id`");
     }
 
     [Fact]
     public void TestRightJoinAs() {
         string sql = Query().Select("u.*").FromAs("user", "u")
-            .RightJoinAs("authuser", "a", "u.id", "a.user_id")
+            .RightJoinAs("street", "s", "u.street_id", "s.id")
             .ToParameterizedSql();
-        sql.Should().Be("select `u`.* from `user` as `u` right join `authuser` as `a` on `u`.`id` = `a`.`user_id`");
+        sql.Should().Be("select `u`.* from `user` as `u` right join `street` as `s` on `u`.`street_id` = `s`.`id`");
     }
 
     [Fact]
     public void TestFullJoin() {
         string sql = Query().SelectAllFrom("user")
-            .FullJoin("authuser", "user.id", "authuser.user_id")
+            .FullJoin("street", "user.street_id", "street.id")
             .ToParameterizedSql();
-        sql.Should().Be("select `user`.* from `user` full join `authuser` on `user`.`id` = `authuser`.`user_id`");
+        sql.Should().Be("select `user`.* from `user` full join `street` on `user`.`street_id` = `street`.`id`");
     }
 
     [Fact]
     public void TestFullJoinAs() {
         string sql = Query().Select("u.*").FromAs("user", "u")
-            .FullJoinAs("authuser", "a", "u.id", "a.user_id")
+            .FullJoinAs("street", "s", "u.street_id", "s.id")
             .ToParameterizedSql();
-        sql.Should().Be("select `u`.* from `user` as `u` full join `authuser` as `a` on `u`.`id` = `a`.`user_id`");
+        sql.Should().Be("select `u`.* from `user` as `u` full join `street` as `s` on `u`.`street_id` = `s`.`id`");
     }
 
     [Fact]
     public void TestCrossJoin() {
         string sql = Query().SelectAllFrom("user")
-            .CrossJoin("authuser", "user.id", "authuser.user_id")
+            .CrossJoin("street", "user.street_id", "street.id")
             .ToParameterizedSql();
-        sql.Should().Be("select `user`.* from `user` cross join `authuser` on `user`.`id` = `authuser`.`user_id`");
+        sql.Should().Be("select `user`.* from `user` cross join `street` on `user`.`street_id` = `street`.`id`");
     }
 
     [Fact]
     public void TestCrossJoinAs() {
         string sql = Query().Select("u.*").FromAs("user", "u")
-            .CrossJoinAs("authuser", "a", "u.id", "a.user_id")
+            .CrossJoinAs("street", "s", "u.street_id", "s.id")
             .ToParameterizedSql();
-        sql.Should().Be("select `u`.* from `user` as `u` cross join `authuser` as `a` on `u`.`id` = `a`.`user_id`");
+        sql.Should().Be("select `u`.* from `user` as `u` cross join `street` as `s` on `u`.`street_id` = `s`.`id`");
     }
 
     [Fact]
     public void TestMultipleJoins() {
-        string sql = Query().Select("a.*").FromAs("authuser", "a")
-            .JoinAs("authuser_role", "ar", "a.id", "ar.user_id")
-            .JoinAs("role", "r", "ar.role_id", "r.id")
+        string sql = Query().Select("s.*").ColumnAs("sa.name", "historical_name").FromAs("street", "s")
+            .JoinAs("street_audit", "sa", "s.id", "sa.id")
+            .JoinAs("user", "u", "sa.named_after", "u.id")
+            .Where("u.name").Like("%Hitler%")
             .ToParameterizedSql();
-        sql.Should().Be("select `a`.* from `authuser` as `a` "
-            + "join `authuser_role` as `ar` on `a`.`id` = `ar`.`user_id` "
-            + "join `role` as `r` on `ar`.`role_id` = `r`.`id`");
+        sql.Should().Be("select `s`.*, `sa`.`name` as `historical_name` from `street` as `s` "
+            + "join `street_audit` as `sa` on `s`.`id` = `sa`.`id` "
+            + "join `user` as `u` on `sa`.`named_after` = `u`.`id` "
+            + "where `u`.`name` like @0");
     }
 
     [Fact]
