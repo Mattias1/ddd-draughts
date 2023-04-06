@@ -1,4 +1,5 @@
 using FluentAssertions;
+using NodaTime;
 using System.Linq;
 using System.Threading.Tasks;
 using Xunit;
@@ -8,7 +9,7 @@ namespace SqlQueryBuilder.IntegrationTest;
 public sealed class MySqlIT {
     [Fact]
     public void TestSimpleSelectQuery() {
-        var users = DbContext.Get.QueryWithoutTransaction()
+        var users = DbContext.MySql.QueryWithoutTransaction()
             .SelectAllFrom("user")
             .OrderByAsc("id")
             .List<DbUser>();
@@ -18,7 +19,7 @@ public sealed class MySqlIT {
 
     [Fact]
     public async Task TestSimpleAsyncSelectQuery() {
-        var users = await DbContext.Get.QueryWithoutTransaction()
+        var users = await DbContext.MySql.QueryWithoutTransaction()
             .SelectAllFrom("user")
             .OrderByAsc("id")
             .ListAsync<DbUser>();
@@ -28,39 +29,51 @@ public sealed class MySqlIT {
 
     [Fact]
     public void TestComplicatedSelectQuery() {
-        var name = DbContext.Get.WithTransaction(tran => {
-            return DbContext.Get.Query(tran)
-                .Select("u.username").FromAs("user", "u")
-                .JoinAs("street", "s", "s.id", "u.street_id")
-                .Where("s.name").Like("%swamp%")
-                .OrderByDesc("u.id")
-                .Skip(0).Take(1)
-                .SingleString();
-        });
+        using var tran = DbContext.MySql.BeginTransaction();
+
+        var name = DbContext.MySql.Query(tran)
+            .Select("u.username").FromAs("user", "u")
+            .JoinAs("street", "s", "s.id", "u.street_id")
+            .Where("s.name").Like("%swamp%")
+            .OrderByDesc("u.id")
+            .Skip(0).Take(1)
+            .SingleString();
+
+        tran.Commit();
 
         name.Should().Be("Miss Piggy");
     }
 
     [Fact]
+    public void TestSelectNodaTimeProperty() {
+        var elmosBirthday = DbContext.MySql.QueryWithoutTransaction()
+            .Select("created_at").From("user")
+            .Where("username").Is("Elmo")
+            .Single<LocalDateTime>();
+
+        elmosBirthday.Should().Be(new LocalDateTime(1980, 2, 3, 18, 0));
+    }
+
+    [Fact]
     public async Task TestInsertUpdateAndDelete() {
-        using (var tran = await DbContext.Get.BeginTransactionAsync()) {
-            await DbContext.Get.Query(tran)
+        using (var tran = await DbContext.MySql.BeginTransactionAsync()) {
+            await DbContext.MySql.Query(tran)
                 .InsertInto("user")
                 .Values(4, "Grover", 52, "blue", 1337, 2, "1970-05-01 18:00:00")
                 .ExecuteAsync();
 
-            await DbContext.Get.Query(tran)
+            await DbContext.MySql.Query(tran)
                 .Update("user")
                 .SetColumn("age", 4)
                 .Where("username").Is("Elmo")
                 .ExecuteAsync();
 
-            await DbContext.Get.Query(tran)
+            await DbContext.MySql.Query(tran)
                 .DeleteFrom("user")
                 .Where("age").Is(4)
                 .ExecuteAsync();
 
-            var usersBeforeRollback = await DbContext.Get.Query(tran)
+            var usersBeforeRollback = await DbContext.MySql.Query(tran)
                 .Select("username").From("user").OrderByAsc("id")
                 .ListStringsAsync();
 
@@ -69,12 +82,14 @@ public sealed class MySqlIT {
             await tran.RollbackAsync();
         }
 
-        var usersAfterRollback = await DbContext.Get.WithTransactionAsync(async tran => {
-            return await DbContext.Get.Query(tran)
+        using (var tran = await DbContext.MySql.BeginTransactionAsync()) {
+            var usersAfterRollback = await DbContext.MySql.Query(tran)
                 .Select("username").From("user").OrderByAsc("id")
                 .ListStringsAsync();
-        });
 
-        usersAfterRollback.Should().BeEquivalentTo("Kermit the Frog", "Miss Piggy", "Elmo");
+            await tran.CommitAsync();
+
+            usersAfterRollback.Should().BeEquivalentTo("Kermit the Frog", "Miss Piggy", "Elmo");
+        }
     }
 }

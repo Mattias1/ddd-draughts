@@ -3,7 +3,6 @@ using SqlQueryBuilder.Model;
 using SqlQueryBuilder.Options;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace SqlQueryBuilder.Builder;
@@ -31,27 +30,19 @@ public sealed partial class QueryBuilder : IQueryBuilderBase {
 
     public ICompleteQueryBuilder Cast() => this;
 
-    public SqlBuilderResultRow FirstResult() => Results().First();
-    public SqlBuilderResultRow? FirstOrDefaultResult() => Results().FirstOrDefault();
-    public SqlBuilderResultRow SingleResult() => Results().Single();
-    public SqlBuilderResultRow? SingleOrDefaultResult() => Results().SingleOrDefault();
-    public IReadOnlyList<SqlBuilderResultRow> Results() {
+    public async Task<IReadOnlyList<T>> ListAsync<T>() {
         string parameterizedSql = ToParameterizedSql();
         try {
-            return _options.SqlFlavor.ToResults(parameterizedSql, _query.Parameters);
+            return await _options.SqlFlavor.ExecuteWithResultsAsync<T>(parameterizedSql, _query.Parameters);
         } catch (Exception e) {
             throw new SqlExecutionException(e, _options.AddParameterizedSqlToException ? parameterizedSql : null);
         }
     }
 
-    public async Task<SqlBuilderResultRow> FirstResultAsync() => (await ResultsAsync()).First();
-    public async Task<SqlBuilderResultRow?> FirstOrDefaultResultAsync() => (await ResultsAsync()).FirstOrDefault();
-    public async Task<SqlBuilderResultRow> SingleResultAsync() => (await ResultsAsync()).Single();
-    public async Task<SqlBuilderResultRow?> SingleOrDefaultResultAsync() => (await ResultsAsync()).SingleOrDefault();
-    public async Task<IReadOnlyList<SqlBuilderResultRow>> ResultsAsync() {
+    public IReadOnlyList<T> List<T>() {
         string parameterizedSql = ToParameterizedSql();
         try {
-            return await _options.SqlFlavor.ToResultsAsync(parameterizedSql, _query.Parameters);
+            return _options.SqlFlavor.ExecuteWithResults<T>(parameterizedSql, _query.Parameters);
         } catch (Exception e) {
             throw new SqlExecutionException(e, _options.AddParameterizedSqlToException ? parameterizedSql : null);
         }

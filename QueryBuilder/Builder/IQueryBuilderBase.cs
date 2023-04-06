@@ -1,4 +1,3 @@
-using SqlQueryBuilder.Options;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -7,20 +6,11 @@ namespace SqlQueryBuilder.Builder;
 public interface IQueryBuilderBase {
     ICompleteQueryBuilder Cast();
 
-    SqlBuilderResultRow FirstResult();
-    SqlBuilderResultRow? FirstOrDefaultResult();
-    SqlBuilderResultRow SingleResult();
-    SqlBuilderResultRow? SingleOrDefaultResult();
-    IReadOnlyList<SqlBuilderResultRow> Results();
-
-    Task<SqlBuilderResultRow> FirstResultAsync();
-    Task<SqlBuilderResultRow?> FirstOrDefaultResultAsync();
-    Task<SqlBuilderResultRow> SingleResultAsync();
-    Task<SqlBuilderResultRow?> SingleOrDefaultResultAsync();
-    Task<IReadOnlyList<SqlBuilderResultRow>> ResultsAsync();
-
     bool Execute();
     Task<bool> ExecuteAsync();
+
+    Task<IReadOnlyList<T>> ListAsync<T>();
+    IReadOnlyList<T> List<T>();
 
     string ToString();
     string ToUnsafeSql();

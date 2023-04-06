@@ -1,7 +1,9 @@
+using Dapper;
 using MySql.Data.MySqlClient;
 using SqlQueryBuilder.Exceptions;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace SqlQueryBuilder.Options;
@@ -16,46 +18,20 @@ public sealed class MySqlTransactionFlavor : ISqlTransactionFlavor {
     }
 
     public async Task<bool> ExecuteAsync(string query, IDictionary<string, object?> parameters) {
-        var cmd = BuildCommand(query, parameters);
-        int nrOfRowsAffected = await cmd.ExecuteNonQueryAsync();
+        int nrOfRowsAffected = await _connection.ExecuteAsync(query, parameters);
         return nrOfRowsAffected > 0;
     }
     public bool Execute(string query, IDictionary<string, object?> parameters) {
-        var cmd = BuildCommand(query, parameters);
-        int nrOfRowsAffected = cmd.ExecuteNonQuery();
+        int nrOfRowsAffected = _connection.Execute(query, parameters);
         return nrOfRowsAffected > 0;
     }
 
-    public async Task<IReadOnlyList<SqlBuilderResultRow>> ToResultsAsync(string query, IDictionary<string, object?> parameters) {
-        var cmd = BuildCommand(query, parameters);
-
-        var results = new List<SqlBuilderResultRow>();
-        using (var reader = await cmd.ExecuteReaderAsync()) {
-            while (await reader.ReadAsync()) {
-                results.Add(SqlBuilderResultRow.FromReader(reader));
-            }
-        }
-        return results.AsReadOnly();
+    public async Task<IReadOnlyList<T>> ExecuteWithResultsAsync<T>(string query, IDictionary<string, object?> parameters) {
+        var result = await _connection.QueryAsync<T>(query, new DynamicParameters(parameters), _transaction);
+        return result.ToList().AsReadOnly();
     }
-    public IReadOnlyList<SqlBuilderResultRow> ToResults(string query, IDictionary<string, object?> parameters) {
-        var cmd = BuildCommand(query, parameters);
-
-        var results = new List<SqlBuilderResultRow>();
-        using (var reader = cmd.ExecuteReader()) {
-            while (reader.Read()) {
-                results.Add(SqlBuilderResultRow.FromReader(reader));
-            }
-        }
-        return results.AsReadOnly();
-    }
-
-    private MySqlCommand BuildCommand(string query, IDictionary<string, object?> parameters) {
-        var cmd = new MySqlCommand(query, _connection, _transaction);
-        foreach (var (key, value) in parameters) {
-            cmd.Parameters.AddWithValue(key, value);
-        }
-        cmd.Prepare();
-        return cmd;
+    public IReadOnlyList<T> ExecuteWithResults<T>(string query, IDictionary<string, object?> parameters) {
+        return _connection.Query<T>(query, new DynamicParameters(parameters), _transaction).ToList().AsReadOnly();
     }
 
     public Task<ISqlTransactionFlavor> BeginTransactionAsync() {

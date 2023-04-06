@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace SqlQueryBuilder.Options;
 
-public sealed class Pagination<T> where T : new() {
+public sealed class Pagination<T> {
     public const string INVALID_COUNT_ERROR = "Cannot get the count of this query.";
 
     public IReadOnlyList<T> Results { get; }

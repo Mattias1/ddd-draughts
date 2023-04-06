@@ -1,5 +1,6 @@
 using SqlQueryBuilder.Options;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Draughts.Test.Fakes;
@@ -8,10 +9,10 @@ public sealed class FakeSqlFlavor : ISqlFlavor {
     // --- Implementation of the fake ---
     public List<string> ExecutedQueries { get; } = new List<string>();
 
-    public SqlBuilderResultRow? NextSingleResult {
-        set => NextResult = value is null ? null : new List<SqlBuilderResultRow>() { value };
+    public object? NextSingleResult {
+        set => NextResult = value is null ? null : new List<object?>() { value };
     }
-    public IReadOnlyList<SqlBuilderResultRow>? NextResult { get; set; }
+    public IReadOnlyList<object?>? NextResult { get; set; }
 
     // --- Implementation of the interface ---
     public Task<bool> ExecuteAsync(string query, IDictionary<string, object?> parameters) {
@@ -23,13 +24,13 @@ public sealed class FakeSqlFlavor : ISqlFlavor {
         return true;
     }
 
-    public Task<IReadOnlyList<SqlBuilderResultRow>> ToResultsAsync(string query, IDictionary<string, object?> parameters) {
-        return Task.FromResult(ToResults(query, parameters));
+    public Task<IReadOnlyList<T>> ExecuteWithResultsAsync<T>(string query, IDictionary<string, object?> parameters) {
+        return Task.FromResult(ExecuteWithResults<T>(query, parameters));
     }
 
-    public IReadOnlyList<SqlBuilderResultRow> ToResults(string query, IDictionary<string, object?> parameters) {
+    public IReadOnlyList<T> ExecuteWithResults<T>(string query, IDictionary<string, object?> parameters) {
         ExecutedQueries.Add(query);
-        return NextResult ?? new List<SqlBuilderResultRow>();
+        return NextResult?.Cast<T>().ToList().AsReadOnly() ?? new List<T>().AsReadOnly();
     }
 
     public Task<ISqlTransactionFlavor> BeginTransactionAsync() => Task.FromResult(BeginTransaction());
