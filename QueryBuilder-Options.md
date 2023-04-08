@@ -11,6 +11,9 @@ Provided options are `IdentityColumnFormat` and `CamelToSnakeColumnFormat` (defa
 You can add your own format if you want.
 For inspiration, take a look [here](/QueryBuilder/Options/CamelToSnakeColumnFormat.cs).
 
+**Note** that Dapper by default cannot deal with snake case and NodaTime objects. You can enable that
+globally with something like: `QueryBuilderOptions.SetupDapperWithSnakeCaseAndNodaTime();`
+
 
 ### SmartDate
 If enabled this modifies date logic to be more sensible.

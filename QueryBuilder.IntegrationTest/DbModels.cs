@@ -11,7 +11,7 @@ public sealed class DbUser {
     public string? Color { get; set; }
     public int Counter { get; set; }
     public long StreetId { get; set; }
-    public ZonedDateTime CreatedAt { get; set; }
+    public LocalDateTime CreatedAt { get; set; }
 }
 
 public sealed class DbStreet {

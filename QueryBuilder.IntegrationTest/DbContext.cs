@@ -20,7 +20,8 @@ public sealed class DbContext {
 
     private DbContext(ISqlFlavor sqlFlavor) {
         _sqlFlavor = sqlFlavor;
-        DapperNodaTimeSetup.Register(DateTimeZoneProviders.Tzdb);
+
+        QueryBuilderOptions.SetupDapperWithSnakeCaseAndNodaTime();
     }
 
     public ISqlTransactionFlavor BeginTransaction() => _sqlFlavor.BeginTransaction();

@@ -55,6 +55,17 @@ public sealed class MySqlIT {
     }
 
     [Fact]
+    public void TestSnakeCaseMapping() {
+        var kermit = DbContext.MySql.QueryWithoutTransaction()
+            .SelectAllFrom("user")
+            .OrderByAsc("id")
+            .Where("id").Is(1)
+            .Single<DbUser>();
+
+        kermit.StreetId.Should().Be(1);
+    }
+
+    [Fact]
     public async Task TestInsertUpdateAndDelete() {
         using (var tran = await DbContext.MySql.BeginTransactionAsync()) {
             await DbContext.MySql.Query(tran)

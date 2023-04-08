@@ -1,10 +1,11 @@
 SQL Query builder
 ==================
-A lightweight querybuilder for my database interactions.
+A lightweight querybuilder for my database interactions, using Dapper internally.
 
 Since Linq to SQL is no longer supported and something like NHibernate or Entity framework is way
-overkill all that's left are some simple query builders or wrappers around Dapper.
-So naturally I decided to add another query builder to the pile ;)
+overkill all that's left are some simple query builders / wrappers around Dapper.
+I didn't find any I liked, so naturally I decided to make my own ;)
+
 
 Examples
 ---------
@@ -47,6 +48,9 @@ Note that the id is not parameterized, because it's a `long` type, and therefore
 give you a performance boost for large where in lists.
 Also note that if you forget the where clause, it'll throw an exception.
 You can turn these [options](/QueryBuilder-Options.md) off if you want.
+
+Note also that this assumes Dapper can deal with snake case and NodaTime objects. You can enable
+that with something like: `QueryBuilderOptions.SetupDapperWithSnakeCaseAndNodaTime();`
 
 A more complicated example:
 ```

@@ -1,3 +1,6 @@
+using AdaskoTheBeAsT.Dapper.NodaTime;
+using NodaTime;
+
 namespace SqlQueryBuilder.Options;
 
 public sealed class QueryBuilderOptions {
@@ -52,4 +55,11 @@ public sealed class QueryBuilderOptions {
             DontParameterizeNumbers, GuardForForgottenWhere, WrapFieldNames
         );
     }
+
+    public static void SetupDapperWithSnakeCaseAndNodaTime() {
+        SetupDapperWithSnakeCase();
+        SetupDapperWithNodaTime();
+    }
+    public static void SetupDapperWithSnakeCase() => Dapper.DefaultTypeMap.MatchNamesWithUnderscores = true;
+    public static void SetupDapperWithNodaTime() => DapperNodaTimeSetup.Register(DateTimeZoneProviders.Tzdb);
 }
