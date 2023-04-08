@@ -16,6 +16,6 @@ public sealed class EntityIdSpecification<T, TId> : Specification<T> where T : E
     public override Expression<Func<T, bool>> ToExpression() => u => _id.Equals(u.Id);
 
     public override void ApplyQueryBuilder(IQueryBuilder builder, QueryWhereType whereType) {
-        ApplyColumnWhere(builder, whereType, _fieldName, q => q.Is(_id));
+        ApplyColumnWhere(builder, whereType, _fieldName, q => q.Is(_id.Value));
     }
 }

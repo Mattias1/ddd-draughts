@@ -17,7 +17,7 @@ public sealed class UsersWithRoleSpecification : Specification<AuthUser> {
     public override Expression<Func<AuthUser, bool>> ToExpression() => u => u.RoleIds.Contains(_roleId);
 
     public override void ApplyQueryBuilder(IQueryBuilder builder, QueryWhereType whereType) {
-        ApplyColumnWhere(builder, whereType, "authuser_roles.role_id", q => q.Is(_roleId));
+        ApplyColumnWhere(builder, whereType, "authuser_roles.role_id", q => q.Is(_roleId.Value));
     }
 
     public override IEnumerable<PossibleJoins> RequiredJoins() {

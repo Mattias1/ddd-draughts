@@ -63,10 +63,10 @@ public sealed class AuthUserRepository : BaseRepository<AuthUser, UserId, DbAuth
             var toDelete = oldRoleIds.Except(newRoleIds).ToArray();
             var toAdd = newRoleIds.Except(oldRoleIds);
 
-            GetBaseQuery().Update(TableName).SetWithoutIdFrom(obj).Where("id").Is(entity.Id).Execute();
+            GetBaseQuery().Update(TableName).SetWithoutIdFrom(obj).Where("id").Is(entity.Id.Value).Execute();
             if (toDelete.Any()) {
                 GetBaseQuery().DeleteFrom(AuthuserRolesTableName)
-                    .Where("user_id").Is(entity.Id)
+                    .Where("user_id").Is(entity.Id.Value)
                     .And("role_id").In(toDelete)
                     .Execute();
             }

@@ -4,6 +4,7 @@ using Draughts.Repositories.Misc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using SqlQueryBuilder.Options;
 using System;
 
 namespace Draughts.Command;
@@ -44,6 +45,7 @@ public sealed class Program {
                 var settings = ctx.Configuration.Get<AppSettings>();
 
                 DbContext.Init(settings?.DbPassword ?? "devapp");
+                QueryBuilderOptions.SetupDapperWithSnakeCaseAndNodaTime();
             });
     }
 }

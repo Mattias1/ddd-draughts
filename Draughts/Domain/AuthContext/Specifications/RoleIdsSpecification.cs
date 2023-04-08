@@ -17,6 +17,6 @@ public sealed class RoleIdsSpecification : Specification<Role> {
     public override Expression<Func<Role, bool>> ToExpression() => u => _ids.Contains(u.Id);
 
     public override void ApplyQueryBuilder(IQueryBuilder builder, QueryWhereType whereType) {
-        ApplyColumnWhere(builder, whereType, "id", q => q.In(_ids.AsEnumerable()));
+        ApplyColumnWhere(builder, whereType, "id", q => q.In(_ids.Select(i => i.Value)));
     }
 }

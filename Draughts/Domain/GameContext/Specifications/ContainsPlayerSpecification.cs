@@ -18,7 +18,7 @@ public sealed class ContainsPlayerSpecification : Specification<Game> {
     public override Expression<Func<Game, bool>> ToExpression() => g => g.Players.Any(p => p.UserId == _userId);
 
     public override void ApplyQueryBuilder(IQueryBuilder builder, QueryWhereType whereType) {
-        ApplyColumnWhere(builder, whereType, "players.user_id", q => q.Is(_userId));
+        ApplyColumnWhere(builder, whereType, "players.user_id", q => q.Is(_userId.Value));
     }
 
     public override IEnumerable<PossibleJoins> RequiredJoins() {

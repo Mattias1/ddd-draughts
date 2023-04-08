@@ -19,7 +19,7 @@ public sealed class DbUser : IDbObject<DbUser, User> {
     public string Username { get; set; }
     public int Rating { get; set; }
     public string Rank { get; set; }
-    public ZonedDateTime CreatedAt { get; set; }
+    public LocalDateTime CreatedAt { get; set; }
     public int TotalPlayed { get; set; }
     public int TotalWon { get; set; }
     public int TotalTied { get; set; }
@@ -53,7 +53,7 @@ public sealed class DbUser : IDbObject<DbUser, User> {
                 new GamesTally(EnglishAmericanPlayed, EnglishAmericanWon, EnglishAmericanTied, EnglishAmericanLost),
                 new GamesTally(OtherPlayed, OtherWon, OtherTied, OtherLost)
             ),
-            CreatedAt
+            CreatedAt.InUtc()
         );
     }
 
@@ -79,7 +79,7 @@ public sealed class DbUser : IDbObject<DbUser, User> {
             OtherWon = entity.Statistics.OtherTally.Won,
             OtherTied = entity.Statistics.OtherTally.Tied,
             OtherLost = entity.Statistics.OtherTally.Lost,
-            CreatedAt = entity.CreatedAt
+            CreatedAt = entity.CreatedAt.LocalDateTime
         };
     }
 }
@@ -89,7 +89,7 @@ public sealed class DbAuthUser : IDbObject<DbAuthUser, AuthUser> {
     public string Username { get; set; }
     public string PasswordHash { get; set; }
     public string Email { get; set; }
-    public ZonedDateTime CreatedAt { get; set; }
+    public LocalDateTime CreatedAt { get; set; }
 
     public bool Equals(DbAuthUser? other) => Id.Equals(other?.Id);
 
@@ -99,7 +99,7 @@ public sealed class DbAuthUser : IDbObject<DbAuthUser, AuthUser> {
             new Username(Username),
             Domain.AuthContext.Models.PasswordHash.FromStorage(PasswordHash),
             new Email(Email),
-            CreatedAt,
+            CreatedAt.InUtc(),
             roles
         );
     }
@@ -110,7 +110,7 @@ public sealed class DbAuthUser : IDbObject<DbAuthUser, AuthUser> {
             Username = entity.Username.Value,
             PasswordHash = entity.PasswordHash.ToStorage(),
             Email = entity.Email.Value,
-            CreatedAt = entity.CreatedAt
+            CreatedAt = entity.CreatedAt.LocalDateTime
         };
     }
 }
@@ -127,19 +127,19 @@ public sealed class DbAuthUserRole : IEquatable<DbAuthUserRole> {
 public sealed class DbRole : IDbObject<DbRole, Role> {
     public long Id { get; set; }
     public string Rolename { get; set; }
-    public ZonedDateTime CreatedAt { get; set; }
+    public LocalDateTime CreatedAt { get; set; }
 
     public bool Equals(DbRole? other) => Id.Equals(other?.Id);
 
     public Role ToDomainModel(Permission[] permissions) {
-        return new Role(new RoleId(Id), Rolename, CreatedAt, permissions);
+        return new Role(new RoleId(Id), Rolename, CreatedAt.InUtc(), permissions);
     }
 
     public static DbRole FromDomainModel(Role entity) {
         return new DbRole {
             Id = entity.Id.Value,
             Rolename = entity.Rolename,
-            CreatedAt = entity.CreatedAt
+            CreatedAt = entity.CreatedAt.LocalDateTime
         };
     }
 }
@@ -159,7 +159,7 @@ public sealed class DbAdminLog : IDbObject<DbAdminLog, AdminLog> {
     public string Parameters { get; set; }
     public long UserId { get; set; }
     public string Username { get; set; }
-    public ZonedDateTime CreatedAt { get; set; }
+    public LocalDateTime CreatedAt { get; set; }
 
     public bool Equals(DbAdminLog? other) => Id.Equals(other?.Id);
 
@@ -170,7 +170,7 @@ public sealed class DbAdminLog : IDbObject<DbAdminLog, AdminLog> {
             Parameters.Split(','),
             new UserId(UserId),
             new Username(Username),
-            CreatedAt
+            CreatedAt.InUtc()
         );
     }
 
@@ -181,7 +181,7 @@ public sealed class DbAdminLog : IDbObject<DbAdminLog, AdminLog> {
             Parameters = string.Join(',', entity.Parameters),
             UserId = entity.UserId.Value,
             Username = entity.Username.Value,
-            CreatedAt = entity.CreatedAt
+            CreatedAt = entity.CreatedAt.LocalDateTime
         };
     }
 }
@@ -195,12 +195,12 @@ public sealed class DbGame : IDbObject<DbGame, Game> {
     public string CaptureConstraints { get; set; }
     public int TurnTime { get; set; }
     public long? Victor { get; set; }
-    public ZonedDateTime CreatedAt { get; set; }
-    public ZonedDateTime? StartedAt { get; set; }
-    public ZonedDateTime? FinishedAt { get; set; }
+    public LocalDateTime CreatedAt { get; set; }
+    public LocalDateTime? StartedAt { get; set; }
+    public LocalDateTime? FinishedAt { get; set; }
     public long? TurnPlayerId { get; set; }
-    public ZonedDateTime? TurnCreatedAt { get; set; }
-    public ZonedDateTime? TurnExpiresAt { get; set; }
+    public LocalDateTime? TurnCreatedAt { get; set; }
+    public LocalDateTime? TurnExpiresAt { get; set; }
 
     public bool Equals(DbGame? other) => Id.Equals(other?.Id);
 
@@ -211,17 +211,17 @@ public sealed class DbGame : IDbObject<DbGame, Game> {
             GetTurn(players),
             GetGameSettings(),
             players.SingleOrDefault(p => p.UserId == Victor),
-            CreatedAt,
-            StartedAt,
-            FinishedAt
+            CreatedAt.InUtc(),
+            StartedAt?.InUtc(),
+            FinishedAt?.InUtc()
         );
     }
 
     private Turn? GetTurn(List<Player> players) {
         return TurnPlayerId is null || TurnCreatedAt is null || TurnExpiresAt is null ? null : new Turn(
             players.Single(p => p.Id == TurnPlayerId.Value),
-            TurnCreatedAt.Value,
-            TurnExpiresAt.Value - TurnCreatedAt.Value
+            TurnCreatedAt.Value.InUtc(),
+            TurnExpiresAt.Value.InUtc() - TurnCreatedAt.Value.InUtc()
         );
     }
 
@@ -251,12 +251,12 @@ public sealed class DbGame : IDbObject<DbGame, Game> {
             CaptureConstraints = captureConstraints,
             TurnTime = (int)entity.Settings.MaxTurnLength.TotalSeconds,
             Victor = entity.Victor?.UserId.Value,
-            CreatedAt = entity.CreatedAt,
-            StartedAt = entity.StartedAt,
-            FinishedAt = entity.FinishedAt,
+            CreatedAt = entity.CreatedAt.LocalDateTime,
+            StartedAt = entity.StartedAt?.LocalDateTime,
+            FinishedAt = entity.FinishedAt?.LocalDateTime,
             TurnPlayerId = entity.Turn?.Player.Id.Value,
-            TurnCreatedAt = entity.Turn?.CreatedAt,
-            TurnExpiresAt = entity.Turn?.ExpiresAt
+            TurnCreatedAt = entity.Turn?.CreatedAt.LocalDateTime,
+            TurnExpiresAt = entity.Turn?.ExpiresAt.LocalDateTime
         };
     }
 }
@@ -268,7 +268,7 @@ public sealed class DbPlayer : IDbObject<DbPlayer, Player> {
     public string Username { get; set; }
     public string Rank { get; set; }
     public bool Color { get; set; }
-    public ZonedDateTime CreatedAt { get; set; }
+    public LocalDateTime CreatedAt { get; set; }
 
     public bool Equals(DbPlayer? other) => Id.Equals(other?.Id);
 
@@ -279,7 +279,7 @@ public sealed class DbPlayer : IDbObject<DbPlayer, Player> {
             new Username(Username),
             Ranks.All.Single(r => r.Name == Rank),
             Color ? Domain.GameContext.Models.Color.White : Domain.GameContext.Models.Color.Black,
-            CreatedAt
+            CreatedAt.InUtc()
         );
     }
 
@@ -291,7 +291,7 @@ public sealed class DbPlayer : IDbObject<DbPlayer, Player> {
             Username = entity.Username.Value,
             Rank = entity.Rank.Name,
             Color = entity.Color == Domain.GameContext.Models.Color.White,
-            CreatedAt = entity.CreatedAt
+            CreatedAt = entity.CreatedAt.LocalDateTime
         };
     }
 }
@@ -351,14 +351,14 @@ public sealed class DbVote : IEquatable<DbVote> {
     public long UserId { get; set; }
     public string Subject { get; set; }
     public bool InFavor { get; set; }
-    public ZonedDateTime CreatedAt { get; set; }
+    public LocalDateTime CreatedAt { get; set; }
 
     public static IReadOnlyList<Voting> ToDomainModels(IEnumerable<DbVote> dbVotes) {
         var votesPerGame = dbVotes.GroupBy(v => v.GameId);
         var results = new List<Voting>();
         foreach (var gameVotes in votesPerGame) {
             var votes = gameVotes
-                .Select(v => new Vote(new UserId(v.UserId), VotingSubjectFromString(v.Subject), v.InFavor, v.CreatedAt))
+                .Select(v => new Vote(new UserId(v.UserId), VotingSubjectFromString(v.Subject), v.InFavor, v.CreatedAt.InUtc()))
                 .ToList();
             results.Add(new Voting(new GameId(gameVotes.Key), votes));
         }
@@ -376,7 +376,7 @@ public sealed class DbVote : IEquatable<DbVote> {
             UserId = v.UserId.Value,
             Subject = VotingSubjectToString(v.Subject),
             InFavor = v.InFavor,
-            CreatedAt = v.CreatedAt
+            CreatedAt = v.CreatedAt.LocalDateTime
         }).ToList();
     }
 
@@ -402,8 +402,8 @@ public sealed class DbVote : IEquatable<DbVote> {
 public sealed class DbEvent : IDbObject<DbEvent, DomainEvent> {
     public long Id { get; set; }
     public string Type { get; set; }
-    public ZonedDateTime CreatedAt { get; set; }
-    public ZonedDateTime? HandledAt { get; set; }
+    public LocalDateTime CreatedAt { get; set; }
+    public LocalDateTime? HandledAt { get; set; }
     public string Data { get; set; }
 
     public bool Equals(DbEvent? other) => other?.Id == Id;
@@ -411,9 +411,9 @@ public sealed class DbEvent : IDbObject<DbEvent, DomainEvent> {
     public static DomainEvent ToDomainModel(DbEvent e) {
         return e.Type switch
         {
-            GameFinished.TYPE => GameFinished.FromStorage(GetId(e), e.CreatedAt, e.HandledAt, e.Data),
-            AuthUserCreated.TYPE => AuthUserCreated.FromStorage(GetId(e), e.CreatedAt, e.HandledAt, e.Data),
-            UserCreated.TYPE => UserCreated.FromStorage(GetId(e), e.CreatedAt, e.HandledAt, e.Data),
+            GameFinished.TYPE => GameFinished.FromStorage(GetId(e), e.CreatedAt.InUtc(), e.HandledAt?.InUtc(), e.Data),
+            AuthUserCreated.TYPE => AuthUserCreated.FromStorage(GetId(e), e.CreatedAt.InUtc(), e.HandledAt?.InUtc(), e.Data),
+            UserCreated.TYPE => UserCreated.FromStorage(GetId(e), e.CreatedAt.InUtc(), e.HandledAt?.InUtc(), e.Data),
             _ => throw new InvalidOperationException($"Unknown event type '{e.Type}' for event '{e.Id}'")
         };
     }
@@ -424,8 +424,8 @@ public sealed class DbEvent : IDbObject<DbEvent, DomainEvent> {
         return new DbEvent {
             Id = entity.Id.Value,
             Type = entity.Type,
-            CreatedAt = entity.CreatedAt,
-            HandledAt = entity.HandledAt,
+            CreatedAt = entity.CreatedAt.LocalDateTime,
+            HandledAt = entity.HandledAt?.LocalDateTime,
             Data = entity.BuildDataString()
         };
     }
@@ -433,7 +433,7 @@ public sealed class DbEvent : IDbObject<DbEvent, DomainEvent> {
 
 public sealed class DbReceivedEvent : IEquatable<DbReceivedEvent> {
     public long Id { get; set; }
-    public ZonedDateTime HandledAt { get; set; }
+    public LocalDateTime HandledAt { get; set; }
 
     public override bool Equals(object? obj) => obj is DbReceivedEvent evt && Equals(evt);
     public bool Equals(DbReceivedEvent? other) => other?.Id == Id;

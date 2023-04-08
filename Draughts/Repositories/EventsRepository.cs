@@ -57,7 +57,7 @@ public sealed class EventsRepository {
             return new List<(DomainEventId Id, ZonedDateTime HandledAt)>().AsReadOnly();
         }
         return SelectAllFromReceivedEvents().Where("id").In(eventIds).List<DbReceivedEvent>()
-            .MapReadOnly(re => (new DomainEventId(re.Id), re.HandledAt));
+            .MapReadOnly(re => (new DomainEventId(re.Id), re.HandledAt.InUtc()));
     }
 
     public bool EventIsReceived(DomainEventId evtId) {
@@ -65,12 +65,12 @@ public sealed class EventsRepository {
     }
 
     public void MarkEventAsReceived(DomainEventId evtId, ZonedDateTime handledAt) {
-        var obj = new DbReceivedEvent { Id = evtId.Value, HandledAt = handledAt };
+        var obj = new DbReceivedEvent { Id = evtId.Value, HandledAt = handledAt.LocalDateTime };
         GetBaseQuery().InsertInto(RECEIVED_EVENTS).InsertFrom(obj).Execute();
     }
 
     public void MarkEventAsHandled(DomainEventId evtId, ZonedDateTime handledAt) {
-        GetBaseQuery().Update(SENT_EVENTS).SetColumn("handled_at", handledAt).Where("id").Is(evtId).Execute();
+        GetBaseQuery().Update(SENT_EVENTS).SetColumn("handled_at", handledAt).Where("id").Is(evtId.Value).Execute();
     }
 
     public static void InsertEvent(DomainEvent evt, IInitialQueryBuilder baseQuery) {

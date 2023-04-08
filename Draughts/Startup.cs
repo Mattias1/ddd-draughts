@@ -11,6 +11,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using SignalRWebPack.Hubs;
+using SqlQueryBuilder.Options;
 using System;
 using System.Threading.Tasks;
 
@@ -80,6 +81,7 @@ public sealed class Startup {
         }
 
         DbContext.Init(settings.DbPassword);
+        QueryBuilderOptions.SetupDapperWithSnakeCaseAndNodaTime();
         Utils.BaseUrl = settings.BaseUrl;
     }
 }

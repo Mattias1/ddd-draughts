@@ -46,7 +46,7 @@ public sealed class VotingRepository {
     public void Save(Voting entity) {
         // We (currently) can't modify or delete votes, so inserting is all that's necessary here.
         var voteObjs = DbVote.FromDomainModel(entity);
-        var existingVotes = SelectAllFromTable().Where("game_id").Is(entity.Id).List<DbVote>();
+        var existingVotes = SelectAllFromTable().Where("game_id").Is(entity.Id.Value).List<DbVote>();
         var newVotes = voteObjs.Except(existingVotes);
         GetBaseQuery().InsertInto(TableName).InsertFrom(newVotes).Execute();
     }

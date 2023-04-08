@@ -35,8 +35,8 @@ public sealed class GameStateRepository : BaseRepository<GameState, GameId, DbGa
 
         int maxDbIndex = GetBaseQuery().Select().Max("index")
             .From(MovesTableName)
-            .Where("game_id").Is(entity.Id)
-            .SingleOrDefaultValue<short>() ?? -1;
+            .Where("game_id").Is(entity.Id.Value)
+            .SingleOrDefault<short?>() ?? -1;
         if (entity.Moves.Count > maxDbIndex + 1) {
             var newMoves = DbMove.ArrayFromDomainModels(entity, maxDbIndex);
             GetBaseQuery().InsertInto(MovesTableName).InsertFrom(newMoves).Execute();

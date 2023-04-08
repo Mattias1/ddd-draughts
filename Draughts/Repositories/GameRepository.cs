@@ -5,7 +5,6 @@ using Draughts.Repositories.Transaction;
 using NodaTime;
 using SqlQueryBuilder.Builder;
 using SqlQueryBuilder.Common;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using static Draughts.Repositories.Misc.JoinEnum;
@@ -65,19 +64,22 @@ public sealed class GameRepository : BaseRepository<Game, GameId, DbGame> {
         if (FindByIdOrNull(entity.Id) is null) {
             GetBaseQuery().InsertInto(TableName).InsertFrom(obj).Execute();
         } else {
-            GetBaseQuery().Update(TableName).SetWithoutIdFrom(obj).Where("id").Is(entity.Id).Execute();
+            GetBaseQuery().Update(TableName).SetWithoutIdFrom(obj).Where("id").Is(entity.Id.Value).Execute();
         }
         SavePlayers(entity);
     }
 
     private void SavePlayers(Game gameEntity) {
         var existingPlayerIds = GetBaseQuery()
-            .Select("id").From(PlayersTableName).Where("game_id").Is(gameEntity.Id)
+            .Select("id").From(PlayersTableName).Where("game_id").Is(gameEntity.Id.Value)
             .ListLongs();
         foreach (var playerEntity in gameEntity.Players) {
             var obj = DbPlayer.FromDomainModel(playerEntity, gameEntity.Id);
             if (existingPlayerIds.Contains(playerEntity.Id.Value)) {
-                GetBaseQuery().Update(PlayersTableName).SetWithoutIdFrom(obj).Where("id").Is(playerEntity.Id).Execute();
+                GetBaseQuery()
+                    .Update(PlayersTableName).SetWithoutIdFrom(obj)
+                    .Where("id").Is(playerEntity.Id.Value)
+                    .Execute();
             } else {
                 GetBaseQuery().InsertInto(PlayersTableName).InsertFrom(obj).Execute();
             }

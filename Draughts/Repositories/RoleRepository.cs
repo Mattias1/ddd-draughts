@@ -46,16 +46,16 @@ public sealed class RoleRepository : BaseRepository<Role, RoleId, DbRole> {
             GetBaseQuery().InsertInto(TableName).InsertFrom(obj).Execute();
             InsertPermissions(entity.Id.Value, entity.Permissions.Select(p => p.Value));
         } else {
-            var oldPermissions = GetPermissionRoleQuery().Where("role_id").Is(entity.Id).List<DbPermissionRole>()
+            var oldPermissions = GetPermissionRoleQuery().Where("role_id").Is(entity.Id.Value).List<DbPermissionRole>()
                 .Select(pr => pr.Permission).ToArray();
             var newPermissions = entity.Permissions.Select(p => p.Value).ToArray();
             var toDelete = oldPermissions.Except(newPermissions);
             var toAdd = newPermissions.Except(oldPermissions);
 
-            GetBaseQuery().Update(TableName).SetWithoutIdFrom(obj).Where("id").Is(entity.Id).Execute();
+            GetBaseQuery().Update(TableName).SetWithoutIdFrom(obj).Where("id").Is(entity.Id.Value).Execute();
             if (toDelete.Any()) {
                 GetBaseQuery().DeleteFrom(PermissionRolesTableName)
-                    .Where("role_id").Is(entity.Id)
+                    .Where("role_id").Is(entity.Id.Value)
                     .And("permission").In(toDelete)
                     .Execute();
             }
@@ -81,7 +81,7 @@ public sealed class RoleRepository : BaseRepository<Role, RoleId, DbRole> {
     }
 
     public void Delete(RoleId roleId) {
-        GetBaseQuery().DeleteFrom(PermissionRolesTableName).Where("role_id").Is(roleId).Execute();
-        GetBaseQuery().DeleteFrom(TableName).Where("id").Is(roleId).Execute();
+        GetBaseQuery().DeleteFrom(PermissionRolesTableName).Where("role_id").Is(roleId.Value).Execute();
+        GetBaseQuery().DeleteFrom(TableName).Where("id").Is(roleId.Value).Execute();
     }
 }
