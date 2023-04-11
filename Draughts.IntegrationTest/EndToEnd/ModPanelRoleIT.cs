@@ -51,7 +51,7 @@ public sealed class ModPanelRoleIT {
 
     private async Task PostCreateRole() {
         var result = await _apiTester.PostForm("/modpanel/role/create", new CreateRoleRequest("New IT test role"));
-        result.StatusCode.Should().Be(200);
+        result.Should().HaveStatusCode(200);
         if (!_apiTester.TryRegex(result.RequestUri(), @"/modpanel/role/(\d+)/edit", out string? value)) {
             // Make the test fail with a nice message.
             result.RequestUri().Should().Match("/modpanel/role/<some-value>/edit?success=*");
@@ -71,7 +71,7 @@ public sealed class ModPanelRoleIT {
     private async Task PostEditRole() {
         var result = await _apiTester.PostForm($"/modpanel/role/{RoleId}/edit",
             new EditRoleRequest(EDITED_ROLENAME, new string[] { Permission.Permissions.PLAY_GAME }));
-        result.StatusCode.Should().Be(200);
+        result.Should().HaveStatusCode(200);
         result.RequestUri().Should().Match("/modpanel/roles?success=*");
 
         AssertRoleIsLogged("role.edit");
@@ -85,7 +85,7 @@ public sealed class ModPanelRoleIT {
     private async Task PostAssignUserToRole() {
         var result = await _apiTester.PostForm($"/modpanel/role/{RoleId}/user",
             new AssignUserToRoleRequest(ASSIGNED_USERNAME));
-        result.StatusCode.Should().Be(200);
+        result.Should().HaveStatusCode(200);
         result.RequestUri().Should().Match($"/modpanel/role/{RoleId}/users?success=*");
 
         AssertRoleIsLogged("role.gain");
@@ -94,7 +94,7 @@ public sealed class ModPanelRoleIT {
     private async Task PostRemoveUserFromRole() {
         long userId = TEST_PLAYER_BLACK_USER_ID;
         var result = await _apiTester.Post($"/modpanel/role/{RoleId}/user/{userId}/remove");
-        result.StatusCode.Should().Be(200);
+        result.Should().HaveStatusCode(200);
         result.RequestUri().Should().Match($"/modpanel/role/{RoleId}/users?success=*");
 
         AssertRoleIsLogged("role.lose");
@@ -102,7 +102,7 @@ public sealed class ModPanelRoleIT {
 
     private async Task PostDeleteRole() {
         var result = await _apiTester.Post($"/modpanel/role/{RoleId}/delete");
-        result.StatusCode.Should().Be(200);
+        result.Should().HaveStatusCode(200);
         result.RequestUri().Should().Match("/modpanel/roles?success=*");
 
         AssertRoleIsLogged("role.delete");

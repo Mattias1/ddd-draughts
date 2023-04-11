@@ -80,9 +80,9 @@ public sealed class GameTestHelper {
             return this;
         }
 
-        public GameBuilder WithTurn(Color color) {
+        public GameBuilder WithTurn(Color color) => WithTurn(color, _startedAt ?? _createdAt ?? Feb29);
+        public GameBuilder WithTurn(Color color, ZonedDateTime createdAt) {
             var player = FindPlayerForColor(color);
-            var createdAt = _startedAt ?? _createdAt ?? Feb29;
             return WithTurn(new Turn(player, createdAt, Duration.FromHours(24)));
         }
         public GameBuilder WithTurn(Turn? turn) {

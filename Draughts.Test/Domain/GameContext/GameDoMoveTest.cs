@@ -115,7 +115,7 @@ public sealed class GameDoMoveTest {
 
         Action doMove = () => _playGameService.DoMove(game, gameState, whitePlayer.UserId, 13.AsSquare(), 11.AsSquare());
 
-        doMove.Should().Throw<ManualValidationException>().WithMessage(Game.ERROR_GAME_NOT_ACTIVE);
+        doMove.Should().Throw<ManualValidationException>().WithMessage("*not active*");
     }
 
     [Fact]
@@ -126,7 +126,7 @@ public sealed class GameDoMoveTest {
 
         Action doMove = () => _playGameService.DoMove(game, gameState, white, 9.AsSquare(), 6.AsSquare());
 
-        doMove.Should().Throw<ManualValidationException>().WithMessage(Game.ERROR_GAME_NOT_ACTIVE);
+        doMove.Should().Throw<ManualValidationException>().WithMessage("*not active*");
     }
 
     [Fact]
@@ -135,7 +135,7 @@ public sealed class GameDoMoveTest {
 
         Action doMove = () => _playGameService.DoMove(game, gameState, black, 4.AsSquare(), 7.AsSquare());
 
-        doMove.Should().Throw<ManualValidationException>().WithMessage(Game.ERROR_NOT_YOUR_TURN);
+        doMove.Should().Throw<ManualValidationException>().WithMessage("*not your turn*");
     }
 
     [Fact]

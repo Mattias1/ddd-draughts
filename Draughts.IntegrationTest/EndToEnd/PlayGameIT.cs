@@ -130,7 +130,7 @@ public sealed class PlayGameIT {
     private async Task PostCreateGame(string cookie) {
         var result = await _apiTester.As(cookie).PostForm("/lobby/create",
             new GameCreationRequest(6, true, true, true, "max", "black"));
-        result.StatusCode.Should().Be(200);
+        result.Should().HaveStatusCode(200);
         if (!_apiTester.TryRegex(result.RequestUri(), @"/game/(\d+)", out string? value)) {
             result.RequestUri().Should().Match("/game/<some-value>?success=*");
             return;
@@ -141,7 +141,7 @@ public sealed class PlayGameIT {
 
     private async Task PostJoinGame(string cookie) {
         var result = await _apiTester.As(cookie).PostForm("/lobby/join", new GameJoinRequest(GameId?.Value, null));
-        result.StatusCode.Should().Be(200);
+        result.Should().HaveStatusCode(200);
         result.RequestUri().Should().Match($"/game/{GameId}?success=*");
     }
 
@@ -172,18 +172,18 @@ public sealed class PlayGameIT {
 
     private async Task PostMove(int from, int to, string cookie) {
         var result = await _apiTester.As(cookie).PostJson($"/game/{GameId}/move", new MoveRequest(from, to));
-        result.StatusCode.Should().Be(200);
+        result.Should().HaveStatusCode(200);
     }
 
     private async Task PostDrawVote(string cookie) {
         var result = await _apiTester.As(cookie).Post($"/game/{GameId}/draw");
-        result.StatusCode.Should().Be(200);
+        result.Should().HaveStatusCode(200);
         result.RequestUri().Should().Match($"/game/{GameId}?success=*");
     }
 
     private async Task PostResignation(string cookie) {
         var result = await _apiTester.As(cookie).Post($"/game/{GameId}/resign");
-        result.StatusCode.Should().Be(200);
+        result.Should().HaveStatusCode(200);
         result.RequestUri().Should().Match($"/game/{GameId}?success=*");
     }
 

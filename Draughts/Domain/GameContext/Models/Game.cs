@@ -9,10 +9,6 @@ using System.Linq;
 namespace Draughts.Domain.GameContext.Models;
 
 public sealed class Game : AggregateRoot<Game, GameId> {
-    public const string ERROR_GAME_NOT_ACTIVE = "This game is not active.";
-    public const string ERROR_NOT_YOUR_TURN = "It's not your turn.";
-    public const string ERROR_NOT_IN_GAME = "You're not in the game.";
-
     private readonly List<Player> _players;
 
     public override GameId Id { get; }
@@ -134,20 +130,20 @@ public sealed class Game : AggregateRoot<Game, GameId> {
     public void ValidateCanDoMove(UserId currentUser) {
         ValidateGameIsActive();
         if (Turn!.Player.UserId != currentUser) {
-            throw new ManualValidationException(ERROR_NOT_YOUR_TURN);
+            throw new ManualValidationException($"It's not your turn in game {Id}.");
         }
     }
 
     public void ValidateCanVote(UserId currentUser) {
         ValidateGameIsActive();
         if (!Players.Any(p => p.UserId == currentUser)) {
-            throw new ManualValidationException(ERROR_NOT_IN_GAME);
+            throw new ManualValidationException($"You're not in game {Id}.");
         }
     }
 
     private void ValidateGameIsActive() {
         if (!HasStarted || IsFinished || Turn is null) {
-            throw new ManualValidationException(ERROR_GAME_NOT_ACTIVE);
+            throw new ManualValidationException($"Game {Id} is not active.");
         }
     }
 }

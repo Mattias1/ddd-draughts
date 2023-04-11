@@ -1,3 +1,4 @@
+using Draughts.Common.Utilities;
 using Draughts.Domain.GameContext.Models;
 using Draughts.Test.TestHelpers;
 using FluentAssertions;
@@ -31,7 +32,9 @@ public sealed class ModPanelGameToolsIT {
 
     private void CreateGame() {
         _apiTester.UnitOfWork.WithGameTransaction(tran => {
-            var game = GameTestHelper.StartedInternationalGame().Build();
+            var game = GameTestHelper.StartedInternationalGame()
+                .WithTurn(Color.White, _apiTester.Clock.UtcNow())
+                .Build();
             _apiTester.GameRepository.Save(game);
             _gameId = game.Id;
         });
@@ -51,8 +54,8 @@ public sealed class ModPanelGameToolsIT {
         int turnTime36Hours = 129600;
         var result = await _apiTester.PostForm("/modpanel/game-tools/turn-time",
             new ChangeTurnTimeRequest(_gameId?.Value, turnTime36Hours, true));
-        result.StatusCode.Should().Be(200);
-        result.RequestUri().Should().Match($"/modpanel/game-tools?success=*");
+        result.Should().HaveStatusCode(200);
+        result.RequestUri().Should().Match("/modpanel/game-tools?success=*");
 
         AssertActionIsLogged("game.turntimechange");
     }

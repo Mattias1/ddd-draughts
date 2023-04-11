@@ -72,7 +72,7 @@ public sealed partial class QueryBuilder : IQueryBuilderBase {
         string query = ToParameterizedSql();
         foreach (var (key, value) in _query.Parameters) {
             if (value is string stringValue) {
-                query = query.Replace(key, $"'{value}'");
+                query = query.Replace(key, $"'{stringValue}'");
             } else {
                 query = query.Replace(key, value?.ToString() ?? "null");
             }

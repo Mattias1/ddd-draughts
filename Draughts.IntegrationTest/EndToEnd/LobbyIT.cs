@@ -58,7 +58,7 @@ public sealed class LobbyIT {
     private async Task PostCreateGame() {
         var result = await _apiTester.PostForm("/lobby/create",
             new GameCreationRequest(6, true, true, true, "max", "black"));
-        result.StatusCode.Should().Be(200);
+        result.Should().HaveStatusCode(200);
         if (!_apiTester.TryRegex(result.RequestUri(), @"/game/(\d+)", out string? value)) {
             result.RequestUri().Should().Match("/game/<some-value>?success=*");
             return;
@@ -69,7 +69,7 @@ public sealed class LobbyIT {
 
     private async Task PostJoinGame() {
         var result = await _apiTester.PostForm("/lobby/join", new GameJoinRequest(GameId?.Value, null));
-        result.StatusCode.Should().Be(200);
+        result.Should().HaveStatusCode(200);
         result.RequestUri().Should().Match($"/game/{GameId}?success=*");
     }
 

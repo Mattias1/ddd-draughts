@@ -72,7 +72,7 @@ public sealed class AuthenticationIT {
 
     private async Task PostLogin() {
         var result = await _apiTester.PostForm("/auth/login", new LoginRequest("TestPlayerBlack", "admin"));
-        result.StatusCode.Should().Be(200);
+        result.Should().HaveStatusCode(200);
         result.RequestUri().Should().Be("/");
     }
 

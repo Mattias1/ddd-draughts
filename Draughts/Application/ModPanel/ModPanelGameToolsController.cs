@@ -57,9 +57,9 @@ public sealed class ModPanelGameToolsController : BaseController {
 
             await _websocketHub.PushGameUpdateReady(gameId);
 
-            return SuccessRedirect($"/modpanel/game-tools", $"Turn time for game {gameId} is changed.");
+            return SuccessRedirect("/modpanel/game-tools", $"Turn time for game {gameId} is changed.");
         } catch (ManualValidationException e) {
-            return ErrorRedirect($"/modpanel/game-tools", e.Message);
+            return ErrorRedirect("/modpanel/game-tools", e.Message);
         }
     }
 
