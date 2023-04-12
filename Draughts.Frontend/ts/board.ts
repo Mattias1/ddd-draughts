@@ -43,9 +43,8 @@ export class Board {
 
     public static fromString(boardString: string): Board {
         let pieces = Array.from(boardString)
-            .map(c => parseInt('0x0' + c, 16))
-            .filter(i => !isNaN(i))
-            .map(i => new Piece(i));
+            .filter(c => /[0-9A-Fa-f]+/g.test(c))
+            .map(c => new Piece(parseInt('0x0' + c, 16)));
         let size = Math.sqrt(pieces.length * 2);
         return new Board(size, pieces);
     }
@@ -82,7 +81,7 @@ export class Piece {
     }
 
     public toChar(): string {
-        return this.value.toString();
+        return this.value.toString(16).toUpperCase();
     }
     public toString(): string {
         if (this.isEmpty()) {

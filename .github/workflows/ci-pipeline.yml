@@ -32,12 +32,10 @@ jobs:
       run: >
         cd Draughts.Frontend/
         && npm ci
-        && cd ../
     - name: Build frontend
       run: >
         cd Draughts.Frontend/
         && npm run build:prod
-        && cd ../
 
     # Setup database for the tests
     - name: Start database
@@ -46,24 +44,35 @@ jobs:
       run: >
         cd Draughts.Command/
         && dotnet run --project Draughts.Command.csproj data:essential data:dummy
-        && cd ../
 
-    # Run all tests
-    - name: Run unit tests
-      run: >
-        dotnet test
-        --no-build
-        --verbosity normal
-        --filter FullyQualifiedName~Draughts.Test
+    # Run backend tests
     - name: Run query builder tests
       run: >
         dotnet test
         --no-build
         --verbosity normal
         --filter FullyQualifiedName~SqlQueryBuilder.Test
+    - name: Run query builder tests
+      run: >
+        dotnet test
+        --no-build
+        --verbosity normal
+        --filter FullyQualifiedName~SqlQueryBuilder.IntegrationTest
+    - name: Run unit tests
+      run: >
+        dotnet test
+        --no-build
+        --verbosity normal
+        --filter FullyQualifiedName~Draughts.Test
     - name: Run database backend tests
       run: >
         dotnet test
         --no-build
         --verbosity normal
         --filter FullyQualifiedName~Draughts.IntegrationTest
+
+    # Run frontend tests
+    - name: Run jest tests
+      run: >
+        cd Draughts.Frontend/
+        && npm run test

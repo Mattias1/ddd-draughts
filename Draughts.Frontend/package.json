@@ -10,28 +10,30 @@
     "build": "echo 'npm run build is not a valid command, did you mean build:dev or build:prod?'",
     "build:dev": "webpack",
     "build:prod": "webpack --env production",
-    "test": "jest"
+    "test": "jest",
+    "tests": "jest"
   },
   "keywords": [
     "ddd",
+    "domain-driven design",
     "draughts"
   ],
   "author": "",
   "license": "MIT",
   "devDependencies": {
-    "@types/jest": "^29.2.4",
-    "@types/jquery": "^3.5.14",
-    "jest": "^29.3.1",
-    "jest-cli": "^29.3.1",
-    "ts-jest": "^29.0.3",
+    "@types/jest": "^29.5.0",
+    "@types/jquery": "^3.5.16",
+    "jest": "^29.5.0",
+    "jest-cli": "^29.5.0",
+    "ts-jest": "^29.1.0",
     "ts-loader": "^9.4.2",
-    "typescript": "^4.9.4",
-    "webpack": "^5.75.0",
+    "typescript": "^4.9.5",
+    "webpack": "^5.79.0",
     "webpack-cli": "^5.0.1"
   },
   "dependencies": {
-    "@microsoft/signalr": "^7.0.0",
+    "@microsoft/signalr": "^7.0.5",
     "dayjs": "^1.11.7",
-    "jquery": "^3.6.1"
+    "jquery": "^3.6.4"
   }
 }

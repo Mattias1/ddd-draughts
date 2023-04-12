@@ -21,7 +21,7 @@ Setup
 ### Dependencies
 - Dotnet 7 SDK
 - Docker and docker-compose
-- Node.js and npm
+- Node.js 18 and npm 9
 
 ### Run Draughts
 To run a production build of draughts, you need some patience `;)` __WIP__.
