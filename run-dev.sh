@@ -32,7 +32,6 @@ function reset {
         echo "Removing draughts-dev dependencies, including the database content."
         docker-compose -p draughts-dev -f docker/docker-compose-develop.yaml down
         docker volume rm draughts-dev_draughts-db-data
-        docker volume rm draughts-dev_sqlquerybuilder-it-db-data
     else
         echo "Warning, resetting will remove the database content. If you are sure, use the --force flag"
     fi

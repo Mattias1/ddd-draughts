@@ -1,4 +1,5 @@
 using SqlQueryBuilder.Builder;
+using SqlQueryBuilder.MySql;
 using SqlQueryBuilder.Options;
 using System;
 

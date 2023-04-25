@@ -46,18 +46,6 @@ jobs:
         && dotnet run --project Draughts.Command.csproj data:essential data:dummy
 
     # Run backend tests
-    - name: Run query builder tests
-      run: >
-        dotnet test
-        --no-build
-        --verbosity normal
-        --filter FullyQualifiedName~SqlQueryBuilder.Test
-    - name: Run query builder tests
-      run: >
-        dotnet test
-        --no-build
-        --verbosity normal
-        --filter FullyQualifiedName~SqlQueryBuilder.IntegrationTest
     - name: Run unit tests
       run: >
         dotnet test

@@ -1,7 +1,7 @@
 using Draughts.Common.OoConcepts;
-using Draughts.Test.Fakes;
 using FluentAssertions;
 using SqlQueryBuilder.Builder;
+using SqlQueryBuilder.Testing;
 using System;
 using System.Linq.Expressions;
 using Xunit;
