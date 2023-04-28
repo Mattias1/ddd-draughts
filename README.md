@@ -16,8 +16,8 @@ The documentation is a part of the application. You can find the link to the
 look at the [source files](/Draughts/Application/Documentation/Views) of the docs.
 
 
-Setup
-------
+Setup development environment
+------------------------------
 ### Dependencies
 - Dotnet 7 SDK
 - Node.js 18 and npm 9
@@ -39,3 +39,21 @@ open at [http://localhost:52588](http://localhost:52588).
 If you need to, you can access the databases with adminer at
 [http://localhost:52580](http://localhost:52580/?server=draughts-db&username=root).
 As credentials use _MySQL_, _draughts-db_, _root_, _root_. You can leave the database empty.
+
+
+Release instructions
+---------------------
+Build a release: `./build-release.sh`
+
+Deploy with something like:
+```
+sudo docker container rm -f draughts \
+  ; sudo docker image rm draughts \
+  ; sudo docker load -i ./Draughts/publish/docker-image-draughts.tar \
+  ; sudo docker run --name draughts -p 8000:8000 -v ${PWD}/Draughts/logs:/app/logs:z draughts
+```
+Note:
+- Make sure the user 'dkr-user' with uid '1042' has write access to the logs dir.
+- You should probably add something like `--restart always`,
+  `-v some-dir/appsettings.env.json:/app/appsettings.env.json:ro` and
+  `-v some-dir/my-cert.pfx:/app/cert.pfx:ro` to the docker run command.
