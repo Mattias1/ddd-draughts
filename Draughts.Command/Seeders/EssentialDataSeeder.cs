@@ -23,6 +23,15 @@ public sealed class EssentialDataSeeder {
         _userRepository = userRepository;
     }
 
+    public bool DatabaseNeedsSeeding() {
+        try {
+            EnsureDatabasesAreEmpty();
+            return true;
+        } catch (InvalidOperationException) {
+            return false;
+        }
+    }
+
     public void SeedData() {
         EnsureDatabasesAreEmpty();
 

@@ -14,6 +14,12 @@ fi
 function start {
     echo "Starting draughts-dev dependencies."
     docker-compose -p draughts-dev -f docker/docker-compose-develop.yaml up -d
+
+    echo ""
+    cd Draughts.Command/
+    dotnet build Draughts.Command.csproj
+    dotnet run --project Draughts.Command.csproj data:dev
+    cd ../
 }
 
 function stop {

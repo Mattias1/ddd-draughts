@@ -29,6 +29,19 @@ public sealed class DraughtsConsole {
 
         foreach (string arg in args) {
             switch (arg) {
+                case "data:dev":
+                    WaitForDatabaseConnection(5);
+
+                    if (_essentialDataSeeder.DatabaseNeedsSeeding()) {
+                        Console.WriteLine("Start seeding essential and dummy data...");
+                        _essentialDataSeeder.SeedData();
+                        _dummyDataSeeder.SeedData();
+                        Console.WriteLine("Successfully seeded the database with essential and dummy data.");
+                    }
+                    else {
+                        Console.WriteLine("The database is not empty, so no seeding required.");
+                    }
+                    break;
                 case "data:essential":
                     WaitForDatabaseConnection(5);
 
@@ -59,10 +72,10 @@ public sealed class DraughtsConsole {
                     break;
                 case "-h":
                 case "--help":
+                    PrintHelp();
+                    break;
                 default:
-                    if (arg != "--help") {
-                        Console.Write($"Unknown argument given ('{arg}'); ");
-                    }
+                    Console.Write($"Unknown argument given ('{arg}'); ");
                     PrintHelp();
                     break;
             }
@@ -94,7 +107,7 @@ public sealed class DraughtsConsole {
     // TODO: How to actually call this commandline utility from outside an IDE?
     private static void PrintHelp() {
         Console.WriteLine("usage: <draughts.command> ["
-            + "data:essential|data:dummy|events:sync|events:dispatch"
+            + "data:dev|data:essential|data:dummy|events:sync|events:dispatch"
             + "]");
     }
 }
