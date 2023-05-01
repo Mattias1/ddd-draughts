@@ -76,11 +76,11 @@ public sealed class Startup {
 
     private static void ConfigureAppSettings(IConfiguration configuration) {
         var settings = configuration.Get<AppSettings?>();
-        if (settings?.DbPassword is null || settings.BaseUrl is null) {
+        if (settings?.DbPassword is null || settings.DbPort is null || settings.BaseUrl is null) {
             throw new InvalidOperationException("Invalid appsettings.json file");
         }
 
-        DbContext.Init(settings.DbPassword);
+        DbContext.Init(settings.DbPort.Value, settings.DbPassword);
         QueryBuilderOptions.SetupDapperWithSnakeCaseAndNodaTime();
         Utils.BaseUrl = settings.BaseUrl;
     }

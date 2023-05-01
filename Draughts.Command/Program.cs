@@ -44,7 +44,7 @@ public sealed class Program {
             .ConfigureAppConfiguration((ctx, config) => {
                 var settings = ctx.Configuration.Get<AppSettings>();
 
-                DbContext.Init(settings?.DbPassword ?? "devapp");
+                DbContext.Init(settings?.DbPort ?? 52506, settings?.DbPassword ?? "devapp");
                 QueryBuilderOptions.SetupDapperWithSnakeCaseAndNodaTime();
             });
     }
