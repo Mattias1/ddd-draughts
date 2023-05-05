@@ -21,12 +21,12 @@ public sealed class AuthenticationIT {
 
     [Fact]
     public async Task DontRegisterNewUserWithDuplicateUsername() {
-        await PostRegistration("MATTY", $"matty+unique@example.com", 400, "/auth/register?error=*");
+        await PostRegistration("MATTY", "matty+unique@example.com", 400, "/auth/register?error=*");
     }
 
     [Fact]
     public async Task DontRegisterNewUserWithDuplicateEmail() {
-        await PostRegistration("matty_unique", $"MATTY@example.com", 400, "/auth/register?error=*");
+        await PostRegistration("matty_unique", "MATTY@example.com", 400, "/auth/register?error=*");
     }
 
     [Fact]

@@ -17,8 +17,7 @@ function start {
 
     echo ""
     cd Draughts.Command/
-    dotnet build Draughts.Command.csproj
-    dotnet run --project Draughts.Command.csproj data:dev
+    dotnet run data:dev
     cd ../
 }
 

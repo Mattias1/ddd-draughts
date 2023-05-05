@@ -16,6 +16,10 @@ public sealed class DraughtsConsole {
     private readonly SystemEventQueueService _systemEventQueueService;
     private readonly IIdGenerator _idGenerator;
 
+    private string[] MigrationDatabases => new string[] {
+        DbContext.AUTH_DATABASE, DbContext.GAME_DATABASE, DbContext.MISC_DATABASE, DbContext.USER_DATABASE
+    };
+
     public DraughtsConsole(EssentialDataSeeder essentialDataSeeder, DummyDataSeeder dummyDataSeeder,
             SystemEventQueueService systemEventQueueService, IIdGenerator idGenerator) {
         _essentialDataSeeder = essentialDataSeeder;
@@ -27,21 +31,45 @@ public sealed class DraughtsConsole {
     public void ExecuteCommand(string[] args) {
         IdTestHelper.IdGenerator = _idGenerator;
 
-        foreach (string arg in args) {
+        for (int i = 0; i < args.Length; i++) {
+            string arg = args[i];
+            string? nextArg = args.Length > i + 1 ? args[i + 1] : null;
             switch (arg) {
                 case "data:dev":
                     WaitForDatabaseConnection(5);
 
+                    Console.WriteLine("Initializing dev database (all migrations and seeds)...");
+                    MigrateUp();
+
                     if (_essentialDataSeeder.DatabaseNeedsSeeding()) {
-                        Console.WriteLine("Start seeding essential and dummy data...");
                         _essentialDataSeeder.SeedData();
                         _dummyDataSeeder.SeedData();
-                        Console.WriteLine("Successfully seeded the database with essential and dummy data.");
+                        Console.WriteLine("Successfully initialized the database for development.");
                     }
                     else {
                         Console.WriteLine("The database is not empty, so no seeding required.");
                     }
                     break;
+
+                case "migrate":
+                case "migrate:up":
+                    WaitForDatabaseConnection(5);
+
+                    Console.WriteLine("Start database migration...");
+                    MigrateUp();
+                    Console.WriteLine("Successfully migrated the database.");
+                    break;
+                case "migrate:down":
+                    WaitForDatabaseConnection(5);
+
+                    Console.WriteLine("Revert database migration...");
+                    if (nextArg is null || !long.TryParse(nextArg, out long migrationVersion)) {
+                        throw new InvalidOperationException("migrate:down requires the migration-version (number) as argument");
+                    }
+                    MigrateDown(migrationVersion);
+                    Console.WriteLine("Successfully reverted the database migration.");
+                    break;
+
                 case "data:essential":
                     WaitForDatabaseConnection(5);
 
@@ -54,6 +82,7 @@ public sealed class DraughtsConsole {
                     _dummyDataSeeder.SeedData();
                     Console.WriteLine("Successfully seeded the database with dummy data.");
                     break;
+
                 case "events:syncstatus":
                 case "events:sync":
                     Console.WriteLine("Start event queue status sync...");
@@ -66,6 +95,7 @@ public sealed class DraughtsConsole {
                     _systemEventQueueService.RedispatchEventQueue(new UserId(UserId.ADMIN), new Username(Username.ADMIN));
                     Console.WriteLine("Successfully dispatched the unhandled events...");
                     break;
+
                 case "-v":
                 case "--version":
                     Console.WriteLine("Draughts console - version alpha");
@@ -86,11 +116,11 @@ public sealed class DraughtsConsole {
         }
     }
 
-    public static void WaitForDatabaseConnection(int maxSeconds) {
+    private static void WaitForDatabaseConnection(int maxSeconds) {
         for (int i = 1; i <= maxSeconds + 1; i++) {
             try {
                 using (var tranFlavor = DbContext.Get.BeginMiscTransaction()) {
-                    DbContext.Get.Query(tranFlavor).CountAllFrom("id_generation").SingleLong();
+                    // If we can start a transaction, we have a connection
                     tranFlavor.Commit();
                     return;
                 }
@@ -104,10 +134,21 @@ public sealed class DraughtsConsole {
         throw new InvalidOperationException("Database connection failed.");
     }
 
-    // TODO: How to actually call this commandline utility from outside an IDE?
+    private void MigrateUp() {
+        foreach (string database in MigrationDatabases) {
+            Program.WithMigrationRunner(database, runner => runner.MigrateUp());
+        }
+    }
+
+    private void MigrateDown(long migrationVersion) {
+        foreach (string database in MigrationDatabases) {
+            Program.WithMigrationRunner(database, runner => runner.MigrateDown(migrationVersion));
+        }
+    }
+
     private static void PrintHelp() {
-        Console.WriteLine("usage: <draughts.command> ["
-            + "data:dev|data:essential|data:dummy|events:sync|events:dispatch"
+        Console.WriteLine("usage: dotnet run ["
+            + "data:dev|data:essential|data:dummy|migrate:up|migrate:down|events:sync|events:dispatch"
             + "]");
     }
 }

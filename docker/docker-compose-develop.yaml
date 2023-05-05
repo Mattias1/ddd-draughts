@@ -10,8 +10,7 @@ services:
     volumes:
       - draughts-db-data:/var/lib/mysql
       # Files in this directory are executed in alphabetical order when initializing
-      - ./draughts-db/structure.sql:/docker-entrypoint-initdb.d/aa-structure.sql
-      - ./draughts-db/userprivileges.sql:/docker-entrypoint-initdb.d/bb-userprivileges.sql
+      - ./draughts-db/init.sql:/docker-entrypoint-initdb.d/aa-init.sql
     ports:
       - 52506:3306 # SQL Port
 

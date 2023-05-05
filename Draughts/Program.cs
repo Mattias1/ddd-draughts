@@ -1,25 +1,22 @@
-using AdaskoTheBeAsT.Dapper.NodaTime;
 using Draughts.Application.Shared;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using NodaTime;
 using Serilog;
 using Serilog.Events;
-using SqlQueryBuilder.Options;
 using System;
 using System.IO;
 
 namespace Draughts;
 
-public sealed class Program {
+public static class Program {
     private static readonly object _lock = new object();
-    private volatile static bool _logIsConfigured = false;
+    private static volatile bool _logIsConfigured = false;
 
     public static void Main(string[] args) => CreateHostBuilder(args).Build().Run();
 
-    public static IHostBuilder CreateHostBuilder(string[] args) {
+    private static IHostBuilder CreateHostBuilder(string[] args) {
         return Host.CreateDefaultBuilder(args)
             .ConfigureAppConfiguration(configuration => ConfigureAppsettings(configuration))
             .ConfigureLogging((ctx, log) => ConfigureSerilog(ctx.Configuration, log, "draughts-app"))
@@ -58,7 +55,7 @@ public sealed class Program {
         logBuilder.ClearProviders();
         logBuilder.AddSerilog();
 
-        Log.Information($"Starting Draughts application...");
+        Log.Information("Starting Draughts application...");
     }
 
     private static string GetLogPathFormat(string? rootDir, string fileName) {
@@ -74,7 +71,7 @@ public sealed class Program {
         return dir;
     }
 
-    public static LogEventLevel FromString(string? logLevel) {
+    private static LogEventLevel FromString(string? logLevel) {
         return logLevel?.ToLowerInvariant() switch {
             "fatal" => LogEventLevel.Fatal,
             "error" => LogEventLevel.Error,
