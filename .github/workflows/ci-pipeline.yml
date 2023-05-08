@@ -38,12 +38,8 @@ jobs:
         && npm run build:prod
 
     # Setup database for the tests
-    - name: Start database
+    - name: Start and init database
       run: ./run-dev.sh start
-    - name: Init database
-      run: >
-        cd Draughts.Command/
-        && dotnet run --project Draughts.Command.csproj data:essential data:dummy
 
     # Run backend tests
     - name: Run unit tests

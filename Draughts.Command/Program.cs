@@ -37,16 +37,19 @@ public static class Program {
     }
 
     private static IHostBuilder CreateHostBuilder(string[] args) {
-        return Host.CreateDefaultBuilder(args)
-            .ConfigureAppConfiguration(config => Draughts.Program.ConfigureAppsettings(config))
-            .ConfigureLogging((ctx, log) => {
-                Draughts.Program.ConfigureSerilog(ctx.Configuration, log, "draughts-command");
-            })
-            .ConfigureServices(services => DraughtsCommandServiceProvider.ConfigureServices(services))
-            .ConfigureAppConfiguration((ctx, config) => {
-                var settings = ctx.Configuration.Get<AppSettings>();
+        var config = Draughts.Program.LoadAppSettingsConfiguration();
+        var appSettings = config.Get<AppSettings?>();
 
-                DbContext.Init(settings?.DbPort ?? 52506, settings?.DbPassword ?? "devapp");
+        return Host.CreateDefaultBuilder(args)
+            .ConfigureLogging(log => Draughts.Program.ConfigureSerilog(appSettings, log, "draughts-command"))
+            .ConfigureServices(services => DraughtsCommandServiceProvider.ConfigureServices(services))
+            .ConfigureAppConfiguration((ctx, builder) => {
+                builder.AddConfiguration(config);
+                if (appSettings?.DbPassword is null || appSettings.DbServer is null || appSettings.DbPort is null) {
+                    throw new InvalidOperationException("Invalid appsettings.json file");
+                }
+
+                DbContext.Init(appSettings.DbServer, appSettings.DbPort.Value, appSettings.DbPassword);
                 QueryBuilderOptions.SetupDapperWithSnakeCaseAndNodaTime();
             });
     }

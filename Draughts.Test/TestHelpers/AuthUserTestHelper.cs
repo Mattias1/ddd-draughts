@@ -22,7 +22,11 @@ public sealed class AuthUserTestHelper {
             .WithId(user.Id)
             .WithUsername(user.Username)
             .WithEmail($"{user.Username}@example.com")
+#if DEBUG
             .WithPasswordHash(user.Username.Value)
+#else
+            .WithPasswordHash("ChangeMe :)")
+#endif
             .WithCreatedAt(user.CreatedAt)
             .WithRoles(roles);
     }

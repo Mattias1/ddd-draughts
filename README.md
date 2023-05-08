@@ -30,7 +30,7 @@ To run a production build of draughts, you need some patience `;)` __WIP__.
 Optional: Create _appsettings.env.json_ files to override existing settings.
 The json files exist in the _Draughts_, _Draughts.IntegrationTest_ and _Draughts.Command_ projects.
 
-Start and initialise the develop dependencies with `sudo ./run-dev.sh start`.
+Start and initialise the develop dependencies with `./run-dev.sh start`.
 To build the frontend run `npm install && npm run build:dev`.
 
 You can then run the application with something like `cd Draughts && dotnet run -v n`. It should

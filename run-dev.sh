@@ -13,7 +13,7 @@ fi
 # --- The actions we can execute ---
 function start {
     echo "Starting draughts-dev dependencies."
-    docker-compose -p draughts-dev -f docker/docker-compose-develop.yaml up -d
+    sudo docker-compose -p draughts-dev -f docker/docker-compose-develop.yaml up -d
 
     echo ""
     cd Draughts.Command/
@@ -23,20 +23,20 @@ function start {
 
 function stop {
     echo "Stopping draughts-dev dependencies."
-    docker-compose -p draughts-dev -f docker/docker-compose-develop.yaml stop
+    sudo docker-compose -p draughts-dev -f docker/docker-compose-develop.yaml stop
 }
 
 function remove {
     echo "Stopping and removing draughts-dev dependencies."
-    docker-compose -p draughts-dev -f docker/docker-compose-develop.yaml down
+    sudo docker-compose -p draughts-dev -f docker/docker-compose-develop.yaml down
 }
 
 function reset {
     if [[ $FLAG == "-f" || $FLAG == "--force" ]] ;
     then
         echo "Removing draughts-dev dependencies, including the database content."
-        docker-compose -p draughts-dev -f docker/docker-compose-develop.yaml down
-        docker volume rm draughts-dev_draughts-db-data
+        sudo docker-compose -p draughts-dev -f docker/docker-compose-develop.yaml down
+        sudo docker volume rm draughts-dev_draughts-db-data
     else
         echo "Warning, resetting will remove the database content. If you are sure, use the --force flag"
     fi

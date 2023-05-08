@@ -1,4 +1,5 @@
 using DalSoft.Hosting.BackgroundQueue;
+using Draughts.Application.Shared;
 using Draughts.Application.Shared.Middleware;
 using Draughts.Common;
 using Draughts.Common.Events;
@@ -13,6 +14,7 @@ using Flurl;
 using Flurl.Http;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.TestHost;
+using Microsoft.Extensions.Configuration;
 using NodaTime;
 using Serilog;
 using System.Diagnostics.CodeAnalysis;
@@ -59,9 +61,12 @@ public sealed class ApiTester {
     }
 
     private IWebHostBuilder WebHostBuilder() {
+        var config = Program.LoadAppSettingsConfiguration();
+        var appSettings = config.Get<AppSettings?>();
+
         return new WebHostBuilder()
-            .ConfigureAppConfiguration(config => Program.ConfigureAppsettings(config))
-            .ConfigureLogging((ctx, log) => Program.ConfigureSerilog(ctx.Configuration, log, "draughts-it"))
+            .UseConfiguration(config)
+            .ConfigureLogging(log => Program.ConfigureSerilog(appSettings, log, "draughts-it"))
             .UseStartup<Startup>();
     }
 

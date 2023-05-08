@@ -4,6 +4,7 @@ using Draughts.Domain.AuthContext.Models;
 using Draughts.Domain.UserContext.Models;
 using Draughts.Repositories.Misc;
 using Draughts.Test.TestHelpers;
+using Microsoft.Extensions.Logging;
 using SqlQueryBuilder.Exceptions;
 using System;
 using System.Threading;
@@ -15,17 +16,20 @@ public sealed class DraughtsConsole {
     private readonly DummyDataSeeder _dummyDataSeeder;
     private readonly SystemEventQueueService _systemEventQueueService;
     private readonly IIdGenerator _idGenerator;
+    private readonly ILogger<DraughtsConsole> _logger;
 
     private string[] MigrationDatabases => new string[] {
         DbContext.AUTH_DATABASE, DbContext.GAME_DATABASE, DbContext.MISC_DATABASE, DbContext.USER_DATABASE
     };
 
     public DraughtsConsole(EssentialDataSeeder essentialDataSeeder, DummyDataSeeder dummyDataSeeder,
-            SystemEventQueueService systemEventQueueService, IIdGenerator idGenerator) {
+            SystemEventQueueService systemEventQueueService, IIdGenerator idGenerator,
+            ILogger<DraughtsConsole> logger) {
         _essentialDataSeeder = essentialDataSeeder;
         _dummyDataSeeder = dummyDataSeeder;
         _systemEventQueueService = systemEventQueueService;
         _idGenerator = idGenerator;
+        _logger = logger;
     }
 
     public void ExecuteCommand(string[] args) {
@@ -42,6 +46,8 @@ public sealed class DraughtsConsole {
                     MigrateUp();
 
                     if (_essentialDataSeeder.DatabaseNeedsSeeding()) {
+                        Console.WriteLine();
+                        Console.WriteLine("Start seeding essential and dummy data...");
                         _essentialDataSeeder.SeedData();
                         _dummyDataSeeder.SeedData();
                         Console.WriteLine("Successfully initialized the database for development.");
@@ -62,10 +68,12 @@ public sealed class DraughtsConsole {
                 case "migrate:down":
                     WaitForDatabaseConnection(5);
 
-                    Console.WriteLine("Revert database migration...");
                     if (nextArg is null || !long.TryParse(nextArg, out long migrationVersion)) {
                         throw new InvalidOperationException("migrate:down requires the migration-version (number) as argument");
                     }
+                    i++;
+
+                    Console.WriteLine($"Revert database migration to version {migrationVersion}...");
                     MigrateDown(migrationVersion);
                     Console.WriteLine("Successfully reverted the database migration.");
                     break;
@@ -116,7 +124,7 @@ public sealed class DraughtsConsole {
         }
     }
 
-    private static void WaitForDatabaseConnection(int maxSeconds) {
+    private void WaitForDatabaseConnection(int maxSeconds) {
         for (int i = 1; i <= maxSeconds + 1; i++) {
             try {
                 using (var tranFlavor = DbContext.Get.BeginMiscTransaction()) {
@@ -125,6 +133,8 @@ public sealed class DraughtsConsole {
                     return;
                 }
             } catch (SqlQueryBuilderException e) {
+                string connectionString = DbContext.Get.ConnectionStringForMigrations(DbContext.MISC_DATABASE);
+                _logger.LogWarning(e, $"Database connection failure ({i}; {connectionString}).");
                 if (i <= maxSeconds) {
                     Console.WriteLine($"Wait for database connection ({i}: {e.Message})");
                     Thread.Sleep(1000);
@@ -147,7 +157,7 @@ public sealed class DraughtsConsole {
     }
 
     private static void PrintHelp() {
-        Console.WriteLine("usage: dotnet run ["
+        Console.WriteLine("usage: dotnet Draughts.Command.dll ["
             + "data:dev|data:essential|data:dummy|migrate:up|migrate:down|events:sync|events:dispatch"
             + "]");
     }
