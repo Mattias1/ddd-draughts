@@ -8,42 +8,47 @@ public sealed class UserStatistics : Entity<UserStatistics, UserId> {
     public GamesTally TotalTally { get; private set; }
     public GamesTally InternationalTally { get; private set; }
     public GamesTally EnglishAmericanTally { get; private set; }
+    public GamesTally HexdameTally { get; private set;  }
     public GamesTally OtherTally { get; private set; }
 
     public UserStatistics(UserId id, GamesTally totalTally, GamesTally internationalTally,
-            GamesTally englishAmericanTally, GamesTally otherTally) {
+            GamesTally englishAmericanTally, GamesTally hexdameTally, GamesTally otherTally) {
         Id = id;
         TotalTally = totalTally;
         InternationalTally = internationalTally;
         EnglishAmericanTally = englishAmericanTally;
+        HexdameTally = hexdameTally;
         OtherTally = otherTally;
     }
 
     public void UpdateForFinishedGame(GameSettingsPreset gameSettingsPreset, UserId? victor) {
-        bool? isWin = victor is null ? null : Id == victor;
+        bool? isWonTiedOrLost = victor is null ? null : Id == victor;
 
-        TotalTally = TotalTally.WithFinishedGame(isWin);
+        TotalTally = TotalTally.WithFinishedGame(isWonTiedOrLost);
         if (gameSettingsPreset == GameSettingsPreset.International) {
-            InternationalTally = InternationalTally.WithFinishedGame(isWin);
+            InternationalTally = InternationalTally.WithFinishedGame(isWonTiedOrLost);
         } else if (gameSettingsPreset == GameSettingsPreset.EnglishAmerican) {
-            EnglishAmericanTally = EnglishAmericanTally.WithFinishedGame(isWin);
+            EnglishAmericanTally = EnglishAmericanTally.WithFinishedGame(isWonTiedOrLost);
+        } else if (gameSettingsPreset == GameSettingsPreset.Hexdame) {
+            HexdameTally = HexdameTally.WithFinishedGame(isWonTiedOrLost);
         } else {
-            OtherTally = OtherTally.WithFinishedGame(isWin);
+            OtherTally = OtherTally.WithFinishedGame(isWonTiedOrLost);
         }
     }
 
     public static UserStatistics BuildNew(UserId id) {
-        return new UserStatistics(id, GamesTally.Empty, GamesTally.Empty, GamesTally.Empty, GamesTally.Empty);
+        return new UserStatistics(id, GamesTally.Empty, GamesTally.Empty, GamesTally.Empty,
+            GamesTally.Empty, GamesTally.Empty);
     }
 }
 
 public sealed record GamesTally(int Played, int Won, int Tied, int Lost) {
-    public GamesTally WithFinishedGame(bool? isWin) {
+    public GamesTally WithFinishedGame(bool? isWonTiedOrLost) {
         return new GamesTally(
             Played + 1,
-            isWin == true ? Won + 1 : Won,
-            isWin == null ? Tied + 1 : Tied,
-            isWin == false ? Lost + 1 : Lost
+            isWonTiedOrLost == true ? Won + 1 : Won,
+            isWonTiedOrLost is null ? Tied + 1 : Tied,
+            isWonTiedOrLost == false ? Lost + 1 : Lost
         );
     }
 

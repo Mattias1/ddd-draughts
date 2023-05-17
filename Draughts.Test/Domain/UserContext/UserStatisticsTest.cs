@@ -19,6 +19,7 @@ public sealed class UserStatisticsTest {
         userStats.TotalTally.Should().Be(new GamesTally(1, 1, 0, 0));
         userStats.InternationalTally.Should().Be(new GamesTally(1, 1, 0, 0));
         userStats.EnglishAmericanTally.Should().Be(new GamesTally(0, 0, 0, 0));
+        userStats.HexdameTally.Should().Be(new GamesTally(0, 0, 0, 0));
         userStats.OtherTally.Should().Be(new GamesTally(0, 0, 0, 0));
     }
 
@@ -31,19 +32,21 @@ public sealed class UserStatisticsTest {
         userStats.TotalTally.Should().Be(new GamesTally(1, 0, 0, 1));
         userStats.InternationalTally.Should().Be(new GamesTally(0, 0, 0, 0));
         userStats.EnglishAmericanTally.Should().Be(new GamesTally(1, 0, 0, 1));
+        userStats.HexdameTally.Should().Be(new GamesTally(0, 0, 0, 0));
         userStats.OtherTally.Should().Be(new GamesTally(0, 0, 0, 0));
     }
 
     [Fact]
-    public void UpdateStatisticsForOtherDraw() {
+    public void UpdateStatisticsForHexdameDraw() {
         var userStats = UserStatistics.BuildNew(TiedPlayerId);
 
-        userStats.UpdateForFinishedGame(GameSettingsPreset.Other, null);
+        userStats.UpdateForFinishedGame(GameSettingsPreset.Hexdame, null);
 
         userStats.TotalTally.Should().Be(new GamesTally(1, 0, 1, 0));
         userStats.InternationalTally.Should().Be(new GamesTally(0, 0, 0, 0));
         userStats.EnglishAmericanTally.Should().Be(new GamesTally(0, 0, 0, 0));
-        userStats.OtherTally.Should().Be(new GamesTally(1, 0, 1, 0));
+        userStats.HexdameTally.Should().Be(new GamesTally(1, 0, 1, 0));
+        userStats.OtherTally.Should().Be(new GamesTally(0, 0, 0, 0));
     }
 
     [Fact]
@@ -55,6 +58,33 @@ public sealed class UserStatisticsTest {
         userStats.TotalTally.Should().Be(new GamesTally(1, 1, 0, 0));
         userStats.InternationalTally.Should().Be(new GamesTally(0, 0, 0, 0));
         userStats.EnglishAmericanTally.Should().Be(new GamesTally(0, 0, 0, 0));
+        userStats.HexdameTally.Should().Be(new GamesTally(0, 0, 0, 0));
         userStats.OtherTally.Should().Be(new GamesTally(1, 1, 0, 0));
+    }
+
+    [Fact]
+    public void UpdateOtherStatisticsForMiniHexLoss() {
+        var userStats = UserStatistics.BuildNew(LoserId);
+
+        userStats.UpdateForFinishedGame(GameSettingsPreset.MiniHex, VictorId);
+
+        userStats.TotalTally.Should().Be(new GamesTally(1, 0, 0, 1));
+        userStats.InternationalTally.Should().Be(new GamesTally(0, 0, 0, 0));
+        userStats.EnglishAmericanTally.Should().Be(new GamesTally(0, 0, 0, 0));
+        userStats.HexdameTally.Should().Be(new GamesTally(0, 0, 0, 0));
+        userStats.OtherTally.Should().Be(new GamesTally(1, 0, 0, 1));
+    }
+
+    [Fact]
+    public void UpdateStatisticsForOtherDraw() {
+        var userStats = UserStatistics.BuildNew(TiedPlayerId);
+
+        userStats.UpdateForFinishedGame(GameSettingsPreset.Other, null);
+
+        userStats.TotalTally.Should().Be(new GamesTally(1, 0, 1, 0));
+        userStats.InternationalTally.Should().Be(new GamesTally(0, 0, 0, 0));
+        userStats.EnglishAmericanTally.Should().Be(new GamesTally(0, 0, 0, 0));
+        userStats.HexdameTally.Should().Be(new GamesTally(0, 0, 0, 0));
+        userStats.OtherTally.Should().Be(new GamesTally(1, 0, 1, 0));
     }
 }

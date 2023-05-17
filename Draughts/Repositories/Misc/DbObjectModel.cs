@@ -32,6 +32,10 @@ public sealed class DbUser : IDbObject<DbUser, User> {
     public int EnglishAmericanWon { get; set; }
     public int EnglishAmericanTied { get; set; }
     public int EnglishAmericanLost { get; set; }
+    public int HexdamePlayed { get; set; }
+    public int HexdameWon { get; set; }
+    public int HexdameTied { get; set; }
+    public int HexdameLost { get; set; }
     public int OtherPlayed { get; set; }
     public int OtherWon { get; set; }
     public int OtherTied { get; set; }
@@ -51,6 +55,7 @@ public sealed class DbUser : IDbObject<DbUser, User> {
                 new GamesTally(TotalPlayed, TotalWon, TotalTied, TotalLost),
                 new GamesTally(InternationalPlayed, InternationalWon, InternationalTied, InternationalLost),
                 new GamesTally(EnglishAmericanPlayed, EnglishAmericanWon, EnglishAmericanTied, EnglishAmericanLost),
+                new GamesTally(HexdamePlayed, HexdameWon, HexdameTied, HexdameLost),
                 new GamesTally(OtherPlayed, OtherWon, OtherTied, OtherLost)
             ),
             CreatedAt.InUtc()
@@ -75,6 +80,10 @@ public sealed class DbUser : IDbObject<DbUser, User> {
             EnglishAmericanWon = entity.Statistics.EnglishAmericanTally.Won,
             EnglishAmericanTied = entity.Statistics.EnglishAmericanTally.Tied,
             EnglishAmericanLost = entity.Statistics.EnglishAmericanTally.Lost,
+            HexdamePlayed = entity.Statistics.HexdameTally.Played,
+            HexdameWon = entity.Statistics.HexdameTally.Won,
+            HexdameTied = entity.Statistics.HexdameTally.Tied,
+            HexdameLost = entity.Statistics.HexdameTally.Lost,
             OtherPlayed = entity.Statistics.OtherTally.Played,
             OtherWon = entity.Statistics.OtherTally.Won,
             OtherTied = entity.Statistics.OtherTally.Tied,

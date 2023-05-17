@@ -8,7 +8,7 @@
 
 <div class="text-container">
     <h1>@Model.Rank.Name @Model.Username</h1>
-    
+
     <table class="page-table">
         <thead>
             <tr>
@@ -40,6 +40,13 @@
                 <td>@Model.Statistics.EnglishAmericanTally.Won</td>
                 <td>@Model.Statistics.EnglishAmericanTally.Lost</td>
                 <td>@Model.Statistics.EnglishAmericanTally.Tied</td>
+            </tr>
+            <tr>
+                <td>Hexdame:</td>
+                <td>@Model.Statistics.HexdameTally.Played</td>
+                <td>@Model.Statistics.HexdameTally.Won</td>
+                <td>@Model.Statistics.HexdameTally.Lost</td>
+                <td>@Model.Statistics.HexdameTally.Tied</td>
             </tr>
             <tr>
                 <td>Other:</td>

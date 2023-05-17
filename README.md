@@ -23,9 +23,6 @@ Setup development environment
 - Node.js 18 and npm 9
 - Docker and docker-compose
 
-### Run Draughts
-To run a production build of draughts, you need some patience `;)` __WIP__.
-
 ### Setup development environment
 Optional: Create _appsettings.env.json_ files to override existing settings.
 The json files exist in the _Draughts_, _Draughts.IntegrationTest_ and _Draughts.Command_ projects.
@@ -41,11 +38,11 @@ If you need to, you can access the databases with adminer at
 As credentials use _MySQL_, _draughts-db_, _root_, _root_. You can leave the database empty.
 
 
-Release instructions
----------------------
-Build a release: `./build-release.sh`
+Build a release
+----------------
+To build a release, run `./build-release.sh`.
 
-Deploy with something like:
+You can deploy with something like
 ```
 sudo docker container rm -f draughts \
   ; sudo docker image rm draughts \
