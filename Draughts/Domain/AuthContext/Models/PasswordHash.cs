@@ -14,7 +14,7 @@ public sealed class PasswordHash : ValueObject<PasswordHash> {
 #else
         private const int MINIMUM_LENGTH = 8;
 #endif
-    private static readonly byte[] Pepper = Encoding.UTF8.GetBytes("PlGFw266BWmA1i5vGg9XWrGsFaUqUI");
+    private static readonly byte[] Pepper = "PlGFw266BWmA1i5vGg9XWrGsFaUqUI"u8.ToArray();
 
     private byte[] Hash { get; }
 

@@ -24,3 +24,11 @@ public sealed class UserViewModel : BasicUserViewModel {
         Statistics = user.Statistics;
     }
 }
+
+public sealed class AuthUserViewModel : BasicUserViewModel {
+    public Email Email { get; }
+
+    public AuthUserViewModel(AuthUser authUser) : base(authUser.Id, authUser.Username) {
+        Email = authUser.Email;
+    }
+}

@@ -110,7 +110,7 @@ public sealed class DummyDataSeeder {
 
             foreach (var u in users) {
                 var role = u.Username == "PendingPlayer" ? pendingRegistrationRole : registeredUserRole;
-                var authUserBuilder = AuthUserTestHelper.FromUserAndRoles(u, role).WithPasswordHash("admin");
+                var authUserBuilder = AuthUserTestHelper.FromUserAndRoles(u, role).WithPassword("admin");
                 if (u.Username == Username.MATTY) {
                     authUserBuilder.AddRole(adminRole);
                 }

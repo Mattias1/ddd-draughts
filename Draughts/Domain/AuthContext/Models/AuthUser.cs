@@ -41,15 +41,31 @@ public sealed class AuthUser : AggregateRoot<AuthUser, UserId> {
     }
 
     public void RemoveRole(RoleId roleId, string rolename) {
-        if (rolename == Role.ADMIN_ROLENAME && AuthUser.PROTECTED_USERS.Contains(Username.Value)) {
+        if (rolename == Role.ADMIN_ROLENAME && PROTECTED_USERS.Contains(Username.Value)) {
             throw new ManualValidationException("You can't remove the admin role from protected users "
                 + $"({Id}, {Username}).");
         }
         if (!_rolesIds.Contains(roleId)) {
             throw new ManualValidationException($"This user ({Id}, {Username}) "
-                + "doesn't have that role ({roleId}, {rolename}).");
+                + $"doesn't have that role ({roleId}, {rolename}).");
         }
         _rolesIds.Remove(roleId);
+    }
+
+    public void UpdateEmailOrPassword(string? plaintextPassword, string? newEmail, string? newPassword) {
+        if (newEmail is null && newPassword is null) {
+            throw new ManualValidationException("No password or email was provided.");
+        }
+        if (!PasswordHash.CanLogin(plaintextPassword, Id, Username)) {
+            throw new ManualValidationException("Incorrect password.");
+        }
+
+        if (newEmail is not null) {
+            Email = new Email(newEmail);
+        }
+        if (newPassword is not null) {
+            PasswordHash = PasswordHash.Generate(newPassword, Id, Username);
+        }
     }
 
     public static AuthUser CreateNew(IIdPool idPool, Username username, Email email,

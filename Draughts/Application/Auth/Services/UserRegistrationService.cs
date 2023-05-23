@@ -21,7 +21,7 @@ public sealed class UserRegistrationService {
 
     public UserRegistrationService(
             AuthUserRepository authUserRepository, IClock clock, IIdGenerator idGenerator,
-            RoleRepository roleRepository, IUnitOfWork unitOfWork, UserRepository userRepository,
+            RoleRepository roleRepository, UserRepository userRepository,
             UserRegistrationDomainService userRegistrationDomainService) {
         _authUserRepository = authUserRepository;
         _clock = clock;
@@ -58,10 +58,10 @@ public sealed class UserRegistrationService {
         return user;
     }
 
-    public AuthUser FinishRegistration(UserId id) {
+    public AuthUser FinishRegistration(UserId userId) {
         var registeredUserRole = _roleRepository.Find(new RolenameSpecification(Role.REGISTERED_USER_ROLENAME));
         var pendingRegistrationRole = _roleRepository.Find(new RolenameSpecification(Role.PENDING_REGISTRATION_ROLENAME));
-        var authUser = _authUserRepository.FindById(id);
+        var authUser = _authUserRepository.FindById(userId);
 
         _userRegistrationDomainService.Register(authUser, registeredUserRole, pendingRegistrationRole);
 

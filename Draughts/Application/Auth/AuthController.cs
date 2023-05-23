@@ -75,7 +75,7 @@ public sealed class AuthController : BaseController {
         try {
             ValidateNotNull(request?.Name, request?.Email, request?.Password, request?.PasswordConfirm);
 
-            // This is no domain logic, but let's-help-the-user logic. It's fine in here.
+            // This is not domain logic, but let's-help-the-user logic. It's fine in here.
             if (request!.Password != request.PasswordConfirm) {
                 throw new ManualValidationException("PasswordConfirm", "The passwords do not match.");
             }

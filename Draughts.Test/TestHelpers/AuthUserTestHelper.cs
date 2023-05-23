@@ -23,9 +23,9 @@ public sealed class AuthUserTestHelper {
             .WithUsername(user.Username)
             .WithEmail($"{user.Username}@example.com")
 #if DEBUG
-            .WithPasswordHash(user.Username.Value)
+            .WithPassword(user.Username.Value)
 #else
-            .WithPasswordHash("ChangeMe :)")
+            .WithPassword("ChangeMe :)")
 #endif
             .WithCreatedAt(user.CreatedAt)
             .WithRoles(roles);
@@ -38,7 +38,7 @@ public sealed class AuthUserTestHelper {
             .WithId(IdTestHelper.NextForUser())
             .WithUsername(new Username(name))
             .WithEmail($"{name}@example.com")
-            .WithPasswordHash(name)
+            .WithPassword(name)
             .WithCreatedAt(Feb29)
             .WithRoles(registeredUserRole);
     }
@@ -64,7 +64,7 @@ public sealed class AuthUserTestHelper {
             return this;
         }
 
-        public AuthUserBuilder WithPasswordHash(string plaintextPassword) {
+        public AuthUserBuilder WithPassword(string plaintextPassword) {
             if (_id is null || _username is null) {
                 throw new InvalidOperationException("The id and username should be set (and not changed)");
             }
