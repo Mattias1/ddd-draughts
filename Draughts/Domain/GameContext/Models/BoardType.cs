@@ -117,12 +117,13 @@ public sealed class HexagonalBoardType : ValueObject<HexagonalBoardType>, IBoard
         // For the hexagonal board coordinate logic, we assume that the hex is a (stretched) square,
         // and then add to compensate for the out-of-range squares
         int compensatedValue = squareId.Value;
-        for (int i = 0; i < DisplaySize - 1; i++) {
-            int amountToAdd = LongSize - DisplaySize - i;
+        for (int i = 0; i < DisplaySize - 1; i++) { // North-west triangle
             if (compensatedValue > i * LongSize) {
-                compensatedValue += amountToAdd;
+                compensatedValue += LongSize - DisplaySize - i;
             }
-            if (compensatedValue >= LongSize * (LongSize - i)) {
+        }
+        for (int i = 1; i < DisplaySize - 1; i++) { // South-east triangle
+            if (compensatedValue > LongSize * (DisplaySize + i) - i) {
                 compensatedValue += i;
             }
         }

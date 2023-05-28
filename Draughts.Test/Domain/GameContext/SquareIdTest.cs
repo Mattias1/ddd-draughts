@@ -56,6 +56,17 @@ public sealed class SquareIdTest {
     }
 
     [Theory]
+    [InlineData(4, 0, 1), InlineData(5, 0, 2), InlineData(6, 0, 3), InlineData(7, 0, 4), InlineData(8, 0, 5)]
+    [InlineData(8, 1, 11), InlineData(8, 2, 18), InlineData(8, 3, 26), InlineData(8, 4, 35)]
+    [InlineData(7, 5, 43), InlineData(6, 6, 50), InlineData(5, 7, 56), InlineData(4, 8, 61)]
+    [InlineData(3, 8, 60), InlineData(2, 8, 59), InlineData(1, 8, 58), InlineData(0, 8, 57)]
+    [InlineData(0, 7, 51), InlineData(0, 6, 44), InlineData(0, 5, 36), InlineData(0, 4, 27)]
+    [InlineData(1, 3, 19), InlineData(2, 2, 12), InlineData(3, 1, 6)]
+    public void CoordinateToIdOnHexdameBoard(int x, int y, int id) {
+        SquareId.FromPosition(x, y, HEX5).Should().Be(id.AsSquare());
+    }
+
+    [Theory]
     [InlineData(0, 0), InlineData(2, 0)]
     [InlineData(1, 1), InlineData(3, 1)]
     [InlineData(0, 2), InlineData(2, 2)]
@@ -153,6 +164,26 @@ public sealed class SquareIdTest {
         //  |__|04|09|14|18|
         // |__|__|08|13|17|
         id.AsSquare().ToPosition(HEX3).Should().Be((x, y));
+    }
+
+    [Theory]
+    [InlineData(1, 4, 0), InlineData(2, 5, 0), InlineData(3, 6, 0), InlineData(4, 7, 0), InlineData(5, 8, 0)]
+    [InlineData(11, 8, 1), InlineData(18, 8, 2), InlineData(26, 8, 3), InlineData(35, 8, 4)]
+    [InlineData(43, 7, 5), InlineData(50, 6, 6), InlineData(56, 5, 7), InlineData(61, 4, 8)]
+    [InlineData(60, 3, 8), InlineData(59, 2, 8), InlineData(58, 1, 8), InlineData(57, 0, 8)]
+    [InlineData(51, 0, 7), InlineData(44, 0, 6), InlineData(36, 0, 5), InlineData(27, 0, 4)]
+    [InlineData(19, 1, 3), InlineData(12, 2, 2), InlineData(6, 3, 1)]
+    public void SquareIdToCoordinateOnHexdameBoard(int id, int x, int y) {
+        //         |05|11|18|26|35|__|__|__|__|  Side view
+        //        |04|10|17|25|34|43|__|__|__|                E
+        //       |03|09|16|24|33|42|50|__|__|              N  +  S
+        //      |02|08|15|23|32|41|49|56|__|                  W
+        //     |01|07|14|22|31|40|48|55|61|      <- You
+        //    |__|06|13|21|30|39|47|54|60|
+        //   |__|__|12|20|29|38|46|53|59|
+        //  |__|__|__|19|28|37|45|52|58|
+        // |__|__|__|__|27|36|44|51|57|
+        id.AsSquare().ToPosition(HEX5).Should().Be((x, y));
     }
 
     // TODO: These are BoardType tests, not SquareId tests

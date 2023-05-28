@@ -9,6 +9,7 @@ namespace Draughts.Test.Domain.GameContext;
 
 public sealed class HexagonalBoardMoveTest {
     private static readonly IBoardType HEX3 = new HexagonalBoardType(3);
+    private static readonly IBoardType HEX5 = new HexagonalBoardType(5);
 
     private readonly GameSettings _settings = GameSettings.MiniHex;
 
@@ -40,7 +41,7 @@ public sealed class HexagonalBoardMoveTest {
 
     [Theory]
     [InlineData(5, 6, 7), InlineData(5, 10, 15), InlineData(5, 9, 13)]
-    public void CapturePieceForwards(int from, int victim, int to) {
+    public void BlackCapturesPieceForwards(int from, int victim, int to) {
         //   |.|.|5|    Side view   |03|07|12|           E
         //  |.|5|.|.|              |02|06|11|16|      N  +  S
         // |.|4|5|.|5|  <- You    |01|05|10|15|19|       W
@@ -51,6 +52,22 @@ public sealed class HexagonalBoardMoveTest {
         board[from.AsSquare()].Piece.Should().Be(Piece.Empty);
         board[victim.AsSquare()].Piece.Should().Be(Piece.Empty);
         board[to.AsSquare()].Piece.Should().Be(Piece.BlackMan);
+        canCaptureMore.Should().BeFalse();
+    }
+
+    [Theory]
+    [InlineData(10, 9, 8), InlineData(10, 5, 1), InlineData(10, 6, 3)]
+    public void WhiteCapturesPieceForwards(int from, int victim, int to) {
+        //   |.|.|5|    Side view   |03|07|12|           E
+        //  |.|4|.|.|              |02|06|11|16|      N  +  S
+        // |.|4|5|.|5|  <- You    |01|05|10|15|19|       W
+        //  |.|4|.|.|              |04|09|14|18|
+        //   |.|.|5|                |08|13|17|
+        var board = Board.FromString(HEX3, "000 0440 04505 0000 505");
+        board.PerformNewMove(from.AsSquare(), to.AsSquare(), _settings, out bool canCaptureMore);
+        board[from.AsSquare()].Piece.Should().Be(Piece.Empty);
+        board[victim.AsSquare()].Piece.Should().Be(Piece.Empty);
+        board[to.AsSquare()].Piece.Should().Be(Piece.WhiteKing);
         canCaptureMore.Should().BeFalse();
     }
 
@@ -187,5 +204,22 @@ public sealed class HexagonalBoardMoveTest {
         board.PerformChainCaptureMove(6.AsSquare(), 16.AsSquare(), _settings, out bool canCaptureMore);
         board.ToLongString(" ", "").Should().Be("000 0000 000D0 0054 000");
         canCaptureMore.Should().BeTrue();
+    }
+
+    [Fact]
+    public void CapturePieceOnFullHexdameBoard() {
+        //      |.|.|.|.|.|    Side view   |05|11|18|26|35|           E
+        //     |4|.|.|.|.|5|              |04|10|17|25|34|43|      N  +  S
+        //    |4|4|.|.|.|.|5|  <- You    |03|09|16|24|33|42|50|       W
+        //   |4|4|.|.|.|.|5|5|          |02|08|15|23|32|41|49|56|
+        //  |4|4|4|.|.|4|5|5|5|        |01|07|14|22|31|40|48|55|61|
+        //   |4|4|.|.|.|5|5|5|          |06|13|21|30|39|47|54|60|
+        //    |4|4|.|.|.|5|5|            |12|20|29|38|46|53|59|
+        //     |4|.|.|.|.|5|              |19|28|37|45|52|58|
+        //      |.|.|.|.|.|                |27|36|44|51|57|
+        var board = Board.FromString(HEX5, "44440 444400 4440000 44000000 000000000 00004005 0005555 005555 05555");
+        board.PerformNewMove(47.AsSquare(), 32.AsSquare(), _settings, out bool canCaptureMore);
+        board.ToLongString(" ", "").Should().Be("44440 444400 4440000 44000000 000005000 00000005 0000555 005555 05555");
+        canCaptureMore.Should().BeFalse();
     }
 }
