@@ -176,7 +176,7 @@ public sealed class DbAdminLog : IDbObject<DbAdminLog, AdminLog> {
         return new AdminLog(
             new AdminLogId(Id),
             Type,
-            Parameters.Split(','),
+            Parameters.Split(',', StringSplitOptions.RemoveEmptyEntries),
             new UserId(UserId),
             new Username(Username),
             CreatedAt.InUtc()
