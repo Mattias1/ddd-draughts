@@ -33,10 +33,12 @@
         <div>
             <form class="form-horizontal" action="/auth/login" method="post">
                 <h3>Login</h3>
-                <p>
-                    Try to login with <em>admin</em> or <em>user</em> for example.
-                    The password should be <em>admin</em> for all of them.
-                </p>
+                @if (Utils.IsDebug) {
+                    <p>
+                        Try to login with <em>admin</em> or <em>user</em> for example.
+                        The password should be <em>admin</em> for all of them.
+                    </p>
+                }
                 <label>
                     <span>Name:</span>
                     <input type="text" name="name" placeholder="Insert username or email" />
@@ -51,12 +53,13 @@
                 </label>
             </form>
             <p>Or <a @Utils.Href("/auth/register")>register</a> a new account.</p>
-            <div class="p-like">
-                Debug shortcuts:
-                @Utils.PostLink("Login as Matty", "/auth/login", ("name", "Matty"), ("password", "admin")) or
-                @Utils.PostLink("Login as Mathy", "/auth/login", ("name", "Mathy"), ("password", "admin"))
-                (only works at local dev environment)
-            </div>
+            @if (Utils.IsDebug) {
+                <div class="p-like">
+                    Debug shortcuts:
+                    @Utils.PostLink("Login as Matty", "/auth/login", ("name", "Matty"), ("password", "admin")) or
+                    @Utils.PostLink("Login as Mathy", "/auth/login", ("name", "Mathy"), ("password", "admin"))
+                </div>
+            }
         </div>
     }
 </div>

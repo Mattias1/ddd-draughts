@@ -21,6 +21,15 @@ public static class Utils {
     public static string BaseUrl { get; set; } = "http://localhost:52588";
 
     /// <summary>
+    /// Whether we are compiling in debug or release mode
+    /// </summary>
+#if DEBUG
+    public static bool IsDebug = true;
+#else
+    public static bool IsDebug = false;
+#endif
+
+    /// <summary>
     /// Print 'hidden' or not
     /// </summary>
     public static HtmlString HideIf(bool isHidden) => new HtmlString(isHidden ? "hidden" : "");
