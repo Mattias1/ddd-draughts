@@ -36,7 +36,7 @@ public static class DraughtsServiceProvider {
 
     private static void ConfigureApplicationMiddleware(IServiceCollection services) {
         services.AddSingleton<IClock>(SystemClock.Instance);
-        services.AddBackgroundQueue(e => Log.Logger.Error("Error in background task", e));
+        services.AddBackgroundQueue(e => Log.Logger.Error(e, "Error in background task"));
 
         services.AddScoped<JwtActionFilter>();
         services.AddScoped<AuthContextActionFilter>();

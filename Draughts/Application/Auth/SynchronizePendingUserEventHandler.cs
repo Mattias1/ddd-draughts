@@ -3,6 +3,7 @@ using Draughts.Common.Events;
 using Draughts.Domain.AuthContext.Events;
 using Draughts.Repositories;
 using Draughts.Repositories.Transaction;
+using Microsoft.Extensions.Logging;
 using NodaTime;
 
 namespace Draughts.Application.Auth;
@@ -10,8 +11,9 @@ namespace Draughts.Application.Auth;
 public sealed class SynchronizePendingUserEventHandler : DomainEventHandler<AuthUserCreated> {
     private readonly UserRegistrationService _userRegistrationService;
 
-    public SynchronizePendingUserEventHandler(IClock clock, EventsRepository eventsRepository, IUnitOfWork unitOfWork,
-            UserRegistrationService userRegistrationService) : base(clock, eventsRepository, unitOfWork) {
+    public SynchronizePendingUserEventHandler(IClock clock, EventsRepository eventsRepository,
+            ILogger<SynchronizePendingUserEventHandler> logger, IUnitOfWork unitOfWork,
+            UserRegistrationService userRegistrationService) : base(clock, eventsRepository, logger, unitOfWork) {
         _userRegistrationService = userRegistrationService;
     }
 
