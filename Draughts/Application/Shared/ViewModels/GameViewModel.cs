@@ -29,8 +29,10 @@ public class GameViewModel {
 
 public sealed class PlayGameViewModel : GameViewModel {
     public GameStateViewModel CurrentGameState { get; }
+    public string Nonce { get; }
 
-    public PlayGameViewModel(Game game, GameState gameState, IClock clock) : base(game, clock) {
+    public PlayGameViewModel(Game game, GameState gameState, IClock clock, string nonce) : base(game, clock) {
         CurrentGameState = new GameStateViewModel(gameState);
+        Nonce = nonce;
     }
 }

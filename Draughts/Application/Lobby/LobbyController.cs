@@ -46,7 +46,7 @@ public sealed class LobbyController : BaseController {
 
     [HttpGet("lobby/create"), Requires(Permissions.PLAY_GAME)]
     public IActionResult Create() {
-        return View();
+        return View(new NonceViewModel(WebsiteContext.Nonce));
     }
 
     [HttpPost("lobby/create"), Requires(Permissions.PLAY_GAME)]

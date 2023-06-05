@@ -1,6 +1,6 @@
 import * as $ from 'jquery'
 
-export function initializeShowHideLinks(parentIdentifier: string = ''): void {
+export function initShowHideLinks(parentIdentifier: string = ''): void {
     $(parentIdentifier + " .show-hide-link").off('click');
 
     $(parentIdentifier + " .show-hide-link").on('click', function () {

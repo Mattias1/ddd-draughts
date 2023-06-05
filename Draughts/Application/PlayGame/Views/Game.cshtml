@@ -107,3 +107,9 @@
 <div id="captureSequenceFrom" class="hidden" data-val="@captureSequenceFrom"></div>
 <div id="turnExpiryTime" class="hidden" data-val="@Utils.DateTimeIso(Model.Turn?.ExpiresAt)"></div>
 <div id="currentTime" class="hidden" data-val="@Utils.DateTimeIso(Model.Turn?.CurrentTime)"></div>
+
+@section Scripts {
+    <script type="text/javascript" nonce="@(Model.Nonce)">
+        DraughtsApp.initializePlayGame();
+    </script>
+}

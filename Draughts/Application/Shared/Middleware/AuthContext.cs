@@ -49,7 +49,7 @@ public sealed class AuthContext {
 
     public static bool IsLoggedIn(HttpContext httpContext) => httpContext.Items.ContainsKey(AUTH_CONTEXT);
 
-    public static AuthContext GetFromHttpContext(HttpContext httpContext) {
+    public static AuthContext GetFromHttpContextOrThrow(HttpContext httpContext) {
         return GetFromHttpContextOrNull(httpContext) ?? throw new InvalidOperationException(ERROR_NO_AUTH);
     }
     public static AuthContext? GetFromHttpContextOrNull(HttpContext? httpContext) {

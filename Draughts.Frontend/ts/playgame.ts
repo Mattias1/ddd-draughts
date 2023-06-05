@@ -8,7 +8,7 @@ let isCaptureSequenceSquare: boolean = false;
 let websocketConnection: signalR.HubConnection|null = null;
 let timerIntervalId: number|null = null;
 
-export function initPlaygame(): void {
+export function initPlayGame(): void {
     let gameId = $('#game-id').data('gameId');
     let captureSequenceFrom = $('#captureSequenceFrom').data('val');
     if (captureSequenceFrom) {

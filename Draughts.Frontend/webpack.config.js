@@ -23,7 +23,10 @@ export default (env) => {
     },
     output: {
       filename: 'bundle.js',
-      path: _resolve(__dirname, '../Draughts/wwwroot/js')
+      path: _resolve(__dirname, '../Draughts/wwwroot/js'),
+      library: 'DraughtsApp',
+      libraryExport: 'default',
+      libraryTarget: 'var'
     },
     watchOptions: {
       poll: true,

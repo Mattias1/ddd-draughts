@@ -35,7 +35,7 @@ public sealed class PlayGameController : BaseController {
                 return _playGameService.FindGameAndState(new GameId(gameId));
             });
 
-            return View(new PlayGameViewModel(game, gameState, _clock));
+            return View(new PlayGameViewModel(game, gameState, _clock, WebsiteContext.Nonce));
         } catch (ManualValidationException e) {
             return NotFound(e.Message);
         }

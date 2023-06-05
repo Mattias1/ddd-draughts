@@ -14,6 +14,7 @@ namespace Draughts.Application.Shared;
 [ServiceFilter(typeof(AuthContextActionFilter))]
 public class BaseController : Controller {
     private AuthContext? _authContext;
+    private WebsiteContext? _webContext;
     private readonly List<(string field, string error)> _errors;
     private string? _successMessage;
 
@@ -24,8 +25,10 @@ public class BaseController : Controller {
     }
 
     public bool IsLoggedIn => HttpContext is not null && AuthContext.IsLoggedIn(HttpContext);
-    public AuthContext AuthContext => _authContext ??= AuthContext.GetFromHttpContext(HttpContext);
+    public AuthContext AuthContext => _authContext ??= AuthContext.GetFromHttpContextOrThrow(HttpContext);
     public AuthContext? AuthContextOrNull => _authContext ??= AuthContext.GetFromHttpContextOrNull(HttpContext);
+    public WebsiteContext WebsiteContext => _webContext ??= WebsiteContext.GetFromHttpContextOrThrow(HttpContext);
+    public WebsiteContext? WebsiteContextOrNull => _webContext ??= WebsiteContext.GetFromHttpContextOrNull(HttpContext);
 
     public IReadOnlyList<(string field, string error)> Errors => _errors.AsReadOnly();
 

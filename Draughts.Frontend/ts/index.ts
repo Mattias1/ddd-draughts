@@ -1,11 +1,16 @@
 import * as $ from 'jquery'
 
-import { initializeShowHideLinks } from "./site";
+import { initShowHideLinks } from "./site";
 import { initCreateGame } from "./creategame";
-import { initPlaygame } from "./playgame";
+import { initPlayGame } from "./playgame";
 
 $(function () {
-    initializeShowHideLinks();
-    initCreateGame();
-    initPlaygame();
+    // These functions are called on every page load
+    initShowHideLinks();
 });
+
+export default {
+    // These functions should be called manually in their respective pages
+    initializeCreateGame: () => initCreateGame(),
+    initializePlayGame: () => initPlayGame()
+}
