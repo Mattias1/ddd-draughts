@@ -3,6 +3,7 @@ using Draughts.Application.Auth;
 using Draughts.Application.Auth.Services;
 using Draughts.Application.Lobby.Services;
 using Draughts.Application.ModPanel.Services;
+using Draughts.Application.PlayGame;
 using Draughts.Application.PlayGame.Services;
 using Draughts.Application.Shared.Middleware;
 using Draughts.Common.Events;

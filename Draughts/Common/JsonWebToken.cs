@@ -13,20 +13,20 @@ using System.Text;
 namespace Draughts.Common;
 
 public sealed class JsonWebToken {
-    private static readonly JsonSerializerSettings jsonSettings = new JsonSerializerSettings {
+    private static readonly JsonSerializerSettings JSON_SETTINGS = new JsonSerializerSettings {
         ContractResolver = new CamelCasePropertyNamesContractResolver()
     };
     private static readonly byte[] SECRET = Convert.FromBase64String("SvR9OUqzB23f3j3v0KfRlgJjGEcNLyCYDCf4Hougaz0=");
     public const int EXPIRATION_SECONDS = 24 * 60 * 60;
 
     private string? _cachedJwtString;
-    private readonly JwtData Data;
+    private readonly JwtData _data;
 
-    public UserId UserId => new UserId(Data.Usr);
-    public Username Username => new Username(Data.Una);
-    public IReadOnlyList<RoleId> RoleIds => Data.Rol.Select(r => new RoleId(r)).ToList().AsReadOnly();
+    public UserId UserId => new UserId(_data.Usr);
+    public Username Username => new Username(_data.Una);
+    public IReadOnlyList<RoleId> RoleIds => _data.Rol.Select(r => new RoleId(r)).ToList().AsReadOnly();
 
-    private JsonWebToken(JwtData data) => Data = data;
+    private JsonWebToken(JwtData data) => _data = data;
 
     public string ToJwtString() {
         if (_cachedJwtString is not null) {
@@ -34,7 +34,7 @@ public sealed class JsonWebToken {
         }
 
         string header = ToBase64Json(new JwtHeader());
-        string data = ToBase64Json(Data);
+        string data = ToBase64Json(_data);
         string signature = ComputeSignature(header, data);
 
         _cachedJwtString = $"{header}.{data}.{signature}";
@@ -74,7 +74,7 @@ public sealed class JsonWebToken {
     }
 
     private static string ToBase64Json<T>(T part)
-        => ToBase64(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(part, jsonSettings)));
+        => ToBase64(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(part, JSON_SETTINGS)));
     private static string ToBase64(byte[] bytes) {
         return Convert.ToBase64String(bytes).Replace('+', '-').Replace('/', '_').Replace("=", "");
     }

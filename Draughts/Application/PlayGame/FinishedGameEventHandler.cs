@@ -5,7 +5,7 @@ using Draughts.Repositories.Transaction;
 using Microsoft.Extensions.Logging;
 using NodaTime;
 
-namespace Draughts.Application.Auth;
+namespace Draughts.Application.PlayGame;
 
 public sealed class FinishedGameEventHandler : DomainEventHandler<GameFinished> {
     private readonly UserRepository _userRepository;

@@ -1,4 +1,5 @@
 using DalSoft.Hosting.BackgroundQueue;
+using Draughts.Application.Hubs;
 using Draughts.Domain.GameContext.Models;
 using Draughts.Repositories;
 using Draughts.Repositories.Transaction;
@@ -6,7 +7,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Logging;
 using NodaTime;
-using SignalRWebPack.Hubs;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -56,7 +56,7 @@ public sealed class HeartBeatMiddleware {
                 _backgroundQueue.Enqueue(async cancellationToken => await HandleMissingTurns(gameIds, now.InUtc()));
             }
         } catch (Exception e) {
-            _log.LogError("Uncaught exception in the HeartBeat middleware", e);
+            _log.LogError(e, "Uncaught exception in the HeartBeat middleware");
         }
 
         await _next(context);
@@ -73,7 +73,7 @@ public sealed class HeartBeatMiddleware {
 
                 await _websocketHub.PushGameUpdateReady(gameId);
             } catch (Exception e) {
-                _log.LogError($"HeartBeat HandleMissingTurns exception for game {gameId}", e);
+                _log.LogError(e, $"HeartBeat HandleMissingTurns exception for game {gameId}");
             }
         }
     }

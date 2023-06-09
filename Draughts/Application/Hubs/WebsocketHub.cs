@@ -6,7 +6,7 @@ using Serilog;
 using System;
 using System.Threading.Tasks;
 
-namespace SignalRWebPack.Hubs;
+namespace Draughts.Application.Hubs;
 
 public sealed class WebsocketHub : Hub {
     public async Task AssociateGame(object? rawGameId) {
@@ -15,10 +15,10 @@ public sealed class WebsocketHub : Hub {
             if (!int.TryParse(gameId, out _)) {
                 throw new ManualValidationException("Invalid connection attempt while associating for game " + rawGameId);
             }
-            await Groups.AddToGroupAsync(Context.ConnectionId, GameGroup(gameId?.ToString()));
+            await Groups.AddToGroupAsync(Context.ConnectionId, GameGroup(gameId));
             Log.Debug("Websocket connection associated with game " + gameId);
         } catch (Exception e) {
-            Log.Error(e.Message);
+            Log.Error(e, e.Message);
             throw;
         }
     }
@@ -33,7 +33,7 @@ public static class WebsocketHubExtensions {
             await websocketHubContext.Clients.Group(WebsocketHub.GameGroup(gameId)).SendAsync("gameUpdateReady", gameId.ToString());
             Log.Debug($"Pushed websocket game update ready notification for game {gameId}");
         } catch (Exception e) {
-            Log.Error(e.Message);
+            Log.Error(e, e.Message);
             throw;
         }
     }
@@ -43,7 +43,7 @@ public static class WebsocketHubExtensions {
             await websocketHubContext.Clients.Group(WebsocketHub.GameGroup(gameId)).SendAsync("gameUpdated", data);
             Log.Debug($"Pushed websocket game update with data for game {gameId}");
         } catch (Exception e) {
-            Log.Error(e.Message);
+            Log.Error(e, e.Message);
             throw;
         }
     }

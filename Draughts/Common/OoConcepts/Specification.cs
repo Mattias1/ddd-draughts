@@ -30,9 +30,9 @@ public abstract class Specification<T> {
         } else if (whereType == QueryWhereType.Or) {
             func(builder.Or(column));
         } else if (whereType == QueryWhereType.AndNot) {
-            builder.AndNot(builder => func(builder.Where(column)));
+            builder.AndNot(b => func(b.Where(column)));
         } else if (whereType == QueryWhereType.OrNot) {
-            builder.OrNot(builder => func(builder.Where(column)));
+            builder.OrNot(b => func(b.Where(column)));
         } else {
             throw new InvalidOperationException("Unknown query where type");
         }

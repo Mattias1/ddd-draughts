@@ -9,7 +9,7 @@ public static class NodaTimeExtensions {
     public static ZonedDateTime UtcNow(this IClock clock) => clock.InUtc().GetCurrentZonedDateTime();
     public static string ToIsoString(this ZonedDateTime? datetime) {
         if (datetime is not null && datetime.Value.Zone != DateTimeZone.Utc) {
-            throw new NotImplementedException("Currenlty only UTC times are supported.");
+            throw new NotImplementedException("Currently only UTC times are supported.");
         }
         return datetime is null ? "" : datetime.Value.ToIsoString();
     }

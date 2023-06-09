@@ -12,7 +12,7 @@ namespace Draughts.Common.Events;
 public abstract class DomainEventHandlerBase : IDomainEventHandler {
     private readonly IClock _clock;
     private readonly EventsRepository _eventsRepository;
-    private ILogger _logger;
+    private readonly ILogger _logger;
     private readonly IUnitOfWork _unitOfWork;
 
     protected DomainEventHandlerBase(IClock clock, EventsRepository eventsRepository, ILogger logger,

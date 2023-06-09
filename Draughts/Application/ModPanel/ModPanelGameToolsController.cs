@@ -1,4 +1,5 @@
 using Draughts.Application.Auth.Services;
+using Draughts.Application.Hubs;
 using Draughts.Application.ModPanel.ViewModels;
 using Draughts.Application.Shared;
 using Draughts.Application.Shared.Attributes;
@@ -10,7 +11,6 @@ using Draughts.Repositories.Transaction;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using NodaTime;
-using SignalRWebPack.Hubs;
 using System.Threading.Tasks;
 using static Draughts.Domain.AuthContext.Models.Permission;
 

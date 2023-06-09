@@ -11,7 +11,7 @@ using Microsoft.AspNetCore.Mvc;
 using NodaTime;
 using static Draughts.Domain.AuthContext.Models.Permission;
 
-namespace Draughts.Application;
+namespace Draughts.Application.Gamelist;
 
 [Requires(Permissions.PLAY_GAME)]
 public sealed class GamelistController : BaseController {

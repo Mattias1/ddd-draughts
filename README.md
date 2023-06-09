@@ -43,7 +43,7 @@ Build a release
 To build a release, run `./build-release.sh`.
 
 You can deploy with something like
-```
+``` bash
 sudo docker container rm -f draughts \
   ; sudo docker image rm draughts \
   ; sudo docker load -i ./Draughts/publish/docker-image-draughts.tar \

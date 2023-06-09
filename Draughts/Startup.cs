@@ -1,3 +1,4 @@
+using Draughts.Application.Hubs;
 using Draughts.Application.Shared;
 using Draughts.Application.Shared.Middleware;
 using Draughts.Common;
@@ -10,7 +11,6 @@ using Microsoft.AspNetCore.Mvc.Razor;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using SignalRWebPack.Hubs;
 using SqlQueryBuilder.Options;
 using System;
 using System.Threading.Tasks;

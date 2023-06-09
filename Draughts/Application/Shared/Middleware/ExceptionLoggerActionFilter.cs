@@ -11,6 +11,6 @@ public sealed class ExceptionLoggerActionFilter : IExceptionFilter {
     }
 
     public void OnException(ExceptionContext context) {
-        _log.LogError("Uncaught exception", context.Exception);
+        _log.LogError(context.Exception, "Uncaught exception");
     }
 }

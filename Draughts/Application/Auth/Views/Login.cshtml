@@ -7,10 +7,12 @@
     <div>
         <form class="form-horizontal" action="/auth/login" method="post">
             <h3>Login to your account</h3>
-            <p>
-                Try to login with <em>admin</em> or <em>user</em> for example.
-                The password should be <em>admin</em> for all of them.
-            </p>
+            @if (Utils.IsDebug) {
+                <p>
+                    Try to login with <em>admin</em> or <em>user</em> for example.
+                    The password should be <em>admin</em> for all of them.
+                </p>
+            }
             <label>
                 <span>Name:</span>
                 <input type="text" name="name" placeholder="Insert username or email" />
