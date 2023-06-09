@@ -46,7 +46,7 @@ You can deploy with something like
 ``` bash
 sudo docker container rm -f draughts \
   ; sudo docker image rm draughts \
-  ; sudo docker load -i ./Draughts/publish/docker-image-draughts.tar \
+  ; sudo docker load -i ./Draughts/publish/docker-image-draughts.tar.gz \
   ; sudo docker run --name draughts -p 8000:8000 -v ${PWD}/Draughts/logs:/app/logs:z draughts
 ```
 Note:
