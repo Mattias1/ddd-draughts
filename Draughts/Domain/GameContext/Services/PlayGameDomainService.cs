@@ -15,7 +15,7 @@ public sealed class PlayGameDomainService {
     }
 
     public void DoMove(Game game, GameState gameState, UserId currentUserId, SquareId from, SquareId to) {
-        game.ValidateCanDoMove(currentUserId);
+        game.ValidateCanTakeTurn(currentUserId);
 
         var moveResult = gameState.AddMove(from, to, game.Turn!.Player.Color, game.Settings);
 

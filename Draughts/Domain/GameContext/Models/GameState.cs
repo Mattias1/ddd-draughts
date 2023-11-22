@@ -24,7 +24,7 @@ public sealed class GameState : AggregateRoot<GameState, GameId> {
     private GameState(GameId gameId, Board? initialBoard, List<Move> moves, Board board, SquareId? captureSequenceFrom) {
         Id = gameId;
         _initialBoard = initialBoard;
-        _moves = moves;
+        _moves = new List<Move>(moves); // Clone to prevent the outside of modifying this list
         Board = board;
         CaptureSequenceFrom = captureSequenceFrom;
     }

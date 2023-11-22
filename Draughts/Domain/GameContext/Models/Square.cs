@@ -3,6 +3,7 @@ using System.Diagnostics.CodeAnalysis;
 namespace Draughts.Domain.GameContext.Models;
 
 // Right now this class is mutable because the Board is.
+// TODO: FIX THIS
 public sealed class Square {
     private readonly Board _board;
     public SquareId Id { get; }

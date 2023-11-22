@@ -70,7 +70,7 @@ public sealed class Game : AggregateRoot<Game, GameId> {
     }
 
     public void NextTurn(UserId currentUser, ZonedDateTime switchedAt) {
-        ValidateCanDoMove(currentUser);
+        ValidateCanTakeTurn(currentUser);
         SwitchTurn(switchedAt);
     }
 
@@ -98,7 +98,7 @@ public sealed class Game : AggregateRoot<Game, GameId> {
     private Player GetPlayerForColor(Color color) => _players.Single(p => p.Color == color);
 
     public void WinGame(UserId currentUser, ZonedDateTime finishedAt) {
-        ValidateCanDoMove(currentUser);
+        ValidateCanTakeTurn(currentUser);
 
         FinishedAt = finishedAt;
         Victor = Turn!.Player;
@@ -127,7 +127,7 @@ public sealed class Game : AggregateRoot<Game, GameId> {
         AttachEvent(GameFinished.Factory(this));
     }
 
-    public void ValidateCanDoMove(UserId currentUser) {
+    public void ValidateCanTakeTurn(UserId currentUser) {
         ValidateGameIsActive();
         if (Turn!.Player.UserId != currentUser) {
             throw new ManualValidationException($"It's not your turn in game {Id}.");

@@ -10,7 +10,7 @@ public sealed class Piece : ValueObject<Piece> {
 
     private Piece(byte raw) {
         if (raw > 0 && raw < 0b0100 || raw > 0b1111) {
-            throw new InvalidOperationException($"Invalid square value ({raw})");
+            throw new InvalidOperationException($"Invalid piece value ({raw})");
         }
         RawValue = raw;
     }

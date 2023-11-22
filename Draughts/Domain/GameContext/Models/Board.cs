@@ -9,6 +9,7 @@ namespace Draughts.Domain.GameContext.Models;
 
 // This class is like a mutable value object. It could be immutable, but that'd be not very performant. Maybe. Hmm. :/
 // It's not an entity either. It doesn't really have an identity.
+// TODO: FIX THIS
 public sealed class Board {
     private readonly Square[] _squares; // Well, or hexes really, but close enough
     public IBoardType Type { get; }
@@ -20,10 +21,7 @@ public sealed class Board {
     /// The top left square is (0, 0).
     /// </summary>
     public Square? this[int x, int y] => Type.IsPlayable(x, y) ? this[SquareId.FromPosition(x, y, Type)] : null;
-    public Square this[SquareId n] {
-        get => _squares[n.Value - 1];
-        private set => _squares[n.Value - 1] = value;
-    }
+    public Square this[SquareId n] => _squares[n.Value - 1];
 
     public int NrOfPlayableSquares => _squares.Length;
 
@@ -67,6 +65,7 @@ public sealed class Board {
         return move;
     }
 
+    // TODO
     public void PerformMoveUnsafe(SquareId from, SquareId to, SquareId? victim) {
         this[to].Piece = this[from].Piece;
         this[from].Piece = Piece.Empty;
@@ -75,6 +74,7 @@ public sealed class Board {
         }
     }
 
+    // TODO
     public void UndoMoveUnsafe(SquareId from, SquareId to, SquareId? victim, Piece capturedPiece) {
         this[from].Piece = this[to].Piece;
         this[to].Piece = Piece.Empty;
@@ -84,7 +84,7 @@ public sealed class Board {
     }
 
     private void PromoteUnsafe(SquareId square) {
-        this[square].Piece = this[square].Piece.Promoted();
+        this[square].Piece = this[square].Piece.Promoted(); // TODO
     }
 
     private bool HasManOnLastRow(SquareId squareId) {
@@ -97,7 +97,7 @@ public sealed class Board {
     }
 
     private void CleanUpBodies() {
-        _squares.Where(s => s.HasDeadPiece).ForEach(s => s.Piece = Piece.Empty);
+        _squares.Where(s => s.HasDeadPiece).ForEach(s => s.Piece = Piece.Empty); // TODO
     }
 
     public int NrOfPiecesPerColor(Color color) => _squares.Count(p => p.ColorOfPiece == color);
